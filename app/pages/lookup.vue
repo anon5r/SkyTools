@@ -30,7 +30,6 @@
 
 <script>
   import axios from 'axios';
-  import { BskyAgent } from '@atproto/api'
   import { isDev } from '~/utils'
 
   const defaultDomain = '.bsky.social' 

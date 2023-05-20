@@ -21,12 +21,11 @@
           </div>
           <div class="py-2 px-2" :class="{'text-red-600 dark:text-red-400': hasError, 'text-gray-600 dark:text-gray-400': !hasError}">
             <div v-if="hasError">{{ results }}</div>
-            <ul v-else>
-              <li v-for="(record, index) in results" :key="index">
-                <font-awesome-icon :icon="['fas', 'circle-check']" style="color: #18b404;" v-if="index===0" />
-                <font-awesome-icon :icon="['fas', 'flag']" style="color: #ea2a63;" v-else-if="record.type==='create'" />
-                <font-awesome-icon :icon="['far', 'square-minus']" style="color: #cccccc;" v-else />
-                {{ 'handle' in record ? record.handle : record.alsoKnownAs[0] }}
+            <ul v-else class="relative border-l border-gray-200 dark:border-gray-700">
+              <li v-for="record in results" :key="record.id" class="mb-4 ml-3">
+                <font-awesome-icon :icon="record.icon" :style="record.iconStyle" class="absolute w-3 h-3 mt-1.5 -left-1.5" />
+                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAt }}</time>
+                <p class="mb-4 text-base font-normal">{{ record.handle }}</p>
             </li>
             </ul>
           </div>
@@ -36,8 +35,11 @@
 </template>
 
 <script>
+  import { DateTime } from 'luxon'
   import axios from 'axios'
   import { isDev } from '~/utils'
+
+  const defaultDomain = '.bsky.social' 
 
   export default {
     layout: 'default',
@@ -53,6 +55,10 @@
         try {
           this.hasError = false
           handle = handle.startsWith('@') ? handle.substring(1) : handle
+          if (!handle.includes('.')) {
+            handle = handle + defaultDomain // default xxx -> xxx.bsky.social
+            this.inputText = handle
+          }
           const res = await axios.get(`https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`);
           console.log(res)
           if (res.data.did)
@@ -72,16 +78,39 @@
           if (!this.inputText.startsWith('did:'))
             did = await this.getDID(this.inputText)
           if (this.hasError) return
-          const res = await axios.get(`https://plc.directory/${did}/log`);
+          const res = await axios.get(`https://plc.directory/${did}/log/audit`);
           if (isDev()) console.log(res)
-          if (res.data.length > 0)
-            this.results = res.data
-            this.results.reverse()
-        } catch (error) {
-          if (isDev()) console.error(error);
-          this.results = error.message
-          if (error.response?.data?.message)
-            this.results = error.response.data.message
+          if (res.data.length > 0) {
+            let records = res.data.reverse()
+            let items = []
+            for (let idx in records) {
+              let record,icon,style
+              record = records[idx]
+              icon = ['fas', 'square-minus']
+              style = {color: '#cccccc'};
+              if (idx == 0) {
+                icon = ['fas', 'circle-check']
+                style = {color: '#18b404'}
+              } else if (record.operation?.type==='create' || record.operation?.prev === null) {
+                icon = ['fas', 'flag']
+                style = {color: '#ea2a63'}
+              }
+              items.push({
+                id: record.cid,
+                icon: icon,
+                iconStyle: style,
+                createdAt: DateTime.fromISO(record.createdAt).toString(),
+                handle: record.operation.handle ? record.operation.handle : record.operation.alsoKnownAs[0],
+                _raw: record.operation
+              })
+            }
+            this.results = items
+          }
+        } catch (err) {
+          if (isDev()) console.error(err);
+          this.results = err.message
+          if (err.response?.data?.message)
+            this.results = err.response.data.message
           
         }
       }

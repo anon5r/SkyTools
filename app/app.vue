@@ -17,6 +17,7 @@ import Footbar from '~/components/Footbar.vue'
 import { isDev } from '~/utils'
 
 export default {
+  title: 'SkyTools',
   components: {
     Navbar,
     Footbar
