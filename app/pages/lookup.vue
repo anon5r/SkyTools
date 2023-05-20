@@ -1,0 +1,90 @@
+<template>
+    <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
+      <div class="w-full max-w-md">
+        <div class="bg-white shadow-md rounded-lg px-3 py-2 mb-4">
+          <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
+            Enter a handle or DID
+          </div>
+          <div class="flex items-center bg-gray-200 rounded-md">
+            <div class="w-full p-2">
+              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="inputHandle" placeholder="jack.bsky.social" />
+            </div>
+            <div class="p-2">
+              <button class="bg-blue-500 text-white rounded-md px-2 py-1" @click="requestDID">Lookup</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg px-3 py-2 border-2" v-if="result" :class="{'border-red-400': hasError, 'border-green-500': !hasError}">
+          <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
+            <span v-if="result.startsWith('did:')">DID</span>
+            <span v-else>Handle</span>
+          </div>
+          <div class="py-2 px-2" :class="{'text-red-600 dark:text-red-400': hasError, 'text-gray-600 dark:text-gray-400': !hasError}">
+            {{ result }}
+          </div>
+        </div>
+      </div>
+    </div>
+</template>
+
+<script>
+  import axios from 'axios';
+  import { BskyAgent } from '@atproto/api'
+  import { isDev } from '~/utils'
+
+  const defaultDomain = '.bsky.social' 
+
+  export default {
+    layout: 'default',
+    data() {
+      return {
+        inputHandle: '',
+        result: '',
+        hasError: false
+      }
+    },
+    methods: {
+      
+      async requestDID() {
+        try {
+          let text = this.inputHandle;
+          if (!text.startsWith('did:')) {
+            text.startsWith('@') ? text.substring(1) : text
+            text.startsWith('at://') ? text.substring(5) : text
+            this.inputHandle = text
+            if (!text.includes('.'))
+              text = text + defaultDomain // default xxx -> xxx.bsky.social
+              this.inputHandle = text
+          }
+
+          let requestUrl;
+          if (text.startsWith('did:')) 
+            requestUrl = `https://plc.directory/${text}`
+          else
+            requestUrl = `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${text}`
+
+          const res = await axios.get(requestUrl)
+          if (isDev()) console.log(res)
+
+          if (res.data?.did)
+            this.result = res.data.did
+
+          else if (res.data?.alsoKnownAs)
+            this.result = res.data.alsoKnownAs[0]
+
+          this.hasError = false
+
+        } catch (error) {
+          if (isDev()) console.error(error)
+          this.hasError = true
+          this.result = error.message
+          if (error.response.data.message)
+            this.result = error.response.data.message
+          
+        }
+      },
+    },
+  }
+</script>
+  

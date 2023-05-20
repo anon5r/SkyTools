@@ -16,6 +16,7 @@
     "tailwindcss": "^3.3.2"
   },
   "dependencies": {
+    "@atproto/api": "^0.3.7",
     "@fortawesome/fontawesome": "^1.2.0-6",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",

@@ -22,7 +22,7 @@
                         <div id="dropdownNavbar" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                             <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
                                 <li>
-                                    <NuxtLink to="/didlookup" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">DID lookup</NuxtLink>
+                                    <NuxtLink to="/lookup" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Lookup</NuxtLink>
                                 </li>
                                 <li>
                                     <NuxtLink to="/history" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">History</NuxtLink>
@@ -34,7 +34,7 @@
                         </div>
                     </li>
                     <li>
-                        <NuxtLink to="//bsky.app" class="block py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Bluesky</NuxtLink>
+                        <NuxtLink to="//bsky.app" class="block py-0 pl-3 pr-4 md:text-blue rounded md:bg-transparent hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:text-gray-300 dark:hover:text-white">Bluesky</NuxtLink>
                     </li>
                 </ul>
             </div>
