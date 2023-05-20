@@ -5,7 +5,7 @@
         SkyTools
       </div>
       <div class="text-xl text-gray-700">
-        Welcome to SkyTools, your ultimate tool for AT protocols and DID.
+        Tools for Bluesky.
       </div>
     </div>
   </div>
