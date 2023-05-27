@@ -14,7 +14,7 @@
     import Navbar from '~/components/Navbar.vue'
     import Footbar from '~/components/Footbar.vue'
     export default {
-      // グローバルなVueのオプション
+        title: 'Skytools',
         components: {
             Navbar,
             Footbar
