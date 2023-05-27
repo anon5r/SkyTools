@@ -73,9 +73,9 @@
         return id
       },
       submit() {
-        this.$router.push({ query: { handle: this.handle } })
-        if (this.handle.length > 0) {
-          this.getHistory(this.handle)
+        this.$router.push({ query: { id: this.id } })
+        if (this.id.length > 0) {
+          this.getHistory(this.id)
         }
       },
       /** Get DID from handle */
@@ -83,7 +83,7 @@
         try {
           this.hasError = false
           handle = this.formatIdentifier(handle)
-          this.handle = handle
+          this.id = handle
           this.$router.push({ query: { id: handle } })
           
           const res = await axios.get(`https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`);
