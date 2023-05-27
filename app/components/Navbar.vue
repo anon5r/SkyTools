@@ -22,7 +22,10 @@
                         <div id="dropdownNavbar" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                             <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
                                 <li v-for="item in navItems" :key="item.src">
-                                    <NuxtLink :to="item.src" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{item.title}}</NuxtLink>
+                                    <NuxtLink :to="item.src" class="flex items-center justify-between w-full px-4 py-2 flex-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        {{item.title}}
+                                        <span v-if="item.requireLogin"><font-awesome-icon :icon="['fas', 'user-lock']" class="text-gray-400 dark:text-gray-700" tooltip="Authorization required" /></span>
+                                </NuxtLink>
                                 </li>
                             </ul>
                         </div>
@@ -46,9 +49,9 @@
     initFlowbite()
   })
   const navItems = reactive([
-    { src: '/lookup',   title: 'Lookup' },
-    { src: '/history',  title: 'History' },
-    { src: '/blocking', title: 'Blocking' },
-    { src: '/chase-invite-code', title: 'Chase invite code' },
+    { src: '/lookup',   title: 'Lookup', requireLogin: false },
+    { src: '/history',  title: 'History', requireLogin: false },
+    // { src: '/blocking', title: 'Blocking', requireLogin: false },
+    // { src: '/invite-code', title: 'Invite code', requireLogin: true },
   ]);
 </script>

@@ -11,10 +11,9 @@
   </div>
 </template>
 
-<script>
+<script type="ts">
 import Navbar from '~/components/Navbar.vue'
 import Footbar from '~/components/Footbar.vue'
-import { isDev } from '~/utils'
 
 export default {
   title: 'SkyTools',

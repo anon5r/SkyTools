@@ -7,10 +7,10 @@
           </div>
           <div class="flex items-center bg-gray-200 rounded-md">
             <div class="w-full p-2">
-              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="inputText" placeholder="jack.bsky.social or did:plc:xxxxxxxxxxx" />
+              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="handle" @focusout="focusout" @keyup.enter="submit" placeholder="jack.bsky.social or did:plc:xxxxxxxxxxx" />
             </div>
             <div class="p-2">
-              <button class="bg-blue-500 text-white rounded-md px-2 py-1" @click="getHistory">Submit</button>
+              <button class="bg-blue-500 text-white rounded-md px-2 py-1" @click="submit">Submit</button>
             </div>
           </div>
         </div>
@@ -24,8 +24,9 @@
             <ul v-else class="relative border-l border-gray-200 dark:border-gray-700">
               <li v-for="record in results" :key="record.id" class="mb-4 ml-3">
                 <font-awesome-icon :icon="record.icon" :style="record.iconStyle" class="absolute w-3 h-3 mt-1.5 -left-1.5" />
-                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAt }}</time>
-                <p class="mb-4 text-base font-normal">{{ record.handle }}</p>
+                <time class="mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAt }}</time>
+                <p class="mb-1 text-base font-normal">{{ record.handle }}</p>
+                <div class="mb-5 text-xs text-gray-300 dark:text-gray-700">{{ record.did }}</div>
             </li>
             </ul>
           </div>
@@ -38,29 +39,54 @@
   import { DateTime } from 'luxon'
   import axios from 'axios'
   import { isDev } from '~/utils'
+  import { ref, onMounted } from 'vue'
+  import { useRoute } from 'vue-router'
+  import { useAppConfig } from 'nuxt/app'
 
-  const defaultDomain = '.bsky.social' 
 
   export default {
     layout: 'default',
     data() {
       return {
-        inputText: '',
         results: [],
         hasError: false
       }
     },
+    setup() {
+      const route = useRoute()
+      const handle = ref(route.query.handle || '');
+      return { handle }
+    },
     methods: {
+      focusout() {
+        this.handle = this.formatIdentifier(this.handle)
+      },
+      formatIdentifier (id) {
+        if (!id.startsWith('did:')) {
+          id.startsWith('@') ? id.substring(1) : id
+          id.startsWith('at://') ? id.substring(5) : id
+          if (!id.includes('.')) {
+            id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
+          }
+        }
+        return id
+      },
+      submit() {
+        this.$router.push({ query: { handle: this.handle } })
+        if (this.handle.length > 0) {
+          this.getHistory(this.handle)
+        }
+      },
+      /** Get DID from handle */
       async getDID(handle) {
         try {
           this.hasError = false
-          handle = handle.startsWith('@') ? handle.substring(1) : handle
-          if (!handle.includes('.')) {
-            handle = handle + defaultDomain // default xxx -> xxx.bsky.social
-            this.inputText = handle
-          }
+          handle = this.formatIdentifier(handle)
+          this.handle = handle
+          this.$router.push({ query: { id: handle } })
+          
           const res = await axios.get(`https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`);
-          console.log(res)
+          if (isDev()) console.log(res)
           if (res.data.did)
             return res.data.did
         } catch (error) {
@@ -72,11 +98,11 @@
           
         }
       },
-      async getHistory() {
+      /** Get handle history from DID */
+      async getHistory(did) {
         try {
-          let did = this.inputText
-          if (!this.inputText.startsWith('did:'))
-            did = await this.getDID(this.inputText)
+          if (!did.startsWith('did:'))
+            did = await this.getDID(did)
           if (this.hasError) return
           const res = await axios.get(`https://plc.directory/${did}/log/audit`);
           if (isDev()) console.log(res)
@@ -101,6 +127,7 @@
                 iconStyle: style,
                 createdAt: DateTime.fromISO(record.createdAt).toString(),
                 handle: record.operation.handle ? record.operation.handle : record.operation.alsoKnownAs[0],
+                did: record.did,
                 _raw: record.operation
               })
             }

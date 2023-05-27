@@ -2,7 +2,9 @@
 
 export default defineNuxtConfig({
     appConfig: {
-        productionTip: false
+        productionTip: false,
+        defaultSuffix: '.bsky.social',
+        bskyService: 'https://bsky.social',
     },
     modules: [
         '@nuxtjs/tailwindcss'
