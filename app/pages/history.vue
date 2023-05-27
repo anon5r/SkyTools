@@ -7,7 +7,7 @@
           </div>
           <div class="flex items-center bg-gray-200 rounded-md">
             <div class="w-full p-2">
-              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="handle" @focusout="focusout" @keyup.enter="submit" placeholder="jack.bsky.social or did:plc:xxxxxxxxxxx" />
+              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="id" @focusout="focusout" @keyup.enter="submit" placeholder="jack.bsky.social or did:plc:xxxxxxxxxxx" />
             </div>
             <div class="p-2">
               <button class="bg-blue-500 text-white rounded-md px-2 py-1" @click="submit">Submit</button>
@@ -54,12 +54,13 @@
     },
     setup() {
       const route = useRoute()
-      const handle = ref(route.query.handle || '');
-      return { handle }
+      const id = ref(route.query.id || '');
+      return { id }
     },
     methods: {
       focusout() {
-        this.handle = this.formatIdentifier(this.handle)
+        if (this.id)
+          this.id = this.formatIdentifier(this.id)
       },
       formatIdentifier (id) {
         if (!id.startsWith('did:')) {

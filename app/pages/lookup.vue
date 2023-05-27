@@ -7,7 +7,7 @@
           </div>
           <div class="flex items-center bg-gray-200 rounded-md">
             <div class="w-full p-2">
-              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="handle" @focusout="focusout" @keyup.enter="requestDID" placeholder="jack.bsky.social" />
+              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="id" @focusout="focusout" @keyup.enter="requestDID" placeholder="jack.bsky.social" />
             </div>
             <div class="p-2">
               <button class="bg-blue-500 text-white rounded-md px-2 py-1" @click="requestDID">Lookup</button>
@@ -40,8 +40,8 @@
     layout: 'default',
     setup() {
       const route = useRoute();
-      const handle = ref(route.query.handle || '');
-      return { handle }
+      const id = ref(route.query.id || '');
+      return { id }
     },
     data() {
       return {
@@ -51,7 +51,8 @@
     },
     methods: {
       focusout() {
-        this.handle = this.formatIdentifier(this.handle)
+        if (this.id)
+          this.id = this.formatIdentifier(this.id)
       },
       formatIdentifier (id) {
         if (!id.startsWith('did:')) {
@@ -65,15 +66,15 @@
       },
       async requestDID() {
         try {
-          let identifier = this.formatIdentifier(this.handle)
-          this.handle = identifier
-          this.$router.push({ query: { handle: identifier } });
+          let identifier = this.formatIdentifier(this.id)
+          this.id = identifier
+          this.$router.push({ query: { id: identifier } });
 
           let requestUrl;
           if (identifier.startsWith('did:')) 
             requestUrl = `https://plc.directory/${identifier}`
           else
-            requestUrl = `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+            requestUrl = `https://bsky.social/xrpc/com.atproto.identity.resolveId?id=${identifier}`
 
           const res = await axios.get(requestUrl)
           if (isDev()) console.log(res)
