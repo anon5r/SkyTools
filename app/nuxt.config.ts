@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
     appConfig: {
@@ -15,5 +16,6 @@ export default defineNuxtConfig({
     ],
     plugins: [
         '@/plugins/fontawesome.ts',
+         { src: '~/plugins/vercel.ts', mode: 'client' },
     ]
 })
