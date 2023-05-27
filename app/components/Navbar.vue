@@ -51,7 +51,7 @@
   const navItems = reactive([
     { src: '/lookup',   title: 'Lookup', requireLogin: false },
     { src: '/history',  title: 'History', requireLogin: false },
-    { src: '/blocking', title: 'Blocking', requireLogin: false },
-    { src: '/invite-code', title: 'Invite code', requireLogin: true },
+    // { src: '/blocking', title: 'Blocking', requireLogin: false },
+    // { src: '/invite-code', title: 'Invite code', requireLogin: true },
   ]);
 </script>

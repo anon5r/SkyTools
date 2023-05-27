@@ -7,7 +7,7 @@
           </div>
           <div class="flex items-center bg-gray-200 rounded-md">
             <div class="w-full p-2">
-              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="handle" @keyup.enter="submit" placeholder="jack.bsky.social or did:plc:xxxxxxxxxxx" />
+              <input class="bg-transparent rounded-md w-full text-gray-700" v-model="handle" @focusout="focusout" @keyup.enter="submit" placeholder="jack.bsky.social or did:plc:xxxxxxxxxxx" />
             </div>
             <div class="p-2">
               <button class="bg-blue-500 text-white rounded-md px-2 py-1" @click="submit">Submit</button>
@@ -41,8 +41,8 @@
   import { isDev } from '~/utils'
   import { ref, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useAppConfig } from 'nuxt/app'
 
-  const defaultDomain = '.bsky.social' 
 
   export default {
     layout: 'default',
@@ -58,6 +58,19 @@
       return { handle }
     },
     methods: {
+      focusout() {
+        this.handle = this.formatIdentifier(this.handle)
+      },
+      formatIdentifier (id) {
+        if (!id.startsWith('did:')) {
+          id.startsWith('@') ? id.substring(1) : id
+          id.startsWith('at://') ? id.substring(5) : id
+          if (!id.includes('.')) {
+            id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
+          }
+        }
+        return id
+      },
       submit() {
         this.$router.push({ query: { handle: this.handle } })
         if (this.handle.length > 0) {
@@ -68,12 +81,10 @@
       async getDID(handle) {
         try {
           this.hasError = false
-          handle = handle.startsWith('@') ? handle.substring(1) : handle
-          if (!handle.includes('.')) {
-            handle = handle + defaultDomain // default xxx -> xxx.bsky.social
-            this.handle = handle
-            this.$router.push({ query: { id: handle } })
-          }
+          handle = this.formatIdentifier(handle)
+          this.handle = handle
+          this.$router.push({ query: { id: handle } })
+          
           const res = await axios.get(`https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`);
           if (isDev()) console.log(res)
           if (res.data.did)
