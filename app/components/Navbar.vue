@@ -28,10 +28,13 @@
                                 </NuxtLink>
                                 </li>
                             </ul>
+                            <div v-if="isAuthenticated" class="py-1">
+                                <a href="#logout" @click="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out from Bluesky</a>
+                            </div>
                         </div>
                     </li>
                     <li>
-                        <NuxtLink to="//bsky.app" class="block py-0 pl-3 pr-4 md:text-blue rounded md:bg-transparent hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:text-gray-300 dark:hover:text-white">Bluesky</NuxtLink>
+                        <NuxtLink to="https://bsky.app" class="block py-0 pl-3 pr-4 md:text-blue rounded md:bg-transparent hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:text-gray-300 dark:hover:text-white">Bluesky</NuxtLink>
                     </li>
                 </ul>
             </div>
@@ -40,9 +43,11 @@
 </template>
 
 <script setup>
+  import { useRoute, useRouter } from 'nuxt/app'
   import { onMounted, defineComponent, reactive } from 'vue'
   import { initFlowbite } from 'flowbite'
-  
+  import { useSession } from '@/composables/session'
+
   defineComponent({name: 'Navbar'})
   
   onMounted(() => {
@@ -52,6 +57,24 @@
     { src: '/lookup',   title: 'Lookup', requireLogin: false },
     { src: '/history',  title: 'History', requireLogin: false },
     // { src: '/blocking', title: 'Blocking', requireLogin: false },
-    // { src: '/invite-code', title: 'Invite code', requireLogin: true },
+    { src: '/invite-code', title: 'Invite code', requireLogin: true },
   ]);
+  
+  const route = useRoute()
+  const router = useRouter()
+  const session = useSession()
+
+  const isAuthenticated = ref(session.isAuthenticated.value)
+  
+  const logout = () => {
+    if (isAuthenticated) {
+        const nextPage = route.fullPath
+        session.navigation.next= null
+        
+        session.logout()
+        router.push(nextPage)
+    }
+    router.push('/')
+  }
+    
 </script>

@@ -1,10 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-export default defineNuxtConfig({
+
+export default {
     appConfig: {
+        pages: true,
         productionTip: false,
-        defaultSuffix: '.bsky.social',
-        bskyService: 'https://bsky.social',
+        defaultSuffix: '.bsky.social' as string,
+        bskyService: 'https://bsky.social' as string,
     },
     modules: [
         '@nuxtjs/tailwindcss'
@@ -16,4 +18,4 @@ export default defineNuxtConfig({
     plugins: [
         '@/plugins/fontawesome.ts',
     ]
-})
+}

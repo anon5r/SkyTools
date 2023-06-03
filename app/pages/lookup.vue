@@ -33,7 +33,7 @@
   import { ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { isDev } from '~/utils'
-  import { useAppConfig, useRuntimeConfig } from 'nuxt/app'
+  import { useAppConfig } from 'nuxt/app'
 
 
   export default {
