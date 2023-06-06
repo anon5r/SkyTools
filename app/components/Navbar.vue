@@ -24,12 +24,14 @@
                                 <li v-for="item in navItems" :key="item.src">
                                     <NuxtLink :to="item.src" class="flex items-center justify-between w-full px-4 py-2 flex-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                         {{item.title}}
-                                        <span v-if="item.requireLogin"><font-awesome-icon :icon="['fas', 'user-lock']" class="text-gray-400 dark:text-gray-700" tooltip="Authorization required" /></span>
+                                        <span v-if="item.requireLogin">
+                                            <ClientOnly><font-awesome-icon :icon="['fas', 'user-lock']" class="text-gray-400 dark:text-gray-700" tooltip="Authorization required" /></ClientOnly>
+                                        </span>
                                 </NuxtLink>
                                 </li>
                             </ul>
-                            <div v-if="isAuthenticated" class="py-1">
-                                <a href="#logout" @click="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out from Bluesky</a>
+                            <div v-if="auth.isLoggedIn" class="py-1">
+                                <a href="#" @click.prevent="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out from Bluesky</a>
                             </div>
                         </div>
                     </li>
@@ -46,13 +48,16 @@
   import { useRoute, useRouter } from 'nuxt/app'
   import { onMounted, defineComponent, reactive } from 'vue'
   import { initFlowbite } from 'flowbite'
-  import { useSession } from '@/composables/session'
+//   import { useSession } from '@/composables/session'
+  import { useAuth } from '@/composables/auth'
+  import { useNavigation } from '@/composables/navigation'
 
   defineComponent({name: 'Navbar'})
   
   onMounted(() => {
     initFlowbite()
   })
+  
   const navItems = reactive([
     { src: '/lookup',   title: 'Lookup', requireLogin: false },
     { src: '/history',  title: 'History', requireLogin: false },
@@ -62,16 +67,21 @@
   
   const route = useRoute()
   const router = useRouter()
-  const session = useSession()
+//   const session = useSession()
+  const auth = useAuth()
+  const navi = useNavigation()
+  
 
-  const isAuthenticated = ref(session.isAuthenticated.value)
+  auth.value = useAuth()  
   
   const logout = () => {
-    if (isAuthenticated) {
+    if (auth.isLoggedIn()) {
         const nextPage = route.fullPath
-        session.navigation.next= null
+        if (!navi.navigate?.value)
+            navi.navigate = Navigation({ next: null, prev: null })
+        navi.navigate.value.next = null
         
-        session.logout()
+        auth.logout()
         router.push(nextPage)
     }
     router.push('/')

@@ -16,6 +16,6 @@ export default {
         '@fortawesome/fontawesome-svg-core/styles.css'
     ],
     plugins: [
-        '@/plugins/fontawesome.ts',
-    ]
+        '@/plugins/fontawesome.client.ts',
+    ],
 }

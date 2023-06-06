@@ -35,7 +35,7 @@
             type="button"
             @click="submitForm"
           >
-            Login
+            Sign in
           </button>
           <p class="text-red-500 text-xs italic" v-show="errorMessage">{{ errorMessage }}</p>
         </div>
@@ -47,10 +47,9 @@
 <script setup lang="ts">
   import { useNuxtApp, useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { ref } from 'vue'
-  // import { Session } from '@/store/session'
   import { isDev } from '../utils'
-  // import { useSessionStore } from '../stores/session'
-  import { useSession } from '../composables/session'
+  // import { useSession } from '../composables/session'
+  import { useAuth } from '../composables/auth'
   import { useNavigation } from '../composables/navigation'
 
 
@@ -58,7 +57,8 @@
   const config = useAppConfig()
   const route = useRoute()
   const router = useRouter()
-  const session = useSession()
+  // const session = useSession()
+  const auth = useAuth()
   const navigate = useNavigation()
   const handle = ref('')
   const password = ref('')
@@ -84,10 +84,11 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        await session.login({identifier: handle.value, password: password.value})
-        if (navigate.getNext()) {
-          navigate.clear()
-          await router.push({ name: navigate.getNext() ? navigate.getNext() : 'index' })
+        if (await auth.login({identifier: handle.value, password: password.value})) {
+          if (navigate.getNext()) {
+            await router.push({ name: navigate.getNext() ? navigate.getNext() : 'index' })
+            navigate.clear()
+          }
         }
         
       } catch (err :any) {

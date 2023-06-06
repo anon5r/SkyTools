@@ -29,7 +29,7 @@ export function useSession() {
     if (agent?.value === null || agent?.value instanceof AtpAgent === false){
       agent.value = new AtpAgent({
         service: config.bskyService as string,
-        persistSession: (_: AtpSessionEvent, sess: AtpSessionData) => {
+        persistSession: (_, sess) => {
           if (sess != null)
             sessionStorage.setItem('session', JSON.stringify(sess))
         }
