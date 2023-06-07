@@ -5,23 +5,26 @@
         <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
             Invite code
         </div>
-        <div v-if="results?.length > 0" class="bg-white shadow-md rounded-lg px-3 py-2 border-2" :class="{'border-red-600': hasError, 'border-green-500': !hasError}">
-          <div class="py-2 px-2" :class="{'text-red-600 dark:text-red-400': hasError, 'text-gray-600 dark:text-gray-400': !hasError}">
+        <div v-if="results?.length > 0" class="bg-white rounded-lg px-3 py-2 border-0">
+          <div class="py-2 px-2 text-gray-600 dark:text-gray-400">
             <div v-if="hasError">{{ results }}</div>
             <ul v-else class="relative border-l border-gray-200 dark:border-gray-700">
               <li v-for="record in results" :key="record.code" class="mb-4 ml-3">
                 <font-awesome-icon :icon="record.icon" :style="record.iconStyle" class="absolute w-3 h-3 mt-1.5 -left-1.5" />
-                <p class="mb-4 text-base font-normal">{{ record.code }}</p>
+                <p class="mb-4 text-base font-normal">
+                  <a @click="toggleUsed">{{ record.code }}</a>
+                  <ul>
+                    <li v-for="(used, index) in record.uses" :key="index">{{ used.handle }} -- {{ used.usedAtLocal }}</li>
+                  </ul>
+                </p>
                 <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAt }}</time>
-                <ul>
-                  <li v-for="(used, key) in record.uses">{{ used.handle }} -- {{ used.usedAtLocal }}</li>
-                </ul>
-            </li>
+              </li>
             </ul>
           </div>
         </div>
         <div v-else>
-          No code issued
+          <ClientOnly><font-awesome-icon :icon="['fas', 'spinner']" spin-pulse /></ClientOnly>
+          Loading...
         </div>
       </div>
     </div>
@@ -55,7 +58,7 @@
       const inviteCode = await agent.value.api.com.atproto.server.getAccountInviteCodes()
       console.log(inviteCode.data)
       
-      for (let index in inviteCode.data.codes) {
+      for (let index in inviteCode.data.codes.reverse()) {
         let codeData = inviteCode.data.codes[index]
         let item = {
           code: codeData.code,
@@ -63,15 +66,15 @@
           createdAt: DateTime.fromISO(codeData.createdAt).toString(),
           used: codeData.uses.length == 0 ? [] : await _convertUsed(codeData.uses),
           icon: ['fas', 'check'],
-          iconStyle: 'color: #18b404',
+          iconStyle: {color: '#18b404'},
           _raw: codeData
         }
         if (codeData.disabled) {
           item.icon = ['fas', 'ban']
-          item.iconStyle = 'color: #e00000'
+          item.iconStyle = {color: '#e00000'}
         } else if (codeData.uses.length > 0) {
           item.icon = ['fas', 'check-double']
-          item.iconStyle = ''
+          item.iconStyle = {}
         }
         results.value.push(item)
       }
