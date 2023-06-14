@@ -48,7 +48,6 @@
   import { useRoute, useRouter } from 'nuxt/app'
   import { onMounted, defineComponent, reactive } from 'vue'
   import { initFlowbite } from 'flowbite'
-//   import { useSession } from '@/composables/session'
   import { useAuth } from '@/composables/auth'
   import { useNavigation } from '@/composables/navigation'
 
@@ -67,7 +66,6 @@
   
   const route = useRoute()
   const router = useRouter()
-//   const session = useSession()
   const auth = await useAuth()
   const navi = useNavigation()
   let isLoggedIn = auth.isLoggedIn()

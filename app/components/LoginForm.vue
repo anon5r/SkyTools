@@ -48,7 +48,6 @@
   import { useNuxtApp, useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { ref } from 'vue'
   import { isDev } from '../utils'
-  // import { useSession } from '../composables/session'
   import { useAuth } from '../composables/auth'
   import { useNavigation } from '../composables/navigation'
 
@@ -57,7 +56,6 @@
   const config = useAppConfig()
   const route = useRoute()
   const router = useRouter()
-  // const session = useSession()
   const auth = await useAuth()
   const navigate = useNavigation()
   const handle = ref('')

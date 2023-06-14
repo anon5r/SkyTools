@@ -6,13 +6,13 @@ let agent: BskyAgent | null = null
 
 const isLoggedIn = ref(false)
 
-const getAgent = () :BskyAgent => {
+const getAgent = (): BskyAgent => {
   if (!agent) {
     const config = useAppConfig()
     agent = new BskyAgent({
       service: config.bskyService as string,
       persistSession: (_, sess) => {
-        if (process.client && sess != null) 
+        if (process.client && sess != null)
           sessionStorage.setItem('credentials', JSON.stringify(sess))
       }
     })
@@ -20,12 +20,12 @@ const getAgent = () :BskyAgent => {
   return agent
 }
 
-const login = async (credentials: {identifier: string, password: string}) => {
+const login = async (credentials: { identifier: string, password: string }) => {
   try {
     const response = await getAgent().login({ identifier: credentials.identifier, password: credentials.password })
 
     if (response.success && process.client) {
-      if (process.client) 
+      if (process.client)
         sessionStorage.setItem('credentials', JSON.stringify(getAgent().session))
       isLoggedIn.value = true
     }

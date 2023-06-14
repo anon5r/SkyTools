@@ -11,10 +11,6 @@
 </template>
 
 <script type="ts">
-import { computed } from 'vue'
-// import { useSessionStore } from '@/stores/session'
-import { useSession } from '@/composables/session'
-
 import Navbar from '~/components/Navbar.vue'
 import Footbar from '~/components/Footbar.vue'
 
