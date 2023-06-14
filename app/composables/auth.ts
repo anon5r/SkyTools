@@ -1,6 +1,6 @@
 import { ref } from 'vue'
-import { BskyAgent } from '@atproto/api'
 import { useAppConfig } from 'nuxt/app'
+import { BskyAgent } from '@atproto/api'
 
 let agent: BskyAgent | null = null
 
