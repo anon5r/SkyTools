@@ -11,8 +11,3 @@
     name: 'Footbar',
   }
 </script>
-  
-<style scoped>
-  /* スタイルをここに追加します */
-</style>
-  

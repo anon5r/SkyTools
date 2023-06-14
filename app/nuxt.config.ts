@@ -17,5 +17,5 @@ export default {
     ],
     plugins: [
         '@/plugins/fontawesome.client.ts',
-    ],
+    ]
 }

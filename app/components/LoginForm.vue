@@ -58,7 +58,7 @@
   const route = useRoute()
   const router = useRouter()
   // const session = useSession()
-  const auth = useAuth()
+  const auth = await useAuth()
   const navigate = useNavigation()
   const handle = ref('')
   const password = ref('')

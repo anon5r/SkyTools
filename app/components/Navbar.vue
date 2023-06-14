@@ -30,7 +30,7 @@
                                 </NuxtLink>
                                 </li>
                             </ul>
-                            <div v-if="auth.isLoggedIn" class="py-1">
+                            <div v-if="isLoggedIn" class="py-1">
                                 <a href="#" @click.prevent="logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out from Bluesky</a>
                             </div>
                         </div>
@@ -68,11 +68,12 @@
   const route = useRoute()
   const router = useRouter()
 //   const session = useSession()
-  const auth = useAuth()
+  const auth = await useAuth()
   const navi = useNavigation()
-  
+  let isLoggedIn = auth.isLoggedIn()
 
-  auth.value = useAuth()  
+
+  auth.value = await useAuth()
   
   const logout = () => {
     if (auth.isLoggedIn()) {
@@ -82,6 +83,7 @@
         navi.navigate.value.next = null
         
         auth.logout()
+        isLoggedIn = false
         router.push(nextPage)
     }
     router.push('/')

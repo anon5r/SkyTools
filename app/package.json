@@ -27,6 +27,7 @@
     "@pinia/nuxt": "^0.4.11",
     "axios": "^1.4.0",
     "flowbite": "^1.6.5",
+    "flowbite-vue": "^0.0.12",
     "luxon": "^3.3.0"
   }
 }

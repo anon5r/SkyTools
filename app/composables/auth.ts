@@ -39,7 +39,8 @@ const login = async (credentials: {identifier: string, password: string}) => {
 
 const logout = async () => {
   try {
-    if (getAgent().hasSession) getAgent().session = undefined
+    if (getAgent().hasSession)
+      getAgent().session = undefined
 
     if (process.client)
       sessionStorage.removeItem('credentials')
@@ -58,17 +59,21 @@ const restoreSession = async () => {
         const session = JSON.parse(credentials)
         const success = await getAgent().resumeSession(session)
         if (success) isLoggedIn.value = true
-      } catch (error) {
-        console.error(error)
+      } catch (err) {
+        console.error(err)
+        if (err.response.status == 400) {
+          if (err.response.data.error == 'ExpiredToken')
+            await logout()
+        }
       }
     }
   }
 }
 
-export function useAuth() {
-  getAgent()
+export async function useAuth() {
+  await getAgent()
   // RunAtOne
-  restoreSession()
+  await restoreSession()
 
   return {
     login,
