@@ -7,6 +7,8 @@
             Invite code
           </div>
           <div v-if="inviteCodes" class="bg-white rounded-lg px-3 py-2 border-0">
+
+              <div v-if="nextDate" class="text-sm italic">You will get next new code at {{ nextDate }}</div>
               <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
                 <accordion-panel v-for="record in inviteCodes" :key="record.code">
                   <accordion-header aria-expanded="false">
@@ -64,6 +66,7 @@
   import { useNavigation } from '@/composables/navigation'
   import { useIdentity } from '@/composables/identity'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
+import { isDev } from '../utils'
 
   const config = useAppConfig()
   const route = useRoute()
@@ -72,6 +75,7 @@
   const agent = ref(null)
   const identity = useIdentity()
   const inviteCodes = ref(null)
+  const nextDate = ref(null)
 
 
   // Go login page
@@ -99,7 +103,7 @@
             usedAtLocal: DateTime.fromISO(use.usedAt).toFormat('DDD TTT'),
           }));
           const resolvedUses = await Promise.all(rewriteUses);
-
+          // invite code
           const row = {
             ...record, 
             showDetail: false,
@@ -108,6 +112,8 @@
           };
           records.push(row);
         }
+        // will be get next new code date..
+        nextDate.value = DateTime.fromISO(records[0].createdAt).plus({weeks:2}).toFormat('DDD')
       } else {
         records = [{
           code: 'No code available',
@@ -118,7 +124,7 @@
           uses: []
         }]
       }
-
+      
       if (records == null)
         throw new Error('Failed to get response')
 
@@ -133,14 +139,13 @@
     if (agent.value == null)
       agent.value = await getAgent()
     
-    console.debug(`login = ${isLoggedIn()}`)
-    
     if (isLoggedIn()) {
       console.dir(inviteCodes)
       inviteCodes.value = await getInviteCodes()
-      
-      console.dir(inviteCodes)
-      console.log();
+      if (isDev()) {
+        console.dir(inviteCodes)
+        console.log()
+      }
     } else {
       loadLoginForm()
     }
