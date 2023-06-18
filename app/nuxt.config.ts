@@ -26,6 +26,7 @@ export default {
   css: [
     'flowbite/dist/flowbite.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
+    '~/assets/css/main.css',
   ],
   plugins: ['@/plugins/fontawesome.client.ts'],
 }

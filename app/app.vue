@@ -10,14 +10,13 @@
   </div>
 </template>
 
-<script type="ts">
+<script setup type="ts">
+  import { onMounted } from 'vue';
   import Navbar from '~/components/Navbar.vue'
   import Footbar from '~/components/Footbar.vue'
+  import { initFlowbite } from 'flowbite'
 
-  export default {
-      components: {
-        Navbar,
-        Footbar
-      }
-  }
+  onMounted(() => {
+    initFlowbite()
+  })
 </script>
