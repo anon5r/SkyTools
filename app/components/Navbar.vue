@@ -5,7 +5,7 @@
       <a href="/" class="flex items-center">
         <span
           class="self-center text-2xl text-transparent bg-clip-text bg-gradient-to-b to-blue-600 from-green-100 font-semibold whitespace-nowrap dark:text-sky">
-          SkyTools
+          {{ appName }}
         </span>
       </a>
       <button
@@ -42,7 +42,7 @@
               id="dropdownNavbarLink"
               data-dropdown-toggle="dropdownNavbar"
               class="flex items-center justify-between w-full py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
-              Identity
+              Tools
               <svg
                 class="w-5 h-5 ml-1"
                 aria-hidden="true"
@@ -62,7 +62,7 @@
               <ul
                 class="py-2 text-sm text-gray-700 dark:text-gray-400"
                 aria-labelledby="dropdownLargeButton">
-                <li v-for="item in navItems" :key="item.src">
+                <li v-for="item in navItems.tools" :key="item.src">
                   <NuxtLink
                     :to="item.src"
                     class="flex items-center justify-between w-full px-4 py-2 flex-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
@@ -90,9 +90,9 @@
           </li>
           <li>
             <NuxtLink
-              to="https://bsky.app"
-              class="block py-0 pl-3 pr-4 md:text-blue rounded md:bg-transparent hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:text-gray-300 dark:hover:text-white">
-              Bluesky
+              to="about"
+              class="block py-2 pl-3 pr-4 rounded text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+              About
             </NuxtLink>
           </li>
         </ul>
@@ -102,7 +102,7 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'nuxt/app'
+import { useRoute, useRouter, useAppConfig } from 'nuxt/app'
 import { onMounted, defineComponent, reactive } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { initFlowbite } from 'flowbite'
@@ -118,17 +118,22 @@ onMounted(async () => {
     isLoggedIn = auth.value.isLoggedIn()
 })
 
-const navItems = reactive([
-    { src: '/lookup', title: 'Lookup', requireLogin: false },
-    { src: '/history', title: 'History', requireLogin: false },
-    // { src: '/blocking', title: 'Blocking', requireLogin: false },
-    { src: '/invite-code', title: 'Invite code', requireLogin: true },
-])
+const navItems = reactive({
+    tools: [
+        { src: '/lookup', title: 'Lookup', requireLogin: false },
+        { src: '/history', title: 'History', requireLogin: false },
+        // { src: '/blocking', title: 'Blocking', requireLogin: false },
+        { src: '/invite-code', title: 'Invite code', requireLogin: true },
+    ]
+    })
 
 const route = useRoute()
 const router = useRouter()
 const auth = ref(null)
 const navi = useNavigation()
+const config = useAppConfig()
+const appName = config.title
+
 let isLoggedIn = ref(null)
 
 const logout = () => {
