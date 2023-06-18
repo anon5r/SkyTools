@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-lg">
       <ClientOnly>
         <div class="bg-white shadow-md rounded-lg px-3 py-3 mb-4">
           <div class="block text-gray-700 text-lg font-semibold py-3 px-2 mb-2">
@@ -12,17 +12,17 @@
               <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
                 <accordion-panel v-for="record in inviteCodes" :key="record.code">
                   <accordion-header aria-expanded="false">
-                    <font-awesome-icon 
-                      :icon="record.uses?.length > 0 
-                        ? ['fas', 'check-double'] 
-                        : (record.disabled 
+                    <font-awesome-icon
+                      :icon="record.uses?.length > 0
+                        ? ['fas', 'check-double']
+                        : (record.disabled
                           ? ['fas', 'ban']
-                          : ['fas', 'check'])" 
-                        :style="record.uses?.length > 0 
-                          ? {'color': 'text-gray-900'} 
-                          : (record.disabled 
+                          : ['fas', 'check'])"
+                        :style="record.uses?.length > 0
+                          ? {'color': 'text-gray-900'}
+                          : (record.disabled
                             ? {'color': '#e00000'}
-                            : {'color': '#18b404'})" 
+                            : {'color': '#18b404'})"
                       class="mr-2"/>
                     <a @click="toggleUsed" :class="{ 'line-through': (record.uses?.length > 0) }">{{ record.code }}</a>
                   </accordion-header>
@@ -33,7 +33,10 @@
                     <ul>
                       <li v-for="(use, index) in record.uses" :key="index">
                         <div>
-                          <NuxtLink :to="`https://bsky.app/profile/${use.alsoKnownAs}`" class="block py-0 pl-1 pr-1 text-blue-500 hover:textg-blue-300 hover:dark:text-blue-700">{{ use.alsoKnownAs }}</NuxtLink>
+                          Used by <NuxtLink :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`" class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700" target="_blank">{{ use.alsoKnownAs }}</NuxtLink>
+                        </div>
+                        <div>
+                          <span class="sm italic text-gray-300 dark:text-gray-700">{{ use.usedBy }}</span>
                         </div>
                         <div>
                           Used at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ use.usedAtLocal }}</time>
@@ -75,20 +78,15 @@
 
     if (agent.value == null)
       agent.value = await getAgent()
-    
+
     if (isLoggedIn()) {
-      console.dir(inviteCodes)
       inviteCodes.value = await getInviteCodes()
-      if (isDev()) {
-        console.dir(inviteCodes)
-        console.log()
-      }
     } else {
-      loadLoginForm()
+      loadSigninForm()
     }
   }
 
-  onMounted(await asyncLoad)
+  onMounted(asyncLoad)
 
   const config = useAppConfig()
   const route = useRoute()
@@ -99,15 +97,15 @@
   const nextDate = ref(null)
 
 
-  // Go login page
-  const loadLoginForm = async () => {
+  // Go sign-in page
+  const loadSigninForm = async () => {
     const router = useRouter()
     const serviceURL = new URL(config.bskyService)
     // Back to current page
     navigate.setNext(route.name);
-    await router.push({ path: `${serviceURL.hostname}/login` })
+    await router.push({ path: `${serviceURL.hostname}/signin` })
   }
-  
+
   /** Gets list of invite codes */
   const getInviteCodes = async () => {
     const atproto = agent.value.api.com.atproto.server;
@@ -119,14 +117,14 @@
         for (const record of response.data.codes.reverse()) {
           // Resolve to handle from DID
           const rewriteUses = record.uses.map(async use => ({
-            ...use, 
+            ...use,
             alsoKnownAs: await identity.resolveDID(use.usedBy, true),
             usedAtLocal: DateTime.fromISO(use.usedAt).toFormat('DDD TTT'),
           }));
           const resolvedUses = await Promise.all(rewriteUses);
           // invite code
           const row = {
-            ...record, 
+            ...record,
             showDetail: false,
             createdAtLocal: DateTime.fromISO(record.createdAt).toFormat('DDD TTT'),
             uses: resolvedUses
@@ -152,7 +150,7 @@
       return records
     } catch (error) {
       console.error(error)
-      loadLoginForm()
+      loadSigninForm()
     }
   }
 

@@ -45,7 +45,7 @@
         About Sign-in to Bluesky and Sessions
       </h2>
       <p class="mb-6">
-        Login request is sent directly to the Bluesky server and is handled entirely within the browser.
+        Sign-in request is sent directly to the Bluesky server and is handled entirely within the browser.
         Session will be deleted when your browser is closed, timeout, or when you will sign out.
       </p>
 

@@ -1,7 +1,7 @@
 <template>
     <div class="w-full max-w-xs mx-auto">
       <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h4 class="text-2xl font-bold dark:text-white">Bluesky login</h4>
+        <h4 class="text-2xl font-bold dark:text-white">Sign-in to Bluesky</h4>
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="handle">
             Your handle
@@ -11,7 +11,7 @@
             id="handle"
             v-model="handle"
             type="text"
-            placeholder="jack.bsky.social"
+            placeholder="ex. example.bsky.social"
             @focusout="validateHandle"
           />
         </div>
@@ -57,7 +57,6 @@
   })
 
 
-  const app = useNuxtApp()
   const config = useAppConfig()
   const route = useRoute()
   const router = useRouter()

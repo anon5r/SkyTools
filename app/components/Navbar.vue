@@ -67,7 +67,7 @@
                     :to="item.src"
                     class="flex items-center justify-between w-full px-4 py-2 flex-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                     {{ item.title }}
-                    <span v-if="item.requireLogin">
+                    <span v-if="item.requireSignin">
                       <ClientOnly>
                         <font-awesome-icon
                           :icon="['fas', 'user-lock']"
@@ -105,27 +105,27 @@
 import { useRoute, useRouter, useAppConfig } from 'nuxt/app'
 import { onMounted, defineComponent, reactive } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { initFlowbite } from 'flowbite'
+import { initFlowbite, Collapse } from 'flowbite'
 import { useAuth } from '@/composables/auth'
 import { useNavigation } from '@/composables/navigation'
 
 defineComponent({ name: 'Navbar' })
 
 onMounted(async () => {
-    initFlowbite()
+  initFlowbite()
 
-    auth.value = await useAuth()
-    isLoggedIn = auth.value.isLoggedIn()
+  auth.value = await useAuth()
+  isLoggedIn = auth.value.isLoggedIn()
 })
 
 const navItems = reactive({
-    tools: [
-        { src: '/lookup', title: 'Lookup', requireLogin: false },
-        { src: '/history', title: 'History', requireLogin: false },
-        // { src: '/blocking', title: 'Blocking', requireLogin: false },
-        { src: '/invite-code', title: 'Invite code', requireLogin: true },
-    ]
-    })
+  tools: [
+    { src: '/lookup', title: 'Lookup', requireSignin: false },
+    { src: '/history', title: 'History', requireSignin: false },
+    // { src: '/blocking', title: 'Blocking', requireSignin: false },
+    { src: '/invite-code', title: 'Invite code', requireSignin: true },
+  ]
+})
 
 const route = useRoute()
 const router = useRouter()
@@ -134,19 +134,22 @@ const navi = useNavigation()
 const config = useAppConfig()
 const appName = config.title
 
-let isLoggedIn = ref(null)
+let isLoggedIn = false
 
 const logout = () => {
-    if (auth.value.isLoggedIn()) {
-      const nextPage = route.fullPath
-        if (!navi.navigate?.value)
-        navi.navigate = Navigation({ next: null, prev: null })
-      navi.navigate.value.next = null
+  if (auth.value.isLoggedIn()) {
+    const nextPage = route.fullPath
+    if (!navi.navigate?.value)
+      navi.navigate = Navigation({ next: null, prev: null })
+    navi.navigate.value.next = null
 
-      auth.value.logout()
-      isLoggedIn.value = false
-      router.push(nextPage)
-    }
-    router.push('/')
+    auth.value.logout()
+    isLoggedIn = false
+    router.push(nextPage)
+    const navbarElem = document.getElementById('navbar-dropdown')
+    const collapse = new Collapse(navbarElem, navbarElem)
+    collapse.collapse()
+  }
+  router.push('/')
 }
 </script>
