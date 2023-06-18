@@ -13,7 +13,7 @@
               v-model="handle"
               @focusout="focusout"
               @keyup.enter="requestDID"
-              placeholder="jack.bsky.social" />
+              placeholder="ex. example.bsky.social" />
           </div>
           <div class="p-2">
             <button

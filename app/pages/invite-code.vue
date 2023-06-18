@@ -7,7 +7,6 @@
             Invite code
           </div>
           <div v-if="inviteCodes" class="bg-white rounded-lg px-3 py-2 border-0">
-
               <div v-if="nextDate" class="text-sm italic">You will get next new code at <span class="bold">{{ nextDate }}</span></div>
               <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
                 <accordion-panel v-for="record in inviteCodes" :key="record.code">
@@ -79,7 +78,7 @@
     if (agent.value == null)
       agent.value = await getAgent()
 
-    if (isLoggedIn()) {
+    if (isLoggedIn) {
       inviteCodes.value = await getInviteCodes()
     } else {
       loadSigninForm()
@@ -112,7 +111,8 @@
     try {
       const response = await atproto.getAccountInviteCodes()
       let records = []
-      console.log(response)
+      if (isDev()) console.log(response)
+
       if (response.data?.codes?.length > 0) {
         for (const record of response.data.codes.reverse()) {
           // Resolve to handle from DID

@@ -103,7 +103,7 @@
 
 <script setup>
 import { useRoute, useRouter, useAppConfig } from 'nuxt/app'
-import { onMounted, defineComponent, reactive } from 'vue'
+import { onMounted, defineComponent, reactive, computed } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { initFlowbite, Collapse } from 'flowbite'
 import { useAuth } from '@/composables/auth'
@@ -115,7 +115,11 @@ onMounted(async () => {
   initFlowbite()
 
   auth.value = await useAuth()
-  isLoggedIn = auth.value.isLoggedIn()
+  isLoggedIn.value = auth.value.isLoggedIn
+})
+
+computed(() => {
+  isLoggedIn.value = auth.value.isLoggedIn
 })
 
 const navItems = reactive({
@@ -134,21 +138,18 @@ const navi = useNavigation()
 const config = useAppConfig()
 const appName = config.title
 
-let isLoggedIn = false
+const isLoggedIn = ref(false)
 
 const logout = () => {
-  if (auth.value.isLoggedIn()) {
+  if (auth.value.isLoggedIn) {
     const nextPage = route.fullPath
     if (!navi.navigate?.value)
       navi.navigate = Navigation({ next: null, prev: null })
     navi.navigate.value.next = null
 
     auth.value.logout()
-    isLoggedIn = false
+    isLoggedIn.value = false
     router.push(nextPage)
-    const navbarElem = document.getElementById('navbar-dropdown')
-    const collapse = new Collapse(navbarElem, navbarElem)
-    collapse.collapse()
   }
   router.push('/')
 }
