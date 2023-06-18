@@ -15,10 +15,9 @@
   import Footbar from '~/components/Footbar.vue'
 
   export default {
-      title: 'SkyTools',
       components: {
-          Navbar,
-          Footbar
+        Navbar,
+        Footbar
       }
   }
 </script>
