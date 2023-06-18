@@ -19,7 +19,7 @@ const resolveDID = async (identifier: string, onlyHandle: boolean = true) => {
       }
       return res.data?.alsoKnownAs[0]
     }
-  } catch (err) {
+  } catch (err: Error) {
     if (isDev()) console.error(err)
     if (err.response?.data.message)
       return err.response?.data.message
@@ -35,7 +35,7 @@ const resolveHandle = async (identifier: string) => {
 
     if (res.data?.did)
       return res.data.did
-  } catch (err) {
+  } catch (err: Error) {
     if (isDev()) console.error(err)
     if (err.response?.data.message)
       return err.response?.data.message

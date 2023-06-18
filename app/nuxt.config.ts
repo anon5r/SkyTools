@@ -7,6 +7,7 @@ export default {
         productionTip: false,
         defaultSuffix: '.bsky.social' as string,
         bskyService: 'https://bsky.social' as string,
+        inviteCodeFreq: { weeks: 2 },
     },
     modules: [
         '@nuxtjs/tailwindcss'

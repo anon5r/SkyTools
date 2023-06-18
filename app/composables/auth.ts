@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { useAppConfig } from 'nuxt/app'
 import { BskyAgent } from '@atproto/api'
 
+
 let agent: BskyAgent | null = null
 
 const isLoggedIn = ref(false)

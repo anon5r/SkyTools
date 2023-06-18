@@ -1,12 +1,34 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
+    "strict": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "ESNext",
+      "ESNext.AsyncIterable",
+      "DOM",
+      "WebWorker"
+    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
     "baseUrl": ".",
+    "types": [
+      "@types/node",
+      "@nuxt/types"
+    ],
+    "typeRoots": [
+      "types",
+      "node_modules/@types"
+    ],
     "paths": {
       "@/*": ["*"]
     }

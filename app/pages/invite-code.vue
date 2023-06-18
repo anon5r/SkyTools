@@ -8,7 +8,7 @@
           </div>
           <div v-if="inviteCodes" class="bg-white rounded-lg px-3 py-2 border-0">
 
-              <div v-if="nextDate" class="text-sm italic">You will get next new code at {{ nextDate }}</div>
+              <div v-if="nextDate" class="text-sm italic">You will get next new code at <span class="bold">{{ nextDate }}</span></div>
               <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
                 <accordion-panel v-for="record in inviteCodes" :key="record.code">
                   <accordion-header aria-expanded="false">
@@ -66,11 +66,32 @@
   import { useNavigation } from '@/composables/navigation'
   import { useIdentity } from '@/composables/identity'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
-import { isDev } from '../utils'
+  import { isDev } from '../utils'
+
+
+  const asyncLoad = async () => {
+
+    const { getAgent, isLoggedIn } = await useAuth()
+
+    if (agent.value == null)
+      agent.value = await getAgent()
+    
+    if (isLoggedIn()) {
+      console.dir(inviteCodes)
+      inviteCodes.value = await getInviteCodes()
+      if (isDev()) {
+        console.dir(inviteCodes)
+        console.log()
+      }
+    } else {
+      loadLoginForm()
+    }
+  }
+
+  onMounted(await asyncLoad)
 
   const config = useAppConfig()
   const route = useRoute()
-  const { getAgent, isLoggedIn } = await useAuth()
   const navigate = useNavigation()
   const agent = ref(null)
   const identity = useIdentity()
@@ -113,7 +134,7 @@ import { isDev } from '../utils'
           records.push(row);
         }
         // will be get next new code date..
-        nextDate.value = DateTime.fromISO(records[0].createdAt).plus({weeks:2}).toFormat('DDD')
+        nextDate.value = DateTime.fromISO(records[0].createdAt).plus(config.inviteCodeFreq).toFormat('DDD')
       } else {
         records = [{
           code: 'No code available',
@@ -124,7 +145,7 @@ import { isDev } from '../utils'
           uses: []
         }]
       }
-      
+
       if (records == null)
         throw new Error('Failed to get response')
 
@@ -134,24 +155,6 @@ import { isDev } from '../utils'
       loadLoginForm()
     }
   }
-  const asyncLoad = async () => {
-
-    if (agent.value == null)
-      agent.value = await getAgent()
-    
-    if (isLoggedIn()) {
-      console.dir(inviteCodes)
-      inviteCodes.value = await getInviteCodes()
-      if (isDev()) {
-        console.dir(inviteCodes)
-        console.log()
-      }
-    } else {
-      loadLoginForm()
-    }
-  }
-
-  onMounted(await asyncLoad)
 
   const toggleDetail = async (record) => {
     const index = inviteCodes.indexOf(record)

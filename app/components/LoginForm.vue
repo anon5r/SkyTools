@@ -46,17 +46,24 @@
 
 <script setup lang="ts">
   import { useNuxtApp, useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { isDev } from '../utils'
   import { useAuth } from '../composables/auth'
   import { useNavigation } from '../composables/navigation'
+import { initFlowbite } from 'flowbite'
+
+  onMounted(async () => {
+    initFlowbite()
+    if (auth.value == null)
+      auth.value = await useAuth()
+  })
 
 
   const app = useNuxtApp()
   const config = useAppConfig()
   const route = useRoute()
   const router = useRouter()
-  const auth = await useAuth()
+  const auth = ref(null)
   const navigate = useNavigation()
   const handle = ref('')
   const password = ref('')
@@ -82,7 +89,7 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        if (await auth.login({identifier: handle.value, password: password.value})) {
+        if (await auth.value.login({identifier: handle.value, password: password.value})) {
           if (navigate.getNext()) {
             await router.push({ name: navigate.getNext() ? navigate.getNext() : 'index' })
             navigate.clear()
