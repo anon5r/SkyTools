@@ -2,10 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-a {
-  @apply text-blue-500;
-}
-
-a:hover {
-  @apply underline;
-}

@@ -50,10 +50,8 @@
   import { isDev } from '../utils'
   import { useAuth } from '../composables/auth'
   import { useNavigation } from '../composables/navigation'
-import { initFlowbite } from 'flowbite'
 
   onMounted(async () => {
-    initFlowbite()
     if (auth.value == null)
       auth.value = await useAuth()
   })
@@ -95,7 +93,7 @@ import { initFlowbite } from 'flowbite'
             navigate.clear()
           }
         }
-        
+
       } catch (err :any) {
         if (isDev()) console.error(err)
         if (err.error && err.message) {1

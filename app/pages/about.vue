@@ -9,9 +9,9 @@
       <h1 class="text-3xl font-semibold mb-4">このサイトについて</h1>
       <p class="mb-6">
         このサイトは、
-        <NuxtLink to="https://bsky.app">Bluesky</NuxtLink>
+        <NuxtLink :to="config.bskyAppURL" target="_blank">Bluesky</NuxtLink>
         および
-        <NuxtLink to="https://atproto.com">AT Protocol</NuxtLink>
+        <NuxtLink to="https://atproto.com" target="_blank">AT Protocol</NuxtLink>
         のAPIを利用したウェブアプリケーションです。
         サービス内で使用されているAPIの一部を可視化しているだけです。
       </p>
@@ -26,11 +26,7 @@
 
       <h2 class="text-2xl font-semibold mb-4">問い合わせ先</h2>
       <p>
-        <NuxtLink
-          to="https://bsky.app/profile/did%3Aplc%3Ac22jdrqhoajyj5ca7e56a3ke">
-          anon5r.com
-        </NuxtLink>
-        までどうぞ
+        <NuxtLink :to="adminURL" target="_blank">@{{ adminHandle }}</NuxtLink>
       </p>
     </div>
 
@@ -39,9 +35,9 @@
       <h1 class="text-3xl font-semibold mb-4">About This Site</h1>
       <p class="mb-6">
         This site is a web application that uses the APIs of
-        <NuxtLink to="https://bsky.app">Bluesky</NuxtLink>
+        <NuxtLink :to="config.bskyAppURL" target="_blank">Bluesky</NuxtLink>
         and
-        <NuxtLink to="https://atproto.com">AT Protocol</NuxtLink>.
+        <NuxtLink to="https://atproto.com" target="_blank">AT Protocol</NuxtLink>.
         It merely visualizes some of the APIs used within the service.
       </p>
 
@@ -55,23 +51,44 @@
 
       <h2 class="text-2xl font-semibold mb-4">Contact</h2>
       <p>
-        Please contact us at
-        <NuxtLink
-          to="https://bsky.app/profile/did%3Aplc%3Ac22jdrqhoajyj5ca7e56a3ke">
-          anon5r.com
-        </NuxtLink>
+        Please contact to
+        <NuxtLink :to="adminURL" target="_blank">@{{ adminHandle }}</NuxtLink>
       </p>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useAppConfig } from 'nuxt/app';
+import { useIdentity } from '@/composables/identity';
 
-import { ref } from 'vue';
-
+const config = useAppConfig()
+const { resolveDID } = useIdentity()
 const currentLanguage = ref('en');
+const adminHandle = ref('admin')
+const adminURL = ref(`${config.bskyAppURL}/profile/${config.adminDID ?? 'admin'}`)
 
 function changeLanguage(lang) {
   currentLanguage.value = lang;
 }
+
+onMounted(async () => {
+  const handle = await resolveDID(config.adminDID, true) ?? ''
+  if (handle) {
+    adminHandle.value = handle
+    adminURL.value = `${config.bskyAppURL}/profile/${handle}`
+  }
+})
+
 </script>
+
+<style scoped>
+a {
+  @apply text-blue-500;
+}
+
+a:hover {
+  @apply underline;
+}
+</style>

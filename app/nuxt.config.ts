@@ -17,10 +17,12 @@ export default {
   appConfig: {
     pages: true,
     productionTip: false,
-    title: 'SkyBox',
+    title: 'SkyBox' as string,
     defaultSuffix: '.bsky.social' as string,
     bskyService: 'https://bsky.social' as string,
-    inviteCodeFreq: { weeks: 2 },
+    bskyAppURL: 'https://bsky.app' as string,
+    adminDID: 'did:plc:c22jdrqhoajyj5ca7e56a3ke' as string,
+    inviteCodeFreq: { weeks: 2 } as object,
   },
   modules: ['@nuxtjs/tailwindcss'],
   css: [
