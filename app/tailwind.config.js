@@ -4,20 +4,18 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
   content: [
-    "./components/**/*.{js,vue,ts}",
-    "./layouts/**/*.vue",
-    "./pages/**/*.vue",
-    "./plugins/**/*.{js,ts}",
-    "./nuxt.config.{js,ts}",
-    "./node_modules/flowbite.{js,ts}",
-    "./node_modules/flowbite/**/*.js"
+    './components/**/*.{js,vue,ts}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts}',
+    './nuxt.config.{js,ts}',
+    './node_modules/flowbite.{js,ts}',
+    './node_modules/flowbite/**/*.js',
   ],
   theme: {
     extend: {},
   },
-  plugins: [
-    require('flowbite/plugin')
-  ],
+  plugins: [require('flowbite/plugin')],
   colors: {
     gray: colors.gray,
     blue: colors.sky,
@@ -25,4 +23,3 @@ module.exports = {
     pink: colors.fuchsia,
   },
 }
-
