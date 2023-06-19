@@ -83,6 +83,7 @@
                   href="#"
                   @click.prevent="logout"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">
+                  <font-awesome-icon :icon="['fas', 'right-from-bracket']" />
                   Sign out from Bluesky
                 </a>
               </div>
@@ -143,8 +144,8 @@ const isLoggedIn = ref(false)
 const logout = () => {
   if (auth.value.isLoggedIn) {
     const nextPage = route.fullPath
-    if (!navi.navigate?.value)
-      navi.navigate = Navigation({ next: null, prev: null })
+    if (!navi.navigate.value)
+      navi.navigate = useNavigation({ next: null, prev: null })
     navi.navigate.value.next = null
 
     auth.value.logout()

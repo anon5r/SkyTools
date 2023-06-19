@@ -4,6 +4,7 @@
         <h4 class="text-2xl font-bold dark:text-white">Sign-in to Bluesky</h4>
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="handle">
+            <font-awesome-icon :icon="['fas', 'user']" />
             Your handle
           </label>
           <input
@@ -18,6 +19,7 @@
         </div>
         <div class="mb-3">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+            <font-awesome-icon :icon="['fas', 'key']" />
             App Password
           </label>
           <input
