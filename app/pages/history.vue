@@ -110,7 +110,7 @@ export default {
         try {
           this.hasError = false
           handle = this.formatIdentifier(handle)
-          this.handle = handle
+          this.id = handle
           this.$router.push({ query: { id: handle } })
 
                 const res = await axios.get(

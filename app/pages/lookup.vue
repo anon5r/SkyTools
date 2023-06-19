@@ -85,6 +85,9 @@ export default {
           let identifier = this.formatIdentifier(this.handle)
           this.handle = identifier
           this.$router.push({ query: { handle: identifier } })
+          let identifier = this.formatIdentifier(this.id)
+          this.id = identifier
+          this.$router.push({ query: { id: identifier } });
 
           let requestUrl
                 if (identifier.startsWith('did:'))
