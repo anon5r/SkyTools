@@ -1,36 +1,165 @@
 <template>
-    <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
-      <div class="w-full max-w-md">
-<!-- 
-        <div class="bg-white shadow-md rounded-lg px-3 py-2 border-2" v-if="results.length > 0" :class="{'border-red-600': hasError, 'border-green-500': !hasError}">
-          <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
-            Handle history
+  <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
+    <div class="w-full max-w-lg">
+      <ClientOnly>
+        <div class="bg-white shadow-md rounded-lg px-3 py-3 mb-4">
+          <div class="block text-gray-700 text-lg font-semibold py-3 px-2 mb-2">
+            Invite code
           </div>
-          <div class="py-2 px-2" :class="{'text-red-600 dark:text-red-400': hasError, 'text-gray-600 dark:text-gray-400': !hasError}">
-            <div v-if="hasError">{{ results }}</div>
-            <ul v-else class="relative border-l border-gray-200 dark:border-gray-700">
-              <li v-for="record in results" :key="record.id" class="mb-4 ml-3">
-                <font-awesome-icon :icon="record.icon" :style="record.iconStyle" class="absolute w-3 h-3 mt-1.5 -left-1.5" />
-                <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAt }}</time>
-                <p class="mb-4 text-base font-normal">{{ record.handle }}</p>
-            </li>
-            </ul>
+          <div v-if="inviteCodes" class="bg-white rounded-lg px-3 py-2 border-0">
+              <div v-if="nextDate" class="text-sm italic">You will get next new code at <span class="bold">{{ nextDate }}</span></div>
+              <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
+                <accordion-panel v-for="record in inviteCodes" :key="record.code">
+                  <accordion-header aria-expanded="false">
+                    <font-awesome-icon
+                      :icon="record.uses?.length > 0
+                        ? ['fas', 'check-double']
+                        : (record.disabled
+                          ? ['fas', 'ban']
+                          : ['fas', 'check'])"
+                        :style="record.uses?.length > 0
+                          ? {'color': 'text-gray-900'}
+                          : (record.disabled
+                            ? {'color': '#e00000'}
+                            : {'color': '#18b404'})"
+                      class="mr-2"/>
+                    <a @click="toggleUsed" :class="{ 'line-through': (record.uses?.length > 0) }">{{ record.code }}</a>
+                  </accordion-header>
+                  <accordion-content>
+                    <div>
+                      Issued at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAtLocal }}</time>
+                    </div>
+                    <ul>
+                      <li v-for="(use, index) in record.uses" :key="index">
+                        <div>
+                          Used by <NuxtLink :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`" class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700" target="_blank">{{ use.alsoKnownAs }}</NuxtLink>
+                        </div>
+                        <div>
+                          <span class="sm italic text-gray-300 dark:text-gray-700">{{ use.usedBy }}</span>
+                        </div>
+                        <div>
+                          Used at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ use.usedAtLocal }}</time>
+                        </div>
+                      </li>
+                      <li v-if="record.uses.length == 0">
+                        <div class="text-green-500">Available!</div>
+                      </li>
+                    </ul>
+                  </accordion-content>
+                </accordion-panel>
+              </Accordion>
           </div>
-          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-        </div> -->
-      </div>
+          <div v-else>
+            <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
+            Loading...
+          </div>
+        </div>
+      </ClientOnly>
     </div>
+  </div>
 </template>
 
 
-<script>
-  import { defineComponent } from '@vue/composition-api'
-  import { BskyAgent } from '@atproto/api'
+<script setup type="ts">
+  import { onMounted, ref, reactive, toRefs } from 'vue'
+  import { DateTime } from 'luxon'
+  import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
+  import { useAuth } from '@/composables/auth'
+  import { useNavigation } from '@/composables/navigation'
+  import { useIdentity } from '@/composables/identity'
+  import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
+  import { isDev } from '../utils'
 
-  export default defineComponent({
-    setup() {
-        
-    },
 
-  })
+  const asyncLoad = async () => {
+
+    const { getAgent, isLoggedIn } = await useAuth()
+
+    if (agent.value == null)
+      agent.value = await getAgent()
+
+    if (isLoggedIn) {
+      inviteCodes.value = await getInviteCodes()
+    } else {
+      loadSigninForm()
+    }
+  }
+
+  onMounted(asyncLoad)
+
+  const config = useAppConfig()
+  const route = useRoute()
+  const navigate = useNavigation()
+  const agent = ref(null)
+  const identity = useIdentity()
+  const inviteCodes = ref(null)
+  const nextDate = ref(null)
+
+
+  // Go sign-in page
+  const loadSigninForm = async () => {
+    const router = useRouter()
+    const serviceURL = new URL(config.bskyService)
+    // Back to current page
+    navigate.setNext(route.name);
+    await router.push({ path: `${serviceURL.hostname}/signin` })
+  }
+
+  /** Gets list of invite codes */
+  const getInviteCodes = async () => {
+    const atproto = agent.value.api.com.atproto.server;
+    try {
+      const response = await atproto.getAccountInviteCodes()
+      let records = []
+      if (isDev()) console.log(response)
+
+      if (response.data?.codes?.length > 0) {
+        for (const record of response.data.codes.reverse()) {
+          // Resolve to handle from DID
+          const rewriteUses = record.uses.map(async use => ({
+            ...use,
+            alsoKnownAs: await identity.resolveDID(use.usedBy, true),
+            usedAtLocal: DateTime.fromISO(use.usedAt).toFormat('DDD TTT'),
+          }));
+          const resolvedUses = await Promise.all(rewriteUses);
+          // invite code
+          const row = {
+            ...record,
+            showDetail: false,
+            createdAtLocal: DateTime.fromISO(record.createdAt).toFormat('DDD TTT'),
+            uses: resolvedUses
+          };
+          records.push(row);
+        }
+        // will be get next new code date..
+        nextDate.value = DateTime.fromISO(records[0].createdAt).plus(config.inviteCodeFreq).toFormat('DDD')
+      } else {
+        records = [{
+          code: 'No code available',
+          available: 0,
+          showDetail: false,
+          disabled: true,
+          localCreatedAt: '',
+          uses: []
+        }]
+      }
+
+      if (records == null)
+        throw new Error('Failed to get response')
+
+      return records
+    } catch (error) {
+      console.error(error)
+      loadSigninForm()
+    }
+  }
+
+  const toggleDetail = async (record) => {
+    const index = inviteCodes.indexOf(record)
+    inviteCodes[index] = {
+      ...record,
+      showDetail: !record.showDetail,
+    }
+}
 </script>
+

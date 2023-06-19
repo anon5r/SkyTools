@@ -3,23 +3,20 @@
     <header>
       <Navbar />
     </header>
-
-    <NuxtPage /> <!-- ページコンポーネントを表示 -->
+    <NuxtPage />
     <footer>
       <Footbar />
     </footer>
   </div>
 </template>
 
-<script type="ts">
-import Navbar from '~/components/Navbar.vue'
-import Footbar from '~/components/Footbar.vue'
+<script setup type="ts">
+  import { onMounted } from 'vue';
+  import Navbar from '~/components/Navbar.vue'
+  import Footbar from '~/components/Footbar.vue'
+  import { initFlowbite } from 'flowbite'
 
-export default {
-  title: 'SkyTools',
-  components: {
-    Navbar,
-    Footbar
-  }
-}
+  onMounted(() => {
+    initFlowbite()
+  })
 </script>
