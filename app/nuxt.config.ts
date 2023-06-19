@@ -4,7 +4,7 @@ export default {
   app: {
     ssr: true,
     head: {
-      title: 'SkyBox',
+      title: 'SkyTools',
       meta: [
         { charset: 'utf-8' },
         {
@@ -17,7 +17,7 @@ export default {
   appConfig: {
     pages: true,
     productionTip: false,
-    title: 'SkyBox' as string,
+    title: 'SkyTools' as string,
     defaultSuffix: '.bsky.social' as string,
     bskyService: 'https://bsky.social' as string,
     bskyAppURL: 'https://bsky.app' as string,
