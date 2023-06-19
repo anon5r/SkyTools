@@ -565,7 +565,7 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.4.0"
 
-"@fortawesome/vue-fontawesome@3":
+"@fortawesome/vue-fontawesome@^3.0.3":
   version "3.0.3"
   resolved "https://npm.fontawesome.com/@fortawesome/vue-fontawesome/-/3.0.3/vue-fontawesome-3.0.3.tgz#633e2998d11f7d4ed41f0d5ea461a22ec9b9d034"
   integrity sha512-KCPHi9QemVXGMrfuwf3nNnNo129resAIQWut9QTAMXmXqL2ErABC6ohd2yY5Ipq0CLWNbKHk8TMdTXL/Zf3ZhA==
