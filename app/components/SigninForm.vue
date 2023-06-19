@@ -11,11 +11,12 @@
             id="handle"
             v-model="handle"
             type="text"
+            autocomplete="username"
             placeholder="ex. example.bsky.social"
             @focusout="validateHandle"
           />
         </div>
-        <div class="mb-6">
+        <div class="mb-3">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
             App Password
           </label>
@@ -24,6 +25,7 @@
             id="password"
             v-model="password"
             type="password"
+            autocomplete="current-password"
             placeholder="xxxx-xxxx-xxxx-xxxx"
             @input="validatePassword"
           />
@@ -31,22 +33,22 @@
         </div>
         <div class="flex items-center justify-between">
           <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap py-4 px-8 rounded focus:outline-none focus:shadow-outline"
             type="button"
-            @click="submitForm"
-          >
+            @click="submitForm">
             Sign in
           </button>
-          <p class="text-red-500 text-xs italic" v-show="errorMessage">{{ errorMessage }}</p>
         </div>
+        <div class="block px-1 py-2 text-red-500 text-xs italic" v-show="errorMessage">{{ errorMessage }}</div>
       </form>
     </div>
 </template>
 
 
 <script setup lang="ts">
-  import { useNuxtApp, useAppConfig, useRoute, useRouter } from 'nuxt/app'
+  import { useAppConfig, useRoute, useRouter, onBeforeRouteLeave } from 'nuxt/app'
   import { ref, onMounted } from 'vue'
+  import { isNavigationFailure, NavigationFailureType } from 'vue-router'
   import { isDev } from '../utils'
   import { useAuth } from '../composables/auth'
   import { useNavigation } from '../composables/navigation'
@@ -88,13 +90,14 @@
       try {
         if (await auth.value.login({identifier: handle.value, password: password.value})) {
           if (navigate.getNext()) {
-            await router.push({ name: navigate.getNext() ? navigate.getNext() : 'index' })
-            navigate.clear()
+            auth.value.isLoggedIn = true
+            router.push({ name: navigate.getNext() ?? 'index' })
           }
         }
 
       } catch (err :any) {
         if (isDev()) console.error(err)
+
         if (err.error && err.message) {1
           errorMessage.value = err.message
         } else {
