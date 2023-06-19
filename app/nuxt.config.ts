@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineNuxtConfig } from 'nuxt/config'
 
 export default {
   app: {
@@ -30,5 +31,8 @@ export default {
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/css/main.css',
   ],
-  plugins: ['@/plugins/fontawesome.client.ts'],
+  plugins: [
+    '@/plugins/fontawesome.client.ts',
+     { src: '~/plugins/vercel.ts', mode: 'client' },
+  ],
 }
