@@ -33,6 +33,7 @@ export default {
   ],
   plugins: [
     '@/plugins/fontawesome.client.ts',
-     { src: '~/plugins/vercel.ts', mode: 'client' },
+    '@/plugins/vue-gtm.client.ts',
+    { src: '~/plugins/vercel.ts', mode: 'client' },
   ],
 }

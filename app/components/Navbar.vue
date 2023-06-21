@@ -103,55 +103,55 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter, useAppConfig } from 'nuxt/app'
-import { onMounted, defineComponent, reactive, computed } from 'vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { initFlowbite, Collapse } from 'flowbite'
-import { useAuth } from '@/composables/auth'
-import { useNavigation } from '@/composables/navigation'
+  import { useRoute, useRouter, useAppConfig } from 'nuxt/app'
+  import { ref, onMounted, defineComponent, reactive, computed } from 'vue'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { initFlowbite } from 'flowbite'
+  import { useAuth } from '@/composables/auth'
+  import { useNavigation } from '@/composables/navigation'
 
-defineComponent({ name: 'Navbar' })
+  defineComponent({ name: 'Navbar' })
 
-onMounted(async () => {
-  initFlowbite()
+  onMounted(async () => {
+    initFlowbite()
 
-  auth.value = await useAuth()
-  isLoggedIn.value = auth.value.isLoggedIn
-})
+    auth.value = await useAuth()
+    isLoggedIn.value = auth.value.isLoggedIn
+  })
 
-computed(() => {
-  isLoggedIn.value = auth.value.isLoggedIn
-})
+  computed(() => {
+    isLoggedIn.value = auth.value.isLoggedIn
+  })
 
-const navItems = reactive({
-  tools: [
-    { src: '/lookup', title: 'Lookup', requireSignin: false },
-    { src: '/history', title: 'History', requireSignin: false },
-    // { src: '/blocking', title: 'Blocking', requireSignin: false },
-    { src: '/invite-code', title: 'Invite code', requireSignin: true },
-  ]
-})
+  const navItems = reactive({
+    tools: [
+      { src: '/lookup', title: 'Lookup', requireSignin: false },
+      { src: '/history', title: 'History', requireSignin: false },
+      // { src: '/blocking', title: 'Blocking', requireSignin: false },
+      { src: '/invite-code', title: 'Invite code', requireSignin: true },
+    ],
+  })
 
-const route = useRoute()
-const router = useRouter()
-const auth = ref(null)
-const navi = useNavigation()
-const config = useAppConfig()
-const appName = config.title
+  const route = useRoute()
+  const router = useRouter()
+  const auth = ref(null)
+  const navi = useNavigation()
+  const config = useAppConfig()
+  const appName = config.title
 
-const isLoggedIn = ref(false)
+  const isLoggedIn = ref(false)
 
-const logout = () => {
-  if (auth.value.isLoggedIn) {
-    const nextPage = route.fullPath
-    if (!navi.navigate.value)
-      navi.navigate = useNavigation({ next: null, prev: null })
-    navi.navigate.value.next = null
+  const logout = () => {
+    if (auth.value.isLoggedIn) {
+      const nextPage = route.fullPath
+      if (!navi.navigate.value)
+        navi.navigate = useNavigation({ next: null, prev: null })
+      navi.navigate.value.next = null
 
-    auth.value.logout()
-    isLoggedIn.value = false
-    router.push(nextPage)
+      auth.value.logout()
+      isLoggedIn.value = false
+      router.push(nextPage)
+    }
+    router.push('/')
   }
-  router.push('/')
-}
 </script>
