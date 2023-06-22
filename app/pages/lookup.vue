@@ -68,17 +68,17 @@ export default {
     },
     methods: {
         focusout() {
-        this.handle = this.formatIdentifier(this.handle)
+          this.handle = this.formatIdentifier(this.handle)
         },
         formatIdentifier(id) {
-        if (!id.startsWith('did:')) {
-          id.startsWith('@') ? id.substring(1) : id
-          id.startsWith('at://') ? id.substring(5) : id
-                if (!id.includes('.')) {
-            id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
-          }
+          if (id.length > 0 && !id.startsWith('did:')) {
+            id.startsWith('@') ? id.substring(1) : id
+            id.startsWith('at://') ? id.substring(5) : id
+            if (!id.includes('.')) {
+              id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
             }
-        return id
+              }
+          return id
         },
         async requestDID() {
         try {
