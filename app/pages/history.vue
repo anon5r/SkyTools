@@ -90,20 +90,20 @@ export default {
         this.handle = this.formatIdentifier(this.handle)
         },
         formatIdentifier(id) {
-            if (!id.startsWith('did:')) {
-          id.startsWith('@') ? id.substring(1) : id
-          id.startsWith('at://') ? id.substring(5) : id
-          if (!id.includes('.')) {
-            id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
-                }
+          if (id.length > 0 && !id.startsWith('did:')) {
+            id.startsWith('@') ? id.substring(1) : id
+            id.startsWith('at://') ? id.substring(5) : id
+            if (!id.includes('.')) {
+              id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
             }
-        return id
+          }
+          return id
         },
         submit() {
         this.$router.push({ query: { handle: this.handle } })
-            if (this.handle.length > 0) {
-          this.getHistory(this.handle)
-            }
+          if (this.handle.length > 0) {
+            this.getHistory(this.handle)
+          }
         },
         /** Get DID from handle */
         async getDID(handle) {
@@ -112,66 +112,67 @@ export default {
           handle = this.formatIdentifier(handle)
           this.id = handle
           this.$router.push({ query: { id: handle } })
-
-                const res = await axios.get(
-                    `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`
+          const res = await axios.get(
+            `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`
           )
           if (isDev()) console.log(res)
           if (res.data.did) return res.data.did
-            } catch (error) {
+        } catch (error) {
           this.hasError = true
           if (isDev()) console.error(error)
-          this.results = error.message
-                if (error.response.data.message)
+            this.results = error.message
+          if (error.response.data.message)
             this.results = error.response.data.message
-            }
+        }
         },
         /** Get handle history from DID */
         async getHistory(did) {
         try {
           if (!did.startsWith('did:')) did = await this.getDID(did)
           if (this.hasError) return
+
           const res = await axios.get(`https://plc.directory/${did}/log/audit`)
+
           if (isDev()) console.log(res)
-                if (res.data.length > 0) {
-            let records = res.data.reverse()
-            let items = []
-                    for (let idx in records) {
-              let record, icon, style
-              record = records[idx]
-              icon = ['fas', 'square-minus']
-              style = { color: '#cccccc' }
+            if (res.data.length > 0) {
+              let records = res.data.reverse()
+              let items = []
+              for (let idx in records) {
+                let record, icon, style
+                record = records[idx]
+                icon = ['fas', 'square-minus']
+                style = { color: '#cccccc' }
               if (idx == 0) {
                 icon = ['fas', 'circle-check']
                 style = { color: '#18b404' }
-                        } else if (
-                            record.operation?.type === 'create' ||
-                record.operation?.prev === null
+              } else if (
+                record.operation?.type === 'create'
+                || record.operation?.prev === null
               ) {
                 icon = ['fas', 'flag']
                 style = { color: '#ea2a63' }
               }
-                        items.push({
-                            id: record.cid,
+              items.push({
+                id: record.cid,
                 icon: icon,
-                            iconStyle: style,
-                            createdAt: DateTime.fromISO(record.createdAt).toString(),
-                            handle: record.operation.handle
+                iconStyle: style,
+                createdAt: DateTime.fromISO(record.createdAt).toString(),
+                handle: record.operation.handle
                   ? record.operation.handle
-                                : record.operation.alsoKnownAs[0],
+                  : record.operation.alsoKnownAs[0],
                 did: record.did,
-                            _raw: record.operation,
+                _raw: record.operation,
               })
-                    }
+            }
             this.results = items
-                }
-            } catch (err) {
+          }
+        } catch (err) {
           if (isDev()) console.error(err)
           this.results = err.message
-                if (err.response?.data?.message)
+          if (err.response?.data?.message)
             this.results = err.response.data.message
-            }
-        },
+        }
+      },
     },
 }
 </script>

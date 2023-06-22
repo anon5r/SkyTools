@@ -126,7 +126,7 @@
   const navItems = reactive({
     tools: [
       { src: '/lookup', title: 'Lookup', requireSignin: false },
-      { src: '/history', title: 'History', requireSignin: false },
+      { src: '/history', title: 'Handle history', requireSignin: false },
       // { src: '/blocking', title: 'Blocking', requireSignin: false },
       { src: '/invite-code', title: 'Invite code', requireSignin: true },
     ],
