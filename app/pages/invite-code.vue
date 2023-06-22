@@ -43,6 +43,16 @@
                       </li>
                       <li v-if="record.uses.length == 0">
                         <div class="text-green-500">Available!</div>
+                        <CopyToClipboard
+                          :copy-text="record.code"
+                          class="text-blue-500 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-200"
+                          position="bottom-right"
+                          success-message="Copied!"
+                          error-message="Failed to copy"
+                          :display-duration="3500"
+                          >
+                          <font-awesome-icon :icon="['far', 'clipboard']" /> Copy this code!
+                        </CopyToClipboard>
                       </li>
                     </ul>
                   </accordion-content>
@@ -60,7 +70,7 @@
 </template>
 
 
-<script setup type="ts">
+<script setup lang="js">
   import { onMounted, ref, reactive, toRefs } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
@@ -92,6 +102,7 @@
   const navigate = useNavigation()
   const agent = ref(null)
   const identity = useIdentity()
+
   const inviteCodes = ref(null)
   const nextDate = ref(null)
 
@@ -160,6 +171,7 @@
       ...record,
       showDetail: !record.showDetail,
     }
-}
+  }
+
 </script>
 
