@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
+  <div class="flex flex-col px-4 justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200">
     <div class="w-full max-w-md pt-4 pb-4 text-right">
       <a class="pr-2" @click="changeLanguage('en')">English</a> /
       <a class="pl-2" @click="changeLanguage('ja')">日本語</a>

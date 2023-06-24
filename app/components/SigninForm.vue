@@ -1,14 +1,13 @@
 <template>
     <div class="w-full max-w-xs mx-auto">
-      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h4 class="text-2xl font-bold dark:text-white">Sign-in to Bluesky</h4>
+      <form class="bg-white dark:bg-slate-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h4 class="text-2xl font-bold text-base">Sign-in to Bluesky</h4>
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="handle">
-            <font-awesome-icon :icon="['fas', 'user']" />
-            Your handle
+          <label class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2" for="handle">
+            <font-awesome-icon :icon="['fas', 'user']">Your handle</font-awesome-icon>
           </label>
           <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
             id="handle"
             v-model="handle"
             type="text"
@@ -18,12 +17,11 @@
           />
         </div>
         <div class="mb-3">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-            <font-awesome-icon :icon="['fas', 'key']" />
-            App Password
+          <label class="block text-base text-sm font-bold mb-2" for="password">
+            <font-awesome-icon :icon="['fas', 'key']">App Password</font-awesome-icon>
           </label>
           <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            class="shadow appearance-none border rounded w-full py-2 px-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
             v-model="password"
             type="password"

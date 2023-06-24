@@ -1,15 +1,15 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
+    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-md">
-      <div class="bg-white shadow-md rounded-lg px-3 py-2 mb-4">
-        <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
+      <div class="border-2 border-gray-100 dark:border-slate-800 shadow-md rounded-lg px-3 py-2 mb-4">
+        <div class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
           Enter a handle or DID
         </div>
-        <div class="flex items-center bg-gray-200 rounded-md">
+        <div class="flex items-center bg-gray-100 dark:bg-slate-700 rounded-md">
           <div class="w-full p-2">
             <input
-              class="bg-transparent rounded-md w-full text-gray-700"
+              class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
               v-model="handle"
               @focusout="focusout"
               @keyup.enter="requestDID"
@@ -17,7 +17,7 @@
           </div>
           <div class="p-2">
             <button
-              class="bg-blue-500 text-white rounded-md px-2 py-1"
+              class="bg-blue-500 dark:bg-blue-700 text-white dark:text-slate-300 rounded-md px-2 py-1"
               @click="requestDID">
               Lookup
             </button>
@@ -26,10 +26,10 @@
       </div>
 
       <div
-        class="bg-white shadow-md rounded-lg px-3 py-2 border-2"
+        class="bg-gray-100 dark:bg-slate-700 shadow-md rounded-lg px-3 py-2 border-2"
         v-if="result"
         :class="{ 'border-red-400': hasError, 'border-green-500': !hasError }">
-        <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
+        <div class="block text-gray-700 dark:text-slate-300 text-lg font-semibold py-2 px-2">
           <span v-if="result.startsWith('did:')">DID</span>
           <span v-else>Handle</span>
         </div>
@@ -37,7 +37,7 @@
           class="py-2 px-2"
           :class="{
             'text-red-600 dark:text-red-400': hasError,
-            'text-gray-600 dark:text-gray-400': !hasError,
+            'text-gray-600 dark:text-slate-400': !hasError,
           }">
           {{ result }}
         </div>

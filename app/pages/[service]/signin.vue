@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
+    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div v-if="isRedirected" class="w-full max-w-md">
       <div
         class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
