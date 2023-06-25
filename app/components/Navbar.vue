@@ -97,7 +97,7 @@
             </NuxtLink>
           </li>
           <li>
-            <ToggleDarkmode class="block py-2 pl-3 pr-4 rounded" />
+            <ToggleDarkmode class="block pl-3 rounded" />
           </li>
         </ul>
       </div>
