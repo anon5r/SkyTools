@@ -2,7 +2,7 @@
   <div
     class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-md">
-      <div class="border-2 border-gray-500 dark:border-slate-500 shadow-md rounded-lg px-3 py-2 mb-4">
+      <div class="border-2 border-gray-500 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg px-3 py-2 mb-4">
         <div class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
           Enter current handle or DID
         </div>
