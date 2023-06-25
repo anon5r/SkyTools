@@ -1,15 +1,15 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-4">
+    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-md">
-      <div class="bg-white shadow-md rounded-lg px-3 py-2 mb-4">
-        <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
+      <div class="border-2 border-gray-500 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg px-3 py-2 mb-4">
+        <div class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
           Enter current handle or DID
         </div>
-        <div class="flex items-center bg-gray-200 rounded-md">
+        <div class="flex items-center bg-gray-200 dark:bg-slate-700 rounded-md">
           <div class="w-full p-2">
             <input
-              class="bg-transparent rounded-md w-full text-gray-700"
+              class="bg-transparent rounded-md w-full text-gray-700 dark:text-gray-300"
               v-model="handle"
               @focusout="focusout"
               @keyup.enter="submit"
@@ -17,7 +17,7 @@
           </div>
           <div class="p-2">
             <button
-              class="bg-blue-500 text-white rounded-md px-2 py-1"
+              class="bg-blue-500 dark:bg-blue-700 text-white dark:text-slate-300 rounded-md px-2 py-1"
               @click="submit">
               Submit
             </button>
@@ -26,10 +26,10 @@
       </div>
 
       <div
-        class="bg-white shadow-md rounded-lg px-3 py-2 border-2"
+        class="bg-white dark:bg-slate-900 shadow-md rounded-lg px-3 py-2 border-2"
         v-if="results.length > 0"
         :class="{ 'border-red-600': hasError, 'border-green-500': !hasError }">
-        <div class="block text-gray-700 text-lg font-semibold py-2 px-2">
+        <div class="block text-gray-700 dark:text-slate-400 text-lg font-semibold py-2 px-2">
           Handle history
         </div>
         <div
@@ -52,7 +52,7 @@
                 {{ record.createdAt }}
               </time>
               <p class="mb-1 text-base font-normal">{{ record.handle }}</p>
-              <div class="mb-5 text-xs text-gray-300 dark:text-gray-700">
+              <div class="mb-5 text-xs text-gray-300 dark:text-slate-500">
                 {{ record.did }}
               </div>
             </li>
