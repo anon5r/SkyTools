@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col px-4 justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200">
     <div class="w-full max-w-md pt-4 pb-4 text-right">
-      <a class="pr-2" @click="changeLanguage('en')">English</a> /
-      <a class="pl-2" @click="changeLanguage('ja')">日本語</a>
+      <a class="pr-2" href="#en" @click.prevent="changeLanguage('en')">English</a> |
+      <a class="pl-2" href="#ja" @click.prevent="changeLanguage('ja')">日本語</a>
     </div>
     <div v-if="currentLanguage === 'ja'" class="w-full max-w-md">
       <!-- Japanese -->
@@ -86,9 +86,10 @@ onMounted(async () => {
 <style scoped>
 a {
   @apply text-blue-500;
+  cursor: hand;
 }
 
 a:hover {
-  @apply underline;
+  @apply text-blue-300;
 }
 </style>
