@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="copyToClipboard" :class="buttonClass">
+    <button @click="copyToClipboard" v-bind="$attrs">
       <slot></slot>
     </button>
     <div
@@ -9,7 +9,7 @@
         'flex items-center fixed z-50 ',
         toastPosition,
         toastTextColor,
-        'px-4 py-2 rounded-md shadow-md  bg-white dark:bg-gray-800',
+        'px-4 py-2 rounded-md shadow-md bg-white dark:bg-gray-800',
       ]">
       <font-awesome-icon
         :icon="[
@@ -23,6 +23,7 @@
 
 <script>
   export default {
+    inheritAttrs: false,
     props: {
       copyText: String,
       successMessage: {
@@ -44,7 +45,7 @@
       buttonClass: {
         type: String,
         default:
-          'text-blue-500 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-200',
+          'text-blue-500 hover:text-blue-800 dark:text-blue-700 dark:hover:text-blue-300',
       },
     },
     data() {
@@ -69,7 +70,7 @@
       },
       toastTextColor() {
         return this.success ? 'text-green-600' : 'text-red-600'
-      },
+      }
     },
     methods: {
       async copyToClipboard() {

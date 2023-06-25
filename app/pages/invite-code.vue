@@ -45,7 +45,7 @@
                         <div class="text-green-500">Available!</div>
                         <CopyToClipboard
                           :copy-text="record.code"
-                          class="text-blue-500 hover:text-blue-800 dark:text-blue-800 dark:hover:text-blue-500"
+                          class="text-blue-500 hover:text-blue-800 dark:text-blue-700 dark:hover:text-blue-500"
                           position="bottom-right"
                           success-message="Copied!"
                           error-message="Failed to copy"
