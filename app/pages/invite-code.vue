@@ -42,7 +42,14 @@
                         </div>
                       </li>
                       <li v-if="record.uses.length == 0">
-                        <div class="text-green-500">Available!</div>
+                        <div>
+                          <span class="text-green-500 pr-3 py-2">Available!</span>
+                          <span v-if="record.createdBy != record.forAccount">
+                            <font-awesome-icon :icon="['fas', 'gift']" beat style="color: #ca1643;" class="px-2" title="Gift!" />
+                            <span class="text-sm">by</span> <span class="sm italic text-sm text-gray-400 dark:text-slate-500">{{ record.createdBy }}</span>
+                          </span>
+                        </div>
+
                         <CopyToClipboard
                           :copy-text="record.code"
                           class="text-blue-500 hover:text-blue-800 dark:text-blue-700 dark:hover:text-blue-500"
@@ -125,7 +132,13 @@
       if (isDev()) console.log(response)
 
       if (response.data?.codes?.length > 0) {
-        for (const record of response.data.codes.reverse()) {
+        // Sort order to descending order by createdAt field
+        response.data?.codes.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        console.log(response.data)
+        for (const record of response.data.codes) {
           // Resolve to handle from DID
           const rewriteUses = record.uses.map(async use => ({
             ...use,
