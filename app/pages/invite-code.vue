@@ -125,7 +125,13 @@
       if (isDev()) console.log(response)
 
       if (response.data?.codes?.length > 0) {
-        for (const record of response.data.codes.reverse()) {
+        // Sort order to descending order by createdAt field
+        response.data?.codes.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        console.log(response.data)
+        for (const record of response.data.codes) {
           // Resolve to handle from DID
           const rewriteUses = record.uses.map(async use => ({
             ...use,
