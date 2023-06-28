@@ -38,7 +38,7 @@
 
   defineComponent({ name: 'ToggleDarkmode' })
 
-  const isDarkTheme = ref<boolean>(false)
+  const isDarkTheme = ref<Boolean>(false)
 
   const loadTheme = () => {
     const savedTheme = localStorage.getItem('color-theme')

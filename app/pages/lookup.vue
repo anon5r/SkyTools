@@ -2,8 +2,8 @@
   <div
     class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-md">
-      <div class="border-2 border-gray-100 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg px-3 py-2 mb-4">
-        <div class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
+      <div class="border-2 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
+        <div class="block text-gray-700 dark:text-slate-200 text-lg font-semibold md:py-2 md:px-2">
           Enter a handle or DID
         </div>
         <div class="flex items-center bg-gray-100 dark:bg-slate-700 rounded-md">
@@ -40,73 +40,89 @@
             'text-gray-600 dark:text-slate-400': !hasError,
           }">
           {{ result }}
+<template>
+  <tabs v-model="activeTab" class="p-5"> <!-- class appends to content DIV for all tabs -->
+    <tab name="posts" title="Posts">
+      Timelines
+    </tab>
+    <tab name="following" title="Following">
+      Following
+    </tab>
+    <tab name="follower" title="Follower">
+      Followers
+    </tab>
+    <tab name="blocking" title="Blocking" :disabled="true">
+      Blocking list here...
+    </tab>
+    <tab name="mute" title="Mute" :disabled="true">
+      Muting list here...
+    </tab>
+  </tabs>
+</template>
+
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { Tabs, Tab } from 'flowbite-vue'
 import { isDev } from '~/utils'
 import { useAppConfig } from 'nuxt/app'
 
-export default {
-    layout: 'default',
-    setup() {
-      const route = useRoute()
-      const handle = ref(route.query.handle || '')
-      return { handle }
-    },
-    data() {
-        return {
-        result: '',
-            hasError: false,
-      }
-    },
-    methods: {
-        focusout() {
-          this.handle = this.formatIdentifier(this.handle)
-        },
-        formatIdentifier(id) {
-          if (id.length > 0 && !id.startsWith('did:')) {
-            id.startsWith('@') ? id.substring(1) : id
-            id.startsWith('at://') ? id.substring(5) : id
-            if (!id.includes('.')) {
-              id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
-            }
-              }
-          return id
-        },
-        async requestDID() {
-        try {
-          let identifier = this.formatIdentifier(this.handle)
-          this.handle = identifier
-          this.$router.push({ query: { handle: identifier } })
+const activeTab = ref('posts')
 
-          let requestUrl
-                if (identifier.startsWith('did:'))
-            requestUrl = `https://plc.directory/${identifier}`
-                else
-            requestUrl = `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+const route = useRoute()
+const router = useRouter()
+const handle = ref(route.query.handle || '')
 
-          const res = await axios.get(requestUrl)
-          if (isDev()) console.log(res)
+const result = ref('')
+const hasError = ref(false)
 
-          if (res.data?.did) this.result = res.data.did
-          else if (res.data?.alsoKnownAs) this.result = res.data.alsoKnownAs[0]
+const focusout = () => {
+    handle.value = this.formatIdentifier(this.handle)
+}
+const formatIdentifier = id => {
+  if (id.length > 0 && !id.startsWith('did:')) {
+    id.startsWith('@') ? id.substring(1) : id
+    id.startsWith('at://') ? id.substring(5) : id
+    if (!id.includes('.')) {
+      id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
+    }
+  }
+  return id
+}
 
-          this.hasError = false
-            } catch (error) {
-          if (isDev()) console.error(error)
-          this.hasError = true
-          this.result = error.message
-                if (error.response.data.message)
-            this.result = error.response.data.message
-            }
-        },
-    },
+
+const requestDID = async () => {
+  try {
+    let identifier = this.formatIdentifier(this.handle)
+    handle.value = identifier
+    router.push({ query: { handle: identifier } })
+
+    let requestUrl
+    if (identifier.startsWith('did:'))
+      requestUrl = `https://plc.directory/${identifier}`
+    else
+      requestUrl = `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+
+    const res = await axios.get(requestUrl)
+    if (isDev()) console.log(res)
+
+    if (res.data?.did) result.value = res.data.did
+    else if (res.data?.alsoKnownAs) result.value = res.data.alsoKnownAs[0]
+
+    hasError.value = false
+  } catch (error) {
+    if (isDev()) console.error(error)
+    hasError.value = true
+    result.value = error.message
+    if (error.response.data.message)
+      result.value = error.response.data.message
+  }
 }
 </script>
