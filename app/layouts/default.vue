@@ -4,7 +4,7 @@
       <Navbar />
     </header>
     <NuxtPage />
-    <footer class="bg-gray-800 text-white py-6 px-4">
+    <footer class="py-6 px-4">
       <Footbar />
     </footer>
   </div>
