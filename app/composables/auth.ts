@@ -63,7 +63,7 @@ const restoreSession = async () => {
         const session = JSON.parse(credentials)
         const res = await getAgent().resumeSession(session)
         isLoggedIn.value = res.success
-      } catch (err) {
+      } catch (err: any) {
         if (isDev()) console.error(err)
         if (err.response.status == 400) {
           if (err.response.data.error == 'ExpiredToken') await logout()
