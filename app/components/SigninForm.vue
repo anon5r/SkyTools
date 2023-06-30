@@ -1,10 +1,10 @@
 <template>
     <div class="w-full max-w-xs mx-auto">
       <form class="bg-white dark:bg-slate-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h4 class="pb-4 text-2xl font-bold text-base">Sign-in to Bluesky</h4>
+        <h4 class="text-2xl font-bold text-base pb-4">Sign-in to Bluesky</h4>
         <div class="mb-4">
-          <label class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2" for="handle">
-            <font-awesome-icon :icon="['fas', 'user']" class="pr-1" />Your handle
+          <label class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1" for="handle">
+            <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />Your handle
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
@@ -17,8 +17,8 @@
           />
         </div>
         <div class="mb-3">
-          <label class="block text-base text-sm font-bold mb-2" for="password">
-            <font-awesome-icon :icon="['fas', 'key']" class="pr-1" />App Password
+          <label class="block text-base text-sm font-bold mb-2 pt-1" for="password">
+            <font-awesome-icon :icon="['fas', 'key']" class="pr-2" />App Password
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
