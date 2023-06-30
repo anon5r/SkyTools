@@ -7,7 +7,10 @@
             Invite code
           </div>
           <div v-if="inviteCodes" class="bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border-0">
-              <div v-if="nextDate" class="text-sm italic">You will get next new code at <span class="bold">{{ nextDate }}</span></div>
+              <div v-if="nextDate" class="text-sm pl-3">
+                <font-awesome-icon :icon="['fas', 'cloud-sun']" class="pr-2" title="Forecast" />
+                <span class="italic" title="This is forecast, Not guaranteed">You will get next new code at <span class="bold">{{ nextDate }}</span></span>
+              </div>
               <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
                 <accordion-panel v-for="record in inviteCodes" :key="record.code">
                   <accordion-header aria-expanded="false">
