@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-center h-screen bg-gray-100 dark:bg-slate-900">
+    class="flex items-center justify-center md:h-screen bg-gray-100 dark:bg-slate-900">
     <div class="text-center">
       <div
         class="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-400 mb-6">
