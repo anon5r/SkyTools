@@ -66,11 +66,9 @@
 <script>
 import { DateTime } from 'luxon'
 import axios from 'axios'
-import { isDev } from '~/utils'
+import { isDev, formatIdentifier } from '~/utils'
 import { ref } from 'vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useRoute } from 'vue-router'
-import { useAppConfig } from 'nuxt/app'
 
 export default {
     layout: 'default',
@@ -87,17 +85,7 @@ export default {
     },
     methods: {
       focusout() {
-        this.handle = this.formatIdentifier(this.handle)
-        },
-        formatIdentifier(id) {
-          if (id.length > 0 && !id.startsWith('did:')) {
-            id.startsWith('@') ? id.substring(1) : id
-            id.startsWith('at://') ? id.substring(5) : id
-            if (!id.includes('.')) {
-              id += useAppConfig().defaultSuffix // default xxx -> xxx.bsky.social
-            }
-          }
-          return id
+        this.handle = formatIdentifier(this.handle)
         },
         submit() {
         this.$router.push({ query: { handle: this.handle } })
@@ -109,7 +97,7 @@ export default {
         async getDID(handle) {
         try {
           this.hasError = false
-          handle = this.formatIdentifier(handle)
+          handle = formatIdentifier(handle)
           this.id = handle
           this.$router.push({ query: { id: handle } })
           const res = await axios.get(
