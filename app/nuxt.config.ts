@@ -3,7 +3,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default {
   publicRuntimeConfig: {
-    apiKey: process.env.GTM_ID || 'GTM-__DUMMY__',
+    gtmID: process.env.GTM_ID || 'GTM-__DUMMY__',
   },
   app: {
     ssr: true,
