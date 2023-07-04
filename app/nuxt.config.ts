@@ -96,13 +96,7 @@ export default {
     adminDID: 'did:plc:c22jdrqhoajyj5ca7e56a3ke' as string,
     inviteCodeFreq: { weeks: 2 } as object,
   },
-  modules: [
-    '@nuxtjs/tailwindcss',
-    'nuxt-cloudflare-analytics',
-    {
-      token: '82dce72b88df4fba9032244b9a294ee1',
-    },
-  ],
+  modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
     'flowbite/dist/flowbite.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
@@ -113,4 +107,7 @@ export default {
     '@/plugins/vue-gtm.client.ts',
     { src: '~/plugins/vercel.ts', mode: 'client' },
   ],
+  cloudflareAnalytics: {
+    token: '82dce72b88df4fba9032244b9a294ee1',
+  },
 }
