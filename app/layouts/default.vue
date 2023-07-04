@@ -25,6 +25,6 @@
 <style scoped>
   /* Common styles */
   div {
-    @apply min-h-max text-base dark:text-slate-300 bg-gray-100 dark:bg-slate-900
+    @apply min-h-max text-base dark:text-slate-300 bg-gray-100 dark:bg-slate-900;
   }
 </style>
