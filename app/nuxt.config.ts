@@ -2,6 +2,9 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default {
+  publicRuntimeConfig: {
+    apiKey: process.env.GTM_ID || 'GTM-__DUMMY__',
+  },
   app: {
     ssr: true,
     head: {
@@ -81,13 +84,6 @@ export default {
           href: '/icons/icon-57x57.png',
         },
       ],
-      script: [
-        {
-          src: 'https://static.cloudflareinsights.com/beacon.min.js',
-          defer: true,
-          data_cf_beacon: process.env.CLOUDFLARE_BEACON_KEY ?? '{"token":""}',
-        },
-      ],
     },
   },
   appConfig: {
@@ -100,7 +96,13 @@ export default {
     adminDID: 'did:plc:c22jdrqhoajyj5ca7e56a3ke' as string,
     inviteCodeFreq: { weeks: 2 } as object,
   },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    'nuxt-cloudflare-analytics',
+    {
+      token: '82dce72b88df4fba9032244b9a294ee1',
+    },
+  ],
   css: [
     'flowbite/dist/flowbite.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
