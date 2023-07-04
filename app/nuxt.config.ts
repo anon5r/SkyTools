@@ -1,12 +1,14 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default {
-  publicRuntimeConfig: {
-    gtmID: process.env.GTM_ID || 'GTM-__DUMMY__',
+  runtimeConfig: {
+    public: {
+      GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
+    },
   },
   app: {
     ssr: true,
+    darkmode: 'class',
     head: {
       title: 'SkyTools',
       meta: [
@@ -108,6 +110,6 @@ export default {
     { src: '~/plugins/vercel.ts', mode: 'client' },
   ],
   cloudflareAnalytics: {
-    token: '82dce72b88df4fba9032244b9a294ee1',
+    token: process.env.CLOUDFLARE_TOKEN || 'none', //'82dce72b88df4fba9032244b9a294ee1',
   },
 }
