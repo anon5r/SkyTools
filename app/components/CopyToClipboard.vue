@@ -70,7 +70,7 @@
       },
       toastTextColor() {
         return this.success ? 'text-green-600' : 'text-red-600'
-      }
+      },
     },
     methods: {
       async copyToClipboard() {

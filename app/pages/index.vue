@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig } from 'nuxt/app';
+  import { useAppConfig } from 'nuxt/app'
   const config = useAppConfig()
   const appName = config.title
 </script>
