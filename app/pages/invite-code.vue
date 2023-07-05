@@ -29,42 +29,47 @@
                     <a @click="toggleUsed" :class="{ 'line-through': (record.uses?.length > 0) }">{{ record.code }}</a>
                   </accordion-header>
                   <accordion-content>
-                    <div>
-                      Issued at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAtLocal }}</time>
-                    </div>
-                    <ul>
-                      <li v-for="(use, index) in record.uses" :key="index">
-                        <div>
-                          Used by <NuxtLink :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`" class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700" target="_blank">{{ use.alsoKnownAs }}</NuxtLink>
-                        </div>
-                        <div>
-                          <span class="sm italic text-gray-300 dark:text-gray-700">{{ use.usedBy }}</span>
-                        </div>
-                        <div>
-                          Used at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ use.usedAtLocal }}</time>
-                        </div>
-                      </li>
-                      <li v-if="record.uses.length == 0">
-                        <div>
-                          <span class="text-green-500 pr-3 py-2">Available!</span>
-                          <span v-if="record.createdBy != record.forAccount">
-                            <font-awesome-icon :icon="['fas', 'gift']" beat style="color: #ca1643;" class="px-2" title="Gift!" />
-                            <span class="text-sm">by</span> <span class="sm italic text-sm text-gray-400 dark:text-slate-500">{{ record.createdBy }}</span>
-                          </span>
-                        </div>
+                    <div v-if="record.createdAt">
+                      <div>
+                        Issued at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAtLocal }}</time>
+                      </div>
+                      <ul>
+                        <li v-for="(use, index) in record.uses" :key="index">
+                          <div>
+                            Used by <NuxtLink :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`" class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700" target="_blank">{{ use.alsoKnownAs }}</NuxtLink>
+                          </div>
+                          <div>
+                            <span class="sm italic text-gray-300 dark:text-gray-700">{{ use.usedBy }}</span>
+                          </div>
+                          <div>
+                            Used at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ use.usedAtLocal }}</time>
+                          </div>
+                        </li>
+                        <li v-if="record.uses.length == 0">
+                          <div>
+                            <span class="text-green-500 pr-3 py-2">Available!</span>
+                            <span v-if="record.createdBy != record.forAccount">
+                              <font-awesome-icon :icon="['fas', 'gift']" beat style="color: #ca1643;" class="px-2" title="Gift!" />
+                              <span class="text-sm">by</span> <span class="sm italic text-sm text-gray-400 dark:text-slate-500">{{ record.createdBy }}</span>
+                            </span>
+                          </div>
 
-                        <CopyToClipboard
-                          :copy-text="record.code"
-                          class="text-blue-500 hover:text-blue-800 dark:text-blue-700 dark:hover:text-blue-500"
-                          position="bottom-right"
-                          success-message="Copied!"
-                          error-message="Failed to copy"
-                          :display-duration="3500"
-                          >
-                          <font-awesome-icon :icon="['far', 'clipboard']" /> Copy this code!
-                        </CopyToClipboard>
-                      </li>
-                    </ul>
+                          <CopyToClipboard
+                            :copy-text="record.code"
+                            class="text-blue-500 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-400"
+                            position="bottom-right"
+                            success-message="Copied!"
+                            error-message="Failed to copy"
+                            :display-duration="3500"
+                            >
+                            <font-awesome-icon :icon="['far', 'clipboard']" /> Copy this code!
+                          </CopyToClipboard>
+                        </li>
+                      </ul>
+                    </div>
+                    <div v-else>
+                      <span class="text-gray-400 dark:text-slate-600 pr-3 py-2">No code issued</span>
+                    </div>
                   </accordion-content>
                 </accordion-panel>
               </Accordion>
