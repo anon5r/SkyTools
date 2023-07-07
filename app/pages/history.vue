@@ -66,7 +66,8 @@
 <script>
 import { DateTime } from 'luxon'
 import axios from 'axios'
-import { isDev, formatIdentifier } from '~/utils'
+import { isDev } from '@/utils/helpers'
+import { formatIdentifier, resolveHandle, getIdentityAuditLogs } from '~/utils/lexicons'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -100,11 +101,7 @@ export default {
           handle = formatIdentifier(handle)
           this.id = handle
           this.$router.push({ query: { id: handle } })
-          const res = await axios.get(
-            `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${handle}`
-          )
-          if (isDev()) console.log(res)
-          if (res.data.did) return res.data.did
+          return resolveHandle(handle)
         } catch (error) {
           this.hasError = true
           if (isDev()) console.error(error)
@@ -119,41 +116,40 @@ export default {
           if (!did.startsWith('did:')) did = await this.getDID(did)
           if (this.hasError) return
 
-          const res = await axios.get(`https://plc.directory/${did}/log/audit`)
+          const res = await getIdentityAuditLogs(did)
 
-          if (isDev()) console.log(res)
-            if (res.data.length > 0) {
-              let records = res.data.reverse()
-              let items = []
-              for (let idx in records) {
-                let record, icon, style
-                record = records[idx]
-                icon = ['fas', 'square-minus']
-                style = { color: '#cccccc' }
-              if (idx == 0) {
-                icon = ['fas', 'circle-check']
-                style = { color: '#18b404' }
-              } else if (
-                record.operation?.type === 'create'
-                || record.operation?.prev === null
-              ) {
-                icon = ['fas', 'flag']
-                style = { color: '#ea2a63' }
-              }
-              items.push({
-                id: record.cid,
-                icon: icon,
-                iconStyle: style,
-                createdAt: DateTime.fromISO(record.createdAt).toString(),
-                handle: record.operation.handle
-                  ? record.operation.handle
-                  : record.operation.alsoKnownAs[0],
-                did: record.did,
-                _raw: record.operation,
-              })
+          if (res.length > 0) {
+            let records = res.reverse()
+            let items = []
+            for (let idx in records) {
+              let record, icon, style
+              record = records[idx]
+              icon = ['fas', 'square-minus']
+              style = { color: '#cccccc' }
+            if (idx == 0) {
+              icon = ['fas', 'circle-check']
+              style = { color: '#18b404' }
+            } else if (
+              record.operation?.type === 'create'
+              || record.operation?.prev === null
+            ) {
+              icon = ['fas', 'flag']
+              style = { color: '#ea2a63' }
             }
-            this.results = items
+            items.push({
+              id: record.cid,
+              icon: icon,
+              iconStyle: style,
+              createdAt: DateTime.fromISO(record.createdAt).toString(),
+              handle: record.operation.handle
+                ? record.operation.handle
+                : record.operation.alsoKnownAs[0],
+              did: record.did,
+              _raw: record.operation,
+            })
           }
+          this.results = items
+        }
         } catch (err) {
           if (isDev()) console.error(err)
           this.results = err.message

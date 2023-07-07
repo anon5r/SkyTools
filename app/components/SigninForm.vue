@@ -49,8 +49,8 @@
   import { useAppConfig, useRoute, useRouter, onBeforeRouteLeave } from 'nuxt/app'
   import { ref, onMounted } from 'vue'
   import { isNavigationFailure, NavigationFailureType } from 'vue-router'
-  import { isDev } from '../utils'
-  import { useAuth } from '../composables/auth'
+  import { isDev } from '~/utils/helpers'
+  import { useAuth } from '~/composables/auth'
   import { useNavigation } from '../composables/navigation'
 
   onMounted(async () => {

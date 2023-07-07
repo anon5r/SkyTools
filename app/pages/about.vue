@@ -61,10 +61,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAppConfig } from 'nuxt/app';
-import { useIdentity } from '@/composables/identity';
+import { resolveDID } from '~/utils/lexicons'
 
 const config = useAppConfig()
-const { resolveDID } = useIdentity()
 const currentLanguage = ref('en');
 const adminHandle = ref('admin')
 const adminURL = ref(`${config.bskyAppURL}/profile/${config.adminDID ?? 'admin'}`)

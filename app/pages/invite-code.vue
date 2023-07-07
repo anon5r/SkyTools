@@ -91,9 +91,10 @@
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { useAuth } from '@/composables/auth'
   import { useNavigation } from '@/composables/navigation'
-  import { useIdentity } from '@/composables/identity'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
-  import { isDev } from '../utils'
+  import { isDev } from '~/utils/helpers'
+  import { resolveDID } from '~/utils/lexicons'
+
 
 
   const asyncLoad = async () => {
@@ -116,7 +117,7 @@
   const route = useRoute()
   const navigate = useNavigation()
   const agent = ref(null)
-  const identity = useIdentity()
+
 
   const inviteCodes = ref(null)
   const nextDate = ref(null)
@@ -150,7 +151,7 @@
           // Resolve to handle from DID
           const rewriteUses = record.uses.map(async use => ({
             ...use,
-            alsoKnownAs: await identity.resolveDID(use.usedBy, true),
+            alsoKnownAs: await resolveDID(use.usedBy, true),
             usedAtLocal: DateTime.fromISO(use.usedAt).toFormat('DDD TTT'),
           }));
           const resolvedUses = await Promise.all(rewriteUses);
