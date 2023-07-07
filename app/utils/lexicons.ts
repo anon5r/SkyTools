@@ -60,7 +60,7 @@ export const resolveDID = async (
  */
 export const resolveHandle = async (identifier: string): Promise<string> => {
   const host = identifier.substring(identifier.indexOf('.') + 1)
-  const url = `https://${host}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+  const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
     const res = await axios.get(url)
     if (isDev()) console.log(res)
