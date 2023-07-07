@@ -92,11 +92,17 @@ export default {
     pages: true,
     productionTip: false,
     title: 'SkyTools' as string,
-    defaultSuffix: '.bsky.social' as string,
-    bskyService: 'https://bsky.social' as string,
-    bskyAppURL: 'https://bsky.app' as string,
-    adminDID: 'did:plc:c22jdrqhoajyj5ca7e56a3ke' as string,
-    inviteCodeFreq: { weeks: 2 } as object,
+    defaultSuffix:
+      process.env.ATPROTO_SERVICE_SUFFIX || ('.bsky.social' as string),
+    bskyService:
+      process.env.ATPROTO_SERVICE || ('https://bsky.social' as string),
+    bskyAppURL: process.env.SERVICE_APP_URL || ('https://bsky.app' as string),
+    adminDID:
+      process.env.ADMIN_DID || ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
+    inviteCodeFreq:
+      (process.env.INVITE_CODE_FREQ &&
+        JSON.parse(process.env.INVITE_CODE_FREQ)) ||
+      ({ weeks: 2 } as object),
   },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
