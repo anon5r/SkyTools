@@ -101,7 +101,7 @@ export default {
           handle = formatIdentifier(handle)
           this.id = handle
           this.$router.push({ query: { id: handle } })
-          return resolveHandle(handle)
+          return await resolveHandle(handle)
         } catch (error) {
           this.hasError = true
           if (isDev()) console.error(error)
