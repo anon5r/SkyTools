@@ -4,7 +4,7 @@
         <h4 class="text-2xl font-bold text-base pb-4">Sign-in to Bluesky</h4>
         <div class="mb-4">
           <label class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1" for="handle">
-            <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />Your handle
+            <font-awesome-icon :icon="['fas', 'user']" class="pr-2" /> Your handle
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
@@ -18,7 +18,7 @@
         </div>
         <div class="mb-3">
           <label class="block text-base text-sm font-bold mb-2 pt-1" for="password">
-            <font-awesome-icon :icon="['fas', 'key']" class="pr-2" />App Password
+            <font-awesome-icon :icon="['fas', 'key']" class="pr-2" /> App Password
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
@@ -33,7 +33,7 @@
         </div>
         <div class="flex items-center justify-between">
           <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap py-4 px-8 rounded focus:outline-none focus:shadow-outline"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
             @click="submitForm">
             Sign in
@@ -46,9 +46,8 @@
 
 
 <script setup lang="ts">
-  import { useAppConfig, useRoute, useRouter, onBeforeRouteLeave } from 'nuxt/app'
+  import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { ref, onMounted } from 'vue'
-  import { isNavigationFailure, NavigationFailureType } from 'vue-router'
   import { isDev } from '~/utils/helpers'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '../composables/navigation'
