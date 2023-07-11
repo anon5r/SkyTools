@@ -1,7 +1,6 @@
 import { createGtm } from '@gtm-support/vue-gtm'
 
 export default defineNuxtPlugin(nuxtApp => {
-  console.log(nuxtApp.$config.public)
   const gtm = createGtm({
     id: nuxtApp.$config.public.GTM_ID,
     defer: true, // Script can be set to `defer` to speed up page load at the cost of less accurate results (in case visitor leaves before script is loaded, which is unlikely but possible). Defaults to false, so the script is loaded `async` by default
