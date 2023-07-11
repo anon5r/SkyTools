@@ -4,6 +4,12 @@ export default {
   runtimeConfig: {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
+
+      atprotoServiceSuffix: '.bsky.social',
+      atprotoService: 'https://bsky.social',
+      serviceAppUrl: ' https://bsky.app',
+      adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
+      inviteCodeFreq: '{"days": 10}',
     },
   },
   app: {

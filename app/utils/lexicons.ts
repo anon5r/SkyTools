@@ -1,16 +1,50 @@
 import axios, { AxiosError } from 'axios'
 import { isDev } from '@/utils/helpers'
+import {
+  AppBskyActorProfile,
+  AppBskyFeedPost,
+  AtUri,
+  AtpAgent,
+  ComAtprotoRepoGetRecord,
+  ComAtprotoRepoListRecords,
+} from '@atproto/api'
+import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
 const plcURL = 'https://plc.directory'
+let atp: AtpAgent | null = null
 
-const config = {
-  defaultSuffix:
-    process.env.ATPROTO_SERVICE_SUFFIX || ('.bsky.social' as string),
-  bskyService: process.env.ATPROTO_SERVICE || ('https://bsky.social' as string),
-  bskyAppURL: process.env.SERVICE_APP_URL || ('https://bsky.app' as string),
-  adminDID: process.env.ADMIN_DID || ('did:bsky:admin' as string),
+let config = {
+  defaultSuffix: '.bsky.social' as string,
+  bskyService: 'https://bsky.social' as string,
+  bskyAppURL: 'https://bsky.app' as string,
+  adminDID: 'did:bsky:admin' as string,
 }
 
+export const setConfig = (newConfig: typeof config) => {
+  if (isDev()) console.log('[lexicons::setConfig] newConfig = ', newConfig)
+  config = { ...config, ...newConfig }
+  atp = new AtpAgent({ service: config.bskyService })
+}
+
+export const getConfig = (): {
+  defaultSuffix: string
+  bskyService: string
+  bskyAppURL: string
+  adminDID: string
+} => {
+  return config
+}
+
+export const getAgent = (): AtpAgent => {
+  if (!atp) {
+    atp = new AtpAgent({ service: config.bskyService })
+  }
+  return atp
+}
+
+/**
+ *
+ */
 export const formatIdentifier = (id: string) => {
   if (id.length > 0 && !id.startsWith('did:')) {
     id = id.startsWith('@') ? id.substring(1) : id
@@ -40,7 +74,8 @@ export const resolveDID = async (
     const res = await axios.get(requestUrl)
 
     if (res.data?.did) {
-      if (isDev()) console.log(res.data)
+      if (isDev())
+        console.log('[lexicons] resolveDID::response.data = ', res.data)
       return res.data.did as string
     } else if (res.data?.alsoKnownAs) {
       const handle = res.data.alsoKnownAs[0]
@@ -63,7 +98,7 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
     const res = await axios.get(url)
-    if (isDev()) console.log(res)
+    if (isDev()) console.log('[lexicons] resolveHandle::response.data = ', res)
 
     if (res.data?.did) return res.data.did as string
     throw new Error('Failed to resolve handle')
@@ -85,7 +120,8 @@ export const getIdentityAuditLogs = async (
   const url = `${plcURL}/${identifier}/log/audit`
   try {
     const res = await axios.get(url)
-    if (isDev()) console.log(res)
+    if (isDev())
+      console.log('[lexicons] getIdentityAuditLogs::response.data = ', res)
 
     if (res.data) return res.data as any
     throw new Error('Failed to resolve handle')
