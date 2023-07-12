@@ -1,13 +1,13 @@
 <template>
   <div
-    class="flex flex-col justify-center md:justify-center items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
+    class="flex flex-col items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-2xl">
       <div
         class="flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
         <div class="w-full p-2">
           <input
             class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
-            v-model="handle"
+            v-model="id"
             @focusout="focusout"
             @keyup.enter="lookup"
             placeholder="Enter a handle or DID" />
@@ -29,13 +29,13 @@
           <p>
             DisplayName
             <span class="text-sm text-gray-900 dark:text-slate-100">
-              {{ userinfo.profile.displayName }}
+              {{ userinfo.profile?.value?.displayName || 'Loading...' }}
             </span>
           </p>
           <p>
             Handle
             <span class="text-sm text-gray-900 dark:text-slate-100">
-              @{{ userinfo.details.handle }}
+              @{{ userinfo.details.handle || route.query.id || 'Loading...' }}
             </span>
           </p>
           <p>
@@ -53,40 +53,38 @@
         <tabs v-model="activeTab" class="p-5">
           <tab name="posts" title="Posts" id="posts">
             <!-- Posts -->
-            <div v-if="userinfo.posts.length > 0">
-              <ul>
-                <li v-for="record of userinfo.posts" :key="record.cid">
-                  <Avatar
-                    rounded
-                    :img="`https://cdn.bsky.social/imgproxy/${userinfo.profile.avatar.ref.$link}`" />
-                  <a
-                    :href="`${config.bskyAppURL}/profile/${handle}/post/${
-                      record.uri.replace('at://').split('/')[2]
-                    }`"
-                    class="text-sm text-gray-500 dark:text-gray-300">
-                    {{ DateTime.fromISO(record.value.createdAt).toString() }}
-                  </a>
-                  {{ record.value.text }}
-                  <div v-if="record.value.embed">
-                    <div
-                      v-if="
-                        record.value.embed.$type == 'app.bsky.embed.images'
-                      ">
-                      <img
-                        v-for="img of record.value.embed.images"
-                        :key="img.image.ref.$link"
-                        :src="`https://cdn.bsky.social/imgproxy/${img.image.ref.$link}`"
-                        :alt="img.image.ref.alt"
-                        class="h-auto max-w-xs" />
-                    </div>
-                  </div>
-                </li>
-              </ul>
+            <div v-if="userinfo.profile && userinfo.posts.length > 0">
+              <div v-for="record of userinfo.posts" :key="record.cid">
+                <PostList
+                  :config="config"
+                  :did="userinfo.details.did"
+                  :handle="userinfo.details.handle"
+                  :avatar_url="userinfo.avatarURL"
+                  :display_name="userinfo.profile.value.displayName"
+                  :post="record"
+                  :attached="record.embed"></PostList>
+              </div>
             </div>
             <div v-else>What are they posting.</div>
           </tab>
+
           <tab name="following" title="Following" id="following">
-            Follow who you want to see.
+            <!-- Following-->
+            <div v-if="userinfo.follow.length > 0">
+              <ul>
+                <li v-for="record of userinfo.follow" :key="record.cid">
+                  <Avatar
+                    rounded
+                    :img="lexicons.buildAvatarURL(config.bskyService, record.value.subject, record.profile)" />
+                  <a
+                    :href="`${config.bskyAppURL}/profile/${record.handle}`"
+                    class="text-sm text-gray-500 dark:text-gray-300">
+                    {{ record.profile.value.displayName }} (@{{record.handle}})
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div v-else>Follow who you want to see.</div>
           </tab>
           <tab name="follower" title="Follower" id="followers">
             Who would you like to be followed by?
@@ -96,12 +94,15 @@
             <div v-if="userinfo.like.length > 0">
               <ul>
                 <li v-for="record of userinfo.like" :key="record.cid">
-                  <a
-                    :href="`${config.bskyAppURL}/profile/${parseAtUri(record.value.subject.uri).did}/post/${parseAtUri(record.value.subject.uri).key}`"
-                    class="text-sm text-gray-500 dark:text-gray-300">
-                    {{ DateTime.fromISO(record.value.createdAt).toString() }}
-                  </a>
-                  {{ record.value.subject.cid }}
+                  <PostList
+                    v-if="record.profile"
+                    :appURL="config.bskyAppURL"
+                    :did="lexicons.parseAtUri(record.profile.uri).did"
+                    :handle="lexicons.resolveDID(lexicons.parseAtUri(record.value.subject.uri).did)"
+                    :avatar_url="lexicons.buildAvatarURL(config.bskyService, lexicons.parseAtUri(record.value.subject.uri).did, record.profile)"
+                    :display_name="record.profile.value.displayName"
+                    :post="record.post"
+                    :attached="record.post.embed"></PostList>
                 </li>
               </ul>
             </div>
@@ -120,68 +121,81 @@
 </template>
 
 <script setup>
-  import axios, { AxiosError } from 'axios'
+  import axios from 'axios'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
-  import { isDev, formatIdentifier, resolveDID } from '~/utils'
+  import { isDev } from '@/utils/helpers'
+  import * as lexicons from '@/utils/lexicons'
+  import { AppBskyFeedPost, AppBskyActorProfile } from '@atproto/api'
 
   const activeTab = ref('posts')
 
   const route = useRoute()
   const router = useRouter()
   const config = useAppConfig()
-  const handle = ref(route.query.handle || '')
+  const id = ref(route.query?.id || '')
+
+  watch(() => route.query.id, newId => {
+    id.value = newId || ''
+  })
 
   const result = ref('')
   // const hasError = ref(false)
 
+  lexicons.setConfig(toRaw(config))
+
   const userinfo = ref({
     details: {},
     profile: {},
+    avatarURL: '',
     posts: [],
-    following: [],
+    follow: [],
     followers: [],
     like: [],
     blocking: [],
     mute: [],
   })
 
-  onMounted(() => {
-    if (route.query.handle) {
-      lookup()
+  onMounted(async () => {
+    if (route.query.id) {
+      await lookup()
     }
   })
 
+
   const focusout = () => {
-    handle.value = formatIdentifier(handle.value)
+    id.value = lexicons.formatIdentifier(id.value)
   }
 
   const lookup = async () => {
-    let identifier = formatIdentifier(handle.value)
-    handle.value = identifier
-    router.push({ query: { handle: identifier } })
+    let identifier = lexicons.formatIdentifier(id.value)
+    id.value = identifier
+    if (route.query.id !== identifier)
+      router.push({ query: { id: identifier } })
 
     await getDetails(identifier)
-    await fetchProfile(identifier)
-    await fetchPosts(identifier)
-    await fetchLike(identifier)
-    console.log(userinfo.value)
+    // watch(userinfo.profile, async (updated, old) => {
+    //   if (updated !== old) {
+    //     await fetchPosts(identifier, 10)
+    //     await fetchFollow(identifier, 20)
+    //     await fetchLike(identifier, 10)
+    //   }
+    // }, { immediate: true })
+    let posts = await fetchPosts(identifier, 10)
+    let follow = await fetchFollow(identifier, 20)
+    let like = await fetchLike(identifier, 10)
+
+    updateUserInfo('posts', posts)
+    // updateUserInfo('follow', follow)
+    // updateUserInfo('like', like)
+
+
+    if (isDev()) console.log(userinfo.value)
   }
 
-  const requestDID = async identifier => {
-    try {
-      result.value = await resolveDID(identifier)
-    } catch (error) {
-      if (isDev()) console.error(error)
-
-      result.value = error.message
-      if (AxiosError.isAxiosError(error) && error.response.data.message)
-        result.value = error.response.data.message
-    }
-  }
   /**
    * update user datum
    * @param {string} item
@@ -192,61 +206,48 @@
   }
 
   /**
-   * Parsing at-proto-uri
-   * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abbcde12345
-   */
-  const parseAtUri = uri => {
-    const m = uri.match(
-      /^at:\/\/(?<did>did:\w+:(?<identifier>[a-z0-9]+))\/(?<collection>[\w.-]+)\/(?<key>[a-z0-9]+)$/
-    )
-    if (m && m.groups) return m.groups
-
-    throw new Error('Invalid URI format')
-  }
-  /**
-   * Parsing DID
-   * @param {string} did did:plc:xxxxxxxxxxxxxx, did:web:xxxxxxxxxxxxxx
-   */
-  const parseDID = did => {
-    const m = did.match(/^did:(?<method>\w+):(?<identifier>[a-z0-9]+)$/)
-    if (m && m.groups) return m.groups
-
-    throw new Error('Invalid URI format')
-  }
-
-  /**
    * Get identifier details
    * @param {string} id handle or DID
    */
   const getDetails = async id => {
+    const [details, profile] = await Promise.all([
+      lexicons.describeRepo(id),
+      lexicons.getProfile(id)
+    ])
+    const url = buildAvatarURL(details.did, profile.value)
+    updateUserInfo('details', details)
+    updateUserInfo('profile', profile)
+    updateUserInfo('avatarURL', url)
+  }
+
+  /**
+   * Get ID details
+   * @param {string} id  handle or DID
+   */
+  const fetchDetails = async id => {
     try {
-      const params = new URLSearchParams()
-      params.append('repo', id)
-      const response = await axios({
-        url: `${config.bskyService}/xrpc/com.atproto.repo.describeRepo`,
-        method: 'GET',
-        params: params,
-      })
-
-      if (response.data) {
-        console.log(response.data)
-
-        updateUserInfo('details', response.data)
-        return response.data
-      }
+      updateUserInfo('details', await lexicons.describeRepo(id))
     } catch (err) {
       console.error(err)
       throw err
     }
   }
 
+
   /**
    * Get user profile
    * @param {string} id DID or handle
    */
   const fetchProfile = async id => {
-    const record = await getRecord('app.bsky.actor.profile', id, 'self')
-    updateUserInfo('profile', record.value)
+    const record = await lexicons.getProfile(id)
+    updateUserInfo('profile', record)
+  }
+
+  /**
+   * Build avatar URL
+   */
+  const buildAvatarURL = (did, profile) => {
+    return lexicons.buildAvatarURL(config.bskyService, did, profile)
   }
 
   /**
@@ -256,90 +257,24 @@
    */
   const fetchPosts = async (id, limit = 50) => {
     try {
-      const response = await listRecords('app.bsky.feed.post', id, limit)
+      const response = await lexicons.listRecords('app.bsky.feed.post', id, limit)
 
-      if (isDev()) console.log(response)
-      if (response) {
-        updateUserInfo('posts', response.records)
+      if (response.success) {
+        if (isDev()) console.log("posts = ",response.data)
+        return response.data.records
       } else {
-        updateUserInfo('posts', [])
+        return []
       }
     } catch (err) {
-      if (AxiosError.isAxiosError(err)) {
-        updateUserInfo('posts', [])
+      if (axios.isAxiosError(err)) {
+        return [err.message]
       }
       if (isDev()) console.error(err)
+      throw new Error('Failed to get posts', err)
     }
   }
 
-  /**
-   * Fetch posts
-   * @param string collection
-   * @param string repo
-   * @param string recordKey
-   * @return object
-   */
-  const getRecord = async (collection, repo, recordKey) => {
-    try {
-      const params = new URLSearchParams()
-      params.append('collection', collection)
-      params.append('repo', repo)
-      params.append('rkey', recordKey)
-      const response = await axios({
-        url: `${config.bskyService}/xrpc/com.atproto.repo.getRecord`,
-        method: 'GET',
-        params: params,
-      })
 
-      if (response.data) {
-        console.log(response.data)
-        return response.data
-      }
-      return {}
-    } catch (err) {
-      if (isDev()) console.error(err)
-      throw new Error(err.message, err)
-    }
-  }
-
-  /**
-   * Get records as list
-   * @param {string} collection
-   * @param {string} identifier
-   * @param {int} limit
-   */
-  const listRecords = async (collection, identifier, limit = 50) => {
-    try {
-      const params = new URLSearchParams()
-      params.append('collection', collection)
-      params.append('repo', identifier)
-      params.append('limit', limit)
-      const response = await axios({
-        url: `${config.bskyService}/xrpc/com.atproto.repo.listRecords`,
-        method: 'GET',
-        params: params,
-      })
-
-      if (response.data) return response.data
-    } catch (err) {
-      if (isDev()) console.error(err)
-      throw new Error(err.message, err)
-    }
-  }
-
-  /**
-   * Get individual post
-   * @param {*} identity
-   * @param {*} recordKey
-   */
-  const getPost = async (identity, recordKey) => {
-    try {
-      return await getRecord('app.bsky.feed.post', identity, recordKey)
-    } catch (err) {
-      if (isDev()) console.error(err)
-      return err.message
-    }
-  }
   /**
    * Fetch like
    * @param {string} id handle or DID
@@ -347,17 +282,63 @@
    */
   const fetchLike = async (id, limit = 50) => {
     try {
-      const response = await listRecords('app.bsky.feed.like', id, limit)
+      const response = await lexicons.listRecords('app.bsky.feed.like', id, limit)
 
-      if (response) {
-        console.log(response)
-        updateUserInfo('like', response.records)
+      if (response.success) {
+        if (isDev()) console.log("app.bsky.feed.like = ", response.data)
+        const records = response.data.records.map(async record => {
+          const post = lexicons.getPost(lexicons.parseAtUri(record.value.subject.uri).did, lexicons.parseAtUri(record.value.subject.uri).key)
+          const profile = lexicons.getProfile(lexicons.parseAtUri(record.value.subject.uri).did)
+          return {
+            ...record,
+            profile: profile,
+            did: lexicons.parseAtUri(record.value.subject.uri).did,
+            post: post
+          }
+        })
+
+        const likeList = await Promise.all(records);
+        if (isDev()) console.log("fetchLike = ", likeList)
+          return likeList
       } else {
-        updateUserInfo('like', [])
+        return []
       }
     } catch (err) {
-      if (AxiosError.isAxiosError(err)) {
-        updateUserInfo('like', [])
+      if (axios.isAxiosError(err)) {
+        return [err.message]
+      }
+      if (isDev()) console.error(err)
+      throw new Error('Failed to get Like feed', err)
+    }
+  }
+
+  /**
+   * Fetch follow
+   * @param {string} id handle or DID
+   * @param {int} limit
+   */
+  const fetchFollow = async (id, limit = 50) => {
+    try {
+      const response = await lexicons.listRecords('app.bsky.graph.follow', id, limit)
+      if (response.success) {
+        const records = response.data.records.map(async record => {
+          const handle = await lexicons.resolveDID(record.value.subject)
+          const profile = await lexicons.getProfile(record.value.subject)
+          return {
+            ...record,
+            handle: handle,
+            profile: profile,
+          }
+        })
+        const resolvedFollowers = await Promise.all(records)
+        if (isDev()) console.log("fetchFollow = ", resolvedFollowers)
+        return resolvedFollowers
+      } else {
+        return []
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        return [err.message]
       }
       if (isDev()) console.error(err)
     }
