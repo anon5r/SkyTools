@@ -61,8 +61,7 @@
                   :handle="userinfo.details.handle"
                   :avatar_url="userinfo.avatarURL"
                   :display_name="userinfo.profile.value.displayName"
-                  :post="record"
-                  :attached="record.embed"></PostList>
+                  :post="toRaw(record)"></PostList>
               </div>
             </div>
             <div v-else>What are they posting.</div>
@@ -101,8 +100,7 @@
                     :handle="lexicons.resolveDID(lexicons.parseAtUri(record.value.subject.uri).did)"
                     :avatar_url="lexicons.buildAvatarURL(config.bskyService, lexicons.parseAtUri(record.value.subject.uri).did, record.profile)"
                     :display_name="record.profile.value.displayName"
-                    :post="record.post"
-                    :attached="record.post.embed"></PostList>
+                    :post="toRaw(record)"></PostList>
                 </li>
               </ul>
             </div>
@@ -124,7 +122,7 @@
   import axios from 'axios'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, toRaw } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
@@ -184,16 +182,16 @@
     //     await fetchLike(identifier, 10)
     //   }
     // }, { immediate: true })
-    let posts = await fetchPosts(identifier, 10)
-    let follow = await fetchFollow(identifier, 20)
-    let like = await fetchLike(identifier, 10)
+    const [posts] = await Promise.all([fetchPosts(identifier, 10)])
+//    let follow = await Promise.all(fetchFollow(identifier, 20))
+//    let like = await Promise.all(fetchLike(identifier, 10))
 
     updateUserInfo('posts', posts)
     // updateUserInfo('follow', follow)
     // updateUserInfo('like', like)
 
 
-    if (isDev()) console.log(userinfo.value)
+    if (isDev()) console.log(toRaw(userinfo))
   }
 
   /**
@@ -202,6 +200,7 @@
    * @param {any} value
    */
   const updateUserInfo = (item, value) => {
+    console.log('[updateUserInfo] ::', item, ' = ', value)
     userinfo.value[item] = value
   }
 
