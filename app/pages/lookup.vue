@@ -286,7 +286,7 @@
       if (response.success) {
         if (isDev()) console.log("app.bsky.feed.like = ", response.data)
         const records = response.data.records.map(async record => {
-          const post = lexicons.getPost(lexicons.parseAtUri(record.value.subject.uri).did, lexicons.parseAtUri(record.value.subject.uri).key)
+          const post = lexicons.getPost(lexicons.parseAtUri(record.value.subject.uri).did, lexicons.parseAtUri(record.value.subject.uri).rkey)
           const profile = lexicons.getProfile(lexicons.parseAtUri(record.value.subject.uri).did)
           return {
             ...record,

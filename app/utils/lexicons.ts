@@ -142,7 +142,7 @@ export const parseAtUri = (uri: string): { [key: string]: string } => {
     return {
       did: aturi.host,
       collection: aturi.collection,
-      key: aturi.rkey,
+      rkey: aturi.rkey,
     }
   } catch (err) {
     throw err

@@ -18,7 +18,7 @@
         </p>
         <p class="text-sm text-gray-600 dark:text-slate-400">
           <a
-            :href="`${config.bskyAppURL}/profile/${props.handle}/post/${props.post.cid}`">
+            :href="appPostURL(props.handle, props.post.uri)">
             <time
               pubdate
               :datetime="props.post.value.createdAt"
@@ -78,7 +78,7 @@
         <!-- Attached images -->
         <EmbedImage :did="did" :embed="props.post.value.embed" />
       </div>
-      <div class="text-xs text-right text-gray-400 dark:text-gray-700">Lang: {{ props.post.value.langs.join(',') }}</div>
+      <div v-if="props.post.value.langs" class="text-xs text-right text-gray-400 dark:text-gray-700">Lang: {{ props.post.value.langs.join(',') }}</div>
     </div>
   </article>
 </template>
@@ -88,7 +88,7 @@
   import { defineProps, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
-  import * as lexicons from '@/utils/helpers'
+  import * as lexicons from '@/utils/lexicons'
 
   const config = useAppConfig()
 
@@ -123,20 +123,25 @@
   const replyTo = ref('@...')
 
   onMounted(async () => {
-    if (props.post.value.reply) await getReplyLink(props.post.value.reply)
+    if (props.post.value.reply)
+    await getReplyLink(props.post.value.reply)
   })
 
   const getReplyLink = async reply => {
-    const aturi = lexicons.parseAtUri(reply.uri)
-
+    const aturi = lexicons.parseAtUri(reply.parent.uri)
     const [record, handle] = await Promise.all([
-      lexicons.getPost({
-        identity: aturi.did,
-        cid: reply.cid,
-      }),
+      lexicons.getPost(
+        aturi.did,
+        aturi.rkey
+      ),
       lexicons.resolveDID(aturi.did),
     ])
 
-    replyTo.value = `<a href="${config.bskyAppURL}/profile/${handle}/post/${aturi.key}">@${handle}</a>`
+    replyTo.value = `<a href="${appPostURL(handle,reply.uri)}">@${handle}</a>`
+  }
+
+  const appPostURL = (handle, uri) => {
+    const aturi = lexicons.parseAtUri(uri)
+    return `${config.bskyAppURL}/profile/${handle}/post/${aturi.rkey}`
   }
 </script>
