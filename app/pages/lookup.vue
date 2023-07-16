@@ -20,34 +20,49 @@
           </button>
         </div>
       </div>
-
-      <div
-        class="bg-gray-100 dark:bg-slate-700 shadow-md rounded-lg px-3 py-2 border-2"
-        v-if="userinfo.profile">
-        <!-- Profile -->
-        <div class="py-2 px-2">
-          <p>
-            DisplayName
-            <span class="text-sm text-gray-900 dark:text-slate-100">
+      <div class="text-gray-900 dark:text-slate-100">
+        <div class="flex items-center">
+          <div class="inline-flex items-center mr-3">
+            <!-- Avatar -->
+            <a v-if="!hasError" :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
+              <Avatar
+                rounded
+                bordered
+                size="lg"
+                :img="userinfo.avatarURL"
+                :alt="userinfo.details.handle"
+                class="m-2" />
+            </a>
+            <div v-else>
+              <Avatar
+                rounded
+                bordered
+                size="lg"
+                class="m-2" />
+            </div>
+          </div>
+          <div>
+            <h2 class="text-3xl" :class="{'text-red-600': hasError}">
+              <!-- Disply name -->
               {{ userinfo.profile?.value?.displayName || userinfo.details.handle }}
-            </span>
-          </p>
-          <p>
-            Handle
-            <span class="text-sm text-gray-900 dark:text-slate-100">
-              @{{ userinfo.details.handle || route.query.id || 'Loading...' }}
-            </span>
-          </p>
-          <p>
-            DID
-            <span class="text-sm italic text-gray-300 dark:text-slate-500">
+            </h2>
+            <div class="text-sm font-semibold text-gray-500 dark:text-slate-500">
+              <!-- Handle -->
+              <a :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
+               :class="{'line-through': hasError}">
+                @{{ userinfo.details.handle }}
+              </a>
+            </div>
+            <div class="text-sm font-mono text-gray-300 dark:text-slate-500">
+              <!-- DID -->
               {{ userinfo.details.did }}
-            </span>
-          </p>
-          <p class="whitespace-pre-line">
-            {{ userinfo.profile.value?.description ?? '' }}
-          </p>
+            </div>
+          </div>
         </div>
+
+        <p class="m-4 whitespace-pre-line">
+          {{ userinfo.profile.value?.description ?? '' }}
+        </p>
       </div>
 
 
@@ -157,12 +172,11 @@
     id.value = newId || ''
   })
 
-  const result = ref('')
-  // const hasError = ref(false)
+  const hasError = ref(false)
 
   lexicons.setConfig(toRaw(config))
 
-  const userinfo = ref({
+  const userinfoInitial = {
     details: {},
     profile: {},
     avatarURL: '',
@@ -172,7 +186,9 @@
     like: [],
     blocking: [],
     mute: [],
-  })
+  }
+
+  const userinfo = ref(userinfoInitial)
 
   onMounted(async () => {
     if (route.query.id) {
@@ -189,6 +205,8 @@
   }
 
   const lookup = async (identifier) => {
+    userinfo.value = userinfoInitial
+    hasError.value = false
     if (!identifier) {
       identifier = lexicons.formatIdentifier(id.value)
     }
@@ -198,25 +216,62 @@
 
     activeTab.value = 'posts'
 
-    await getDetails(identifier)
     try {
-      await getProfile(identifier)
+      await getDetails(identifier)
+      try {
+        await getProfile(identifier)
+      } catch (err) {
+        // If the profile has never been updated,
+        // it cannot be retrieved from the repository
+        console.info('No profile user: ', identifier)
+      }
+
+      try {
+        const posts = await fetchPosts(identifier, 20)
+        updateUserInfo('posts', posts)
+      } catch (err) {
+        if (isDev()) console.error(err)
+      }
+
+      try {
+        const follow = await fetchFollow(identifier, 20)
+        updateUserInfo('following', follow)
+      } catch (err) {
+        if (isDev()) console.error(err)
+      }
+
+      try {
+        const like = await fetchLike(identifier, 20)
+        updateUserInfo('like', like)
+      } catch (err) {
+        if (isDev()) console.error(err)
+      }
+
+      if (isDev()) console.log('UserInfo = ',toRaw(userinfo))
     } catch (err) {
-      // If the profile has never been updated,
-      // it cannot be retrieved from the repository
-      console.info('No profile user: ', identifier)
+      if (isDev()) console.error(err)
+      hasError.value = true
+      updateUserInfo('profile', { value: { displayName:  'Error: Unknown'} })
+      if (id.value.startsWith('did:')) {
+        userinfo.value.details = {
+          handle: 'unknown',
+          did: id.value,
+        }
+      } else {
+        userinfo.value.details = {
+          handle: id.value,
+          did: 'error:unknown:uknown',
+        }
+      }
+      if (axios.isAxiosError(err)) {
+        if (err.response.status === 400) {
+          if (err.response.data?.message) {
+            userinfo.value.profile.description = err.response.data.message
+          }
+        }
+      }
     }
 
-    const posts = await fetchPosts(identifier, 20)
-    updateUserInfo('posts', posts)
-
-    const follow = await fetchFollow(identifier, 20)
-    const like = await fetchLike(identifier, 20)
-
-    updateUserInfo('following', follow)
-    updateUserInfo('like', like)
-
-    if (isDev()) console.log('UserInfo = ',toRaw(userinfo))
   }
 
   /**
