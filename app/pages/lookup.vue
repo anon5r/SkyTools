@@ -49,6 +49,8 @@
           </p>
         </div>
       </div>
+
+
       <div class="pt-4">
         <tabs v-model="activeTab" class="p-5">
           <tab name="posts" title="Posts" id="posts">
@@ -69,7 +71,7 @@
 
 
           <tab name="following" title="Following" id="following">
-            <!-- Following-->
+            <!-- Following -->
             <div v-if="userinfo.following.length > 0">
               <ul>
                 <li v-for="record of userinfo.following" :key="record.cid">
@@ -85,9 +87,24 @@
           </tab>
 
 
-          <tab name="follower" title="Follower" id="followers">
-            Who would you like to be followed by?
-          </tab>
+          <!-- <tab name="follower" title="Follower" id="followers">
+            < !-- Followers -- >
+            <div v-if="userinfo.followers.length > 0">
+              <ul>
+                <li v-for="record of userinfo.followers" :key="record.cid">
+                  <UserField
+                    :did="record.value.subject"
+                    :handle="record.handle"
+                    :profile="record.profile"
+                    @lookup="lookup" />
+                </li>
+              </ul>
+            </div>
+            <div v-else>Who would you like to be followed by?</div>
+          </tab> -->
+
+
+
           <tab name="like" title="Like" id="like">
             <!-- Like -->
             <div v-if="userinfo.like.length > 0">
@@ -97,10 +114,10 @@
                     v-if="record.profile"
                     :appURL="config.bskyAppURL"
                     :did="lexicons.parseAtUri(record.profile.uri).did"
-                    :handle="lexicons.resolveDID(lexicons.parseAtUri(record.value.subject.uri).did)"
-                    :avatar_url="lexicons.buildAvatarURL(config.bskyService, lexicons.parseAtUri(record.value.subject.uri).did, record.profile)"
+                    :handle="record.handle"
+                    :avatar_url="record.avatarURL"
                     :display_name="record.profile.value.displayName"
-                    :post="toRaw(record)"></PostList>
+                    :post="record.post"></PostList>
                 </li>
               </ul>
             </div>
@@ -163,23 +180,6 @@
     }
   })
 
-  // /** Change pane */
-  // const handlePane = async () => {
-  //   const tabName = activeTab.value
-  //   console.log("ActiveTab = ", tabName)
-  //   switch (tabName) {
-  //     case 'posts': {
-  //       const [feeds] = await Promise.all([fetchPosts(id.value, 20)])
-  //       break;
-  //     }
-  //     case 'following': {
-  //       const [feeds] = await Promise.all(fetchFollow(id.value, 20))
-  //       break;
-  //     }
-  //   }
-  //   updateUserInfo(tabName, feeds)
-  // }
-
   const focusout = () => {
     id.value = lexicons.formatIdentifier(id.value)
   }
@@ -207,17 +207,14 @@
       console.info('No profile user: ', identifier)
     }
 
-    const posts = await fetchPosts(identifier, 10)
+    const posts = await fetchPosts(identifier, 20)
     updateUserInfo('posts', posts)
 
-    const [follow,like] = await Promise.all([
-      fetchFollow(identifier, 20),
-      fetchLike(identifier, 10)
-    ])
-console.log('lookup::follow = ', follow)
+    const follow = await fetchFollow(identifier, 20)
+    const like = await fetchLike(identifier, 20)
+
     updateUserInfo('following', follow)
     updateUserInfo('like', like)
-
 
     if (isDev()) console.log('UserInfo = ',toRaw(userinfo))
   }
@@ -317,12 +314,16 @@ console.log('lookup::follow = ', follow)
       if (response.success) {
         if (isDev()) console.log("app.bsky.feed.like = ", response.data)
         const records = response.data.records.map(async record => {
-          const post = await lexicons.getPost(lexicons.parseAtUri(record.value.subject.uri).did, lexicons.parseAtUri(record.value.subject.uri).rkey)
-          const profile = await lexicons.getProfile(lexicons.parseAtUri(record.value.subject.uri).did)
+          const recordUri = lexicons.parseAtUri(record.value.subject.uri)
+          const post = await lexicons.getPost(recordUri.did, recordUri.rkey)
+          const profile = await lexicons.getProfile(recordUri.did)
+          const handle = await lexicons.resolveDID(recordUri.did)
           return {
             ...record,
             profile: profile,
-            did: lexicons.parseAtUri(record.value.subject.uri).did,
+            did: recordUri.did,
+            handle: handle,
+            avatarURL: buildAvatarURL(recordUri.did, profile.value),
             post: post.success ? post.data : {}
           }
         })
@@ -362,6 +363,39 @@ console.log('lookup::follow = ', follow)
         })
         const resolvedFollowers = await Promise.all(records)
         if (isDev()) console.log("fetchFollow = ", resolvedFollowers)
+        return resolvedFollowers
+      } else {
+        return []
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        return [err.message]
+      }
+      if (isDev()) console.error(err)
+    }
+  }
+
+
+  /**
+   * Fetch followers
+   * @param {string} id handle or DID
+   * @param {int} limit
+   */
+  const fetchFollowers = async (id, limit = 50) => {
+    try {
+      const response = await lexicons.listRecords('app.bsky.graph.follow', id, limit)
+      if (response.success) {
+        const records = response.data.records.map(async record => {
+          const handle = await lexicons.resolveDID(record.value.subject)
+          const profile = await lexicons.getProfile(record.value.subject)
+          return {
+            ...record,
+            handle: handle,
+            profile: profile,
+          }
+        })
+        const resolvedFollowers = await Promise.all(records)
+        if (isDev()) console.log("fetchFollowers = ", resolvedFollowers)
         return resolvedFollowers
       } else {
         return []
