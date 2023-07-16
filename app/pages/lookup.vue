@@ -44,7 +44,7 @@
               {{ userinfo.details.did }}
             </span>
           </p>
-          <p>
+          <p class="whitespace-pre-line">
             {{ userinfo.profile.value?.description ?? '' }}
           </p>
         </div>
