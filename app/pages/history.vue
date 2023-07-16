@@ -68,7 +68,7 @@ import { DateTime } from 'luxon'
 import { isDev } from '@/utils/helpers'
 import { formatIdentifier, resolveHandle, getIdentityAuditLogs } from '@/utils/lexicons'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()

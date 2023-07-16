@@ -200,7 +200,7 @@
    * @param {any} value
    */
   const updateUserInfo = (item, value) => {
-    console.log('[updateUserInfo] ::', item, ' = ', value)
+    if (isDev()) console.log('[updateUserInfo] ::', item, ' = ', value)
     userinfo.value[item] = value
   }
 
@@ -231,7 +231,6 @@
       throw err
     }
   }
-
 
   /**
    * Get user profile
