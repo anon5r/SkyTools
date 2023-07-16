@@ -2,7 +2,7 @@
   <div>
     <div v-if="props.embed.$type == 'app.bsky.embed.record'">
       <!-- Embed Record -->
-      <a :href="postURL" class="block max-w-sm p-6 text-sm truncate bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+      <a :href="postURL" class="block max-w-fit p-6 text-sm truncate bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
         {{ props.embed.record.uri }}
       </a>
 

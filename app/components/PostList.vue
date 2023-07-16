@@ -22,9 +22,9 @@
             <time
               pubdate
               :datetime="props.post.value.createdAt"
-              :title="props.post.value.createdAt"
+              :title="DateTime.fromISO(props.post.value.createdAt).toString()"
               class="text-sm font-light">
-              {{ DateTime.fromISO(props.post.value.createdAt).toString() }}
+              {{ DateTime.fromISO(props.post.value.createdAt).toRelative({style: "short"}) }}
             </time>
           </a>
         </p>
@@ -75,7 +75,7 @@
         <AtHandleLink
           v-if="props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
-          class="inline-block font-light text-xs text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+          class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
           In Reply
         </AtHandleLink>
       </div>
@@ -93,7 +93,7 @@
 <script setup>
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { defineProps, onMounted, ref } from 'vue'
-  import { DateTime } from 'luxon'
+  import { Duration, DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import * as lexicons from '@/utils/lexicons'
 
