@@ -18,7 +18,7 @@
         </p>
         <p class="text-sm text-gray-600 dark:text-slate-400">
           <a
-            :href="lexicons.buildPostURL(props.handle, props.post.uri)">
+            :href="postURL">
             <time
               pubdate
               :datetime="props.post.value.createdAt"
@@ -127,23 +127,10 @@
     },
   })
 
-  // const replyTo = ref('@...')
+  const postURL = ref('#')
 
   onMounted(async () => {
-    // if (props.post.value.reply)
-    // await getReplyLink(props.post.value.reply)
+    postURL.value = await lexicons.buildPostURL(config.bskyAppURL, props.post.uri, props.handle)
   })
 
-  const getReplyLink = async reply => {
-    const aturi = lexicons.parseAtUri(reply.parent.uri)
-    const [record, handle] = await Promise.all([
-      lexicons.getPost(
-        aturi.did,
-        aturi.rkey
-      ),
-      lexicons.resolveDID(aturi.did),
-    ])
-
-    replyTo.value = `<a href="${lexicons.buildPostURL(config.bskyAppURL,reply.uri,handle)}">@${handle}</a>`
-  }
 </script>

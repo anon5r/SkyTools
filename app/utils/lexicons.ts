@@ -329,8 +329,8 @@ export const buildPostURL = async (
   handle?: string
 ) => {
   const aturi = parseAtUri(uri)
-  if (isDev()) console.log('[Lexicons] buildPostURL::aturi(parsed) = ', aturi)
-  if (isDev()) console.log('[Lexicons] buildPostURL::handle(param) = ', handle)
+  //if (isDev()) console.log('[Lexicons] buildPostURL::aturi(parsed) = ', aturi)
+  //if (isDev()) console.log('[Lexicons] buildPostURL::handle(param) = ', handle)
   if (handle === undefined) {
     try {
       handle = await resolveDID(aturi.did)
@@ -338,7 +338,7 @@ export const buildPostURL = async (
       handle = aturi.did
     }
   }
-  if (isDev()) console.log('[Lexicons] buildPostURL::handle = ', handle)
+  //if (isDev()) console.log('[Lexicons] buildPostURL::handle = ', handle)
   return `${urlPrefix}/profile/${handle}/post/${aturi.rkey}`
 }
 
