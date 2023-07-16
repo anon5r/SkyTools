@@ -9,13 +9,13 @@
             class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
             v-model="id"
             @focusout="focusout"
-            @keyup.enter="lookup"
+            @keyup.enter="lookupEvent"
             placeholder="Enter a handle or DID" />
         </div>
         <div class="p-2">
           <button
             class="bg-blue-500 dark:bg-blue-700 text-white dark:text-slate-300 rounded-md px-2 py-1"
-            @click="lookup">
+            @click.prevent="lookupEvent">
             Lookup
           </button>
         </div>
@@ -29,7 +29,7 @@
           <p>
             DisplayName
             <span class="text-sm text-gray-900 dark:text-slate-100">
-              {{ userinfo.profile?.value?.displayName || 'Loading...' }}
+              {{ userinfo.profile?.value?.displayName || userinfo.details.handle }}
             </span>
           </p>
           <p>
@@ -45,7 +45,7 @@
             </span>
           </p>
           <p>
-            {{ userinfo.profile.description }}
+            {{ userinfo.profile.value?.description ?? '' }}
           </p>
         </div>
       </div>
@@ -53,38 +53,38 @@
         <tabs v-model="activeTab" class="p-5">
           <tab name="posts" title="Posts" id="posts">
             <!-- Posts -->
-            <div v-if="userinfo.profile && userinfo.posts.length > 0">
+            <div v-if="userinfo.posts.length > 0">
               <div v-for="record of userinfo.posts" :key="record.cid">
                 <PostList
                   :config="config"
                   :did="userinfo.details.did"
                   :handle="userinfo.details.handle"
-                  :avatar_url="userinfo.avatarURL"
-                  :display_name="userinfo.profile.value.displayName"
+                  :avatar_url="userinfo.avatarURL ?? 'about:blank'"
+                  :display_name="userinfo.profile.value?.displayName ?? userinfo.details.handle"
                   :post="toRaw(record)"></PostList>
               </div>
             </div>
             <div v-else>What are they posting.</div>
           </tab>
 
+
           <tab name="following" title="Following" id="following">
             <!-- Following-->
-            <div v-if="userinfo.follow.length > 0">
+            <div v-if="userinfo.following.length > 0">
               <ul>
-                <li v-for="record of userinfo.follow" :key="record.cid">
-                  <Avatar
-                    rounded
-                    :img="lexicons.buildAvatarURL(config.bskyService, record.value.subject, record.profile)" />
-                  <a
-                    :href="`${config.bskyAppURL}/profile/${record.handle}`"
-                    class="text-sm text-gray-500 dark:text-gray-300">
-                    {{ record.profile.value.displayName }} (@{{record.handle}})
-                  </a>
+                <li v-for="record of userinfo.following" :key="record.cid">
+                  <UserField
+                    :did="record.value.subject"
+                    :handle="record.handle"
+                    :profile="record.profile"
+                    @lookup="lookup" />
                 </li>
               </ul>
             </div>
             <div v-else>Follow who you want to see.</div>
           </tab>
+
+
           <tab name="follower" title="Follower" id="followers">
             Who would you like to be followed by?
           </tab>
@@ -150,7 +150,7 @@
     profile: {},
     avatarURL: '',
     posts: [],
-    follow: [],
+    following: [],
     followers: [],
     like: [],
     blocking: [],
@@ -163,32 +163,60 @@
     }
   })
 
+  // /** Change pane */
+  // const handlePane = async () => {
+  //   const tabName = activeTab.value
+  //   console.log("ActiveTab = ", tabName)
+  //   switch (tabName) {
+  //     case 'posts': {
+  //       const [feeds] = await Promise.all([fetchPosts(id.value, 20)])
+  //       break;
+  //     }
+  //     case 'following': {
+  //       const [feeds] = await Promise.all(fetchFollow(id.value, 20))
+  //       break;
+  //     }
+  //   }
+  //   updateUserInfo(tabName, feeds)
+  // }
 
   const focusout = () => {
     id.value = lexicons.formatIdentifier(id.value)
   }
 
-  const lookup = async () => {
-    let identifier = lexicons.formatIdentifier(id.value)
+  const lookupEvent = async () => {
+    await lookup()
+  }
+
+  const lookup = async (identifier) => {
+    if (!identifier) {
+      identifier = lexicons.formatIdentifier(id.value)
+    }
     id.value = identifier
     if (route.query.id !== identifier)
       router.push({ query: { id: identifier } })
 
-    await getDetails(identifier)
-    // watch(userinfo.profile, async (updated, old) => {
-    //   if (updated !== old) {
-    //     await fetchPosts(identifier, 10)
-    //     await fetchFollow(identifier, 20)
-    //     await fetchLike(identifier, 10)
-    //   }
-    // }, { immediate: true })
-    const [posts] = await Promise.all([fetchPosts(identifier, 10)])
-//    let follow = await Promise.all(fetchFollow(identifier, 20))
-//    let like = await Promise.all(fetchLike(identifier, 10))
+    activeTab.value = 'posts'
 
+    await getDetails(identifier)
+    try {
+      await getProfile(identifier)
+    } catch (err) {
+      // If the profile has never been updated,
+      // it cannot be retrieved from the repository
+      console.info('No profile user: ', identifier)
+    }
+
+    const posts = await fetchPosts(identifier, 10)
     updateUserInfo('posts', posts)
-    // updateUserInfo('follow', follow)
-    // updateUserInfo('like', like)
+
+    const [follow,like] = await Promise.all([
+      fetchFollow(identifier, 20),
+      fetchLike(identifier, 10)
+    ])
+console.log('lookup::follow = ', follow)
+    updateUserInfo('following', follow)
+    updateUserInfo('like', like)
 
 
     if (isDev()) console.log('UserInfo = ',toRaw(userinfo))
@@ -209,14 +237,18 @@
    * @param {string} id handle or DID
    */
   const getDetails = async id => {
-    const [details, profile] = await Promise.all([
-      lexicons.describeRepo(id),
-      lexicons.getProfile(id)
-    ])
-    const url = buildAvatarURL(details.did, profile.value)
+    const details = await lexicons.describeRepo(id)
     updateUserInfo('details', details)
-    updateUserInfo('profile', profile)
-    updateUserInfo('avatarURL', url)
+  }
+
+  const getProfile = async id => {
+    const profile = await lexicons.getProfile(id)
+
+    if (profile) {
+      updateUserInfo('profile', profile)
+      const avatarURL = buildAvatarURL(userinfo.value.details.did, profile.value)
+      updateUserInfo('avatarURL', avatarURL)
+    }
   }
 
   /**
@@ -285,13 +317,13 @@
       if (response.success) {
         if (isDev()) console.log("app.bsky.feed.like = ", response.data)
         const records = response.data.records.map(async record => {
-          const post = lexicons.getPost(lexicons.parseAtUri(record.value.subject.uri).did, lexicons.parseAtUri(record.value.subject.uri).rkey)
-          const profile = lexicons.getProfile(lexicons.parseAtUri(record.value.subject.uri).did)
+          const post = await lexicons.getPost(lexicons.parseAtUri(record.value.subject.uri).did, lexicons.parseAtUri(record.value.subject.uri).rkey)
+          const profile = await lexicons.getProfile(lexicons.parseAtUri(record.value.subject.uri).did)
           return {
             ...record,
             profile: profile,
             did: lexicons.parseAtUri(record.value.subject.uri).did,
-            post: post
+            post: post.success ? post.data : {}
           }
         })
 

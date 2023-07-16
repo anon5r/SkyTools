@@ -49,7 +49,7 @@ export const formatIdentifier = (id: string) => {
   if (id.length > 0) {
     id = id.startsWith('at://') ? id.substring(5) : id
     if (!id.startsWith('did:')) id = id.startsWith('@') ? id.substring(1) : id
-    if (!id.includes('.')) {
+    if (!id.startsWith('did:') && !id.includes('.')) {
       id += config.defaultSuffix // default xxx -> xxx.bsky.social
     }
   }
@@ -307,12 +307,10 @@ export const getProfile = async (
 export const buildAvatarURL = (
   serviceURL: string,
   did: string,
-  // profile: { value: { avatar: { ref: { $link: string } } } }
   profile: AppBskyActorProfile.Record
 ) => {
   if (isDev())
     console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
-  // return `${serviceURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.value.avatar.ref.$link}`
   return `${serviceURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
 }
 
