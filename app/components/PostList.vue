@@ -82,8 +82,8 @@
       <!-- Post message -->
       {{ props.post.value.text }}
       <div v-if="props.post.value.embed">
-        <!-- Attached images -->
-        <EmbedImage :did="did" :embed="props.post.value.embed" />
+        <!-- Embeded (image, record...) -->
+        <PostEmbed :did="did" :embed="props.post.value.embed" />
       </div>
       <div v-if="props.post.value.langs" class="text-xs text-right text-gray-400 dark:text-gray-700">Lang: {{ props.post.value.langs.join(',') }}</div>
     </div>
