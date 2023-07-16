@@ -18,7 +18,7 @@
         </p>
         <p class="text-sm text-gray-600 dark:text-slate-400">
           <a
-            :href="appPostURL(props.handle, props.post.uri)">
+            :href="lexicons.buildPostURL(props.handle, props.post.uri)">
             <time
               pubdate
               :datetime="props.post.value.createdAt"
@@ -71,7 +71,14 @@
     </div>
     <div class="text-gray-500 dark:text-gray-400">
       <!-- has reply ? -->
-      <p v-if="props.post.value.reply" v-html="replyTo"></p>
+      <div>
+        <AtHandleLink
+          v-if="props.post.value.reply"
+          :aturi="props.post.value.reply.parent.uri"
+          class="inline-block font-light text-xs text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+          In Reply
+        </AtHandleLink>
+      </div>
       <!-- Post message -->
       {{ props.post.value.text }}
       <div v-if="props.post.value.embed">
@@ -120,11 +127,11 @@
     },
   })
 
-  const replyTo = ref('@...')
+  // const replyTo = ref('@...')
 
   onMounted(async () => {
-    if (props.post.value.reply)
-    await getReplyLink(props.post.value.reply)
+    // if (props.post.value.reply)
+    // await getReplyLink(props.post.value.reply)
   })
 
   const getReplyLink = async reply => {
@@ -137,11 +144,6 @@
       lexicons.resolveDID(aturi.did),
     ])
 
-    replyTo.value = `<a href="${appPostURL(handle,reply.uri)}">@${handle}</a>`
-  }
-
-  const appPostURL = (handle, uri) => {
-    const aturi = lexicons.parseAtUri(uri)
-    return `${config.bskyAppURL}/profile/${handle}/post/${aturi.rkey}`
+    replyTo.value = `<a href="${lexicons.buildPostURL(config.bskyAppURL,reply.uri,handle)}">@${handle}</a>`
   }
 </script>

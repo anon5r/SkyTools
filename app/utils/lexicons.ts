@@ -316,6 +316,32 @@ export const buildAvatarURL = (
   return `${serviceURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
 }
 
+/**
+ * Build post page URL for App
+ * @param {string} urlPrefix App URL prefix
+ * @param {string} uri At Uri
+ * @param {string} handle? Handle
+ * @returns {string}
+ */
+export const buildPostURL = async (
+  urlPrefix: string,
+  uri: string,
+  handle?: string
+) => {
+  const aturi = parseAtUri(uri)
+  if (isDev()) console.log('[Lexicons] buildPostURL::aturi(parsed) = ', aturi)
+  if (isDev()) console.log('[Lexicons] buildPostURL::handle(param) = ', handle)
+  if (handle === undefined) {
+    try {
+      handle = await resolveDID(aturi.did)
+    } catch (er) {
+      handle = aturi.did
+    }
+  }
+  if (isDev()) console.log('[Lexicons] buildPostURL::handle = ', handle)
+  return `${urlPrefix}/profile/${handle}/post/${aturi.rkey}`
+}
+
 export default {
   isDev,
   getConfig,
@@ -332,4 +358,5 @@ export default {
   buildAvatarURL,
   getProfile,
   describeRepo,
+  buildPostURL,
 }

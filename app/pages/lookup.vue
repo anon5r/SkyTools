@@ -191,7 +191,7 @@
     // updateUserInfo('like', like)
 
 
-    if (isDev()) console.log(toRaw(userinfo))
+    if (isDev()) console.log('UserInfo = ',toRaw(userinfo))
   }
 
   /**
