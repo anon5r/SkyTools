@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-  import { defineProps } from 'vue'
+  import { defineProps, ref, onMounted } from 'vue'
   import { useAppConfig } from 'nuxt/app'
   import { parseAtUri, resolveDID, buildPostURL } from '@/utils/lexicons'
 
