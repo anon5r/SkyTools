@@ -2,6 +2,7 @@
   <div
     class="flex flex-col items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-2xl">
+      <ClientOnly>
       <div
         class="my-4 flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
         <div class="w-full p-2">
@@ -153,6 +154,7 @@
           </tab> -->
         </tabs>
       </div>
+      </ClientOnly>
     </div>
   </div>
 </template>
