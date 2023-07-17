@@ -2,7 +2,7 @@
   <div class="w-full max-w-xs mx-auto">
     <form
       class="bg-white dark:bg-slate-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h4 class="text-2xl font-bold text-base pb-4">Sign-in to Bluesky</h4>
+      <h4 class="text-2xl font-bold pb-4">Sign-in to Bluesky</h4>
       <div class="mb-4">
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
@@ -37,7 +37,7 @@
         <p class="text-sm text-right">
           <a
             :href="`${config.bskyAppURL}/settings/app-passwords`"
-            class="text-blue-600 dark:text-blue-800 underline">
+            class="text-blue-600 dark:text-blue-400 underline">
             Configure App Password
           </a>
         </p>

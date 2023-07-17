@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col justify-start items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
+    class="flex justify-center items-start lg:items-center pt-9 lg:pt-0 min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-md">
       <div
         class="border-2 mt-4 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">

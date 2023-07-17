@@ -71,7 +71,7 @@
                       <ClientOnly>
                         <font-awesome-icon
                           :icon="['fas', 'user-lock']"
-                          class="text-gray-400 dark:text-gray-700"
+                          class="text-gray-400 dark:text-gray-400"
                           tooltip="Authorization required" />
                       </ClientOnly>
                     </span>
