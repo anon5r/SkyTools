@@ -72,7 +72,7 @@
   onMounted(() => {
     if (props.profile.value.avatar) {
       const url = buildAvatarURL(
-        config.bskyService,
+        config.cdnPrefix,
         props.did,
         props.profile.value
       )

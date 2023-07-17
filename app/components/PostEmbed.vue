@@ -13,9 +13,7 @@
       <img
         v-for="img of props.embed.images"
         :key="img.image.ref.toString()"
-        :src="`${config.bskyService}/xrpc/com.atproto.sync.getBlob?did=${
-          props.did
-        }&cid=${img.image.ref.toString()}`"
+        :src="`${config.cdnPrefix}/image/${props.did}/${img.image.ref.toString()}`"
         :alt="img.alt"
         class="h-auto max-w-xs" />
     </div>

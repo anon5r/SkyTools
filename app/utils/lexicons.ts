@@ -219,6 +219,12 @@ export const listRecords = async (
   }
 }
 
+/**
+ * Get blob by sync
+ * @param {string} did
+ * @param {string} cid
+ * @returns
+ */
 export const getBlob = async (did: string, cid: string): Promise<string> => {
   try {
     const response = await getAgent().com.atproto.sync.getBlob({
@@ -305,13 +311,14 @@ export const getProfile = async (
  * @returns
  */
 export const buildAvatarURL = (
-  serviceURL: string,
+  cdnURL: string,
   did: string,
   profile: AppBskyActorProfile.Record
 ) => {
   if (isDev())
     console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
-  return `${serviceURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
+  //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
+  return `${cdnURL}/image/${did}/${profile.avatar?.ref}`
 }
 
 /**

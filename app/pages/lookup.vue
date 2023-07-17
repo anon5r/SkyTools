@@ -332,7 +332,7 @@
    * Build avatar URL
    */
   const buildAvatarURL = (did, profile) => {
-    return lexicons.buildAvatarURL(config.bskyService, did, profile)
+    return lexicons.buildAvatarURL(config.cdnPrefix, did, profile)
   }
 
   /**

@@ -10,6 +10,7 @@ export default {
       serviceAppUrl: ' https://bsky.app',
       adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
+      cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
     },
   },
   app: {
@@ -109,6 +110,7 @@ export default {
       (process.env.INVITE_CODE_FREQ &&
         JSON.parse(process.env.INVITE_CODE_FREQ)) ||
       ({ weeks: 2 } as object),
+    cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
   },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
