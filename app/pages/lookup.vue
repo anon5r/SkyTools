@@ -2,8 +2,9 @@
   <div
     class="flex flex-col items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-2xl">
+
       <div
-        class="flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
+        class="my-4 flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
         <div class="w-full p-2">
           <input
             class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
@@ -14,12 +15,13 @@
         </div>
         <div class="p-2">
           <button
-            class="bg-blue-500 dark:bg-blue-700 text-white dark:text-slate-300 rounded-md px-2 py-1"
+            class="bg-gray-400 dark:bg-slate-800 text-white dark:text-slate-300 rounded-md px-2 py-1"
             @click.prevent="lookupEvent">
             Lookup
           </button>
         </div>
       </div>
+
       <div class="text-gray-900 dark:text-slate-100">
         <div class="flex items-center">
           <div class="inline-flex items-center mr-3">
@@ -31,36 +33,36 @@
                 size="lg"
                 :img="userinfo.avatarURL"
                 :alt="userinfo.details.handle"
-                class="m-2" />
+                class="m-2 min-w-max" />
             </a>
             <div v-else>
               <Avatar
                 rounded
                 bordered
                 size="lg"
-                class="m-2" />
+                class="m-2 min-w-max" />
             </div>
           </div>
           <div>
             <h2 class="text-3xl" :class="{'text-red-600': hasError}">
               <!-- Disply name -->
-              {{ userinfo.profile?.value?.displayName || userinfo.details.handle }}
+              {{ userinfo.profile?.value?.displayName || userinfo.details.handle || 'None' }}
             </h2>
             <div class="text-sm font-semibold text-gray-500 dark:text-slate-500">
               <!-- Handle -->
               <a :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
-               :class="{'line-through': hasError}">
-                @{{ userinfo.details.handle }}
+               :class="{'line-through': hasError}" class="before:content-['@']">
+                {{ userinfo.details.handle || 'none.example' }}
               </a>
             </div>
-            <div class="text-sm font-mono text-gray-300 dark:text-slate-500">
+            <div class="text-sm sm:text-xs font-mono sm:font-thin text-gray-400 dark:text-slate-500">
               <!-- DID -->
               {{ userinfo.details.did }}
             </div>
           </div>
         </div>
 
-        <p class="m-4 whitespace-pre-line">
+        <p class="m-4 min-w-strech whitespace-pre-line">
           {{ userinfo.profile.value?.description ?? '' }}
         </p>
       </div>
@@ -132,18 +134,20 @@
                     :handle="record.handle"
                     :avatar_url="record.avatarURL"
                     :display_name="record.profile.value.displayName"
-                    :post="record.post"></PostList>
+                    :post="record.post"
+                    @lookup="lookup"></PostList>
                 </li>
               </ul>
             </div>
             <div v-else>What would you like ?</div>
           </tab>
+          <!--
           <tab name="blocking" title="Blocking" id="blocking" :disabled="true">
             Blocking list here...
           </tab>
           <tab name="mute" title="Mute" id="mute" :disabled="true">
             Muting list here...
-          </tab>
+          </tab> -->
         </tabs>
       </div>
     </div>
@@ -152,14 +156,13 @@
 
 <script setup>
   import axios from 'axios'
-  import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import { ref, onMounted, toRaw } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
-  import { AppBskyFeedPost, AppBskyActorProfile } from '@atproto/api'
+
 
   const activeTab = ref('posts')
 
@@ -370,17 +373,27 @@
         if (isDev()) console.log("app.bsky.feed.like = ", response.data)
         const records = response.data.records.map(async record => {
           const recordUri = lexicons.parseAtUri(record.value.subject.uri)
-          const post = await lexicons.getPost(recordUri.did, recordUri.rkey)
-          const profile = await lexicons.getProfile(recordUri.did)
-          const handle = await lexicons.resolveDID(recordUri.did)
-          return {
-            ...record,
-            profile: profile,
-            did: recordUri.did,
-            handle: handle,
-            avatarURL: buildAvatarURL(recordUri.did, profile.value),
-            post: post.success ? post.data : {}
+          let post
+          try {
+            post = await lexicons.getPost(recordUri.did, recordUri.rkey)
+          } catch (err) {
+            post = {
+              value: {
+                createdAt: '----------',
+                text: 'The post may have been deleted.'
+              }
+            }
           }
+            const profile = await lexicons.getProfile(recordUri.did)
+            const handle = await lexicons.resolveDID(recordUri.did)
+            return {
+              ...record,
+              profile: profile,
+              did: recordUri.did,
+              handle: handle,
+              avatarURL: buildAvatarURL(recordUri.did, profile.value),
+              post: post.success ? post.data : {}
+            }
         })
 
         const likeList = await Promise.all(records);

@@ -1,11 +1,11 @@
 <template>
   <a :href="postURL" class="text-blue-700 dark:text-blue-500">
-    <slot>@{{handle}}</slot>
+    <slot>@{{ handle }}</slot>
   </a>
 </template>
 
 <script setup>
-  import { defineProps } from 'vue';
+  import { defineProps } from 'vue'
   import { useAppConfig } from 'nuxt/app'
   import { parseAtUri, resolveDID, buildPostURL } from '@/utils/lexicons'
 
@@ -17,7 +17,7 @@
     aturi: {
       type: String,
       require: true,
-    }
+    },
   })
 
   onMounted(async () => {

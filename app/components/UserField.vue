@@ -1,16 +1,12 @@
 <template>
-  <div class="px-4 py-4 my-5 rounded-md bg-gray-300 dark:bg-slate-800">
+  <div class="px-4 py-4 my-5 rounded-md bg-white dark:bg-slate-800">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
-            <Avatar
-              rounded
-              :img="avatarURL"
-              :alt="props.handle"
-              class="mr-3" />
+            <Avatar rounded :img="avatarURL" :alt="props.handle" class="mr-3" />
           </a>
         </div>
         <div>
@@ -27,9 +23,9 @@
         </div>
       </div>
       <div>
-
         <p class="text-sm text-gray-600 dark:text-slate-400">
-          <button type="button"
+          <button
+            type="button"
             class="inline-block font-medium text-base text-blue-600 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-blue-700 dark:text-blue-700 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
             @click.prevent="clickLookup">
             Lookup
@@ -45,45 +41,46 @@
 </template>
 
 <script setup>
-import { Avatar } from 'flowbite-vue'
-import { useAppConfig } from 'nuxt/app'
-import { defineProps, defineEmits, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { buildAvatarURL } from '@/utils/lexicons'
+  import { Avatar } from 'flowbite-vue'
+  import { useAppConfig } from 'nuxt/app'
+  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { buildAvatarURL } from '@/utils/lexicons'
 
-const config = useAppConfig()
-const router = useRouter()
+  const config = useAppConfig()
 
-const props = defineProps({
-  did: String,
-  profile: {
-    /* AppBskyActorProfile.Record */
-    type: Object,
-    default: () => {
-      return {
-        displayName: '',
-        description: '',
-        avatar: '',
-        banner: null,
-      }
+  const props = defineProps({
+    did: String,
+    profile: {
+      /* AppBskyActorProfile.Record */
+      type: Object,
+      default: () => {
+        return {
+          displayName: '',
+          description: '',
+          avatar: '',
+          banner: null,
+        }
+      },
     },
-  },
-  handle: String,
-})
+    handle: String,
+  })
 
-const emits = defineEmits({lookup: null})
+  const emits = defineEmits({ lookup: null })
 
-const avatarURL = ref('')
+  const avatarURL = ref('')
 
-onMounted(() => {
-  if (props.profile.value.avatar) {
-    const url = buildAvatarURL(config.bskyService, props.did, props.profile.value)
-    avatarURL.value = url
+  onMounted(() => {
+    if (props.profile.value.avatar) {
+      const url = buildAvatarURL(
+        config.bskyService,
+        props.did,
+        props.profile.value
+      )
+      avatarURL.value = url
+    }
+  })
+
+  const clickLookup = () => {
+    emits('lookup', props.handle)
   }
-})
-
-const clickLookup = () => {
-  emits('lookup', props.handle)
-}
-
 </script>

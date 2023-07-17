@@ -1,12 +1,12 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
+    class="flex flex-col justify-start items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-md">
-      <div class="border-2 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
+      <div class="border-2 mt-4 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
         <div class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
           Enter current handle or DID
         </div>
-        <div class="flex items-center bg-gray-200 dark:bg-slate-700 rounded-md">
+        <div class="flex items-center m-2  bg-gray-200 dark:bg-slate-700 rounded-md">
           <div class="w-full p-2">
             <input
               class="bg-transparent rounded-md w-full text-gray-700 dark:text-gray-300"

@@ -10,7 +10,7 @@
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
-              class="mr-3" />
+              class="mr-3 min-w-max" />
           </a>
         </div>
         <div>
@@ -20,7 +20,8 @@
           </a>
           <div class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
+
+            <a :href="`${props.did}`" @click.prevent="clickLookup">
               @{{ props.handle }}
             </a>
           </div>
@@ -34,7 +35,11 @@
               :datetime="props.post.value.createdAt"
               :title="DateTime.fromISO(props.post.value.createdAt).toString()"
               class="text-sm font-light">
-              {{ DateTime.fromISO(props.post.value.createdAt).toRelative({style: "short"}) }}
+              {{
+                DateTime.fromISO(props.post.value.createdAt).toRelative({
+                  style: 'short',
+                })
+              }}
             </time>
           </a>
         </div>
@@ -52,7 +57,9 @@
         </AtHandleLink>
       </div>
       <!-- Post message -->
-      {{ props.post.value.text }}
+      <div class="break-words">
+        {{ props.post.value.text }}
+      </div>
       <div v-if="props.post.value.embed">
         <!-- Embeded (image, record...) -->
         <PostEmbed :did="did" :embed="props.post.value.embed" />
@@ -60,16 +67,19 @@
     </div>
 
     <div class="flex justify-end">
-      <div v-if="props.post.value.langs" class="justify-start items-baseline text-xs text-right text-gray-400 dark:text-gray-700">Lang: {{ props.post.value.langs.join(',') }}</div>
+      <div
+        v-if="props.post.value.langs"
+        class="justify-start items-baseline text-xs text-right text-gray-400 dark:text-gray-700">
+        Lang: {{ props.post.value.langs.join(',') }}
+      </div>
     </div>
-
   </article>
 </template>
 
 <script setup>
-  import { Avatar, Tabs, Tab } from 'flowbite-vue'
-  import { defineProps, onMounted, ref } from 'vue'
-  import { Duration, DateTime } from 'luxon'
+  import { Avatar } from 'flowbite-vue'
+  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import * as lexicons from '@/utils/lexicons'
 
@@ -103,10 +113,19 @@
     },
   })
 
+  const emits = defineEmits({ lookup: null })
+
   const postURL = ref('#')
 
   onMounted(async () => {
-    postURL.value = await lexicons.buildPostURL(config.bskyAppURL, props.post.uri, props.handle)
+    postURL.value = await lexicons.buildPostURL(
+      config.bskyAppURL,
+      props.post.uri,
+      props.handle
+    )
   })
 
+  const clickLookup = () => {
+    emits('lookup', props.handle)
+  }
 </script>

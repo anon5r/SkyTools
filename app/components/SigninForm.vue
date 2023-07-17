@@ -21,7 +21,7 @@
             <font-awesome-icon :icon="['fas', 'key']" class="pr-2" /> App Password
           </label>
           <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
             v-model="password"
             type="password"
@@ -29,6 +29,9 @@
             placeholder="xxxx-xxxx-xxxx-xxxx"
             @input="validatePassword"
           />
+          <p class="text-sm text-right">
+            <a :href="`${config.bskyAppURL}/settings/app-passwords`" class="text-blue-600 dark:text-blue-800 underline">Configure App Password</a>
+          </p>
           <p class="text-red-500 text-xs italic" v-show="validateError">{{ validateError }}</p>
         </div>
         <div class="flex items-center justify-between">
@@ -71,7 +74,7 @@
 
   const validateHandle =() => {
     if (handle?.value.length > 0 && !handle.value.includes('.')) {
-      handle.value = handle.value + pds
+      handle.value += pds
     }
   }
 
