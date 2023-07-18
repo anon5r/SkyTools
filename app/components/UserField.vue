@@ -6,13 +6,13 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
-            <Avatar rounded :img="avatarURL" :alt="props.handle" class="mr-3" />
+            <Avatar rounded :img="avatarURL" :alt="props.handle" class="mr-3 min-w-max" />
           </a>
         </div>
         <div>
           <!-- DisplayName -->
           <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
-            {{ props.profile.value.displayName }}
+            {{ props.profile ? props.profile.value.displayName : props.handle }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
@@ -35,7 +35,7 @@
     </div>
     <div class="text-sm pl-14 pr-16 max-w-fit truncate">
       <!-- Description -->
-      {{ props.profile.value.description }}
+      {{ props.profile ? props.profile.value.description : '' }}
     </div>
   </div>
 </template>
@@ -55,10 +55,12 @@
       type: Object,
       default: () => {
         return {
-          displayName: '',
-          description: '',
-          avatar: '',
-          banner: null,
+          value: {
+            displayName: '',
+            description: '',
+            avatar: '',
+            banner: null,
+          }
         }
       },
     },
@@ -70,13 +72,15 @@
   const avatarURL = ref('')
 
   onMounted(() => {
-    if (props.profile.value.avatar) {
-      const url = buildAvatarURL(
-        config.cdnPrefix,
-        props.did,
-        props.profile.value
-      )
-      avatarURL.value = url
+    if (props.profile) {
+      if (props.profile.value.avatar) {
+        const url = buildAvatarURL(
+          config.cdnPrefix,
+          props.did,
+          props.profile.value
+        )
+        avatarURL.value = url
+      }
     }
   })
 

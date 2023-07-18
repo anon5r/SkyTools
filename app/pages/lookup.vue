@@ -194,7 +194,7 @@
     following: [],
     followers: [],
     like: [],
-    blocking: [],
+    block: [],
     mute: [],
   }
 
@@ -205,6 +205,8 @@
       await lookup()
     }
   })
+
+  computed
 
   const focusout = () => {
     id.value = lexicons.formatIdentifier(id.value)
@@ -261,6 +263,12 @@
     } catch (err) {
       if (isDev()) console.error(err)
       hasError.value = true
+      updateUserInfo('posts', [])
+      updateUserInfo('following', [])
+      updateUserInfo('followers', [])
+      updateUserInfo('like', [])
+      updateUserInfo('block', [])
+      updateUserInfo('mute', [])
       updateUserInfo('profile', { value: { displayName: 'Error: Unknown' } })
       if (id.value.startsWith('did:')) {
         userinfo.value.details = {
@@ -419,8 +427,23 @@
       )
       if (response.success) {
         const records = response.data.records.map(async record => {
-          const handle = await lexicons.resolveDID(record.value.subject)
-          const profile = await lexicons.getProfile(record.value.subject)
+          let handle = '', profile = {}
+          try {
+            handle = await lexicons.resolveDID(record.value.subject)
+            profile = await lexicons.getProfile(record.value.subject)
+          } catch (err) {
+            // following, but the account has been removed
+            console.info('No exit record: ', record.value.subject)
+            handle = record.value.subject
+            profile = {
+              value: {
+                displayName: record.value.subject,
+                description: '',
+                avatar: '',
+                banner: null
+              }
+            }
+          }
           return {
             ...record,
             handle: handle,

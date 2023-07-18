@@ -21,7 +21,7 @@ let config = {
 }
 
 export const setConfig = (newConfig: typeof config) => {
-  if (isDev()) console.log('[Lexicons] setConfig::newConfig = ', newConfig)
+  // if (isDev()) console.log('[Lexicons] setConfig::newConfig = ', newConfig)
   config = { ...config, ...newConfig }
   atp = new AtpAgent({ service: config.bskyService })
 }
@@ -74,8 +74,8 @@ export const resolveDID = async (
     const res = await axios.get(requestUrl)
 
     if (res.data?.did) {
-      if (isDev())
-        console.log('[Lexicons] resolveDID::response.data = ', res.data)
+      // if (isDev())
+      //   console.log('[Lexicons] resolveDID::response.data = ', res.data)
       return res.data.did as string
     } else if (res.data?.alsoKnownAs) {
       const handle = res.data.alsoKnownAs[0]
