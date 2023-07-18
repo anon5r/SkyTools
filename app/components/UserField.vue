@@ -11,12 +11,12 @@
         </div>
         <div>
           <!-- DisplayName -->
-          <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
+          <a :href="`${config.bskyAppURL}/profile/${props.handle}`" class="sm:truncate">
             {{ props.profile ? props.profile.value.displayName : props.handle }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
+            <a :href="`${config.bskyAppURL}/profile/${props.handle}`" class="sm:truncate">
               @{{ props.handle }}
             </a>
           </p>

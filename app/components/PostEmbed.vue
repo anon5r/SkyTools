@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="m-2">
     <div v-if="props.embed.$type == 'app.bsky.embed.record'">
       <!-- Embed Record -->
       <a
@@ -8,16 +8,22 @@
         {{ props.embed.record.uri }}
       </a>
     </div>
-    <div v-if="props.embed.$type == 'app.bsky.embed.images'">
+    <div
+      v-if="props.embed.$type == 'app.bsky.embed.images'"
+      class="flex flex-wrap">
       <!-- Display image -->
-      <img
-        v-for="img of props.embed.images"
-        :key="img.image.ref.toString()"
-        :src="`${config.cdnPrefix}/image/${
-          props.did
-        }/${img.image.ref.toString()}`"
-        :alt="img.alt"
-        class="flex-inline h-auto max-w-xs rounded-md m-4" />
+      <div class="grid md:grid-cols-2 grid-flow-dense auto-cols-max gap-4 max-w-fit">
+        <div v-for="img of props.embed.images"
+            :key="img.image.ref.toString()"
+            class="flex">
+          <img
+            :src="`${config.cdnPrefix}/image/${
+              props.did
+            }/${img.image.ref.toString()}`"
+            :alt="img.alt"
+            class="h-auto max-w-xs rounded-lg" />
+          </div>
+        </div>
     </div>
   </div>
 </template>

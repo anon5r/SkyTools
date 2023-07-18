@@ -13,14 +13,13 @@
               class="mr-3 min-w-max" />
           </a>
         </div>
-        <div>
+        <div class="truncate">
           <!-- DisplayName -->
           <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
             {{ props.display_name }}
           </a>
-          <div class="text-xs font-mono text-gray-500 dark:text-slate-500">
+          <div class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-
             <a :href="`${props.did}`" @click.prevent="clickLookup">
               @{{ props.handle }}
             </a>

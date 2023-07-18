@@ -1,7 +1,7 @@
 <template>
   <div
     class="flex flex-col items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
-    <div class="w-full max-w-2xl">
+    <div class="w-full max-w-3xl">
       <ClientOnly>
       <div
         class="my-4 flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
@@ -61,7 +61,7 @@
               </a>
             </div>
             <div
-              class="text-sm sm:text-xs font-mono sm:font-thin text-gray-400 dark:text-slate-500">
+              class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500">
               <!-- DID -->
               {{ userinfo.details.did }}
             </div>
