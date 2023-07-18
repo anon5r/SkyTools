@@ -84,7 +84,7 @@
   const validateError = ref('')
   const pds = route.params.service
     ? `.${route.params.service}`
-    : config.defaultSuffix
+    : `.${config.defaultSuffix}`
 
   const validateHandle = () => {
     if (handle.value.length > 0 && !handle.value.includes('.')) {

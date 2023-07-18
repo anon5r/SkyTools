@@ -12,18 +12,20 @@
       v-if="props.embed.$type == 'app.bsky.embed.images'"
       class="flex flex-wrap">
       <!-- Display image -->
-      <div class="grid md:grid-cols-2 grid-flow-dense auto-cols-max gap-4 max-w-fit">
-        <div v-for="img of props.embed.images"
-            :key="img.image.ref.toString()"
-            class="flex">
-          <img
-            :src="`${config.cdnPrefix}/image/${
-              props.did
-            }/${img.image.ref.toString()}`"
-            :alt="img.alt"
-            class="h-auto max-w-xs rounded-lg" />
-          </div>
+      <div
+        class="grid md:grid-cols-2 grid-flow-dense auto-cols-max gap-4 max-w-fit">
+        <div
+          v-for="img of props.embed.images"
+          :key="img.image.ref.toString()"
+          class="flex">
+          <a :href="`${config.cdnPrefix}/${config.defaultPDS}/image/${props.did}/${img.image.ref.toString()}`" target="_blank">
+            <img
+              :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${props.did}/${img.image.ref.toString()}`"
+              :alt="img.alt"
+              class="h-auto max-w-xs rounded-lg" />
+          </a>
         </div>
+      </div>
     </div>
   </div>
 </template>

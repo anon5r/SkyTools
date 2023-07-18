@@ -5,6 +5,7 @@ export default {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
 
+      defaultPDS: 'bsky.social',
       atprotoServiceSuffix: '.bsky.social',
       atprotoService: 'https://bsky.social',
       serviceAppUrl: ' https://bsky.app',
@@ -101,6 +102,7 @@ export default {
     title: 'SkyTools' as string,
     defaultSuffix:
       process.env.ATPROTO_SERVICE_SUFFIX || ('.bsky.social' as string),
+    defaultPDS: process.env.PDS_DEFAULT || ('bsky.social' as string),
     bskyService:
       process.env.ATPROTO_SERVICE || ('https://bsky.social' as string),
     bskyAppURL: process.env.SERVICE_APP_URL || ('https://bsky.app' as string),

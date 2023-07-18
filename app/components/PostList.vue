@@ -1,5 +1,6 @@
 <template>
-  <article class="p-6 mb-6 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
+  <article
+    class="p-6 mb-6 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -18,7 +19,8 @@
           <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
             {{ props.display_name }}
           </a>
-          <div class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
+          <div
+            class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <a :href="`${props.did}`" @click.prevent="clickLookup">
               @{{ props.handle }}

@@ -1,20 +1,24 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
   AppBskyFeedPost,
-  AtUri,
-  AtpAgent,
+  // AtUri,
+  // AtpAgent,
   ComAtprotoRepoGetRecord,
   ComAtprotoRepoListRecords,
 } from '@atproto/api'
-import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
+import { AtUri } from '@atproto/uri'
+// import { AtpAgent } from '@atproto/api/dist/agent'
+import * as api from '@atproto/api'
+const { AtpAgent } = api
 
 const plcURL = 'https://plc.directory'
-let atp: AtpAgent | null = null
+let atp: api.AtpAgent | null = null
 
 let config = {
-  defaultSuffix: '.bsky.social' as string,
+  defaultPDS: 'bsky.social' as string,
+  defaultSuffix: 'bsky.social' as string,
   bskyService: 'https://bsky.social' as string,
   bskyAppURL: 'https://bsky.app' as string,
   adminDID: 'did:bsky:admin' as string,
@@ -27,6 +31,7 @@ export const setConfig = (newConfig: typeof config) => {
 }
 
 export const getConfig = (): {
+  defaultPDS: string
   defaultSuffix: string
   bskyService: string
   bskyAppURL: string
@@ -50,7 +55,7 @@ export const formatIdentifier = (id: string) => {
     id = id.startsWith('at://') ? id.substring(5) : id
     if (!id.startsWith('did:')) id = id.startsWith('@') ? id.substring(1) : id
     if (!id.startsWith('did:') && !id.includes('.')) {
-      id += config.defaultSuffix // default xxx -> xxx.bsky.social
+      id += `.${config.defaultSuffix}` // default xxx -> xxx.bsky.social
     }
   }
   return id
@@ -317,7 +322,7 @@ export const buildAvatarURL = (
   if (isDev())
     console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
   //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
-  return `${cdnURL}/image/${did}/${profile.avatar?.ref}`
+  return `${cdnURL}/${config.defaultPDS}/image/${did}/${profile.avatar?.ref}`
 }
 
 /**

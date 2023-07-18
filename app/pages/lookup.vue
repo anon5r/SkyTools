@@ -3,113 +3,115 @@
     class="flex flex-col items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-3xl">
       <ClientOnly>
-      <div
-        class="my-4 flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
-        <div class="w-full p-2">
-          <input
-            class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
-            v-model="id"
-            @focusout="focusout"
-            @keyup.enter="lookupEvent"
-            placeholder="Enter a handle or DID" />
-        </div>
-        <div class="p-2">
-          <button
-            class="bg-gray-400 dark:bg-slate-800 text-white dark:text-slate-300 rounded-md px-2 py-1"
-            @click.prevent="lookupEvent">
-            Lookup
-          </button>
-        </div>
-      </div>
-
-      <div class="text-gray-900 dark:text-slate-100">
-        <div class="flex items-center">
-          <div class="inline-flex items-center mr-3">
-            <!-- Avatar -->
-            <a
-              v-if="!hasError"
-              :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
-              <Avatar
-                rounded
-                bordered
-                size="lg"
-                :img="userinfo.avatarURL"
-                :alt="userinfo.details.handle"
-                class="m-2 min-w-max" />
-            </a>
-            <div v-else>
-              <Avatar rounded bordered size="lg" class="m-2 min-w-max" />
-            </div>
+        <div
+          class="my-4 flex flex-row justify-between items-center bg-gray-200 dark:bg-slate-700 rounded-md max-w-lg">
+          <div class="w-full p-2">
+            <input
+              class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
+              v-model="id"
+              @focusout="focusout"
+              @keyup.enter="lookupEvent"
+              placeholder="Enter a handle or DID" />
           </div>
-          <div>
-            <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
-              <!-- Disply name -->
-              {{
-                userinfo.profile?.value?.displayName ||
-                userinfo.details.handle ||
-                'None'
-              }}
-            </h2>
-            <div
-              class="text-sm font-semibold text-gray-500 dark:text-slate-500">
-              <!-- Handle -->
+          <div class="p-2">
+            <button
+              class="bg-gray-400 dark:bg-slate-800 text-white dark:text-slate-300 rounded-md px-2 py-1"
+              @click.prevent="lookupEvent">
+              Lookup
+            </button>
+          </div>
+        </div>
+
+        <div class="text-gray-900 dark:text-slate-100">
+          <div class="flex items-center">
+            <div class="inline-flex items-center mr-3">
+              <!-- Avatar -->
               <a
-                :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
-                :class="{ 'line-through': hasError }"
-                class="before:content-['@']">
-                {{ userinfo.details.handle || 'none.example' }}
+                v-if="!hasError"
+                :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
+                <Avatar
+                  rounded
+                  bordered
+                  size="lg"
+                  :img="userinfo.avatarURL"
+                  :alt="userinfo.details.handle"
+                  class="m-2 min-w-max" />
               </a>
-            </div>
-            <div
-              class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500">
-              <!-- DID -->
-              {{ userinfo.details.did }}
-            </div>
-          </div>
-        </div>
-
-        <p class="m-4 min-w-strech whitespace-pre-line">
-          {{ userinfo.profile.value?.description ?? '' }}
-        </p>
-      </div>
-
-      <div class="pt-4">
-        <tabs v-model="activeTab" class="p-5">
-          <tab name="posts" title="Posts" id="posts">
-            <!-- Posts -->
-            <div v-if="userinfo.posts.length > 0">
-              <div v-for="record of userinfo.posts" :key="record.cid">
-                <PostList
-                  :config="config"
-                  :did="userinfo.details.did"
-                  :handle="userinfo.details.handle"
-                  :avatar_url="userinfo.avatarURL ?? 'about:blank'"
-                  :display_name="userinfo.profile
-                    ? userinfo.profile.value.displayName
-                    : userinfo.details.handle"
-                  :post="toRaw(record)"></PostList>
+              <div v-else>
+                <Avatar rounded bordered size="lg" class="m-2 min-w-max" />
               </div>
             </div>
-            <div v-else>There are no posts.</div>
-          </tab>
-
-          <tab name="following" title="Following" id="following">
-            <!-- Following -->
-            <div v-if="userinfo.following.length > 0">
-              <ul>
-                <li v-for="record of userinfo.following" :key="record.cid">
-                  <UserField
-                    :did="record.value.subject"
-                    :handle="record.handle"
-                    :profile="record.profile"
-                    @lookup="lookup" />
-                </li>
-              </ul>
+            <div>
+              <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
+                <!-- Disply name -->
+                {{
+                  userinfo.profile?.value?.displayName ||
+                  userinfo.details.handle ||
+                  'None'
+                }}
+              </h2>
+              <div
+                class="text-sm font-semibold text-gray-500 dark:text-slate-500">
+                <!-- Handle -->
+                <a
+                  :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
+                  :class="{ 'line-through': hasError }"
+                  class="before:content-['@']">
+                  {{ userinfo.details.handle || 'none.example' }}
+                </a>
+              </div>
+              <div
+                class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500">
+                <!-- DID -->
+                {{ userinfo.details.did }}
+              </div>
             </div>
-            <div v-else>No one follows</div>
-          </tab>
+          </div>
 
-          <!-- <tab name="follower" title="Follower" id="followers">
+          <p class="m-4 min-w-strech whitespace-pre-line">
+            {{ userinfo.profile.value?.description ?? '' }}
+          </p>
+        </div>
+
+        <div class="pt-4">
+          <tabs v-model="activeTab" class="p-5">
+            <tab name="posts" title="Posts" id="posts">
+              <!-- Posts -->
+              <div v-if="userinfo.posts.length > 0">
+                <div v-for="record of userinfo.posts" :key="record.cid">
+                  <PostList
+                    :config="config"
+                    :did="userinfo.details.did"
+                    :handle="userinfo.details.handle"
+                    :avatar_url="userinfo.avatarURL ?? 'about:blank'"
+                    :display_name="
+                      userinfo.profile
+                        ? userinfo.profile.value.displayName
+                        : userinfo.details.handle
+                    "
+                    :post="toRaw(record)"></PostList>
+                </div>
+              </div>
+              <div v-else>There are no posts.</div>
+            </tab>
+
+            <tab name="following" title="Following" id="following">
+              <!-- Following -->
+              <div v-if="userinfo.following.length > 0">
+                <ul>
+                  <li v-for="record of userinfo.following" :key="record.cid">
+                    <UserField
+                      :did="record.value.subject"
+                      :handle="record.handle"
+                      :profile="record.profile"
+                      @lookup="lookup" />
+                  </li>
+                </ul>
+              </div>
+              <div v-else>No one follows</div>
+            </tab>
+
+            <!-- <tab name="follower" title="Follower" id="followers">
             < !-- Followers -- >
             <div v-if="userinfo.followers.length > 0">
               <ul>
@@ -125,35 +127,37 @@
             <div v-else>No followers</div>
           </tab> -->
 
-          <tab name="like" title="Like" id="like">
-            <!-- Like -->
-            <div v-if="userinfo.like.length > 0">
-              <ul>
-                <li v-for="record of userinfo.like" :key="record.cid">
-                  <PostList
-                    :appURL="config.bskyAppURL"
-                    :did="record.did"
-                    :handle="record.handle"
-                    :avatar_url="record.avatarURL"
-                    :display_name="record.profile
-                      ? record.profile.value.displayName
-                      : record.handle"
-                    :post="record.post"
-                    @lookup="lookup"></PostList>
-                </li>
-              </ul>
-            </div>
-            <div v-else>There are no liked posts.</div>
-          </tab>
-          <!--
+            <tab name="like" title="Like" id="like">
+              <!-- Like -->
+              <div v-if="userinfo.like.length > 0">
+                <ul>
+                  <li v-for="record of userinfo.like" :key="record.cid">
+                    <PostList
+                      :appURL="config.bskyAppURL"
+                      :did="record.did"
+                      :handle="record.handle"
+                      :avatar_url="record.avatarURL"
+                      :display_name="
+                        record.profile
+                          ? record.profile.value.displayName
+                          : record.handle
+                      "
+                      :post="record.post"
+                      @lookup="lookup"></PostList>
+                  </li>
+                </ul>
+              </div>
+              <div v-else>There are no liked posts.</div>
+            </tab>
+            <!--
           <tab name="blocking" title="Blocking" id="blocking" :disabled="true">
             Blocking list here...
           </tab>
           <tab name="mute" title="Mute" id="mute" :disabled="true">
             Muting list here...
           </tab> -->
-        </tabs>
-      </div>
+          </tabs>
+        </div>
       </ClientOnly>
     </div>
   </div>
@@ -206,8 +210,6 @@
     }
   })
 
-  computed
-
   const focusout = () => {
     id.value = lexicons.formatIdentifier(id.value)
   }
@@ -244,7 +246,7 @@
             banner: null,
             description: '',
             displayName: identifier,
-          }
+          },
         }
         updateUserInfo('profile', profile)
         updateUserInfo('avatarURL', null)
@@ -400,7 +402,8 @@
             }
           }
 
-          let profile, avatar = null
+          let profile,
+            avatar = null
           try {
             profile = await lexicons.getProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
@@ -448,7 +451,8 @@
       )
       if (response.success) {
         const records = response.data.records.map(async record => {
-          let handle = '', profile = {}
+          let handle = '',
+            profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
             profile = await lexicons.getProfile(record.value.subject)
@@ -461,8 +465,8 @@
                 displayName: record.value.subject,
                 description: '',
                 avatar: '',
-                banner: null
-              }
+                banner: null,
+              },
             }
           }
           return {
