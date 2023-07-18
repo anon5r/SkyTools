@@ -1,5 +1,5 @@
 <template>
-  <article class="p-6 mb-6 text-base bg-white rounded-lg dark:bg-slate-800">
+  <article class="p-6 mb-6 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div

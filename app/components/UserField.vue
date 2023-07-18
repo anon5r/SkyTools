@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 py-4 my-5 rounded-md bg-white dark:bg-slate-800">
+  <div class="px-4 py-4 my-5 rounded-md shadow-md bg-white dark:bg-slate-800">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div

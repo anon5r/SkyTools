@@ -17,7 +17,7 @@
           props.did
         }/${img.image.ref.toString()}`"
         :alt="img.alt"
-        class="h-auto max-w-xs" />
+        class="flex-inline h-auto max-w-xs rounded-md m-4" />
     </div>
   </div>
 </template>
