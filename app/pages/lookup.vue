@@ -247,6 +247,7 @@
           }
         }
         updateUserInfo('profile', profile)
+        updateUserInfo('avatarURL', null)
       }
 
       try {
@@ -274,6 +275,7 @@
     } catch (err) {
       if (isDev()) console.error(err)
       hasError.value = true
+      updateUserInfo('avatarURL', null)
       updateUserInfo('posts', [])
       updateUserInfo('following', [])
       updateUserInfo('followers', [])
