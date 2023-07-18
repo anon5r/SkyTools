@@ -236,6 +236,17 @@
         // If the profile has never been updated,
         // it cannot be retrieved from the repository
         console.info('No profile user: ', identifier)
+        // Set as dummy
+        let profile = {
+          value: {
+            $type: 'app.bsky.actor.profile',
+            avatar: null,
+            banner: null,
+            description: '',
+            displayName: identifier,
+          }
+        }
+        updateUserInfo('profile', profile)
       }
 
       try {
