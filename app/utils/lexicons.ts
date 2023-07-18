@@ -74,8 +74,7 @@ export const resolveDID = async (
     const res = await axios.get(requestUrl)
 
     if (res.data?.did) {
-      // if (isDev())
-      //   console.log('[Lexicons] resolveDID::response.data = ', res.data)
+      // if (isDev()) console.log('[Lexicons] resolveDID::response.data = ', res.data)
       return res.data.did as string
     } else if (res.data?.alsoKnownAs) {
       const handle = res.data.alsoKnownAs[0]
@@ -260,7 +259,7 @@ export const getPost = async (
     throw new Error('Failed to get post')
   } catch (err: any) {
     if (isDev()) console.error(err)
-    return err.message
+    throw err
   }
 }
 

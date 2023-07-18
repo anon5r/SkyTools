@@ -84,14 +84,13 @@
                   :did="userinfo.details.did"
                   :handle="userinfo.details.handle"
                   :avatar_url="userinfo.avatarURL ?? 'about:blank'"
-                  :display_name="
-                    userinfo.profile.value?.displayName ??
-                    userinfo.details.handle
-                  "
+                  :display_name="userinfo.profile
+                    ? userinfo.profile.value.displayName
+                    : userinfo.details.handle"
                   :post="toRaw(record)"></PostList>
               </div>
             </div>
-            <div v-else>What are they posting.</div>
+            <div v-else>There are no posts.</div>
           </tab>
 
           <tab name="following" title="Following" id="following">
@@ -107,7 +106,7 @@
                 </li>
               </ul>
             </div>
-            <div v-else>Follow who you want to see.</div>
+            <div v-else>No one follows</div>
           </tab>
 
           <!-- <tab name="follower" title="Follower" id="followers">
@@ -123,7 +122,7 @@
                 </li>
               </ul>
             </div>
-            <div v-else>Who would you like to be followed by?</div>
+            <div v-else>No followers</div>
           </tab> -->
 
           <tab name="like" title="Like" id="like">
@@ -132,18 +131,19 @@
               <ul>
                 <li v-for="record of userinfo.like" :key="record.cid">
                   <PostList
-                    v-if="record.profile"
                     :appURL="config.bskyAppURL"
-                    :did="lexicons.parseAtUri(record.profile.uri).did"
+                    :did="record.did"
                     :handle="record.handle"
                     :avatar_url="record.avatarURL"
-                    :display_name="record.profile.value.displayName"
+                    :display_name="record.profile
+                      ? record.profile.value.displayName
+                      : record.handle"
                     :post="record.post"
                     @lookup="lookup"></PostList>
                 </li>
               </ul>
             </div>
-            <div v-else>What would you like ?</div>
+            <div v-else>There are no liked posts.</div>
           </tab>
           <!--
           <tab name="blocking" title="Blocking" id="blocking" :disabled="true">
@@ -399,14 +399,22 @@
               },
             }
           }
-          const profile = await lexicons.getProfile(recordUri.did)
+
+          let profile, avatar = null
+          try {
+            profile = await lexicons.getProfile(recordUri.did)
+            avatar = buildAvatarURL(recordUri.did, profile.value)
+          } catch (err) {
+            console.info('Not set profile: ', recordUri.did)
+          }
           const handle = await lexicons.resolveDID(recordUri.did)
+
           return {
             ...record,
             profile: profile,
             did: recordUri.did,
             handle: handle,
-            avatarURL: buildAvatarURL(recordUri.did, profile.value),
+            avatarURL: avatar,
             post: post.success ? post.data : {},
           }
         })
