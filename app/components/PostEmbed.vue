@@ -18,9 +18,15 @@
           v-for="img of props.embed.images"
           :key="img.image.ref.toString()"
           class="flex">
-          <a :href="`${config.cdnPrefix}/${config.defaultPDS}/image/${props.did}/${img.image.ref.toString()}`" target="_blank">
+          <a
+            :href="`${config.cdnPrefix}/${config.defaultPDS}/image/${
+              props.did
+            }/${img.image.ref.toString()}`"
+            target="_blank">
             <img
-              :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${props.did}/${img.image.ref.toString()}`"
+              :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
+                props.did
+              }/${img.image.ref.toString()}`"
               :alt="img.alt"
               class="h-auto max-w-xs rounded-lg" />
           </a>

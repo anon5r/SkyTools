@@ -63,9 +63,10 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
+  import { useAppConfig, useRouter } from 'nuxt/app'
   import { ref, onMounted } from 'vue'
   import { isDev } from '~/utils/helpers'
+  import lexicons from '~/utils/lexicons'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '../composables/navigation'
 
@@ -74,7 +75,6 @@
   })
 
   const config = useAppConfig()
-  const route = useRoute()
   const router = useRouter()
   const auth = ref(null)
   const navigate = useNavigation()
@@ -82,14 +82,9 @@
   const password = ref('')
   const errorMessage = ref('')
   const validateError = ref('')
-  const pds = route.params.service
-    ? `.${route.params.service}`
-    : `.${config.defaultSuffix}`
 
   const validateHandle = () => {
-    if (handle.value.length > 0 && !handle.value.includes('.')) {
-      handle.value += pds
-    }
+    handle.value = lexicons.formatIdentifier(handle.value)
   }
 
   const validatePassword = () => {
