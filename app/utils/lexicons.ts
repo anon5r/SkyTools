@@ -10,11 +10,11 @@ import {
 } from '@atproto/api'
 import { AtUri } from '@atproto/uri'
 // import { AtpAgent } from '@atproto/api/dist/agent'
-import * as api from '@atproto/api'
-const { AtpAgent } = api
+import * as Proto from '@atproto/api'
+const { AtpAgent } = Proto
 
 const plcURL = 'https://plc.directory'
-let atp: api.AtpAgent | null = null
+let atp: Proto.AtpAgent | null = null
 
 let config = {
   defaultPDS: 'bsky.social' as string,
@@ -40,7 +40,7 @@ export const getConfig = (): {
   return config
 }
 
-export const getAgent = (): AtpAgent => {
+export const getAgent = (): Proto.AtpAgent => {
   if (!atp) {
     atp = new AtpAgent({ service: config.bskyService })
   }
@@ -87,7 +87,10 @@ export const resolveDID = async (
     }
     throw new Error('Invalid DID')
   } catch (error: any) {
-    if (isDev()) console.error(error)
+    if (isDev()) {
+      console.error('[Lexicons] resolveDID::response.Error')
+    }
+    console.warn(error)
     throw error
   }
 }
@@ -102,12 +105,15 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
     const res = await axios.get(url)
-    if (isDev()) console.log('[Lexicons] resolveHandle::response.data = ', res)
+    // if (isDev()) console.log('[Lexicons] resolveHandle::response.data = ', res)
 
     if (res.data?.did) return res.data.did as string
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
-    if (isDev()) console.error(err)
+    if (isDev()) {
+      console.error('[Lexicons] resolveHandle::response.Error = ')
+    }
+    console.warn(err)
     throw err
   }
 }
@@ -124,13 +130,15 @@ export const getIdentityAuditLogs = async (
   const url = `${plcURL}/${identifier}/log/audit`
   try {
     const res = await axios.get(url)
-    if (isDev())
-      console.log('[Lexicons] getIdentityAuditLogs::response.data = ', res)
+    // if (isDev()) console.log('[Lexicons] getIdentityAuditLogs::response.data = ', res)
 
     if (res.data) return res.data as any
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
-    if (isDev()) console.error(err)
+    if (isDev()) {
+      console.error('[Lexicons] getIdentityAuditLogs::response.Error')
+    }
+    console.warn(err)
     throw err
   }
 }
@@ -185,13 +193,15 @@ export const getRecord = async (
     })
 
     if (response.data) {
-      if (isDev())
-        console.log('[Lexicons] getRecord::response.data = ', response.data)
+      // if (isDev()) console.log('[Lexicons] getRecord::response.data = ', response.data)
       return response
     }
     throw new Error('Record not found')
   } catch (err: any) {
-    if (isDev()) console.error(err)
+    if (isDev()) {
+      console.error('[Lexicons] getRecord::response.Error')
+    }
+    console.warn(err)
     throw new Error(err.message, err)
   }
 }
@@ -218,7 +228,7 @@ export const listRecords = async (
     if (response) return response
     throw new Error('Record not found')
   } catch (err: any) {
-    if (isDev()) console.error(err)
+    if (isDev()) console.warn(err)
     throw new Error(err.message, err)
   }
 }
@@ -243,7 +253,7 @@ export const getBlob = async (did: string, cid: string): Promise<string> => {
     }
     return ''
   } catch (err: any) {
-    if (isDev()) console.error(err)
+    if (isDev()) console.warn(err)
     throw new Error(err.message, err)
   }
 }
@@ -263,7 +273,7 @@ export const getPost = async (
     if (res.success) return res
     throw new Error('Failed to get post')
   } catch (err: any) {
-    if (isDev()) console.error(err)
+    if (isDev()) console.warn(err)
     throw err
   }
 }
@@ -283,13 +293,15 @@ export const describeRepo = async (id: string): Promise<any> => {
     })
 
     if (response.data) {
-      if (isDev())
-        console.log('[Lexicons] describeRepo::response.data = ', response.data)
+      // if (isDev()) console.log('[Lexicons] describeRepo::response.data = ', response.data)
       return response.data
     }
     throw new Error('Failed to get details')
   } catch (err) {
-    console.error(err)
+    if (isDev()) {
+      console.error('[Lexicons] describeRepo::response.Error')
+    }
+    console.warn(err)
     throw err
   }
 }
@@ -303,7 +315,7 @@ export const getProfile = async (
   id: string
 ): Promise<AppBskyActorProfile.Record> => {
   const profile = await getRecord('app.bsky.actor.profile', id, 'self')
-  if (isDev()) console.log('[Lexicons] getProfile::profile = ', profile.data)
+  // if (isDev()) console.log('[Lexicons] getProfile::profile = ', profile.data)
   return profile.data as AppBskyActorProfile.Record
 }
 
@@ -319,8 +331,7 @@ export const buildAvatarURL = (
   did: string,
   profile: AppBskyActorProfile.Record
 ) => {
-  if (isDev())
-    console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
+  // if (isDev()) console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
   //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
   return `${cdnURL}/${config.defaultPDS}/image/${did}/${profile.avatar?.ref}`
 }

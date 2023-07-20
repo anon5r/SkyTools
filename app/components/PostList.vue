@@ -30,8 +30,9 @@
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <div class="pt-1">
-          <a :href="postURL">
+          <a v-if="!props.removed" :href="postURL">
             <time
+              v-if="!props.removed"
               pubdate
               :datetime="props.post.value.createdAt"
               :title="DateTime.fromISO(props.post.value.createdAt).toString()"
@@ -43,12 +44,13 @@
               }}
             </time>
           </a>
+          <time v-else>--------</time>
         </div>
       </div>
     </div>
     <div class="text-gray-500 dark:text-gray-400">
       <!-- has reply ? -->
-      <div>
+      <div v-if="!props.removed">
         <AtHandleLink
           v-if="props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
@@ -58,10 +60,13 @@
         </AtHandleLink>
       </div>
       <!-- Post message -->
-      <div class="break-words">
+      <div v-if="!props.removed" class="break-words">
         {{ props.post.value.text }}
       </div>
-      <div v-if="props.post.value.embed">
+      <div v-else class="italic">
+        This post may have been removed.
+      </div>
+      <div v-if="!props.removed && props.post.value.embed">
         <!-- Embeded (image, record...) -->
         <PostEmbed :did="did" :embed="props.post.value.embed" />
       </div>
@@ -69,7 +74,7 @@
 
     <div class="flex justify-end">
       <div
-        v-if="props.post.value.langs"
+        v-if="!props.removed && props.post.value.langs"
         class="justify-start items-baseline text-xs text-right text-gray-400 dark:text-gray-700">
         Lang: {{ props.post.value.langs.join(',') }}
       </div>
@@ -112,6 +117,7 @@
       type: Object,
       default: () => ({}),
     },
+    removed: Boolean,
   })
 
   const emits = defineEmits({ lookup: null })
