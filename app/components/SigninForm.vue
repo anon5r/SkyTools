@@ -38,7 +38,7 @@
           <a
             :href="`${config.bskyAppURL}/settings/app-passwords`"
             class="text-blue-600 dark:text-blue-400 underline">
-            Configure App Password
+            Create App Password
           </a>
         </p>
         <p class="text-red-500 text-xs italic" v-show="validateError">
@@ -64,24 +64,33 @@
 
 <script setup>
   import { useAppConfig, useRouter } from 'nuxt/app'
-  import { ref, onMounted } from 'vue'
+  import { ref, defineProps } from 'vue'
   import { isDev } from '~/utils/helpers'
   import lexicons from '~/utils/lexicons'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '../composables/navigation'
 
-  onMounted(async () => {
-    if (auth.value == null) auth.value = await useAuth()
-  })
+
 
   const config = useAppConfig()
   const router = useRouter()
-  const auth = ref(null)
   const navigate = useNavigation()
   const handle = ref('')
   const password = ref('')
   const errorMessage = ref('')
   const validateError = ref('')
+
+
+  const props = defineProps({
+    service: {
+      type: String,
+      require: false,
+      default: 'bsky.social',
+    }
+  })
+
+
+  const auth = await useAuth(props.service)
 
   const validateHandle = () => {
     handle.value = lexicons.formatIdentifier(handle.value)
@@ -101,13 +110,13 @@
     if (!validateError.value) {
       try {
         if (
-          await auth.value.login({
+          await auth.login({
             identifier: handle.value,
             password: password.value,
           })
         ) {
           if (navigate.getNext()) {
-            auth.value.isLoggedIn = true
+            auth.isLoggedIn = true
             router.push({ name: navigate.getNext() })
           } else router.push({ name: 'index' })
         }

@@ -21,14 +21,19 @@
       </div>
     </div>
     <div class="w-full max-w-md">
-      <SigninForm @submit="signin" />
+      <SigninForm @submit="signin" :service="pds" />
     </div>
   </div>
 </template>
 
 <script setup type="ts">
+  import { useRoute } from 'nuxt/app'
   import { computed } from 'vue'
   import { useNavigation } from '@/composables/navigation'
+
+  const route = useRoute()
+
+  const pds = route.params.service
 
   const isRedirected = computed(() => {
       const navi = useNavigation()
