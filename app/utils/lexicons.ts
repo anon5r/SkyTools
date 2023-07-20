@@ -4,17 +4,16 @@ import {
   AppBskyActorProfile,
   AppBskyFeedPost,
   // AtUri,
-  // AtpAgent,
+  AtpAgent,
   ComAtprotoRepoGetRecord,
   ComAtprotoRepoListRecords,
 } from '@atproto/api'
 import { AtUri } from '@atproto/uri'
-// import { AtpAgent } from '@atproto/api/dist/agent'
-import * as Proto from '@atproto/api'
-const { AtpAgent } = Proto
+// import * as Proto from '@atproto/api'
+// const { AtpAgent } = Proto
 
 const plcURL = 'https://plc.directory'
-let atp: Proto.AtpAgent | null = null
+let atp: AtpAgent | null = null
 
 let config = {
   defaultPDS: 'bsky.social' as string,
@@ -40,7 +39,7 @@ export const getConfig = (): {
   return config
 }
 
-export const getAgent = (): Proto.AtpAgent => {
+export const getAgent = (): AtpAgent => {
   if (!atp) {
     atp = new AtpAgent({ service: config.bskyService })
   }

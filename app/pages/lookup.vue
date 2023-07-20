@@ -247,7 +247,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
-  import * as lexicons from '@/utils/lexicons'
+  // import * as lexicons from '@/utils/lexicons'
 
   const activeTab = ref('posts')
 
@@ -265,7 +265,7 @@
 
   const hasError = ref(false)
 
-  lexicons.setConfig(toRaw(config))
+
 
   const userinfoInitial = {
     details: {},
@@ -299,9 +299,15 @@
     return Object.values(obj).every(value => value === true)
   }
 
+  let lexicons
   onMounted(async () => {
+    if (!lexicons) {
+      lexicons = await import('@/utils/lexicons')
+      lexicons.setConfig(toRaw(config))
+    }
     if (route.query.id) {
-      await lookup()
+      //id.value = lexicons.formatIdentifier(route.query.id)
+      lookup()
     }
   })
 
