@@ -33,16 +33,6 @@
           </p>
         </div>
       </div>
-      <div>
-        <p class="text-sm text-gray-600 dark:text-slate-400">
-          <button
-            type="button"
-            class="inline-block font-medium text-base text-gray-400 hover:text-white border border-gray-400 hover:bg-gray-500 focus:ring-2 focus:outline-none focus:ring-gray-700 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-gray-700 dark:text-gray-500 dark:hover:text-white dark:hover:bg-gray-500 dark:focus:ring-gray-800"
-            @click.prevent="clickLookup">
-            Lookup
-          </button>
-        </p>
-      </div>
     </div>
     <div class="text-sm pl-14 pr-16 max-w-fit truncate">
       <!-- Description -->
