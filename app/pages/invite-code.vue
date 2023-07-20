@@ -149,11 +149,10 @@
 
 
   const asyncLoad = async () => {
-
     const { getAgent, isLoggedIn } = await useAuth()
 
     if (agent.value == null)
-      agent.value = await getAgent()
+      agent.value = getAgent()
 
     if (isLoggedIn) {
       inviteCodes.value = await getInviteCodes()

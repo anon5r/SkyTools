@@ -128,4 +128,8 @@ export default {
   cloudflareAnalytics: {
     token: process.env.CLOUDFLARE_TOKEN || 'none', //'82dce72b88df4fba9032244b9a294ee1',
   },
+
+  routeRules: {
+    '/lookup': { redirect: '/profile' },
+  },
 }

@@ -10,13 +10,13 @@
               class="bg-transparent rounded-md w-full text-gray-700 dark:text-slate-200"
               v-model="id"
               @focusout="focusout"
-              @keyup.enter="lookupEvent"
+              @keyup.enter="profileEvent"
               placeholder="Enter a handle or DID" />
           </div>
           <div class="p-2">
             <button
               class="bg-gray-400 dark:bg-slate-800 text-white dark:text-slate-300 rounded-md px-2 py-1"
-              @click.prevent="lookupEvent"
+              @click.prevent="profileEvent"
               :disabled="!isLoadingState(loadState)">
               <span v-if="!isLoadingState(loadState)" class="flex flex-inline">
                 <svg aria-hidden="true" role="status" class="inline w-4 h-4 mt-1 mr-2 text-gray-200 animate-spin dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +25,7 @@
                 </svg>
                 Loading...
               </span>
-              <span v-else>Lookup</span>
+              <span v-else>Show</span>
             </button>
           </div>
         </div>
@@ -142,7 +142,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      @lookup="lookup" />
+                      @lookup="showProfile" />
                   </li>
                 </ul>
               </div>
@@ -168,7 +168,7 @@
                     :did="record.value.subject"
                     :handle="record.handle"
                     :profile="record.profile"
-                    @lookup="lookup" />
+                    @lookup="showProfile" />
                 </li>
               </ul>
             </div>
@@ -200,7 +200,7 @@
                           ? record.profile.value.displayName
                           : record.handle"
                       :post="record.post"
-                      @lookup="lookup"></PostList>
+                      @lookup="showProfile"></PostList>
                   </li>
                 </ul>
               </div>
@@ -227,7 +227,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      @lookup="lookup" />
+                      @lookup="showProfile" />
                   </li>
                 </ul>
               </div>
@@ -254,10 +254,10 @@
   const route = useRoute()
   const router = useRouter()
   const config = useAppConfig()
-  const id = ref(route.query.id || '')
+  const id = ref(route.params.id || '')
 
   watch(
-    () => route.query.id,
+    () => route.params.id,
     newId => {
       id.value = newId || ''
     }
@@ -305,9 +305,8 @@
       lexicons = await import('@/utils/lexicons')
       lexicons.setConfig(toRaw(config))
     }
-    if (route.query.id) {
-      //id.value = lexicons.formatIdentifier(route.query.id)
-      lookup()
+    if (route.params.id) {
+      showProfile()
     }
   })
 
@@ -315,11 +314,11 @@
     id.value = lexicons.formatIdentifier(id.value)
   }
 
-  const lookupEvent = async () => {
-    await lookup()
+  const profileEvent = async () => {
+    await showProfile()
   }
 
-  const lookup = async identifier => {
+  const showProfile = async identifier => {
     userinfo.value = userinfoInitial
     hasError.value = false
     updateAllValues(loadState.value, false)
@@ -329,8 +328,8 @@
       identifier = lexicons.formatIdentifier(id.value)
     }
     id.value = identifier
-    if (route.query.id !== identifier)
-      router.push({ query: { id: identifier } })
+    if (route.params.id !== identifier)
+      router.push(`/profile/${identifier}`)
 
     activeTab.value = 'posts'
 

@@ -6,7 +6,7 @@
         <div
           class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`${config.bskyAppURL}/profile/${props.handle}`" @click.prevent="clickLookup">
+          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
             <Avatar
               rounded
               :img="props.avatar_url"
@@ -16,13 +16,13 @@
         </div>
         <div class="truncate">
           <!-- DisplayName -->
-          <a :href="`${config.bskyAppURL}/profile/${props.handle}`" @click.prevent="clickLookup">
+          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
             {{ props.display_name }}
           </a>
           <div
             class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`${props.did}`" @click.prevent="clickLookup">
+            <a :href="`/profile/${props.did}`" @click.prevent="showProfile">
               @{{ props.handle }}
             </a>
           </div>
@@ -132,7 +132,7 @@
     )
   })
 
-  const clickLookup = () => {
+  const showProfile = () => {
     emits('lookup', props.handle)
   }
 </script>
