@@ -21,7 +21,7 @@
       </div>
       <div class="mb-3">
         <label
-          class="block text-base text-sm font-bold mb-2 pt-1"
+          class="block text-base font-bold mb-2 pt-1"
           for="password">
           <font-awesome-icon :icon="['fas', 'key']" class="pr-2" />
           App Password
