@@ -233,9 +233,6 @@
               </div>
               <div v-else>No blocking anyone.</div>
             </tab>
-            <tab name="mute" title="Mute" id="mute" :disabled="true">
-              Muting list here...
-            </tab>
           </tabs>
         </div>
       </ClientOnly>
@@ -279,7 +276,6 @@
     followers: [],
     like: [],
     blocks: [],
-    mute: [],
   }
 
   const userinfo = ref(userinfoInitial)
@@ -291,10 +287,8 @@
     avatarURL: true,
     posts: true,
     following: true,
-    // followers: true,
     like: true,
     blocks: true,
-    // mute: true,
   })
   const updateAllValues = (obj, val) => {
     Object.keys(obj).forEach(key => {
@@ -393,10 +387,8 @@
       updateUserInfo('details', {})
       updateUserInfo('posts', [])
       updateUserInfo('following', [])
-      // updateUserInfo('followers', [])
       updateUserInfo('like', [])
       updateUserInfo('blocks', [])
-      // updateUserInfo('mute', [])
 
       updateUserInfo('profile', { value: { displayName: 'Error: Unknown' } })
 
