@@ -6,7 +6,7 @@
         <div
           class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
+          <a :href="`${config.bskyAppURL}/profile/${props.handle}`" @click.prevent="clickLookup">
             <Avatar
               rounded
               :img="props.avatar_url"
@@ -16,7 +16,7 @@
         </div>
         <div class="truncate">
           <!-- DisplayName -->
-          <a :href="`${config.bskyAppURL}/profile/${props.handle}`">
+          <a :href="`${config.bskyAppURL}/profile/${props.handle}`" @click.prevent="clickLookup">
             {{ props.display_name }}
           </a>
           <div
