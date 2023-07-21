@@ -11,14 +11,14 @@
               rounded
               :img="avatarURL"
               :alt="props.handle"
-              class="mr-3 min-w-max" />
+              class="mr-2 min-w-max" />
           </a>
         </div>
-        <div>
+        <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <a
             :href="`/profile/${props.handle}`"
-            class="truncate text-ellipsis overflow-hidden"
+            class=""
             @click.prevent="showProfile">
             {{ props.profile ? props.profile.value.displayName : props.handle }}
           </a>
@@ -26,7 +26,7 @@
             <!-- Handle -->
             <a
               :href="`/profile/${props.handle}`"
-              class="truncate text-ellipsis overflow-hidden"
+              class="truncate"
               @click.prevent="showProfile">
               @{{ props.handle }}
             </a>

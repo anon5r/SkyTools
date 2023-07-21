@@ -25,7 +25,7 @@
                 </svg>
                 Loading...
               </span>
-              <span v-else>Show</span>
+              <span v-else>View</span>
             </button>
           </div>
         </div>
@@ -76,7 +76,7 @@
                   class="before:content-['@']">
                   {{ userinfo.details.handle || 'none.example' }}
                 </a>
-                <span v-else>loading...</span>
+                <span v-else class="mt-4">loading...</span>
               </div>
               <div
                 class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500">
@@ -92,9 +92,9 @@
         </div>
 
         <div class="pt-4">
-          <tabs v-model="activeTab" class="p-5">
+          <tabs v-model="activeTab" class="pt-1 px-1">
             <tab name="posts" title="Posts" id="posts">
-              <div v-if="!loadState.posts" class="flex">
+              <div v-if="!loadState.posts" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -124,7 +124,7 @@
             </tab>
 
             <tab name="following" title="Following" id="following">
-              <div v-if="!loadState.following" class="flex">
+              <div v-if="!loadState.following" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -146,7 +146,7 @@
                   </li>
                 </ul>
               </div>
-              <div v-else>No one follows</div>
+              <div v-else class="mt-4 mx-2">No one follows</div>
             </tab>
 
             <!-- <tab name="follower" title="Follower" id="followers">
@@ -172,11 +172,11 @@
                 </li>
               </ul>
             </div>
-            <div v-else>No followers</div>
+            <div v-else class="mt-4">No followers</div>
           </tab> -->
 
             <tab name="like" title="Like" id="like">
-              <div v-if="!loadState.like" class="flex">
+              <div v-if="!loadState.like" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -204,11 +204,11 @@
                   </li>
                 </ul>
               </div>
-              <div v-else>There are no liked posts.</div>
+              <div v-else class="mt-4 mx-2">There are no liked posts.</div>
             </tab>
 
             <tab name="blocks" title="Blocks" id="blocks">
-              <div v-if="!loadState.blocks" class="flex">
+              <div v-if="!loadState.blocks" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -231,7 +231,7 @@
                   </li>
                 </ul>
               </div>
-              <div v-else>No blocking anyone.</div>
+              <div v-else class="mt-4 mx-2">No blocking anyone.</div>
             </tab>
           </tabs>
         </div>

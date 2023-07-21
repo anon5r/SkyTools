@@ -1,5 +1,5 @@
 <template>
-  <div class="m-2">
+  <div class="pt-2 m-0">
     <div v-if="props.embed.$type == 'app.bsky.embed.record'">
       <!-- Embed Record -->
       <a
@@ -13,7 +13,7 @@
       class="flex flex-wrap">
       <!-- Display image -->
       <div
-        class="grid md:grid-cols-2 grid-flow-dense auto-cols-max gap-4 max-w-fit">
+        class="p-0 grid md:grid-cols-2 grid-flow-dense auto-cols-max gap-4 max-w-fit">
         <div
           v-for="img of props.embed.images"
           :key="img.image.ref.toString()"
