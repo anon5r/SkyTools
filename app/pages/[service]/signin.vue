@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
+    class="flex justify-center items-start lg:items-center pt-9 lg:pt-0 min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200">
     <div v-if="isRedirected" class="w-full max-w-md">
       <div
         class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
@@ -21,17 +21,22 @@
       </div>
     </div>
     <div class="w-full max-w-md">
-      <SigninForm @submit="signin" />
+      <SigninForm @submit="signin" :service="pds" />
     </div>
   </div>
 </template>
 
 <script setup type="ts">
+  import { useRoute } from 'nuxt/app'
   import { computed } from 'vue'
   import { useNavigation } from '@/composables/navigation'
 
+  const route = useRoute()
+
+  const pds = route.params.service
+
   const isRedirected = computed(() => {
       const navi = useNavigation()
-      return navi.getNext() != null
+      return (navi.getNext())
   })
 </script>
