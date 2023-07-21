@@ -10,13 +10,17 @@
   </div>
 </template>
 
-<script setup type="ts">
-  import { onMounted } from 'vue';
-  import Navbar from '~/components/Navbar.vue'
-  import Footbar from '~/components/Footbar.vue'
+<script setup lang="ts">
+  import { onMounted } from 'vue'
   import { initFlowbite } from 'flowbite'
 
   onMounted(() => {
     initFlowbite()
   })
 </script>
+
+<style scoped>
+  div {
+    @apply min-h-max text-base dark:text-slate-300 bg-gray-100 dark:bg-slate-900;
+  }
+</style>

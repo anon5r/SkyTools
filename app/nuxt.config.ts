@@ -4,6 +4,14 @@ export default {
   runtimeConfig: {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
+
+      defaultPDS: 'bsky.social',
+      atprotoServiceSuffix: '.bsky.social',
+      atprotoService: 'https://bsky.social',
+      serviceAppUrl: ' https://bsky.app',
+      adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
+      inviteCodeFreq: '{"days": 10}',
+      cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
     },
   },
   app: {
@@ -92,11 +100,19 @@ export default {
     pages: true,
     productionTip: false,
     title: 'SkyTools' as string,
-    defaultSuffix: '.bsky.social' as string,
-    bskyService: 'https://bsky.social' as string,
-    bskyAppURL: 'https://bsky.app' as string,
-    adminDID: 'did:plc:c22jdrqhoajyj5ca7e56a3ke' as string,
-    inviteCodeFreq: { weeks: 2 } as object,
+    defaultSuffix:
+      process.env.ATPROTO_SERVICE_SUFFIX || ('.bsky.social' as string),
+    defaultPDS: process.env.PDS_DEFAULT || ('bsky.social' as string),
+    bskyService:
+      process.env.ATPROTO_SERVICE || ('https://bsky.social' as string),
+    bskyAppURL: process.env.SERVICE_APP_URL || ('https://bsky.app' as string),
+    adminDID:
+      process.env.ADMIN_DID || ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
+    inviteCodeFreq:
+      (process.env.INVITE_CODE_FREQ &&
+        JSON.parse(process.env.INVITE_CODE_FREQ)) ||
+      ({ weeks: 2 } as object),
+    cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
   },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
@@ -107,5 +123,9 @@ export default {
   plugins: ['@/plugins/fontawesome.client.ts', '@/plugins/analytics.client.ts'],
   cloudflareAnalytics: {
     token: process.env.CLOUDFLARE_TOKEN || 'none',
+  },
+
+  routeRules: {
+    '/lookup': { redirect: '/profile' },
   },
 }

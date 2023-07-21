@@ -1,17 +1,21 @@
 import { ref } from 'vue'
 import { useAppConfig } from 'nuxt/app'
 import { BskyAgent } from '@atproto/api'
-import { isDev } from '@/utils'
+import { isDev } from '@/utils/helpers'
 
 let agent: BskyAgent | null = null
 
 const isLoggedIn = ref(false)
 
-const getAgent = (): BskyAgent => {
+const getAgent = (service?: string): BskyAgent => {
   if (!agent) {
     const config = useAppConfig()
+    if (!service) service = config.bskyService
+    else if (service.length > 0 && !service.startsWith('https://'))
+      service = `https://${service}`
+
     agent = new BskyAgent({
-      service: config.bskyService as string,
+      service: service,
       persistSession: (_, sess) => {
         if (process.client && sess != null)
           sessionStorage.setItem('credentials', JSON.stringify(sess))
@@ -63,7 +67,7 @@ const restoreSession = async () => {
         const session = JSON.parse(credentials)
         const res = await getAgent().resumeSession(session)
         isLoggedIn.value = res.success
-      } catch (err) {
+      } catch (err: any) {
         if (isDev()) console.error(err)
         if (err.response.status == 400) {
           if (err.response.data.error == 'ExpiredToken') await logout()
@@ -74,8 +78,8 @@ const restoreSession = async () => {
   }
 }
 
-export async function useAuth() {
-  await getAgent()
+export async function useAuth(service?: string) {
+  const agent = getAgent(service)
   // RunAtOne
   await restoreSession()
 
