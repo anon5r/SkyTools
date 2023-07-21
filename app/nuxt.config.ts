@@ -120,13 +120,9 @@ export default {
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/css/main.css',
   ],
-  plugins: [
-    '@/plugins/fontawesome.client.ts',
-    '@/plugins/vue-gtm.client.ts',
-    { src: '~/plugins/vercel.ts', mode: 'client' },
-  ],
+  plugins: ['@/plugins/fontawesome.client.ts', '@/plugins/analytics.client.ts'],
   cloudflareAnalytics: {
-    token: process.env.CLOUDFLARE_TOKEN || 'none', //'82dce72b88df4fba9032244b9a294ee1',
+    token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
 
   routeRules: {

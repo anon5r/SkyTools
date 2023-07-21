@@ -1,6 +1,11 @@
 import { createGtm } from '@gtm-support/vue-gtm'
+import { inject } from '@vercel/analytics'
 
 export default defineNuxtPlugin(nuxtApp => {
+  // vercel analytics
+  inject()
+
+  // Google Tag Manager
   const gtm = createGtm({
     id: nuxtApp.$config.public.GTM_ID,
     defer: true, // Script can be set to `defer` to speed up page load at the cost of less accurate results (in case visitor leaves before script is loaded, which is unlikely but possible). Defaults to false, so the script is loaded `async` by default
