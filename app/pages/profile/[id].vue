@@ -107,7 +107,7 @@
               <!-- Posts -->
               <div v-else-if="userinfo.posts.length > 0">
                 <div v-for="record of userinfo.posts" :key="record.cid">
-                  <PostList
+                  <PostView
                     :config="config"
                     :did="userinfo.details.did"
                     :handle="userinfo.details.handle"
@@ -117,7 +117,7 @@
                         ? userinfo.profile.value.displayName
                         : userinfo.details.handle
                     "
-                    :post="toRaw(record)"></PostList>
+                    :post="toRaw(record)"></PostView>
                 </div>
               </div>
               <div v-else>There are no posts.</div>
@@ -190,7 +190,7 @@
               <div v-else-if="userinfo.like.length > 0">
                 <ul>
                   <li v-for="record of userinfo.like" :key="record.cid">
-                    <PostList
+                    <PostView
                       :appURL="config.bskyAppURL"
                       :did="record.did"
                       :handle="record.handle"
@@ -200,7 +200,7 @@
                           ? record.profile.value.displayName
                           : record.handle"
                       :post="record.post"
-                      @lookup="showProfile"></PostList>
+                      @lookup="showProfile"></PostView>
                   </li>
                 </ul>
               </div>
