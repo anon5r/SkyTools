@@ -39,7 +39,7 @@
     <aside>
       <DrawerSidebar
         id="drawer-sidebar"
-        label="Sidebar"
+        label="Menu"
         :drawer="drawer"
         >
         <ul
@@ -55,8 +55,15 @@
           </NavLink>
         </ul>
         <!-- -------------------- -->
+
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
-          <li>
+          <li v-if="isLoggedIn">
+            <span
+              class="text-sm font-semibold text-gray-500 dark:text-gray-400">
+              @{{ auth.getHandle() }}
+            </span>
+          </li>
+          <li v-if="!isLoggedIn">
             <!-- Sign-in -->
             <a
               :href="`/${config.defaultPDS}/signin`"
@@ -68,12 +75,12 @@
               <span class="ml-3">Sign in Bluesky</span>
             </a>
           </li>
-          <li>
+          <li v-if="isLoggedIn">
             <!-- Sign-out -->
             <a
               href="#sign-out"
               class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              @click="clickLink">
+              @click.prevent="logout">
               <font-awesome-icon
                 :icon="['fas', 'right-from-bracket']"
                 class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
@@ -89,15 +96,19 @@
 
 <script setup>
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { onMounted } from 'vue'
+  import { onMounted, computed } from 'vue'
   import { initFlowbite, Drawer } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
+  import { useAuth } from '@/composables/auth'
 
   const config = useAppConfig()
-  const auth = ref(null)
   const navi = useNavigation()
+  const router = useRouter()
+  const route = useRoute()
   const isLoggedIn = ref(false)
+
+  const auth = ref(await useAuth())
 
   // App name
   const appName = config.title
@@ -126,6 +137,7 @@
     ],
   })
 
+
   /** Drawer */
   let drawer = null
 
@@ -152,6 +164,21 @@
     drawer.toggle()
   }
 
+  const logout = () => {
+    if (auth.value.isLoggedIn) {
+      const nextPage = route.fullPath
+      if (!navi.navigate.value)
+        navi.navigate = useNavigation({ next: null, prev: null })
+      navi.navigate.value.next = null
+
+      auth.value.logout()
+      isLoggedIn.value = false
+      router.push(nextPage)
+    }
+    toggleMenu()
+    router.push('/')
+  }
+
   onMounted(() => {
     initFlowbite()
 
@@ -159,5 +186,15 @@
       if (!drawer)
         initDrawer()
     })
+
+    useAuth().then((auth) => {
+      isLoggedIn.value = auth.isLoggedIn
+    })
+
   })
+
+  computed(() => {
+    isLoggedIn.value = auth.value.isLoggedIn
+  })
+
 </script>

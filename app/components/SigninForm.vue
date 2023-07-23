@@ -116,7 +116,7 @@
           })
         ) {
           if (navigate.getNext()) {
-            auth.isLoggedIn = true
+            auth.setAsLogqedIn(true)
             router.push({ name: navigate.getNext() })
           } else router.push({ name: 'index' })
         }

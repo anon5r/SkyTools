@@ -5,7 +5,7 @@ import { isDev } from '@/utils/helpers'
 
 let agent: BskyAgent | null = null
 
-const isLoggedIn = ref(false)
+let _isLoggedIn = false
 
 const getAgent = (service?: string): BskyAgent => {
   if (!agent) {
@@ -38,7 +38,7 @@ const login = async (credentials: { identifier: string; password: string }) => {
           'credentials',
           JSON.stringify(getAgent().session)
         )
-      isLoggedIn.value = true
+      _isLoggedIn = true
     }
 
     return response.success
@@ -53,7 +53,7 @@ const logout = async () => {
     if (getAgent().hasSession) getAgent().session = undefined
 
     if (process.client) sessionStorage.removeItem('credentials')
-    isLoggedIn.value = false
+    _isLoggedIn = false
   } catch (error) {
     console.error(error)
   }
@@ -66,7 +66,7 @@ const restoreSession = async () => {
       try {
         const session = JSON.parse(credentials)
         const res = await getAgent().resumeSession(session)
-        isLoggedIn.value = res.success
+        _isLoggedIn = res.success
       } catch (err: any) {
         if (isDev()) console.error(err)
         if (err.response.status == 400) {
@@ -76,6 +76,25 @@ const restoreSession = async () => {
       }
     }
   }
+}
+
+/**
+ * @returns {boolean} true if the user is logged in
+ */
+const isLoggedIn = () => {
+  return _isLoggedIn
+}
+
+const setAsLogqedIn = (value: boolean) => {
+  _isLoggedIn = value
+}
+
+/**
+ *
+ * @returns {string} the handle of the logged in user
+ */
+const getHandle = () => {
+  return getAgent().session?.handle ?? ''
 }
 
 export async function useAuth(service?: string) {
@@ -89,5 +108,6 @@ export async function useAuth(service?: string) {
     isLoggedIn,
     getAgent,
     restoreSession,
+    getHandle,
   }
 }
