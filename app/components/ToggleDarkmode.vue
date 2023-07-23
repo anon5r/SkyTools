@@ -42,8 +42,8 @@
 
   const isDarkTheme = ref<Boolean>(false)
 
-  const toggleCount: Ref<Number> = ref<Number>(0)
-  const clickTimestamp: Ref<Number> = ref<Number>(0)
+  const toggleCount: Ref<number> = ref<number>(0)
+  const clickTimestamp: Ref<number> = ref<number>(0)
 
   const loadTheme = () => {
     const savedTheme = localStorage.getItem('color-theme')
