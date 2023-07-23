@@ -35,7 +35,8 @@
 
 <script setup lang="ts">
   import { ref, onMounted, defineComponent } from 'vue'
-  import { useSessionStorage } from '@/composables/sessionStorage';
+  import { isDev } from '@/utils/helpers'
+  import type { Ref } from 'vue'
 
   defineComponent({ name: 'ToggleDarkmode' })
 

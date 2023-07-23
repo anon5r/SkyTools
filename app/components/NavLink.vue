@@ -1,12 +1,11 @@
 <template>
   <li>
     <NuxtLink
-      :to="href"
-      class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-      >
+      :to="props.href"
+      class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
       <font-awesome-icon
         v-if="icon"
-        :icon="icon"
+        :icon="props.icon"
         class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
       <div v-else class="flex-shrink w-6 h-5"></div>
       <span class="ml-3"><slot /></span>

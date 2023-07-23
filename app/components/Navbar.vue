@@ -1,17 +1,16 @@
 <template>
   <div>
-  <ClientOnly>
     <nav
       class="sticky w-full top-0 left-0 border-b z-20 backdrop-blur-md border-gray-200 dark:bg-slate-950 dark:border-gray-700 opacity-90">
       <div
         class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <!-- Logo -->
-        <a href="/" class="flex items-center">
+        <NuxtLink to="/" class="flex items-center">
           <span
             class="self-center text-2xl text-transparent bg-clip-text bg-gradient-to-b to-blue-600 from-green-100 dark:to-orange-600 dark:from-sky-300 font-semibold whitespace-nowrap dark:text-sky">
             {{ appName }}
           </span>
-        </a>
+        </NuxtLink>
 
         <!-- Side menu button by drawer -->
         <DrawerControlButton
@@ -35,13 +34,9 @@
       </div>
     </nav>
 
-    <!-- Drawer menu -->
+      <!-- Drawer menu -->
     <aside>
-      <DrawerSidebar
-        id="drawer-sidebar"
-        label="Menu"
-        :drawer="drawer"
-        >
+      <DrawerSidebar id="drawer-sidebar" label="Menu" :drawer="drawer">
         <ul
           v-for="item in navItems.contents"
           :key="item.src"
@@ -56,13 +51,15 @@
         </ul>
         <!-- -------------------- -->
 
-        <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
+        <ul
+          class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
           <li v-if="isLoggedIn">
             <span
               class="text-sm font-semibold text-gray-500 dark:text-gray-400">
               @{{ auth.getHandle() }}
             </span>
           </li>
+          <ClientOnly>
           <li v-if="!isLoggedIn">
             <!-- Sign-in -->
             <a
@@ -87,16 +84,16 @@
               <span class="ml-3">Sign out</span>
             </a>
           </li>
+          </ClientOnly>
         </ul>
       </DrawerSidebar>
     </aside>
-  </ClientOnly>
   </div>
 </template>
 
 <script setup>
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { onMounted, computed } from 'vue'
+  import { ref, reactive, nextTick, onMounted, computed } from 'vue'
   import { initFlowbite, Drawer } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
@@ -108,7 +105,12 @@
   const route = useRoute()
   const isLoggedIn = ref(false)
 
-  const auth = ref(await useAuth())
+  const auth = ref(
+    useAuth().then(auth => {
+      isLoggedIn.value = auth.isLoggedIn
+      return auth
+    })
+  )
 
   // App name
   const appName = config.title
@@ -137,7 +139,6 @@
     ],
   })
 
-
   /** Drawer */
   let drawer = null
 
@@ -152,7 +153,8 @@
       const drawerOptions = {
         placement: 'right',
         bodyScrolling: true,
-        onToggle: (e) => {
+        backdrop: true,
+        onToggle: e => {
           console.log('toggle(e) = ', e)
         },
       }
@@ -183,18 +185,15 @@
     initFlowbite()
 
     nextTick(() => {
-      if (!drawer)
-        initDrawer()
+      if (!drawer) initDrawer()
     })
 
-    useAuth().then((auth) => {
+    useAuth().then(auth => {
       isLoggedIn.value = auth.isLoggedIn
     })
-
   })
 
   computed(() => {
     isLoggedIn.value = auth.value.isLoggedIn
   })
-
 </script>

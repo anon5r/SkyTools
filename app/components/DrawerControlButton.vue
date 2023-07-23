@@ -28,7 +28,7 @@
     label: {
       type: String,
       require: false,
-      default: 'Open menu'
+      default: 'Open menu',
     },
     placement: {
       type: String,

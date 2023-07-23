@@ -20,9 +20,7 @@
           @focusout="validateHandle" />
       </div>
       <div class="mb-3">
-        <label
-          class="block text-base font-bold mb-2 pt-1"
-          for="password">
+        <label class="block text-base font-bold mb-2 pt-1" for="password">
           <font-awesome-icon :icon="['fas', 'key']" class="pr-2" />
           App Password
         </label>
@@ -70,8 +68,6 @@
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '../composables/navigation'
 
-
-
   const config = useAppConfig()
   const router = useRouter()
   const navigate = useNavigation()
@@ -80,17 +76,23 @@
   const errorMessage = ref('')
   const validateError = ref('')
 
-
   const props = defineProps({
     service: {
       type: String,
       require: false,
       default: 'bsky.social',
-    }
+    },
   })
 
-
-  const auth = await useAuth(props.service)
+  const auth = useAuth(props.service).then(auth => {
+    if (auth.isLoggedIn) {
+      if (navigate.getNext()) {
+        auth.setAsLogqedIn(true)
+        router.push({ name: navigate.getNext() })
+      } else router.push({ name: 'index' })
+    }
+    return auth
+  })
 
   const validateHandle = () => {
     handle.value = lexicons.formatIdentifier(handle.value)
