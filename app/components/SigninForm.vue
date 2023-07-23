@@ -7,7 +7,9 @@
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
           for="handle">
+          <ClientOnly>
           <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />
+          </ClientOnly>
           Your handle
         </label>
         <input
@@ -21,7 +23,9 @@
       </div>
       <div class="mb-3">
         <label class="block text-base font-bold mb-2 pt-1" for="password">
+          <ClientOnly>
           <font-awesome-icon :icon="['fas', 'key']" class="pr-2" />
+          </ClientOnly>
           App Password
         </label>
         <input
@@ -84,11 +88,11 @@
     },
   })
 
-  const auth = useAuth(props.service).then(auth => {
-    if (auth.isLoggedIn) {
+  const auth = useAuth(props.service).then(ret => {
+    if (ret.isLoggedIn) {
       if (navigate.getNext()) {
-        auth.setAsLogqedIn(true)
-        router.push({ name: navigate.getNext() })
+        ret.setAsLogqedIn(true)
+        //router.push({ name: navigate.getNext() })
       } else router.push({ name: 'index' })
     }
     return auth
@@ -111,14 +115,14 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        if (
-          await auth.login({
+        if (auth.value &&
+          await auth.value.login({
             identifier: handle.value,
             password: password.value,
           })
         ) {
           if (navigate.getNext()) {
-            auth.setAsLogqedIn(true)
+            auth.value.setAsLogqedIn(true)
             router.push({ name: navigate.getNext() })
           } else router.push({ name: 'index' })
         }

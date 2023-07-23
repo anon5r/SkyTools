@@ -63,7 +63,7 @@
                   !loadState.profile ? 'Loading...' : (
                   userinfo.profile?.value?.displayName ||
                   userinfo.details.handle ||
-                  'None')
+                  'Unknown')
                 }}
               </h2>
               <div
@@ -74,7 +74,7 @@
                   :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
                   :class="{ 'line-through': hasError }"
                   class="before:content-['@']">
-                  {{ userinfo.details.handle || 'none.example' }}
+                  {{ userinfo.details.handle || 'unknown.example' }}
                 </a>
                 <span v-else class="mt-4">loading...</span>
               </div>
