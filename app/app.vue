@@ -3,7 +3,9 @@
     <header>
       <Navbar />
     </header>
-    <NuxtPage />
+    <main>
+      <NuxtPage />
+    </main>
     <footer>
       <Footbar />
     </footer>

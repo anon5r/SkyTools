@@ -1,6 +1,6 @@
 <template>
   <article
-    class="p-4  my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
+    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -63,9 +63,7 @@
       <div v-if="!props.removed" class="break-words">
         {{ props.post.value.text }}
       </div>
-      <div v-else class="italic">
-        This post may have been removed.
-      </div>
+      <div v-else class="italic">This post may have been removed.</div>
       <div v-if="!props.removed && props.post.value.embed">
         <!-- Embeded (image, record...) -->
         <PostEmbed :did="did" :embed="props.post.value.embed" />

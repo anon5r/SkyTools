@@ -5,8 +5,7 @@
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`"
-            @click.prevent="showProfile">
+          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
             <Avatar
               rounded
               :img="avatarURL"
