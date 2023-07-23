@@ -120,7 +120,7 @@
                     :post="toRaw(record)"></PostView>
                 </div>
               </div>
-              <div v-else>There are no posts.</div>
+              <div v-else class="mt-4 mx-2">There are no posts.</div>
             </tab>
 
             <tab name="following" title="Following" id="following">
@@ -207,7 +207,8 @@
               <div v-else class="mt-4 mx-2">There are no liked posts.</div>
             </tab>
 
-            <tab name="blocks" title="Blocks" id="blocks">
+
+            <tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
               <div v-if="!loadState.blocks" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -247,7 +248,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
-  // import * as lexicons from '@/utils/lexicons'
+  import { useSessionStorage } from '@/composables/sessionStorage'
 
   const activeTab = ref('posts')
 
@@ -264,7 +265,7 @@
   )
 
   const hasError = ref(false)
-
+  const showBlocks = ref(false)
 
 
   const userinfoInitial = {
@@ -305,9 +306,13 @@
       lexicons = await import('@/utils/lexicons')
       lexicons.setConfig(toRaw(config))
     }
+
+    showBlocks.value = sessionStorage.getItem('showBlocks') == 'true'
+
     if (route.params.id) {
       showProfile()
     }
+
   })
 
   const focusout = () => {
@@ -376,12 +381,15 @@
           if (isDev()) console.warn(err)
       }
 
-      try {
-        const blocks = await fetchBlocks(identifier, 30)
-        updateUserInfo('blocks', blocks)
-      } catch (err) {
-        if (isDev()) console.warn(err)
-      }
+      if (showBlocks.value) {
+        try {
+          const blocks = await fetchBlocks(identifier, 30)
+          updateUserInfo('blocks', blocks)
+        } catch (err) {
+          if (isDev()) console.warn(err)
+        }
+      } else
+        updateUserInfo('blocks', [])
 
       if (isDev()) console.log('UserInfo = ', toRaw(userinfo))
 

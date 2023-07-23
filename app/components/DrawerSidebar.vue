@@ -52,7 +52,7 @@
           </NuxtLink>
 
           <!-- Dark mode toggle button -->
-          <ToggleDarkmode class="inline-block justify-between p-4 rounded-sm" />
+          <ToggleDarkmode class="inline-block justify-between px-5 rounded-sm" />
         </div>
       </div>
 </template>

@@ -2,7 +2,7 @@
   <div>
     <button
       id="theme-toggle"
-      @click="toggleTheme"
+      @click="toggleMode"
       type="button"
       class="text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-slate-700 rounded-lg text-sm p-1">
       <span :class="{ hidden: isDarkTheme }">
@@ -35,10 +35,14 @@
 
 <script setup lang="ts">
   import { ref, onMounted, defineComponent } from 'vue'
+  import { useSessionStorage } from '@/composables/sessionStorage';
 
   defineComponent({ name: 'ToggleDarkmode' })
 
   const isDarkTheme = ref<Boolean>(false)
+
+  const toggleCount: Ref<Number> = ref<Number>(0)
+  const clickTimestamp: Ref<Number> = ref<Number>(0)
 
   const loadTheme = () => {
     const savedTheme = localStorage.getItem('color-theme')
@@ -61,6 +65,28 @@
       document.documentElement.classList.remove('dark')
       localStorage.setItem('color-theme', 'light')
     }
+  }
+
+
+  const toggleMode = (e: Event) => {
+    if (Date.now() - clickTimestamp.value < 300) {
+      toggleCount.value++
+      if (isDev()) console.log("toggleCount = " + toggleCount.value)
+      if (toggleCount.value == 10) {
+        toggleCount.value = 0
+        if (!sessionStorage.getItem('showBlocks') || sessionStorage.getItem('showBlocks') === 'false') {
+          alert('You have enabled "DARK" mode.')
+          sessionStorage.setItem('showBlocks', 'true')
+        } else {
+          alert('Disable "DARK" mode.')
+          sessionStorage.setItem('showBlocks', 'false')
+        }
+      }
+    } else {
+      toggleCount.value = 0
+      toggleTheme()
+    }
+    clickTimestamp.value = Date.now()
   }
 </script>
 
