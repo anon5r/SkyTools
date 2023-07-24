@@ -105,7 +105,7 @@
   const route = useRoute()
   const isLoggedIn = ref(false)
 
-  const auth = ref(null)
+  const auth = useAuth()
 
   // App name
   const appName = config.title
@@ -159,13 +159,13 @@
   }
 
   const logout = () => {
-    if (auth.value.isLoggedIn) {
+    if (auth.isLoggedIn()) {
       const nextPage = route.fullPath
       if (!navi.navigate.value)
         navi.navigate = useNavigation({ next: null, prev: null })
       navi.navigate.value.next = null
 
-      auth.value.logout()
+      auth.logout()
       isLoggedIn.value = false
       router.push(nextPage)
     }
@@ -173,8 +173,15 @@
     router.push('/')
   }
 
-  onMounted(() => {
+  onMounted(async () => {
     initFlowbite()
+    if (!auth)
+      auth = useAuth()
+    if (!auth.isLoggedIn()) {
+      auth.getAgent()
+      await auth.restoreSession()
+      isLoggedIn.value = auth.isLoggedIn()
+    }
 
     nextTick(() => {
       if (!drawer) initDrawer()
@@ -182,11 +189,6 @@
   })
 
   computed(() => {
-
-    auth.value = useAuth().then(self => {
-      // isLoggedIn.value = self.isLoggedIn()
-      return self
-    })
     isLoggedIn.value = auth.value.isLoggedIn()
   })
 </script>

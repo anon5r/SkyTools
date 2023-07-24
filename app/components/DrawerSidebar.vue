@@ -2,7 +2,7 @@
   <div
     :id="props.id"
     tabindex="-1"
-    class="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-gray-200 w-64 dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-80 backdrop-blur-sm"
+    class="fixed top-0 right-0 z-40 h-full md:h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-gray-200 w-64 dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-80"
     aria-label="sidebar"
     aria-labelledby="drawer-label"
     aria-modal="true"
@@ -84,7 +84,6 @@
   })
 
   const clickLink = () => {
-    console.log('clickLink', 'drawer', props.drawer)
     if (props.drawer) {
       props.drawer.hide()
     }
