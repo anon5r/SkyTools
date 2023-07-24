@@ -5,6 +5,7 @@
     :data-drawer-target="props.target"
     :data-drawer-toggle="props.target"
     data-drawer-body-scrolling="true"
+    data-drawer-body-backdrop="true"
     :data-drawer-placement="props.placement"
     :aria-controls="props.target"
     :aria-label="props.label">

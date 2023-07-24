@@ -7,7 +7,7 @@
         <!-- Logo -->
         <NuxtLink to="/" class="flex items-center">
           <span
-            class="self-center text-2xl text-transparent bg-clip-text bg-gradient-to-b to-blue-600 from-green-100 dark:to-orange-600 dark:from-sky-300 font-semibold whitespace-nowrap dark:text-sky">
+            class="self-center text-2xl text-transparent bg-clip-text bg-gradient-to-b to-blue-700 from-green-300 dark:to-orange-500 dark:from-sky-300 font-semibold whitespace-nowrap dark:text-sky">
             {{ appName }}
           </span>
         </NuxtLink>
@@ -17,8 +17,7 @@
           id="drawer-menu-button"
           target="drawer-sidebar"
           label="Open Menu"
-          placement="right"
-          @click="toggleMenu">
+          placement="right">
           <svg
             class="w-6 h-6"
             aria-hidden="true"
@@ -34,7 +33,7 @@
       </div>
     </nav>
 
-      <!-- Drawer menu -->
+    <!-- Drawer menu -->
     <aside>
       <DrawerSidebar id="drawer-sidebar" label="Menu" :drawer="drawer">
         <ul
@@ -44,47 +43,45 @@
           <NavLink
             :href="item.src"
             :icon="item.icon"
-            :require-signin="item.requireSignin"
-            @click="clickLink">
+            :require-signin="item.requireSignin">
             {{ item.title }}
           </NavLink>
         </ul>
         <!-- -------------------- -->
 
         <ClientOnly>
-        <ul
-          class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
-          <li v-if="isLoggedIn">
-            <span
-              class="text-sm font-semibold text-gray-500 dark:text-gray-400">
-              @{{ auth.getHandle() }}
-            </span>
-          </li>
-          <li v-if="!isLoggedIn">
-            <!-- Sign-in -->
-            <a
-              :href="`/${config.defaultPDS}/signin`"
-              class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              @click="clickLink">
-              <font-awesome-icon
-                :icon="['fas', 'right-to-bracket']"
-                class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
-              <span class="ml-3">Sign in Bluesky</span>
-            </a>
-          </li>
-          <li v-if="isLoggedIn">
-            <!-- Sign-out -->
-            <a
-              href="#sign-out"
-              class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              @click.prevent="logout">
-              <font-awesome-icon
-                :icon="['fas', 'right-from-bracket']"
-                class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
-              <span class="ml-3">Sign out</span>
-            </a>
-          </li>
-        </ul>
+          <ul
+            class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
+            <li v-if="isLoggedIn">
+              <span
+                class="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                @{{ auth.getHandle() }}
+              </span>
+            </li>
+            <li v-if="!isLoggedIn">
+              <!-- Sign-in -->
+              <a
+                :href="`/${config.defaultPDS}/signin`"
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <font-awesome-icon
+                  :icon="['fas', 'right-to-bracket']"
+                  class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                <span class="ml-3">Sign in Bluesky</span>
+              </a>
+            </li>
+            <li v-if="isLoggedIn">
+              <!-- Sign-out -->
+              <a
+                href="#sign-out"
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                @click.prevent="logout">
+                <font-awesome-icon
+                  :icon="['fas', 'right-from-bracket']"
+                  class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                <span class="ml-3">Sign out</span>
+              </a>
+            </li>
+          </ul>
         </ClientOnly>
       </DrawerSidebar>
     </aside>
@@ -137,11 +134,6 @@
   /** Drawer */
   let drawer = null
 
-  const clickLink = () => {
-    if (!drawer) initDrawer()
-    if (drawer.isVisible()) drawer.hide()
-  }
-
   const initDrawer = () => {
     const $taragetDrawer = document.getElementById('drawer-sidebar')
     if ($taragetDrawer !== null) {
@@ -154,9 +146,9 @@
     }
   }
 
-  const toggleMenu = () => {
-    drawer.hide()
-  }
+  // const toggleMenu = () => {
+  //   drawer.toggle()
+  // }
 
   const logout = () => {
     if (auth.isLoggedIn()) {
@@ -175,8 +167,6 @@
 
   onMounted(async () => {
     initFlowbite()
-    if (!auth)
-      auth = useAuth()
     if (!auth.isLoggedIn()) {
       auth.getAgent()
       await auth.restoreSession()
