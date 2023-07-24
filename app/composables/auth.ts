@@ -3,18 +3,18 @@ import { useAppConfig } from 'nuxt/app'
 import { BskyAgent } from '@atproto/api'
 import { isDev } from '@/utils/helpers'
 
-let agent: BskyAgent | null = null
+let _agent: BskyAgent | null = null
 
 let _isLoggedIn = false
 
 const getAgent = (service?: string): BskyAgent => {
-  if (!agent) {
+  if (!_agent) {
     const config = useAppConfig()
     if (!service) service = config.bskyService
     else if (service.length > 0 && !service.startsWith('https://'))
       service = `https://${service}`
 
-    agent = new BskyAgent({
+    _agent = new BskyAgent({
       service: service,
       persistSession: (_, sess) => {
         if (process.client && sess != null)
@@ -22,7 +22,7 @@ const getAgent = (service?: string): BskyAgent => {
       },
     })
   }
-  return agent
+  return _agent
 }
 
 const login = async (credentials: { identifier: string; password: string }) => {
@@ -97,10 +97,8 @@ const getHandle = () => {
   return getAgent().session?.handle ?? ''
 }
 
-export async function useAuth(service?: string) {
-  const agent = getAgent(service)
-  // RunAtOne
-  await restoreSession()
+export function useAuth(service?: string) {
+  _agent = getAgent(service)
 
   return {
     login,

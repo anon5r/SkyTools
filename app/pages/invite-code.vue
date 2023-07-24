@@ -140,28 +140,13 @@
   import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { useAuth } from '@/composables/auth'
-  import { useNavigation } from '@/composables/navigation'
+  import { useAuth } from '~/composables/auth'
+  import { useNavigation } from '~/composables/navigation'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
 
-
-
-  const asyncLoad = async () => {
-    const { getAgent, isLoggedIn } = await useAuth()
-
-    if (agent.value == null)
-      agent.value = getAgent()
-
-    if (isLoggedIn) {
-      inviteCodes.value = await getInviteCodes()
-    } else {
-      loadSigninForm()
-    }
-  }
-
-  onMounted(asyncLoad)
+  const isLoggedIn = ref(false)
 
   const config = useAppConfig()
   const route = useRoute()
@@ -171,6 +156,30 @@
 
   const inviteCodes = ref(null)
   const nextDate = ref(null)
+
+  /** @constant {useAgent} */
+  const auth = useAuth()
+  agent.value = auth.getAgent()
+  await auth.restoreSession()
+  isLoggedIn.value = auth.isLoggedIn()
+
+
+  const asyncLoad = async () => {
+
+    if (agent.value == null)
+      agent.value = auth.getAgent()
+
+    await auth.restoreSession()
+
+    if (auth.isLoggedIn()) {
+      inviteCodes.value = await getInviteCodes()
+    } else {
+      loadSigninForm()
+    }
+  }
+
+  onMounted(asyncLoad)
+
 
 
   // Go sign-in page
@@ -190,13 +199,13 @@
       let records = []
       if (isDev()) console.log(response)
 
-      if (response.data.codes.length > 0) {
+      if (response.success && response.data.codes.length > 0) {
         // Sort order to descending order by createdAt field
         response.data.codes.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
-        console.log(response.data)
+
         for (const record of response.data.codes) {
           // Resolve to handle from DID
           const rewriteUses = record.uses.map(async use => ({
@@ -232,7 +241,7 @@
 
       return records
     } catch (error) {
-      console.error(error)
+      if (isDev()) console.error(error)
       loadSigninForm()
     }
   }
