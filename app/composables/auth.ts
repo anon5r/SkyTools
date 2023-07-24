@@ -81,7 +81,7 @@ const restoreSession = async () => {
 /**
  * @returns {boolean} true if the user is logged in
  */
-const isLoggedIn = () => {
+const isLoggedIn = (): boolean => {
   return _isLoggedIn
 }
 

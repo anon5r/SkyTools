@@ -51,6 +51,7 @@
         </ul>
         <!-- -------------------- -->
 
+        <ClientOnly>
         <ul
           class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
           <li v-if="isLoggedIn">
@@ -59,7 +60,6 @@
               @{{ auth.getHandle() }}
             </span>
           </li>
-          <ClientOnly>
           <li v-if="!isLoggedIn">
             <!-- Sign-in -->
             <a
@@ -84,8 +84,8 @@
               <span class="ml-3">Sign out</span>
             </a>
           </li>
-          </ClientOnly>
         </ul>
+        </ClientOnly>
       </DrawerSidebar>
     </aside>
   </div>
@@ -105,12 +105,7 @@
   const route = useRoute()
   const isLoggedIn = ref(false)
 
-  const auth = ref(
-    useAuth().then(auth => {
-      isLoggedIn.value = auth.isLoggedIn
-      return auth
-    })
-  )
+  const auth = ref(null)
 
   // App name
   const appName = config.title
@@ -153,17 +148,14 @@
       const drawerOptions = {
         placement: 'right',
         bodyScrolling: true,
-        backdrop: true,
-        onToggle: e => {
-          console.log('toggle(e) = ', e)
-        },
+        // backdrop: true,
       }
       drawer = new Drawer($taragetDrawer, drawerOptions)
     }
   }
 
   const toggleMenu = () => {
-    drawer.toggle()
+    drawer.hide()
   }
 
   const logout = () => {
@@ -187,13 +179,14 @@
     nextTick(() => {
       if (!drawer) initDrawer()
     })
-
-    useAuth().then(auth => {
-      isLoggedIn.value = auth.isLoggedIn
-    })
   })
 
   computed(() => {
-    isLoggedIn.value = auth.value.isLoggedIn
+
+    auth.value = useAuth().then(self => {
+      // isLoggedIn.value = self.isLoggedIn()
+      return self
+    })
+    isLoggedIn.value = auth.value.isLoggedIn()
   })
 </script>
