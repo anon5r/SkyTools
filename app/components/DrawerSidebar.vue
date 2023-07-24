@@ -82,10 +82,4 @@
       default: false,
     },
   })
-
-  const clickLink = () => {
-    if (props.drawer) {
-      props.drawer.hide()
-    }
-  }
 </script>

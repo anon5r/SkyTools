@@ -72,14 +72,15 @@
   const toggleMode = (e: Event) => {
     if (Date.now() - clickTimestamp.value < 300) {
       toggleCount.value++
-      if (isDev()) console.log("toggleCount = " + toggleCount.value)
-      if (toggleCount.value == 10) {
+      if (toggleCount.value <= 5)
+        toggleTheme()
+      if (toggleCount.value == 15) {
         toggleCount.value = 0
         if (!sessionStorage.getItem('showBlocks') || sessionStorage.getItem('showBlocks') === 'false') {
-          alert('You have enabled "DARK" mode.')
+          alert('Found the Easter egg!')
           sessionStorage.setItem('showBlocks', 'true')
         } else {
-          alert('Disable "DARK" mode.')
+          alert('Lost an egg...')
           sessionStorage.setItem('showBlocks', 'false')
         }
       }

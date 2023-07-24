@@ -27,7 +27,9 @@
           Invite code
         </h2>
         <span href="#" class="label-auth-required">
-          <ClientOnlu><font-awesome-icon :icon="['fas', 'lock']" class="mr-1 text-xs" /></ClientOnlu>
+          <ClientOnly>
+            <font-awesome-icon :icon="['fas', 'lock']" class="mr-1 text-xs" />
+          </ClientOnly>
           Authentication required
         </span>
         <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
