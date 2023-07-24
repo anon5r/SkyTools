@@ -160,7 +160,6 @@
   /** @constant {useAgent} */
   const auth = useAuth()
   agent.value = auth.getAgent()
-  await auth.restoreSession()
   isLoggedIn.value = auth.isLoggedIn()
 
 

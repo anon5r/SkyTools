@@ -33,9 +33,9 @@
           Authentication required
         </span>
         <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
-          Shows when your invitation code was given, when it was used and by
-          whom. This feature requires you to log in to Bluesky using
-          AppPassword.
+          View history of invite code grants, usage (and
+          whom used). To use this feature, you must be logged into Bluesky
+          using AppPassword.
         </p>
       </NuxtLink>
     </div>

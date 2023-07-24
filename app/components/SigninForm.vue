@@ -100,7 +100,7 @@
 
 
   const validateHandle =() => {
-    if (handle?.value.length > 0 && !handle.value.includes('.')) {
+    if (handle && handle.value.length > 0 && !handle.value.includes('.')) {
       handle.value = handle.value + pds
     }
   }
