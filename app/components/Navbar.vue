@@ -102,7 +102,7 @@
   const route = useRoute()
   const isLoggedIn = ref(false)
 
-  const auth = useAuth()
+  let auth = null
 
   // App name
   const appName = config.title
@@ -167,11 +167,21 @@
 
   onMounted(async () => {
     initFlowbite()
-    if (!auth.isLoggedIn()) {
-      auth.getAgent()
-      await auth.restoreSession()
-      isLoggedIn.value = auth.isLoggedIn()
-    }
+
+    if (auth === null)
+      auth = import('@/composables/auth').then((module) => {
+        auth = module.useAuth()
+
+        if (!auth.isLoggedIn()) {
+          auth.getAgent()
+          auth.restoreSession().then((result) => {
+            if (result) {
+              isLoggedIn.value = true
+            }
+          })
+        }
+      })
+
 
     nextTick(() => {
       if (!drawer) initDrawer()
