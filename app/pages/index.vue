@@ -3,7 +3,7 @@
     class="flex flex-col justify-center max-w-screen-xl min-h-screen pt-10 lg:pt-0 sm:items-start md:items-center bg-gray-100 dark:bg-slate-900">
     <div class="mx-auto pb-10 text-center">
       <div
-        class="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-400 mb-6">
+        class="text-8xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-400 mb-6">
         {{ appName }}
       </div>
       <div class="text-xl text-gray-700 dark:text-slate-500">

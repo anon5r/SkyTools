@@ -13,6 +13,9 @@
     <span class="sr-only">{{ props.label }}</span>
     <slot></slot>
   </button>
+  <template #fallback>
+    <slot></slot>
+  </template>
   </ClientOnly>
 </template>
 
