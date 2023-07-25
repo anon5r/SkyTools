@@ -139,7 +139,7 @@
       const drawerOptions = {
         placement: 'right',
         bodyScrolling: true,
-        // backdrop: true,
+        backdrop: true,
       }
       drawer = new Drawer($taragetDrawer, drawerOptions)
     }

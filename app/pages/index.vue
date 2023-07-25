@@ -38,6 +38,15 @@
           using AppPassword.
         </p>
       </NuxtLink>
+      <NuxtLink to="/history" class="feature-card">
+        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+          Identity history
+        </h2>
+        <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
+          You can view handle history of identity creation, update, and deletion.
+          This feature will be merge Profile page in the future.
+        </p>
+      </NuxtLink>
     </div>
   </div>
 </template>

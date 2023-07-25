@@ -79,10 +79,12 @@ export const resolveDID = async (
 
     if (res.data?.did) {
       // if (isDev()) console.log('[Lexicons] resolveDID::response.data = ', res.data)
-      return res.data.did as string
+      return res.data.did.trim() as string
     } else if (res.data?.alsoKnownAs) {
       const handle = res.data.alsoKnownAs[0]
-      return onlyHandle ? formatIdentifier(handle) : (handle as string)
+      return onlyHandle
+        ? formatIdentifier(handle).trim()
+        : (handle.trim() as string)
     }
     throw new Error('Invalid DID')
   } catch (error: any) {
