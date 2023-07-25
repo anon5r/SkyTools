@@ -11,7 +11,6 @@
             {{ appName }}
           </span>
         </NuxtLink>
-
         <!-- Side menu button by drawer -->
         <DrawerControlButton
           id="drawer-menu-button"
