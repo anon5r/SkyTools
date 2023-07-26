@@ -157,27 +157,29 @@
   const inviteCodes = ref(null)
   const nextDate = ref(null)
 
-  /** @constant {useAgent} */
-  const auth = useAuth()
-  agent.value = auth.getAgent()
-  isLoggedIn.value = auth.isLoggedIn()
+  const auth = ref(null)
 
 
   const asyncLoad = async () => {
 
     if (agent.value == null)
-      agent.value = auth.getAgent()
+      agent.value = auth.value.getAgent()
 
-    await auth.restoreSession()
+    await auth.value.restoreSession()
 
-    if (auth.isLoggedIn()) {
+    if (auth.value.isLoggedIn()) {
       inviteCodes.value = await getInviteCodes()
     } else {
       loadSigninForm()
     }
   }
 
-  onMounted(asyncLoad)
+  onMounted(async () => {
+    let useAuth = import('@/composables/auth').then(async (module) => {
+        auth.value = module.useAuth()
+        await asyncLoad()
+      })
+  })
 
 
 
