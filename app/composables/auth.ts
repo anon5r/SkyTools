@@ -85,10 +85,6 @@ const isLoggedIn = (): boolean => {
   return _isLoggedIn
 }
 
-const setAsLogqedIn = (value: boolean) => {
-  _isLoggedIn = value
-}
-
 /**
  *
  * @returns {string} the handle of the logged in user
