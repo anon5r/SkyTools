@@ -1,70 +1,130 @@
 <template>
-  <div class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
+  <div
+    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-lg">
       <ClientOnly>
-        <div class="bg-white dark:bg-slate-800 shadow-md rounded-lg px-3 py-3 mb-4">
-          <div class="block text-gray-700 dark:text-gray-400 text-lg font-semibold py-3 px-2 mb-2">
+        <div
+          class="bg-white dark:bg-slate-800 shadow-md rounded-lg px-3 py-3 mb-4">
+          <div
+            class="block text-gray-700 dark:text-gray-400 text-lg font-semibold py-3 px-2 mb-2">
             Invite code
           </div>
-          <div v-if="inviteCodes" class="bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border-0">
-              <div v-if="nextDate" class="text-sm italic">You will get next new code at <span class="bold">{{ nextDate }}</span></div>
-              <Accordion class="py-2 px-2 text-gray-600 dark:text-gray-400" always-open="false" data-accordion="open">
-                <accordion-panel v-for="record in inviteCodes" :key="record.code">
-                  <accordion-header aria-expanded="false">
-                    <font-awesome-icon
-                      :icon="record.uses?.length > 0
+          <div
+            v-if="inviteCodes"
+            class="bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border-0">
+            <div v-if="nextDate" class="text-sm pl-3">
+              <font-awesome-icon
+                :icon="['fas', 'cloud-sun']"
+                class="pr-2"
+                title="Forecast" />
+              <span class="italic" title="This is forecast, Not guaranteed">
+                You will get next new code at
+                <span class="bold">{{ nextDate }}</span>
+              </span>
+            </div>
+            <Accordion
+              class="py-2 px-2 text-gray-600 dark:text-gray-400"
+              always-open="false"
+              data-accordion="open">
+              <accordion-panel v-for="record in inviteCodes" :key="record.code">
+                <accordion-header aria-expanded="false">
+                  <font-awesome-icon
+                    :icon="
+                      record.uses?.length > 0
                         ? ['fas', 'check-double']
-                        : (record.disabled
-                          ? ['fas', 'ban']
-                          : ['fas', 'check'])"
-                        :style="record.uses?.length > 0
-                          ? {'color': 'text-gray-900'}
-                          : (record.disabled
-                            ? {'color': '#e00000'}
-                            : {'color': '#18b404'})"
-                      class="mr-2"/>
-                    <a @click="toggleUsed" :class="{ 'line-through': (record.uses?.length > 0) }">{{ record.code }}</a>
-                  </accordion-header>
-                  <accordion-content>
+                        : record.disabled
+                        ? ['fas', 'ban']
+                        : ['fas', 'check']
+                    "
+                    :style="
+                      record.uses?.length > 0
+                        ? { color: 'text-gray-900' }
+                        : record.disabled
+                        ? { color: '#e00000' }
+                        : { color: '#18b404' }
+                    "
+                    class="mr-2" />
+                  <a
+                    @click="toggleUsed"
+                    :class="{ 'line-through': record.uses?.length > 0 }">
+                    {{ record.code }}
+                  </a>
+                </accordion-header>
+                <accordion-content>
+                  <div v-if="record.createdAt">
                     <div>
-                      Issued at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ record.createdAtLocal }}</time>
+                      Issued at
+                      <time
+                        class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+                        {{ record.createdAtLocal }}
+                      </time>
                     </div>
                     <ul>
                       <li v-for="(use, index) in record.uses" :key="index">
                         <div>
-                          Used by <NuxtLink :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`" class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700" target="_blank">{{ use.alsoKnownAs }}</NuxtLink>
+                          Used by
+                          <NuxtLink
+                            :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`"
+                            class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700"
+                            target="_blank">
+                            {{ use.alsoKnownAs }}
+                          </NuxtLink>
                         </div>
                         <div>
-                          <span class="sm italic text-gray-300 dark:text-gray-700">{{ use.usedBy }}</span>
+                          <span
+                            class="sm italic text-gray-300 dark:text-gray-700">
+                            {{ use.usedBy }}
+                          </span>
                         </div>
                         <div>
-                          Used at <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{{ use.usedAtLocal }}</time>
+                          Used at
+                          <time
+                            class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+                            {{ use.usedAtLocal }}
+                          </time>
                         </div>
                       </li>
                       <li v-if="record.uses.length == 0">
                         <div>
-                          <span class="text-green-500 pr-3 py-2">Available!</span>
+                          <span class="text-green-500 pr-3 py-2">
+                            Available!
+                          </span>
                           <span v-if="record.createdBy != record.forAccount">
-                            <font-awesome-icon :icon="['fas', 'gift']" beat style="color: #ca1643;" class="px-2" title="Gift!" />
-                            <span class="text-sm">by</span> <span class="sm italic text-sm text-gray-400 dark:text-slate-500">{{ record.createdBy }}</span>
+                            <font-awesome-icon
+                              :icon="['fas', 'gift']"
+                              beat
+                              style="color: #ca1643"
+                              class="px-2"
+                              title="Gift!" />
+                            <span class="text-sm">by</span>
+                            <span
+                              class="sm italic text-sm text-gray-400 dark:text-slate-500">
+                              {{ record.createdBy }}
+                            </span>
                           </span>
                         </div>
 
                         <CopyToClipboard
                           :copy-text="record.code"
-                          class="text-blue-500 hover:text-blue-800 dark:text-blue-700 dark:hover:text-blue-500"
+                          class="text-blue-500 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-400"
                           position="bottom-right"
                           success-message="Copied!"
                           error-message="Failed to copy"
-                          :display-duration="3500"
-                          >
-                          <font-awesome-icon :icon="['far', 'clipboard']" /> Copy this code!
+                          :display-duration="3500">
+                          <font-awesome-icon :icon="['far', 'clipboard']" />
+                          Copy this code!
                         </CopyToClipboard>
                       </li>
                     </ul>
-                  </accordion-content>
-                </accordion-panel>
-              </Accordion>
+                  </div>
+                  <div v-else>
+                    <span class="text-gray-400 dark:text-slate-600 pr-3 py-2">
+                      No code issued
+                    </span>
+                  </div>
+                </accordion-content>
+              </accordion-panel>
+            </Accordion>
           </div>
           <div v-else>
             <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
@@ -76,42 +136,51 @@
   </div>
 </template>
 
-
 <script setup lang="js">
-  import { onMounted, ref, reactive, toRefs } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { useAuth } from '@/composables/auth'
-  import { useNavigation } from '@/composables/navigation'
-  import { useIdentity } from '@/composables/identity'
+  import { useAuth } from '~/composables/auth'
+  import { useNavigation } from '~/composables/navigation'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
-  import { isDev } from '../utils'
+  import { isDev } from '~/utils/helpers'
+  import { resolveDID } from '~/utils/lexicons'
+
+  const isLoggedIn = ref(false)
+
+  const config = useAppConfig()
+  const route = useRoute()
+  const navigate = useNavigation()
+  const agent = ref(null)
+
+
+  const inviteCodes = ref(null)
+  const nextDate = ref(null)
+
+  const auth = ref(null)
 
 
   const asyncLoad = async () => {
 
-    const { getAgent, isLoggedIn } = await useAuth()
-
     if (agent.value == null)
-      agent.value = await getAgent()
+      agent.value = auth.value.getAgent()
 
-    if (isLoggedIn) {
+    await auth.value.restoreSession()
+
+    if (auth.value.isLoggedIn()) {
       inviteCodes.value = await getInviteCodes()
     } else {
       loadSigninForm()
     }
   }
 
-  onMounted(asyncLoad)
+  onMounted(async () => {
+    let useAuth = import('@/composables/auth').then(async (module) => {
+        auth.value = module.useAuth()
+        await asyncLoad()
+      })
+  })
 
-  const config = useAppConfig()
-  const route = useRoute()
-  const navigate = useNavigation()
-  const agent = ref(null)
-  const identity = useIdentity()
-
-  const inviteCodes = ref(null)
-  const nextDate = ref(null)
 
 
   // Go sign-in page
@@ -131,18 +200,18 @@
       let records = []
       if (isDev()) console.log(response)
 
-      if (response.data?.codes?.length > 0) {
+      if (response.success && response.data.codes.length > 0) {
         // Sort order to descending order by createdAt field
-        response.data?.codes.sort((a, b) => {
+        response.data.codes.sort((a, b) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
-        console.log(response.data)
+
         for (const record of response.data.codes) {
           // Resolve to handle from DID
           const rewriteUses = record.uses.map(async use => ({
             ...use,
-            alsoKnownAs: await identity.resolveDID(use.usedBy, true),
+            alsoKnownAs: await resolveDID(use.usedBy, true),
             usedAtLocal: DateTime.fromISO(use.usedAt).toFormat('DDD TTT'),
           }));
           const resolvedUses = await Promise.all(rewriteUses);
@@ -173,18 +242,8 @@
 
       return records
     } catch (error) {
-      console.error(error)
+      if (isDev()) console.error(error)
       loadSigninForm()
     }
   }
-
-  const toggleDetail = async (record) => {
-    const index = inviteCodes.indexOf(record)
-    inviteCodes[index] = {
-      ...record,
-      showDetail: !record.showDetail,
-    }
-  }
-
 </script>
-

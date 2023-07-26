@@ -4,7 +4,7 @@
       <Navbar />
     </header>
     <NuxtPage />
-    <footer class="bg-gray-800 text-white py-6 px-4">
+    <footer class="py-6 px-4">
       <Footbar />
     </footer>
   </div>
@@ -24,4 +24,7 @@
 
 <style scoped>
   /* Common styles */
+  div {
+    @apply min-h-max text-base dark:text-slate-300 bg-gray-100 dark:bg-slate-900;
+  }
 </style>

@@ -2,7 +2,7 @@
   <div>
     <button
       id="theme-toggle"
-      @click="toggleTheme"
+      @click="toggleMode"
       type="button"
       class="text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-slate-700 rounded-lg text-sm p-1">
       <span :class="{ hidden: isDarkTheme }">
@@ -35,10 +35,15 @@
 
 <script setup lang="ts">
   import { ref, onMounted, defineComponent } from 'vue'
+  import { isDev } from '@/utils/helpers'
+  import type { Ref } from 'vue'
 
   defineComponent({ name: 'ToggleDarkmode' })
 
-  const isDarkTheme = ref<boolean>(false)
+  const isDarkTheme = ref<Boolean>(false)
+
+  const toggleCount: Ref<number> = ref<number>(0)
+  const clickTimestamp: Ref<number> = ref<number>(0)
 
   const loadTheme = () => {
     const savedTheme = localStorage.getItem('color-theme')
@@ -61,6 +66,29 @@
       document.documentElement.classList.remove('dark')
       localStorage.setItem('color-theme', 'light')
     }
+  }
+
+
+  const toggleMode = (e: Event) => {
+    if (Date.now() - clickTimestamp.value < 300) {
+      toggleCount.value++
+      if (toggleCount.value <= 5)
+        toggleTheme()
+      if (toggleCount.value == 15) {
+        toggleCount.value = 0
+        if (!sessionStorage.getItem('showBlocks') || sessionStorage.getItem('showBlocks') === 'false') {
+          alert('Found the Easter egg!')
+          sessionStorage.setItem('showBlocks', 'true')
+        } else {
+          alert('Lost an egg...')
+          sessionStorage.setItem('showBlocks', 'false')
+        }
+      }
+    } else {
+      toggleCount.value = 0
+      toggleTheme()
+    }
+    clickTimestamp.value = Date.now()
   }
 </script>
 

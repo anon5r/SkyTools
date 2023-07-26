@@ -1,24 +1,28 @@
 import { ref } from 'vue'
 import { useAppConfig } from 'nuxt/app'
 import { BskyAgent } from '@atproto/api'
-import { isDev } from '@/utils'
+import { isDev } from '@/utils/helpers'
 
-let agent: BskyAgent | null = null
+let _agent: BskyAgent | null = null
 
-const isLoggedIn = ref(false)
+let _isLoggedIn = false
 
-const getAgent = (): BskyAgent => {
-  if (!agent) {
+const getAgent = (service?: string): BskyAgent => {
+  if (!_agent) {
     const config = useAppConfig()
-    agent = new BskyAgent({
-      service: config.bskyService as string,
+    if (!service) service = config.bskyService
+    else if (service.length > 0 && !service.startsWith('https://'))
+      service = `https://${service}`
+
+    _agent = new BskyAgent({
+      service: service,
       persistSession: (_, sess) => {
         if (process.client && sess != null)
           sessionStorage.setItem('credentials', JSON.stringify(sess))
       },
     })
   }
-  return agent
+  return _agent
 }
 
 const login = async (credentials: { identifier: string; password: string }) => {
@@ -34,7 +38,7 @@ const login = async (credentials: { identifier: string; password: string }) => {
           'credentials',
           JSON.stringify(getAgent().session)
         )
-      isLoggedIn.value = true
+      _isLoggedIn = true
     }
 
     return response.success
@@ -49,7 +53,7 @@ const logout = async () => {
     if (getAgent().hasSession) getAgent().session = undefined
 
     if (process.client) sessionStorage.removeItem('credentials')
-    isLoggedIn.value = false
+    _isLoggedIn = false
   } catch (error) {
     console.error(error)
   }
@@ -62,8 +66,8 @@ const restoreSession = async () => {
       try {
         const session = JSON.parse(credentials)
         const res = await getAgent().resumeSession(session)
-        isLoggedIn.value = res.success
-      } catch (err) {
+        _isLoggedIn = res.success
+      } catch (err: any) {
         if (isDev()) console.error(err)
         if (err.response.status == 400) {
           if (err.response.data.error == 'ExpiredToken') await logout()
@@ -74,10 +78,23 @@ const restoreSession = async () => {
   }
 }
 
-export async function useAuth() {
-  await getAgent()
-  // RunAtOne
-  await restoreSession()
+/**
+ * @returns {boolean} true if the user is logged in
+ */
+const isLoggedIn = (): boolean => {
+  return _isLoggedIn
+}
+
+/**
+ *
+ * @returns {string} the handle of the logged in user
+ */
+const getHandle = () => {
+  return getAgent().session?.handle ?? ''
+}
+
+export function useAuth(service?: string) {
+  _agent = getAgent(service)
 
   return {
     login,
@@ -85,5 +102,6 @@ export async function useAuth() {
     isLoggedIn,
     getAgent,
     restoreSession,
+    getHandle,
   }
 }
