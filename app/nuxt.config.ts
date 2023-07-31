@@ -31,6 +31,36 @@ export default {
           name: 'theme-color',
           content: '#ccf2ff',
         },
+        { property: 'og:site_name', content: 'SkyTools' },
+        { property: 'og:title', content: 'SkyTools' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: 'https://bsky.social' },
+        {
+          property: 'og:description',
+          content: 'SkyTools is a tools for the Bluesky',
+        },
+        {
+          property: 'og:image',
+          content: 'https://skytools.anon5r.com/images/default.png',
+        },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'SkyTools' },
+        { name: 'twitter:site', content: '@anon5r' },
+        {
+          name: 'twitter:creator',
+          content: 'https://bsky.app/profile/did:plc:c22jdrqhoajyj5ca7e56a3ke',
+        },
+        {
+          name: 'twitter:description',
+          content: 'SkyTools is a tools for the Bluesky',
+        },
+        {
+          name: 'twitter:image',
+          content: 'https://skytools.anon5r.com/images/default.png',
+        },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
