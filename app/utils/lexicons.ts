@@ -105,6 +105,7 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   const host = identifier.substring(identifier.indexOf('.') + 1)
   const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
+    if (identifier.length > 253) throw new Error('Too long identifier')
     const res = await axios.get(url)
     // if (isDev()) console.log('[Lexicons] resolveHandle::response.data = ', res)
 
@@ -212,18 +213,21 @@ export const getRecord = async (
  * @param {string} collection
  * @param {string} identifier
  * @param {int} limit
+ * @param {string|undefined} cursor
  * @return {ComAtprotoRepoListRecords.Response} list of records
  */
 export const listRecords = async (
   collection: string,
   identifier: string,
-  limit: number = 50
+  limit: number = 50,
+  cursor: string | undefined = undefined
 ): Promise<ComAtprotoRepoListRecords.Response> => {
   try {
     const response = await getAgent().api.com.atproto.repo.listRecords({
       collection: collection,
       repo: identifier,
       limit: limit,
+      cursor: cursor,
     })
 
     if (response) return response
