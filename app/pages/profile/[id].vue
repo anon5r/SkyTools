@@ -123,7 +123,7 @@
                 Loading...
               </div>
               <div v-if="cursors.posts" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:bg-slate-400" @click="loadMore('posts')"
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('posts')"
                   :disabled="!loadState.posts">
                   Load more
                 </button>
@@ -156,7 +156,7 @@
                 Loading...
               </div>
               <div v-if="cursors.following" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:bg-slate-400" @click="loadMore('following')"
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('following')"
                 :disabled="!loadState.following">
                   Load more
                 </button>
@@ -196,7 +196,7 @@
                 Loading...
               </div>
               <div v-if="cursors.like" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:bg-slate-400" @click="loadMore('like')"
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('like')"
                   :disabled="!loadState.like">
                   Load more
                 </button>
@@ -230,7 +230,7 @@
                 Loading...
               </div>
               <div v-if="userinfo.blocks.length > 0 && cursors.blocks" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:bg-slate-400" @click="loadMore('blocks')"
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('blocks')"
                   :disabled="!loadState.blocks">
                   Load more
                 </button>
