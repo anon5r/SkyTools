@@ -139,7 +139,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      @lookup="showProfile" />
+                      @show-profile="showProfile" />
                   </li>
                 </ul>
               </div>
@@ -179,7 +179,7 @@
                           ? record.profile.value.displayName
                           : record.handle"
                       :post="record.post"
-                      @lookup="showProfile"></PostView>
+                      @show-profile="showProfile"></PostView>
                   </li>
                 </ul>
               </div>
@@ -214,7 +214,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      @lookup="showProfile" />
+                      @show-profile="showProfile" />
                   </li>
                 </ul>
               </div>
