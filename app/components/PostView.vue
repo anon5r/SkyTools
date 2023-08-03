@@ -118,7 +118,7 @@
     removed: Boolean,
   })
 
-    const emits = defineEmits(['showProfile']),
+  const emits = defineEmits(['showProfile'])
 
   const postURL = ref('#')
 
