@@ -6,7 +6,7 @@
         <div
           class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="handleClick">
+          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             <Avatar
               rounded
               :img="props.avatar_url"
@@ -16,13 +16,13 @@
         </div>
         <div class="truncate">
           <!-- DisplayName -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="handleClick">
+          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             {{ props.display_name }}
           </a>
           <div
             class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`/profile/${props.did}`" @click.prevent="handleClick">
+            <a :href="`/profile/${props.did}`" @click.prevent="clickProfile">
               @{{ props.handle }}
             </a>
           </div>
@@ -130,7 +130,7 @@
     )
   })
 
-  const handleClick = () => {
+  const clickProfile = () => {
     emits('showProfile', props.handle)
   }
 </script>

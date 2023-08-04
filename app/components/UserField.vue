@@ -5,7 +5,7 @@
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
+          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             <Avatar
               rounded
               :img="avatarURL"
@@ -18,7 +18,7 @@
           <a
             :href="`/profile/${props.handle}`"
             class=""
-            @click.prevent="showProfile">
+            @click.prevent="clickProfile">
             {{ props.profile ? props.profile.value.displayName : props.handle }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
@@ -26,7 +26,7 @@
             <a
               :href="`/profile/${props.handle}`"
               class="truncate"
-              @click.prevent="showProfile">
+              @click.prevent="clickProfile">
               @{{ props.handle }}
             </a>
           </p>
@@ -67,7 +67,7 @@
     handle: String,
   })
 
-  const emits = defineEmits({ lookup: null })
+  const emits = defineEmits(['showProfile'])
 
   const avatarURL = ref('')
 
@@ -84,7 +84,7 @@
     }
   })
 
-  const showProfile = () => {
-    emits('lookup', props.handle)
+  const clickProfile = () => {
+    emits('showProfile', props.handle)
   }
 </script>
