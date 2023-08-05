@@ -73,7 +73,7 @@
                   v-if="loadState.details"
                   :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
                   :class="{ 'line-through': hasError }"
-                  class="before:content-['@']">
+                  class="select-all at-handle">
                   {{ userinfo.details.handle || 'unknown.example' }}
                 </a>
                 <span v-else class="mt-4">loading...</span>
@@ -107,7 +107,8 @@
                         ? userinfo.profile.value.displayName
                         : userinfo.details.handle
                     "
-                    :post="toRaw(record)"></PostView>
+                    :post="toRaw(record)"
+                    @show-profile="showProfile"></PostView>
                 </div>
               </div>
               <div v-else class="mt-4 mx-2">There are no posts.</div>
@@ -179,7 +180,7 @@
                           ? record.profile.value.displayName
                           : record.handle"
                       :post="record.post"
-                      @show-profile="showProfile"></PostView>
+                      @show-profile="showProfile" />
                   </li>
                 </ul>
               </div>
@@ -456,7 +457,7 @@
    * @param {any} value
    */
   const updateUserInfo = (item, value) => {
-    if (isDev()) console.log('[updateUserInfo] ::', item, ' = ', value)
+    if (isDev()) console.log('[updateUserInfo]::', item, ' = ', value)
     userinfo.value[item] = value
     loadState.value[item] = true
   }
@@ -586,15 +587,19 @@
             }
           }
 
-          let profile,
-            avatar = null
+          let profile, avatar, handle = null
           try {
             profile = await lexicons.getProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
           } catch (err) {
             console.info('Not set profile: ', recordUri.did)
           }
-          const handle = await lexicons.resolveDID(recordUri.did)
+
+          try {
+            handle = await lexicons.resolveDID(recordUri.did)
+          } catch (err) {
+            handle = record.value.subject
+          }
 
           return {
             ...record,
@@ -619,7 +624,8 @@
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        return [err.message]
+        if (isDev()) console.error(err.status, err.message)
+        return []
       }
       if (isDev()) console.error(err)
       throw new Error('Failed to get Like feed', err)
@@ -643,22 +649,25 @@
       if (response.success) {
         const records = response.data.records.map(async record => {
           let handle = '',
-            profile = {}
+          profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
+          } catch (err) {
+            console.warn('Could not resolve handle (deleted?): ', record.value.subject)
+          }
+
+          try {
             profile = await lexicons.getProfile(record.value.subject)
           } catch (err) {
             // following, but the account has been removed
-            console.info('No exit record: ', record.value.subject)
-            handle = record.value.subject
-            profile = {
+            console.info('No profile exists: ', record.value.subject)
+            profile = Object.assign(profile, {
               value: {
-                displayName: record.value.subject,
                 description: '',
                 avatar: '',
                 banner: null,
-              },
-            }
+              }
+            })
           }
           return {
             ...record,
@@ -675,9 +684,10 @@
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        return [err.message]
+        if (isDev()) console.error(err.status, err.message)
       }
       if (isDev()) console.error(err)
+      return []
     }
   }
 
@@ -703,15 +713,17 @@
           profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
+          } catch (err) {
+            console.warn('Could not resolve handle (deleted?): ', record.value.subject)
+          }
+          try {
             profile = await lexicons.getProfile(record.value.subject)
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)
             //
-            handle = record.value.subject
             profile = {
               value: {
-                displayName: record.value.subject,
                 description: '',
                 avatar: '',
                 banner: null,
@@ -739,3 +751,9 @@
     }
   }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>

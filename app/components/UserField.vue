@@ -19,7 +19,7 @@
             :href="`/profile/${props.handle}`"
             class=""
             @click.prevent="clickProfile">
-            {{ props.profile ? props.profile.value.displayName : props.handle }}
+            {{ props.profile?.value.displayName ? props.profile.value.displayName : props.handle }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
