@@ -1,18 +1,29 @@
 module.exports = {
   root: true,
-  parserOptions: {},
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.eslint.json',
+    tsconfigRootDir: __dirname,
+  },
   env: {
     browser: true,
     node: true,
     commonjs: true,
   },
   extends: [
-    'eslint:recommended',
     'plugin:vue/base',
     'plugin:nuxt/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'eslint-config-airbnb-base',
+    'eslint-config-airbnb-typescript/base',
+    'eslint:recommended',
     'plugin:prettier/recommended',
     'prettier',
   ],
-  plugins: ['prettier'],
-  rules: {},
+  plugins: ['@typescript-eslint', 'vue', 'prettier'],
+  rules: {
+    'import/prefer-default-export': 'off',
+    '@typescript-eslint/quotes': ['error', 'double'],
+  },
+  ignorePatterns: ['node_modules', '.nuxt', 'dist'],
 }
