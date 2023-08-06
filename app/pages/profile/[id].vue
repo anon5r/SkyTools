@@ -69,13 +69,12 @@
               <div
                 class="text-sm font-semibold text-gray-500 dark:text-slate-500">
                 <!-- Handle -->
-                <a
+                <span
                   v-if="loadState.details"
-                  :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
-                  :class="{ 'line-through': hasError }"
+                  :class="{ 'line-through': hasError}"
                   class="select-all at-handle">
                   {{ userinfo.details.handle || 'unknown.example' }}
-                </a>
+              </span>
                 <span v-else class="mt-4">loading...</span>
               </div>
               <div
@@ -326,7 +325,11 @@
   onMounted(async () => {
     if (!lexicons) {
       lexicons = await import('@/utils/lexicons')
+
       lexicons.setConfig(toRaw(config))
+      if (route.params.id) {
+        showProfile()
+      }
     }
 
     showBlocks.value = sessionStorage.getItem('showBlocks') == 'true'
@@ -334,7 +337,6 @@
     if (route.params.id) {
       showProfile()
     }
-
   })
 
   const focusout = () => {

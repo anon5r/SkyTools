@@ -20,10 +20,10 @@
             {{ props.display_name }}
           </a>
           <div
-            class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
+            class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <a :href="`/profile/${props.did}`" @click.prevent="clickProfile">
-              @{{ props.handle }}
+              {{ props.handle }}
             </a>
           </div>
         </div>
@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div class="text-gray-500 dark:text-gray-400">
+    <div class="pl-3 pr-4 text-gray-500 dark:text-gray-400">
       <!-- has reply ? -->
       <div v-if="!props.removed">
         <AtHandleLink
@@ -60,7 +60,7 @@
         </AtHandleLink>
       </div>
       <!-- Post message -->
-      <div v-if="!props.removed" class="break-words">
+      <div v-if="!props.removed" class="break-words whitespace-pre-line">
         {{ props.post.value.text }}
       </div>
       <div v-else class="italic">This post may have been removed.</div>
@@ -134,3 +134,9 @@
     emits('showProfile', props.handle)
   }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>

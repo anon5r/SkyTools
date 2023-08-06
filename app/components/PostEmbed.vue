@@ -2,11 +2,79 @@
   <div class="pt-2 m-0">
     <div v-if="props.embed.$type == 'app.bsky.embed.record'">
       <!-- Embed Record -->
-      <a
-        :href="postURL"
-        class="block max-w-fit p-6 text-sm truncate bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        {{ props.embed.record.uri }}
-      </a>
+      <div class="max-w my-2 ml-8 mr-2 text-sm truncate bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+        <ClientOnly
+          fallback-tag="div"
+          class="flex items-center max-w mr-3 text-md text-gray-900 dark:text-white">
+          <template #placeholder>
+            <a
+            href="#"
+            class="block m-0 p-4"
+            :title="props.embed.record.uri"
+            @click.prevent="loadPostData(props.embed.record.uri)">
+              Loading...
+              <div>{{ props.embed.record.uri }}</div>
+            </a>
+          </template>
+
+          <a
+            v-if="post && !post.isRemoved"
+            :href="postUrl ?? '#'"
+            class="block max-w m-0 p-4"
+            :title="props.embed.record.uri"
+            @click.prevent="showPost(props.embed.record.uri)">
+            <div class="flex flex-col min-w-max">
+              <div
+                class="flex flex-wrap mb-3 text-md text-gray-400 dark:text-gray-500">
+                <!-- Avatar -->
+                <Avatar
+                  rounded
+                  size="xs"
+                  :img="post.avatarURL"
+                  :alt="post.handle"
+                  class="inline-flex mr-1 min-w-max" />
+
+                <div class="inline-flex items-center truncate">
+                  <!-- DisplayName -->
+                  <div class="ml-1 mr-2">
+                    {{ post.profile?.value.displayName ?? post.handle }}
+                  </div>
+                  <div
+                    class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
+                    <!-- Handle -->
+                    <span class="at-handle">{{ post.handle }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="whitespace-pre-line breal-all truncate">
+                {{ post.record?.data?.value?.text }}
+              </div>
+              <div v-if="post.record?.data?.value?.embed">
+                <div
+                  v-if="post.record.data.value.embed.$type == 'app.bsky.embed.images'"
+                  class="flex flex-wrap">
+                  <!-- Display image -->
+                  <div
+                    class="">
+                    <div
+                      v-for="img of post.record.data.value.embed.images"
+                      :key="img.image.ref.toString()"
+                      class="flex">
+                      <img
+                        :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
+                          props.did
+                        }/${img.image.ref.toString()}`"
+                        :alt="img.alt"
+                        class="max-w-xs rounded-lg" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+          <div v-else-if="post && post.isRemoved">This post has been removed</div>
+        </ClientOnly>
+      </div>
     </div>
     <div
       v-if="props.embed.$type == 'app.bsky.embed.images'"
@@ -37,9 +105,11 @@
 </template>
 
 <script setup>
-  import { defineProps, ref, onMounted } from 'vue'
+  import { defineProps, ref, onMounted, toRaw } from 'vue'
   import { useAppConfig } from 'nuxt/app'
-  import { buildPostURL } from '@/utils/lexicons'
+  import * as lexicons from '@/utils/lexicons'
+  import { ClientPost } from '@/utils/client'
+  import { Avatar } from 'flowbite-vue'
 
   const config = useAppConfig()
 
@@ -55,12 +125,52 @@
       default: null,
     },
   })
+
+  const record = ref(null)
+  const profile = ref(null)
+  const handle = ref(null)
+  const avatarURL = ref(null)
+
   const postURL = ref('#')
-  onMounted(async () => {
-    if (props.embed.$type === 'app.bsky.embed.record')
-      postURL.value = await buildPostURL(
-        config.bskyAppURL,
-        props.embed.record.uri
-      )
+  const post = ref({
+    handle: '',
+    avatarURL: '',
+    profile: null,
+    record: null,
+    isRemoved: true,
   })
+
+  onMounted(async () => {
+    if (props.embed.$type === 'app.bsky.embed.record') {
+      // Quoted posts
+      post.value = await loadPostData(config, props.did, props.embed.record.uri)
+      if (isDev()) console.log('post(ClientPost) ', post.value)
+      // Post URL
+      postURL.value = post.value.appUrl
+
+    } else if (props.embed.$type === 'app.bsky.embed.images') {
+      // Images
+      // Post URL
+      postURL.value = await lexicons.buildPostURL(
+        config.bskyAppURL,
+        props.embed.images[0].image.uri
+      )
+    }
+  })
+
+  const loadPostData = async aturi => {
+    const client = await ClientPost.load(toRaw(config), props.embed.record.uri)
+    return client
+  }
+
+  const showPost = aturi => {
+    // TODO In-app individual post view
+    window.open(postURL.value, '_blank')
+  }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>
