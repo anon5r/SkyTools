@@ -63,7 +63,7 @@ export const formatIdentifier = (id: string) => {
 /**
  * Convert DID to at-proto-uri or handle to DID
  * @param {string} identifier DID
- * @returns {string}
+ * @returns {string} Handle
  */
 export const resolveDID = async (
   identifier: string,
@@ -98,8 +98,8 @@ export const resolveDID = async (
 
 /**
  *
- * @param {string} identifier
- * @returns
+ * @param {string} identifier Handle
+ * @returns {string} DID
  */
 export const resolveHandle = async (identifier: string): Promise<string> => {
   const host = identifier.substring(identifier.indexOf('.') + 1)
@@ -148,7 +148,7 @@ export const getIdentityAuditLogs = async (
 /**
  * Parsing at-proto-uri
  * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abbcde12345
- * @return {object} {did: did:plc:xxxxxxxxxxxxx, identifier: xxxxxxxxxxxxxx, collection: app.bsky.feed.post, key: abbcde12345}
+ * @return {object<string, string>} {did: did:plc:xxxxxxxxxxxxx, collection: app.bsky.feed.post, key: abbcde12345}
  */
 export const parseAtUri = (uri: string): { [key: string]: string } => {
   try {
