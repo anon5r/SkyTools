@@ -37,7 +37,7 @@
                 <div class="inline-flex items-center truncate">
                   <!-- DisplayName -->
                   <div class="ml-1 mr-2">
-                    {{ post.profile?.value.displayName ?? post.handle }}
+                    {{ post.profile.value.displayName ?? post.handle }}
                   </div>
                   <div
                     class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
