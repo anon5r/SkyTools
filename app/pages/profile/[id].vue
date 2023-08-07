@@ -386,36 +386,52 @@
         updateUserInfo('avatarURL', null)
       }
 
-      try {
-        const posts = await fetchPosts(identifier, fetchCount)
-        updateUserInfo('posts', posts)
-      } catch (err) {
-        if (isDev()) console.warn(err)
-      }
-
-      try {
-        const follow = await fetchFollow(identifier, fetchCount)
-        updateUserInfo('following', follow)
-      } catch (err) {
-        if (isDev()) console.warn(err)
-      }
-
-      try {
-        const like = await fetchLike(identifier, fetchCount)
-        updateUserInfo('like', like)
-      } catch (err) {
+      let posts, follow, like, blocks = []
+      // Fetch posts
+      fetchPosts(identifier, fetchCount)
+        .then(resolve => {
+          posts = resolve
+          updateUserInfo('posts', posts)
+        })
+        .catch(err => {
           if (isDev()) console.warn(err)
-      }
+        })
+
+      // Fetch follow
+      fetchFollow(identifier, fetchCount)
+        .then(resolve => {
+          follow = resolve
+          updateUserInfo('following', follow)
+        })
+        .catch(err => {
+          if (isDev()) console.warn(err)
+        })
+
+      // Fetch like
+      fetchLike(identifier, fetchCount)
+        .then(resolve => {
+          like = resolve
+          updateUserInfo('like', like)
+        })
+        .catch(err => {
+            if (isDev()) console.warn(err)
+        })
 
       if (showBlocks.value) {
-        try {
-          const blocks = await fetchBlocks(identifier, fetchCount)
-          updateUserInfo('blocks', blocks)
-        } catch (err) {
-          if (isDev()) console.warn(err)
-        }
-      } else
+        fetchBlocks(identifier, fetchCount)
+          .then(resolve => {
+            blocks = resolve
+            updateUserInfo('blocks', blocks)
+          })
+          .catch (err => {
+            if (isDev()) console.warn(err)
+            updateUserInfo('blocks', [])
+          })
+      } else {
         updateUserInfo('blocks', [])
+      }
+
+
 
       if (isDev()) console.log('UserInfo = ', toRaw(userinfo))
       if (isDev()) console.log('Cursors = ', toRaw(cursors))

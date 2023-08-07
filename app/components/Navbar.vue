@@ -93,7 +93,6 @@
   import { initFlowbite, Drawer } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
-  import { useAuth } from '@/composables/auth'
   import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const config = useAppConfig()
@@ -166,7 +165,8 @@
               isLoggedIn.value = true
             }
           })
-        }
+        } else
+          isLoggedIn.value = true
       })
 
 
