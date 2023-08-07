@@ -1,26 +1,28 @@
 <template>
   <ClientOnly>
-  <button
-    type="button"
-    class="font-medium rounded-lg text-sm px-5 py-2.5 mr-2 text-gray-500 bg-transparent hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 focus:outline-none"
-    :data-drawer-target="props.target"
-    :data-drawer-toggle="props.target"
-    data-drawer-body-scrolling="true"
-    data-drawer-body-backdrop="true"
-    :data-drawer-placement="props.placement"
-    :aria-controls="props.target"
-    :aria-label="props.label">
-    <span class="sr-only">{{ props.label }}</span>
-    <slot></slot>
-  </button>
-  <template #fallback>
-    <slot></slot>
-  </template>
+    <button
+      type="button"
+      class="font-medium rounded-lg text-sm px-5 py-2.5 mr-2 text-gray-500 bg-transparent hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 focus:outline-none"
+      :data-drawer-target="props.target"
+      :data-drawer-toggle="props.target"
+      data-drawer-body-scrolling="true"
+      data-drawer-body-backdrop="true"
+      :data-drawer-placement="props.placement"
+      :aria-controls="props.target"
+      :aria-label="props.label"
+      @click.prevent="openSidebar">
+      <span class="sr-only">{{ props.label }}</span>
+      <slot></slot>
+    </button>
+    <template #fallback>
+      <slot></slot>
+    </template>
   </ClientOnly>
 </template>
 
 <script setup>
   import { defineProps } from 'vue'
+  import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const props = defineProps({
     id: {
@@ -42,4 +44,15 @@
       default: 'right',
     },
   })
+
+  const openSidebar = () => {
+    let drawer = getDrawer()
+    if (!drawer) {
+      initDrawer()
+      drawer = getDrawer()
+    }
+    drawer.toggle()
+    drawer.dataDrawerBodyBackdrop = false
+    //drawer.classList.add('drawer-open')
+  }
 </script>

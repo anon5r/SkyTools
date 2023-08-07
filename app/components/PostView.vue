@@ -6,7 +6,7 @@
         <div
           class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
+          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             <Avatar
               rounded
               :img="props.avatar_url"
@@ -16,39 +16,55 @@
         </div>
         <div class="truncate">
           <!-- DisplayName -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
+          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             {{ props.display_name }}
           </a>
           <div
-            class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
+            class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`/profile/${props.did}`" @click.prevent="showProfile">
-              @{{ props.handle }}
+            <a :href="`/profile/${props.did}`" @click.prevent="clickProfile">
+              {{ props.handle }}
             </a>
           </div>
         </div>
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <div class="pt-1">
-          <a v-if="!props.removed" :href="postURL">
-            <time
-              v-if="!props.removed"
-              pubdate
-              :datetime="props.post.value.createdAt"
-              :title="DateTime.fromISO(props.post.value.createdAt).toString()"
-              class="text-sm font-light">
-              {{
-                DateTime.fromISO(props.post.value.createdAt).toRelative({
-                  style: 'short',
-                })
-              }}
-            </time>
-          </a>
-          <time v-else>--------</time>
+          <ClientOnly>
+            <template #placeholder>
+              <time
+                v-if="!props.removed"
+                pubdate
+                :datetime="props.post.value.createdAt"
+                :title="DateTime.fromISO(props.post.value.createdAt).toString()"
+                class="text-sm font-light">
+                {{
+                  DateTime.fromISO(props.post.value.createdAt).toRelative({
+                    style: 'short',
+                  })
+                }}
+              </time>
+            </template>
+            <a v-if="!props.removed" :href="postURL">
+              <time
+                v-if="!props.removed"
+                pubdate
+                :datetime="props.post.value.createdAt"
+                :title="DateTime.fromISO(props.post.value.createdAt).toString()"
+                class="text-sm font-light">
+                {{
+                  DateTime.fromISO(props.post.value.createdAt).toRelative({
+                    style: 'short',
+                  })
+                }}
+              </time>
+            </a>
+            <time v-else>--------</time>
+          </ClientOnly>
         </div>
       </div>
     </div>
-    <div class="text-gray-500 dark:text-gray-400">
+    <div class="pl-3 pr-4 text-gray-500 dark:text-gray-400">
       <!-- has reply ? -->
       <div v-if="!props.removed">
         <AtHandleLink
@@ -60,7 +76,7 @@
         </AtHandleLink>
       </div>
       <!-- Post message -->
-      <div v-if="!props.removed" class="break-words">
+      <div v-if="!props.removed" class="break-words whitespace-pre-line">
         {{ props.post.value.text }}
       </div>
       <div v-else class="italic">This post may have been removed.</div>
@@ -118,7 +134,7 @@
     removed: Boolean,
   })
 
-  const emits = defineEmits({ lookup: null })
+  const emits = defineEmits(['showProfile'])
 
   const postURL = ref('#')
 
@@ -130,7 +146,13 @@
     )
   })
 
-  const showProfile = () => {
-    emits('lookup', props.handle)
+  const clickProfile = () => {
+    emits('showProfile', props.handle)
   }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>

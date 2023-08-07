@@ -20,6 +20,7 @@
             autocomplete="username"
             placeholder="ex. example.bsky.social"
             @focusout="validateHandle"
+            tabindex="1"
           />
         </div>
         <div class="mb-3">
@@ -36,11 +37,13 @@
             type="password"
             autocomplete="current-password"
             placeholder="xxxx-xxxx-xxxx-xxxx"
-          @input="validatePassword" />
+            @input="validatePassword"
+            tabindex="2" />
         <p class="text-sm text-right">
           <a
             :href="`${config.bskyAppURL}/settings/app-passwords`"
-            class="text-blue-600 dark:text-blue-400 underline">
+            class="text-blue-600 dark:text-blue-400 underline"
+            tabindex="4">
             Create App Password
           </a>
         </p>
@@ -50,9 +53,10 @@
         </div>
         <div class="flex items-center justify-between">
           <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap rounded outline-blue-800 dark:outline-blue-300 focus:outline-2 focus:shadow-outline"
             type="button"
-            @click="submitForm">
+            @click="submitForm"
+            tabindex="3">
             Sign in
           </button>
         </div>

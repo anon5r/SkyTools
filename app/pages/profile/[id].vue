@@ -69,13 +69,12 @@
               <div
                 class="text-sm font-semibold text-gray-500 dark:text-slate-500">
                 <!-- Handle -->
-                <a
+                <span
                   v-if="loadState.details"
-                  :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
-                  :class="{ 'line-through': hasError }"
-                  class="before:content-['@']">
+                  :class="{ 'line-through': hasError}"
+                  class="select-all at-handle">
                   {{ userinfo.details.handle || 'unknown.example' }}
-                </a>
+              </span>
                 <span v-else class="mt-4">loading...</span>
               </div>
               <div
@@ -94,18 +93,8 @@
         <div class="pt-4">
           <tabs v-model="activeTab" class="pt-1 px-1">
             <tab name="posts" title="Posts" id="posts">
-              <div v-if="!loadState.posts" class="flex mt-4 mx-2">
-                <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                  </svg>
-                  <span class="sr-only">Loading...</span>
-                </div>
-                Loading...
-              </div>
               <!-- Posts -->
-              <div v-else-if="userinfo.posts.length > 0">
+              <div v-if="userinfo.posts.length > 0">
                 <div v-for="record of userinfo.posts" :key="record.cid">
                   <PostView
                     :config="config"
@@ -117,13 +106,45 @@
                         ? userinfo.profile.value.displayName
                         : userinfo.details.handle
                     "
-                    :post="toRaw(record)"></PostView>
+                    :post="toRaw(record)"
+                    @show-profile="showProfile"></PostView>
                 </div>
               </div>
               <div v-else class="mt-4 mx-2">There are no posts.</div>
+
+              <div v-if="!loadState.posts" class="flex mt-4 mx-2">
+                <div role="status">
+                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                  </svg>
+                  <span class="sr-only">Loading...</span>
+                </div>
+                Loading...
+              </div>
+              <div v-if="cursors.posts" class="flex justify-center pt-2 pb-6">
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('posts')"
+                  :disabled="!loadState.posts">
+                  Load more
+                </button>
+              </div>
             </tab>
 
             <tab name="following" title="Following" id="following">
+              <!-- Following -->
+              <div v-if="userinfo.following.length > 0">
+                <ul>
+                  <li v-for="record of userinfo.following" :key="record.cid">
+                    <UserField
+                      :did="record.value.subject"
+                      :handle="record.handle"
+                      :profile="record.profile"
+                      @show-profile="showProfile" />
+                  </li>
+                </ul>
+              </div>
+              <div v-else class="mt-4 mx-2">No one follows</div>
+
               <div v-if="!loadState.following" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -134,60 +155,18 @@
                 </div>
                 Loading...
               </div>
-              <!-- Following -->
-              <div v-else-if="userinfo.following.length > 0">
-                <ul>
-                  <li v-for="record of userinfo.following" :key="record.cid">
-                    <UserField
-                      :did="record.value.subject"
-                      :handle="record.handle"
-                      :profile="record.profile"
-                      @lookup="showProfile" />
-                  </li>
-                </ul>
+              <div v-if="cursors.following" class="flex justify-center pt-2 pb-6">
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('following')"
+                :disabled="!loadState.following">
+                  Load more
+                </button>
               </div>
-              <div v-else class="mt-4 mx-2">No one follows</div>
             </tab>
 
-            <!-- <tab name="follower" title="Follower" id="followers">
-              <div v-if="!loadState.followet" class="flex">
-                <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                  </svg>
-                  <span class="sr-only">Loading...</span>
-                </div>
-                Loading...
-              </div>
-            < !-- Followers -- >
-            <div v-if="userinfo.followers.length > 0">
-              <ul>
-                <li v-for="record of userinfo.followers" :key="record.cid">
-                  <UserField
-                    :did="record.value.subject"
-                    :handle="record.handle"
-                    :profile="record.profile"
-                    @lookup="showProfile" />
-                </li>
-              </ul>
-            </div>
-            <div v-else class="mt-4">No followers</div>
-          </tab> -->
 
             <tab name="like" title="Like" id="like">
-              <div v-if="!loadState.like" class="flex mt-4 mx-2">
-                <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                  </svg>
-                  <span class="sr-only">Loading...</span>
-                </div>
-                Loading...
-              </div>
               <!-- Like -->
-              <div v-else-if="userinfo.like.length > 0">
+              <div v-if="userinfo.like.length > 0">
                 <ul>
                   <li v-for="record of userinfo.like" :key="record.cid">
                     <PostView
@@ -200,15 +179,46 @@
                           ? record.profile.value.displayName
                           : record.handle"
                       :post="record.post"
-                      @lookup="showProfile"></PostView>
+                      @show-profile="showProfile" />
                   </li>
                 </ul>
               </div>
               <div v-else class="mt-4 mx-2">There are no liked posts.</div>
+
+              <div v-if="!loadState.like" class="flex mt-4 mx-2">
+                <div role="status">
+                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                  </svg>
+                  <span class="sr-only">Loading...</span>
+                </div>
+                Loading...
+              </div>
+              <div v-if="cursors.like" class="flex justify-center pt-2 pb-6">
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('like')"
+                  :disabled="!loadState.like">
+                  Load more
+                </button>
+              </div>
             </tab>
 
 
             <tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
+              <!-- Block -->
+              <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
+                <ul>
+                  {{ record }}
+                  <li v-for="record of userinfo.blocks" :key="record.cid">
+                    <UserField
+                      :did="record.value.subject"
+                      :handle="record.handle"
+                      :profile="record.profile"
+                      @show-profile="showProfile" />
+                  </li>
+                </ul>
+              </div>
+              <div v-else class="mt-4 mx-2">No blocking anyone.</div>
               <div v-if="!loadState.blocks" class="flex mt-4 mx-2">
                 <div role="status">
                   <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -219,20 +229,12 @@
                 </div>
                 Loading...
               </div>
-                <!-- Block -->
-              <div v-else-if="userinfo.blocks && userinfo.blocks.length > 0">
-                <ul>
-                  {{ record }}
-                  <li v-for="record of userinfo.blocks" :key="record.cid">
-                    <UserField
-                      :did="record.value.subject"
-                      :handle="record.handle"
-                      :profile="record.profile"
-                      @lookup="showProfile" />
-                  </li>
-                </ul>
+              <div v-if="userinfo.blocks.length > 0 && cursors.blocks" class="flex justify-center pt-2 pb-6">
+                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('blocks')"
+                  :disabled="!loadState.blocks">
+                  Load more
+                </button>
               </div>
-              <div v-else class="mt-4 mx-2">No blocking anyone.</div>
             </tab>
           </tabs>
         </div>
@@ -263,6 +265,7 @@
       id.value = newId || ''
     }
   )
+  const fetchCount = 20
 
   const hasError = ref(false)
   const showBlocks = ref(false)
@@ -291,11 +294,29 @@
     like: true,
     blocks: true,
   })
+
+  const cursors = ref({
+    posts: undefined,
+    following: undefined,
+    like: undefined,
+    blocks: undefined,
+  })
+
+
+  /**
+   * Batch update all values
+   * @param {*} obj
+   * @param {*} val
+   */
   const updateAllValues = (obj, val) => {
     Object.keys(obj).forEach(key => {
       obj[key] = val
     })
   }
+  /**
+   * Loading state
+   * @param {object} obj
+   */
   const isLoadingState = (obj) => {
     return Object.values(obj).every(value => value === true)
   }
@@ -304,7 +325,11 @@
   onMounted(async () => {
     if (!lexicons) {
       lexicons = await import('@/utils/lexicons')
+
       lexicons.setConfig(toRaw(config))
+      if (route.params.id) {
+        showProfile()
+      }
     }
 
     showBlocks.value = sessionStorage.getItem('showBlocks') == 'true'
@@ -312,7 +337,6 @@
     if (route.params.id) {
       showProfile()
     }
-
   })
 
   const focusout = () => {
@@ -332,6 +356,8 @@
     if (!identifier) {
       identifier = lexicons.formatIdentifier(id.value)
     }
+    if (identifier.length > 253)
+      throw new Error('Identifier is too long')
     id.value = identifier
     if (route.params.id !== identifier)
       router.push(`/profile/${identifier}`)
@@ -360,38 +386,55 @@
         updateUserInfo('avatarURL', null)
       }
 
-      try {
-        const posts = await fetchPosts(identifier, 20)
-        updateUserInfo('posts', posts)
-      } catch (err) {
-        if (isDev()) console.warn(err)
-      }
-
-      try {
-        const follow = await fetchFollow(identifier, 20)
-        updateUserInfo('following', follow)
-      } catch (err) {
-        if (isDev()) console.warn(err)
-      }
-
-      try {
-        const like = await fetchLike(identifier, 20)
-        updateUserInfo('like', like)
-      } catch (err) {
+      let posts, follow, like, blocks = []
+      // Fetch posts
+      fetchPosts(identifier, fetchCount)
+        .then(resolve => {
+          posts = resolve
+          updateUserInfo('posts', posts)
+        })
+        .catch(err => {
           if (isDev()) console.warn(err)
-      }
+        })
+
+      // Fetch follow
+      fetchFollow(identifier, fetchCount)
+        .then(resolve => {
+          follow = resolve
+          updateUserInfo('following', follow)
+        })
+        .catch(err => {
+          if (isDev()) console.warn(err)
+        })
+
+      // Fetch like
+      fetchLike(identifier, fetchCount)
+        .then(resolve => {
+          like = resolve
+          updateUserInfo('like', like)
+        })
+        .catch(err => {
+            if (isDev()) console.warn(err)
+        })
 
       if (showBlocks.value) {
-        try {
-          const blocks = await fetchBlocks(identifier, 30)
-          updateUserInfo('blocks', blocks)
-        } catch (err) {
-          if (isDev()) console.warn(err)
-        }
-      } else
+        fetchBlocks(identifier, fetchCount)
+          .then(resolve => {
+            blocks = resolve
+            updateUserInfo('blocks', blocks)
+          })
+          .catch (err => {
+            if (isDev()) console.warn(err)
+            updateUserInfo('blocks', [])
+          })
+      } else {
         updateUserInfo('blocks', [])
+      }
+
+
 
       if (isDev()) console.log('UserInfo = ', toRaw(userinfo))
+      if (isDev()) console.log('Cursors = ', toRaw(cursors))
 
     } catch (err) {
       if (isDev()) console.error(err)
@@ -432,8 +475,21 @@
    * @param {any} value
    */
   const updateUserInfo = (item, value) => {
-    if (isDev()) console.log('[updateUserInfo] ::', item, ' = ', value)
+    if (isDev()) console.log('[updateUserInfo]::', item, ' = ', value)
     userinfo.value[item] = value
+    loadState.value[item] = true
+  }
+
+  /**
+   * add items to user datum
+   * @param {string} item
+   * @param {array} records
+   */
+  const addRecordsUserInfo = (item, records) => {
+    if (isDev()) console.log('[addItemsToUserInfo] ::', item, ' = ', records)
+    records.forEach(record => {
+      userinfo.value[item].push(record)
+    })
     loadState.value[item] = true
   }
 
@@ -467,20 +523,45 @@
   }
 
   /**
+   *
+   * @param {*} name
+   */
+  const loadMore = async (name) => {
+    let records = []
+    const cursor = cursors.value[name]
+    if (cursor === undefined || cursor === null) return
+    loadState.value[name] = false
+    if (name === 'posts') {
+      records = await fetchPosts(id.value, fetchCount, cursor)
+    } else if (name === 'following') {
+      records = await fetchFollow(id.value, fetchCount, cursor)
+    } else if (name === 'like') {
+      records = await fetchLike(id.value, fetchCount, cursor)
+    } else if (name === 'blocks') {
+      records = await fetchBlocks(id.value, fetchCount, cursor)
+    }
+    addRecordsUserInfo(name, records)
+    if (isDev()) console.log('loadMore::' + name + ' = ', records)
+  }
+
+  /**
    * Fetch posts
    * @param {string} id handle or DID
    * @param {int} limit
+   * @param {string|undefined} cursor
    */
-  const fetchPosts = async (id, limit = 50) => {
+  const fetchPosts = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await lexicons.listRecords(
         'app.bsky.feed.post',
         id,
-        limit
+        limit,
+        cursor,
       )
 
       if (response.success) {
         if (isDev()) console.log('posts = ', response.data)
+        cursors.value['posts'] = response.data.cursor
         return response.data.records
       } else {
         return []
@@ -498,13 +579,15 @@
    * Fetch like
    * @param {string} id handle or DID
    * @param {int} limit
+   * @param {string|undefined} cursor
    */
-  const fetchLike = async (id, limit = 50) => {
+  const fetchLike = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await lexicons.listRecords(
         'app.bsky.feed.like',
         id,
-        limit
+        limit,
+        cursor,
       )
 
       if (response.success) {
@@ -522,15 +605,19 @@
             }
           }
 
-          let profile,
-            avatar = null
+          let profile, avatar, handle = null
           try {
             profile = await lexicons.getProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
           } catch (err) {
             console.info('Not set profile: ', recordUri.did)
           }
-          const handle = await lexicons.resolveDID(recordUri.did)
+
+          try {
+            handle = await lexicons.resolveDID(recordUri.did)
+          } catch (err) {
+            handle = record.value.subject
+          }
 
           return {
             ...record,
@@ -547,6 +634,7 @@
         })
 
         const likeList = await Promise.all(records)
+        cursors.value['like'] = response.data.cursor
         if (isDev()) console.log('fetchLike = ', likeList)
         return likeList
       } else {
@@ -554,7 +642,8 @@
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        return [err.message]
+        if (isDev()) console.error(err.status, err.message)
+        return []
       }
       if (isDev()) console.error(err)
       throw new Error('Failed to get Like feed', err)
@@ -565,33 +654,38 @@
    * Fetch follow
    * @param {string} id handle or DID
    * @param {int} limit
+   * @param {string|undefined} cursor
    */
-  const fetchFollow = async (id, limit = 50) => {
+  const fetchFollow = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await lexicons.listRecords(
         'app.bsky.graph.follow',
         id,
-        limit
+        limit,
+        cursor,
       )
       if (response.success) {
         const records = response.data.records.map(async record => {
           let handle = '',
-            profile = {}
+          profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
+          } catch (err) {
+            console.warn('Could not resolve handle (deleted?): ', record.value.subject)
+          }
+
+          try {
             profile = await lexicons.getProfile(record.value.subject)
           } catch (err) {
             // following, but the account has been removed
-            console.info('No exit record: ', record.value.subject)
-            handle = record.value.subject
-            profile = {
+            console.info('No profile exists: ', record.value.subject)
+            profile = Object.assign(profile, {
               value: {
-                displayName: record.value.subject,
                 description: '',
                 avatar: '',
                 banner: null,
-              },
-            }
+              }
+            })
           }
           return {
             ...record,
@@ -600,6 +694,7 @@
           }
         })
         const resolvedFollowers = await Promise.all(records)
+        cursors.value['following'] = response.data.cursor
         if (isDev()) console.log('fetchFollow = ', resolvedFollowers)
         return resolvedFollowers
       } else {
@@ -607,9 +702,10 @@
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        return [err.message]
+        if (isDev()) console.error(err.status, err.message)
       }
       if (isDev()) console.error(err)
+      return []
     }
   }
 
@@ -618,13 +714,15 @@
    * Fetch blocks
    * @param {string} id handle or DID
    * @param {int} limit
+   * @param {string|undefined} cursor
    */
-  const fetchBlocks = async (id, limit = 50) => {
+  const fetchBlocks = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await lexicons.listRecords(
         'app.bsky.graph.block',
         id,
-        limit
+        limit,
+        cursor,
       )
       if (response.success) {
         //if (isDev()) console.log("fetchBlocks = ", response.data)
@@ -633,15 +731,17 @@
           profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
+          } catch (err) {
+            console.warn('Could not resolve handle (deleted?): ', record.value.subject)
+          }
+          try {
             profile = await lexicons.getProfile(record.value.subject)
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)
             //
-            handle = record.value.subject
             profile = {
               value: {
-                displayName: record.value.subject,
                 description: '',
                 avatar: '',
                 banner: null,
@@ -655,6 +755,7 @@
           }
         })
         const resolvedBlocks = await Promise.all(records)
+        cursors.value['blocks'] = response.data.cursor
         if (isDev()) console.log('fetchBlocks = ', resolvedBlocks)
         return resolvedBlocks
       } else {
@@ -668,3 +769,9 @@
     }
   }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>
