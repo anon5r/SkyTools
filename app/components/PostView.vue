@@ -30,21 +30,37 @@
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <div class="pt-1">
-          <a v-if="!props.removed" :href="postURL">
-            <time
-              v-if="!props.removed"
-              pubdate
-              :datetime="props.post.value.createdAt"
-              :title="DateTime.fromISO(props.post.value.createdAt).toString()"
-              class="text-sm font-light">
-              {{
-                DateTime.fromISO(props.post.value.createdAt).toRelative({
-                  style: 'short',
-                })
-              }}
-            </time>
-          </a>
-          <time v-else>--------</time>
+          <ClientOnly>
+            <template #placeholder>
+              <time
+                v-if="!props.removed"
+                pubdate
+                :datetime="props.post.value.createdAt"
+                :title="DateTime.fromISO(props.post.value.createdAt).toString()"
+                class="text-sm font-light">
+                {{
+                  DateTime.fromISO(props.post.value.createdAt).toRelative({
+                    style: 'short',
+                  })
+                }}
+              </time>
+            </template>
+            <a v-if="!props.removed" :href="postURL">
+              <time
+                v-if="!props.removed"
+                pubdate
+                :datetime="props.post.value.createdAt"
+                :title="DateTime.fromISO(props.post.value.createdAt).toString()"
+                class="text-sm font-light">
+                {{
+                  DateTime.fromISO(props.post.value.createdAt).toRelative({
+                    style: 'short',
+                  })
+                }}
+              </time>
+            </a>
+            <time v-else>--------</time>
+          </ClientOnly>
         </div>
       </div>
     </div>
