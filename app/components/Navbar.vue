@@ -94,12 +94,14 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
   import { useAuth } from '@/composables/auth'
+  import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const config = useAppConfig()
   const navi = useNavigation()
   const router = useRouter()
   const route = useRoute()
   const isLoggedIn = ref(false)
+
 
   let auth = null
 
@@ -130,20 +132,6 @@
     ],
   })
 
-  /** Drawer */
-  let drawer = null
-
-  const initDrawer = () => {
-    const $taragetDrawer = document.getElementById('drawer-sidebar')
-    if ($taragetDrawer !== null) {
-      const drawerOptions = {
-        placement: 'right',
-        bodyScrolling: true,
-        backdrop: true,
-      }
-      drawer = new Drawer($taragetDrawer, drawerOptions)
-    }
-  }
 
   // const toggleMenu = () => {
   //   drawer.toggle()
@@ -183,7 +171,7 @@
 
 
     nextTick(() => {
-      if (!drawer) initDrawer()
+      if (!getDrawer) initDrawer()
     })
   })
 

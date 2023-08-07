@@ -22,6 +22,7 @@
 
 <script setup>
   import { defineProps } from 'vue'
+  import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const props = defineProps({
     id: {
@@ -45,8 +46,13 @@
   })
 
   const openSidebar = () => {
-    const drawer = document.getElementById(props.target)
-    drawer.toggleAttribute()
+    let drawer = getDrawer()
+    if (!drawer) {
+      initDrawer()
+      drawer = getDrawer()
+    }
+    drawer.toggle()
+    drawer.dataDrawerBodyBackdrop = false
     //drawer.classList.add('drawer-open')
   }
 </script>
