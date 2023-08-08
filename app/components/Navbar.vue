@@ -132,10 +132,6 @@
   })
 
 
-  // const toggleMenu = () => {
-  //   drawer.toggle()
-  // }
-
   const logout = () => {
     if (auth.isLoggedIn()) {
       const nextPage = route.fullPath
@@ -147,7 +143,6 @@
       isLoggedIn.value = false
       router.push(nextPage)
     }
-    toggleMenu()
     router.push('/')
   }
 
@@ -168,11 +163,6 @@
         } else
           isLoggedIn.value = true
       })
-
-
-    nextTick(() => {
-      if (!getDrawer) initDrawer()
-    })
   })
 
   computed(() => {
