@@ -96,9 +96,9 @@
                               style="color: #ca1643"
                               class="px-2"
                               title="Gift!" />
-                            <span class="text-sm">by</span>
+                            <span class="text-sm mx-1">by</span>
                             <span
-                              class="sm italic text-sm text-gray-400 dark:text-slate-500">
+                              class="mx-1 italic text-sm text-gray-400 dark:text-slate-500">
                               {{ record.createdBy }}
                             </span>
                           </span>
