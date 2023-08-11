@@ -94,6 +94,18 @@
           <p class="m-4 min-w-strech whitespace-pre-line">
             {{ loadState.profile ? userinfo.profile.value?.description : '' }}
           </p>
+          <!-- Labels -->
+          <div v-if="userinfo.profile.value.labels" class="m-4">
+            <ul class="inline-block">
+              <li
+                v-for="(label, index) in userinfo.profile.value.labels.values"
+                :key="index"
+                class="inline-block items-center px-2 py-1 mr-2 text-xs font-medium rounded text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
+                  <font-awesome-icon :icon="['fas', 'tag']" class="mr-1" size="sm" />
+                  {{ label.val }}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="pt-4">
