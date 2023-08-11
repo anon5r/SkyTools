@@ -95,7 +95,7 @@
             {{ loadState.profile ? userinfo.profile.value?.description : '' }}
           </p>
           <!-- Labels -->
-          <div v-if="userinfo.profile.value.labels" class="m-4">
+          <div v-if="userinfo.profile.value?.labels" class="m-4">
             <ul class="inline-block">
               <li
                 v-for="(label, index) in userinfo.profile.value.labels.values"
