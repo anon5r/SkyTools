@@ -4,7 +4,7 @@
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
-          class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
+          class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             <Avatar
@@ -14,7 +14,7 @@
               class="min-w-max" />
           </a>
         </div>
-        <div class="truncate">
+        <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             {{ props.display_name }}
@@ -30,37 +30,22 @@
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <div class="pt-1">
-          <ClientOnly>
-            <template #placeholder>
-              <time
-                v-if="!props.removed"
-                pubdate
-                :datetime="props.post.value.createdAt"
-                :title="DateTime.fromISO(props.post.value.createdAt).toString()"
-                class="text-sm font-light">
-                {{
-                  DateTime.fromISO(props.post.value.createdAt).toRelative({
-                    style: 'short',
-                  })
-                }}
-              </time>
-            </template>
-            <a v-if="!props.removed" :href="postURL">
-              <time
-                v-if="!props.removed"
-                pubdate
-                :datetime="props.post.value.createdAt"
-                :title="DateTime.fromISO(props.post.value.createdAt).toString()"
-                class="text-sm font-light">
-                {{
-                  DateTime.fromISO(props.post.value.createdAt).toRelative({
-                    style: 'short',
-                  })
-                }}
-              </time>
-            </a>
-            <time v-else>--------</time>
-          </ClientOnly>
+          <NuxtLink v-if="!props.removed" :to="postURL">
+            <!-- Created datetime -->
+            <time
+              v-if="!props.removed"
+              pubdate
+              :datetime="props.post.value.createdAt"
+              :title="DateTime.fromISO(props.post.value.createdAt).toString()"
+              class="text-sm font-light">
+              {{
+                DateTime.fromISO(props.post.value.createdAt).toRelative({
+                  style: 'short',
+                })
+              }}
+            </time>
+          </NuxtLink>
+          <time v-else>--------</time>
         </div>
       </div>
     </div>
@@ -85,8 +70,17 @@
       </div>
       <div v-else class="italic">This post may have been removed.</div>
       <div v-if="!props.removed && props.post.value.embed">
-        <!-- Embeded (image, record...) -->
-        <PostEmbed :did="did" :embed="props.post.value.embed" />
+        <KeepAlive>
+          <Suspense>
+            <!-- Embeded (image, record...) -->
+            <PostEmbed :did="did" :embed="props.post.value.embed" />
+            <template #fallback>
+              <div class="flex justify-center">
+                <div class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            </template>
+          </Suspense>
+        </KeepAlive>
       </div>
     </div>
 
@@ -165,11 +159,14 @@
   const postURL = ref('#')
 
   onMounted(async () => {
-    postURL.value = await lexicons.buildPostURL(
-      config.bskyAppURL,
-      props.post.uri,
-      props.handle
-    )
+    // postURL.value = await lexicons.buildPostURL(
+    //   config.bskyAppURL,
+    //   props.post.uri,
+    //   props.handle
+    // )
+    const atUri = lexicons.parseAtUri(props.post.uri)
+    postURL.value = `/profile/${props.handle}/post/${atUri.rkey}`
+
   })
 
   const clickProfile = () => {
@@ -180,5 +177,12 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+
+  .post-text a:link {
+    @apply text-blue-500 dark:text-blue-400;
+  }
+  .post-text a:hover {
+    @apply text-blue-400 dark:text-blue-500;
   }
 </style>

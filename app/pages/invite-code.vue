@@ -1,12 +1,12 @@
 <template>
   <div
-    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
+    class="flex flex-col justify-center items-center min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4 mx-4">
     <div class="w-full max-w-lg">
       <ClientOnly>
         <div
           class="bg-white dark:bg-slate-800 shadow-md rounded-lg px-3 py-3 mb-4">
           <div
-            class="block text-gray-700 dark:text-gray-400 text-lg font-semibold py-3 px-2 mb-2">
+            class="block text-gray-700 dark:text-gray-400 text-lg font-semibold py-2 px-2">
             Invite code
           </div>
           <div
@@ -26,8 +26,8 @@
               class="py-2 px-2 text-gray-600 dark:text-gray-400"
               always-open="false"
               data-accordion="open">
-              <accordion-panel v-for="record in inviteCodes" :key="record.code">
-                <accordion-header aria-expanded="false">
+              <AccordionPanel v-for="record in inviteCodes" :key="record.code">
+                <AccordionHeader aria-expanded="false">
                   <font-awesome-icon
                     :icon="
                       record.uses?.length > 0
@@ -49,8 +49,8 @@
                     :class="{ 'line-through': record.uses?.length > 0 }">
                     {{ record.code }}
                   </a>
-                </accordion-header>
-                <accordion-content>
+                </AccordionHeader>
+                <AccordionContent>
                   <div v-if="record.createdAt">
                     <div>
                       Issued at
@@ -64,7 +64,7 @@
                         <div>
                           Used by
                           <NuxtLink
-                            :to="`${config.bskyAppURL}/profile/${use.alsoKnownAs}`"
+                            :to="`/profile/${use.alsoKnownAs}`"
                             class="inline py-0 pl-1 pr-1 text-blue-500 hover:text-blue-300 hover:dark:text-blue-700"
                             target="_blank">
                             {{ use.alsoKnownAs }}
@@ -72,7 +72,7 @@
                         </div>
                         <div>
                           <span
-                            class="sm italic text-gray-300 dark:text-gray-700">
+                            class="text-sm italic text-gray-300 dark:text-gray-700" select-all>
                             {{ use.usedBy }}
                           </span>
                         </div>
@@ -83,6 +83,17 @@
                             {{ use.usedAtLocal }}
                           </time>
                         </div>
+
+                        <CopyToClipboard
+                          :copy-text="record.code"
+                          class="text-blue-500 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-400 text-sm"
+                          position="bottom-right"
+                          success-message="Copied!"
+                          error-message="Failed to copy"
+                          :display-duration="3500">
+                          <font-awesome-icon :icon="['far', 'clipboard']" />
+                          Copy this code!
+                        </CopyToClipboard>
                       </li>
                       <li v-if="record.uses.length == 0">
                         <div>
@@ -96,9 +107,9 @@
                               style="color: #ca1643"
                               class="px-2"
                               title="Gift!" />
-                            <span class="text-sm">by</span>
+                            <span class="text-sm mx-1">by</span>
                             <span
-                              class="sm italic text-sm text-gray-400 dark:text-slate-500">
+                              class="mx-1 italic text-sm text-gray-400 dark:text-slate-500">
                               {{ record.createdBy }}
                             </span>
                           </span>
@@ -122,8 +133,8 @@
                       No code issued
                     </span>
                   </div>
-                </accordion-content>
-              </accordion-panel>
+                </AccordionContent>
+              </AccordionPanel>
             </Accordion>
           </div>
           <div v-else>
