@@ -11,7 +11,7 @@
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
-              class="mr-3 min-w-max" />
+              class="min-w-max" />
           </a>
         </div>
         <div class="truncate">
