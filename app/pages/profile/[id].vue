@@ -78,7 +78,7 @@
                 <span v-else class="mt-4">loading...</span>
               </div>
               <div
-                class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
+                class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-600 select-all">
                 <!-- DID -->
                 {{ loadState.details ? userinfo.details.did : 'loading...' }}
               </div>
@@ -250,7 +250,6 @@
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
-  import { useSessionStorage } from '@/composables/sessionStorage'
 
   const activeTab = ref('posts')
 
