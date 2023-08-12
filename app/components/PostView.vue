@@ -11,7 +11,7 @@
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
-              class="mr-2 min-w-max" />
+              class="min-w-max" />
           </a>
         </div>
         <div class="max-w-xs truncate">
@@ -56,13 +56,17 @@
           v-if="props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
           class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
-          <font-awesome-icon :icon="['fas', 'reply']" />
+          <FontAwesomeIcon :icon="['fas', 'reply']" />
           Reply
         </AtHandleLink>
       </div>
       <!-- Post message -->
       <div v-if="!props.removed" class="break-words whitespace-pre-line">
-        {{ props.post.value.text }}
+        <div class="text-sm">
+
+          <!-- <RitchText :post="props.post" /> -->
+          {{ props.post.value.text }}
+        </div>
       </div>
       <div v-else class="italic">This post may have been removed.</div>
       <div v-if="!props.removed && props.post.value.embed">
@@ -80,7 +84,28 @@
       </div>
     </div>
 
-    <div class="flex justify-end">
+    <div class="flex justify-end items-end">
+      <div v-if="!props.removed" class="mt-3 inline-box">
+        <!-- Labels -->
+        <ul v-if="props.post.value.labels?.values" class="inline-block">
+          <li
+            v-if="props.post.value.labels?.values.length > 0"
+            v-for="(label, index) in props.post.value.labels?.values"
+            :key="index"
+            class="inline-block items-center px-1 py-0.5 mr-2 text-xs font-medium rounded"
+            :class="
+            label.val === '!warn'
+            ? `text-yellow-800 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300`
+            : label.val === 'porn' || label.val === 'nsfw'
+            ? `text-pink-500 bg-pink-100 dark:bg-pink-700 dark:text-pink-300`
+            : label.val === 'spam'
+            ? `text-zinc-800 bg-zinc-100 dark:bg-zin-900 dark:text-zinc-300`
+            : `text-indigo-800 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-300`
+            ">
+              <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="xs" />{{ label.val }}
+          </li>
+        </ul>
+      </div>
       <div
         v-if="!props.removed && props.post.value.langs"
         class="justify-start items-baseline text-xs text-right text-gray-400 dark:text-gray-700">
@@ -96,6 +121,7 @@
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import * as lexicons from '@/utils/lexicons'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
 
