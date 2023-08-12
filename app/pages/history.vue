@@ -1,11 +1,11 @@
 <template>
   <div
     class="flex justify-center items-start lg:items-center pt-9 lg:pt-0 min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
-    <div class="w-full max-w-md">
+    <div class="mt-4 w-full max-w-md">
       <div
-        class="border-2 mt-4 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
+        class="border-2 mt-5 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
         <div
-          class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
+          class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-1 px-2">
           Identify history
         </div>
         <div
