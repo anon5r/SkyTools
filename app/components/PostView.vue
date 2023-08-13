@@ -6,25 +6,25 @@
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
+          <NuxtLink :to="getPermaLink(props.handle)" @click.prevent="clickProfile">
             <Avatar
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
               class="min-w-max" />
-          </a>
+          </NuxtLink>
         </div>
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
-          <a :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
+          <NuxtLink :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
             {{ props.display_name }}
-          </a>
+          </NuxtLink>
           <div
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="getPermaLink(props.did)" @click.prevent="clickProfile">
+            <NuxtLink :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
               {{ props.handle }}
-            </a>
+            </NuxtLink>
           </div>
         </div>
       </div>
@@ -38,6 +38,7 @@
               :datetime="props.post.value.createdAt"
               :title="DateTime.fromISO(props.post.value.createdAt).toString()"
               class="text-sm font-light">
+              <!-- Display time as relative -->
               {{
                 DateTime.fromISO(props.post.value.createdAt).toRelative({
                   style: 'short',
@@ -165,20 +166,26 @@
     //   props.handle
     // )
     const atUri = lexicons.parseAtUri(props.post.uri)
-    postURL.value = getPermaLink(props.handle, atUri.cid)
-
+    postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey)
   })
 
+  /**
+   * @return void
+   */
   const clickProfile = () => {
     emits('showProfile', props.handle)
   }
 
-
-  const getPermaLink = (handleOrDid, postID = null) => {
-    if (postID == null)
-      return `/profile/${handleOrDid}`
-
-    return `${config.bskyAppURL}/profile/${handleOrDid}/post/${cid}`
+  /**
+   *
+   * @param {string} handleOrDid
+   * @param {string} postID
+   * @return {string} path or URL
+   */
+  const getPermaLink = (handleOrDid, postID) => {
+    if (postID)
+      return `${config.bskyAppURL}/profile/${handleOrDid}/post/${postID}`
+    return `/profile/${handleOrDid}`
   }
 
 </script>
