@@ -6,7 +6,7 @@
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
+          <a :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
             <Avatar
               rounded
               :img="props.avatar_url"
@@ -16,13 +16,13 @@
         </div>
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
+          <a :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
             {{ props.display_name }}
           </a>
           <div
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`/profile/${props.did}`" @click.prevent="clickProfile">
+            <a :href="getPermaLink(props.did)" @click.prevent="clickProfile">
               {{ props.handle }}
             </a>
           </div>
@@ -165,13 +165,22 @@
     //   props.handle
     // )
     const atUri = lexicons.parseAtUri(props.post.uri)
-    postURL.value = `/profile/${props.handle}/post/${atUri.rkey}`
+    postURL.value = getPermaLink(props.handle, atUri.cid)
 
   })
 
   const clickProfile = () => {
     emits('showProfile', props.handle)
   }
+
+
+  const getPermaLink = (handleOrDid, postID = null) => {
+    if (postID == null)
+      return `/profile/${handleOrDid}`
+
+    return `${config.bskyAppURL}/profile/${handleOrDid}/post/${cid}`
+  }
+
 </script>
 
 <style scoped>
