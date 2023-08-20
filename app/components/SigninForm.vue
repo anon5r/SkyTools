@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRouter, useRoute } from 'nuxt/app'
+  import { useAppConfig, useRoute } from 'nuxt/app'
   import { ref, defineProps } from 'vue'
   import { isDev } from '~/utils/helpers'
   import lexicons from '~/utils/lexicons'
@@ -78,7 +78,6 @@
   import { useNavigation } from '../composables/navigation'
 
   const config = useAppConfig()
-  const router = useRouter()
   const route = useRoute()
   const navigate = useNavigation()
   const auth = ref(null)
@@ -124,7 +123,7 @@
         if (await auth.value.login({identifier: handle.value, password: password.value})) {
           if (navigate.getNext()) {
             auth.value.isLoggedIn = true
-            router.push({ name: navigate.getNext() ?? 'index' })
+            navigate.goNext()
           }
         }
 

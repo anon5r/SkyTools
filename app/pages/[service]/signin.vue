@@ -37,6 +37,6 @@
 
   const isRedirected = computed(() => {
       const navi = useNavigation()
-      return (navi.getNext())
+      return (navi.goNext())
   })
 </script>

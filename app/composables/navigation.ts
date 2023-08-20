@@ -1,5 +1,5 @@
 import { ref, onMounted } from 'vue'
-import { useAppConfig } from 'nuxt/app'
+import { useAppConfig, useRouter } from 'nuxt/app'
 
 interface Navigation {
   next: string | null
@@ -8,6 +8,7 @@ interface Navigation {
 
 export function useNavigation() {
   const config = useAppConfig()
+  const router = useRouter()
 
   // to navigate page after processing
   const navigate = ref<Navigation>({ next: null, prev: null })
@@ -41,5 +42,23 @@ export function useNavigation() {
     return navigate?.value?.prev
   }
 
-  return { navigate, setNext, setPrev, getNext, getPrev, clear }
+  const goNext = (): void => {
+    try {
+      if (getNext()?.startsWith('/')) router.push({ path: getNext() })
+      else router.push({ name: getNext() ?? 'index' })
+    } catch (err) {
+      router.push({ path: '/' })
+    }
+  }
+
+  const goPrev = (): void => {
+    try {
+      if (getPrev()?.startsWith('/')) router.push({ path: getPrev() })
+      router.push({ name: getPrev() ?? 'index' })
+    } catch (err) {
+      router.push({ path: '/' })
+    }
+  }
+
+  return { navigate, setNext, setPrev, getNext, getPrev, clear, goNext, goPrev }
 }
