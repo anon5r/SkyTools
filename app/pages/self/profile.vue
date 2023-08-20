@@ -58,6 +58,20 @@
             </div>
           </div>
 
+          <!-- Follows / Following / Posts -->
+          <div class="m-4 flex flex-row min-w-strech">
+            <div class="mr-2 font-light text-gray-600 dark:text-slate-500">
+              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? userinfo.profile.followersCount : '???' }}</span> followers
+            </div>
+            <div class="mx-2 font-light text-gray-600 dark:text-slate-500">
+              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? userinfo.profile.followsCount : '???' }}</span> following
+            </div>
+            <div class="ml-2 font-light text-gray-600 dark:text-slate-500">
+              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? userinfo.profile.postsCount : '???' }}</span> posts
+            </div>
+          </div>
+
+          <!-- Description -->
           <p class="m-4 min-w-strech whitespace-pre-line">
             {{ loadState.profile ? userinfo.profile.description : '' }}
           </p>
