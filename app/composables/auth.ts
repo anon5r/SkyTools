@@ -1,11 +1,14 @@
 import { ref } from 'vue'
 import { useAppConfig } from 'nuxt/app'
-import { BskyAgent } from '@atproto/api'
+import { BskyAgent, AtpSessionData, AppBskyActorGetProfile } from '@atproto/api'
 import { isDev } from '@/utils/helpers'
+import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
 let _agent: BskyAgent | null = null
 
 let _isLoggedIn = false
+
+let _session: AtpSessionData | undefined = undefined
 
 const getAgent = (service?: string): BskyAgent => {
   if (!_agent) {
@@ -17,8 +20,11 @@ const getAgent = (service?: string): BskyAgent => {
     _agent = new BskyAgent({
       service: service,
       persistSession: (_, sess) => {
-        if (process.client && sess != null)
+        if (process.client && sess != null) {
           sessionStorage.setItem('credentials', JSON.stringify(sess))
+          sessionStorage.setItem('service', service as string)
+          _session = sess
+        }
       },
     })
   }
@@ -89,8 +95,28 @@ const isLoggedIn = (): boolean => {
  *
  * @returns {string} the handle of the logged in user
  */
-const getHandle = () => {
+const getHandle = (): string => {
   return getAgent().session?.handle ?? ''
+}
+
+const getDid = (): string => {
+  return getAgent().session?.did ?? ''
+}
+
+const getProfile = async (): Promise<ProfileViewDetailed> => {
+  if (!getAgent()) throw new Error('Require authentication')
+
+  try {
+    const result = await getAgent().api.app.bsky.actor.getProfile({
+      actor: getAgent().session?.did as string,
+    })
+
+    if (!result.success) throw new Error('Could not get profile')
+
+    return result.data
+  } catch (err) {
+    throw err
+  }
 }
 
 export function useAuth(service?: string) {
@@ -103,5 +129,7 @@ export function useAuth(service?: string) {
     getAgent,
     restoreSession,
     getHandle,
+    getDid,
+    getProfile,
   }
 }
