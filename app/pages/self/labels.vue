@@ -16,8 +16,8 @@
               @keyup.enter="addLabel"
               @change="initInputLabel(false)"
               :disabled="isLoadingState ?? false" />
-              <datalist v-if="suggestedLabels" id="definedLabels">
-                <option v-for="label in suggestedLabels" :key="label" :value="label"></option>
+              <datalist v-if="definedLabels" id="definedLabels">
+                <option v-for="label in definedLabels" :key="label" :value="label"></option>
               </datalist>
             <label
               for="label"
@@ -45,9 +45,9 @@
           <li
             v-for="(label, index) in labels" :key="index"
             :id="`label-dismiss-${index}`"
-            class="inline-flex items-center px-1 py-0.5 mr-2 text-xs font-light rounded select-all"
+            class="inline-flex items-center px-2 py-1 mr-2 text-xs font-light rounded select-all"
             :class="
-              suggestedLabels.includes(label)
+              definedLabels.includes(label)
               // ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
               // : 'text-gray-800 bg-gray-100 dark:bg-gray-700 dark:text-gray-300'
               ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300 hover:bg-pink-300 hover:dark:bg-pink-700'
@@ -58,14 +58,14 @@
                 type="button"
                 class="inline-flex items-center p-0.5 ml-1 text-sm rounded-sm "
                 :class="
-                  suggestedLabels.includes(label)
+                  definedLabels.includes(label)
                   ? 'text-pink-500 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
                   : 'text-gray-400 bg-gray-300 hover:bg-gray-500 hover:text-gray-200 dark:hover:bg-slate-700 dark:hover:text-gray-300'"
                 :data-dismiss-target="
-                  suggestedLabels.includes(label) ?
+                  definedLabels.includes(label) ?
                   '#badge-dismiss-pink'
                   : '#badge-dismiss-dark'
-                  "
+                "
                 aria-label="Remove"
                 @click="removeLabel(label)">
                 <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -80,41 +80,27 @@
 </template>
 
 <script setup>
-  import { ref, reactive, computed } from 'vue'
+  import { ref, onMounted } from 'vue'
   let newLabel = ''
   const labelWarning = ref(false)
   const labels = ref([])
   const isLoadingState = ref(false)
 
-  // Oficial defined list of suggested labels
-  const suggestedLabels = [
-      '!hide',
-      '!no-promote',
-      '!warn',
-      'dmca-violation',
-      'doxxing',
-      'porn',
-      'sexual',
-      'nudity',
-      'nsfl',
-      'corpse',
-      'gore',
-      'torture',
-      'self-harm',
-      'intolerant-race',
-      'intolerant-gender',
-      'intolerant-sexual-orientation',
-      'intolerant-religion',
-      'intolerant',
-      'icon-intolerant',
-      'threat',
-      'spoiler',
-      'spam',
-      'account-security',
-      'net-abuse',
-      'impersonation',
-      'scam',
-    ]
+  // Oficial defined list of defined labels
+  let definedLabels = ref([])
+
+  onMounted(async () => {
+    try {
+      const res = await fetch('/labels.json', { method: 'get' })
+      if (res.ok) {
+        const data = await res.json()
+        definedLabels.value = data.defined
+      }
+
+    }catch (err) {
+      console.log(err)
+    }
+  })
 
 
   const addLabel =() =>{
