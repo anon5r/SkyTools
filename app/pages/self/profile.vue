@@ -13,6 +13,7 @@
                 <Avatar
                   rounded
                   bordered
+                  :status="online"
                   size="lg"
                   :img="userinfo.profile.avatar ?? ''"
                   :alt="userinfo.profile.handle ?? ''"
@@ -72,20 +73,98 @@
           </div>
 
           <!-- Description -->
-          <p class="m-4 min-w-strech whitespace-pre-line">
+          <p class="m-4 text-sm min-w-strech whitespace-pre-line">
             {{ loadState.profile ? userinfo.profile.description : '' }}
           </p>
+
           <!-- Labels -->
-          <div v-if="userinfo.profile.labels" class="m-4">
+          <div v-if="userinfo.profile.labels && !inEdit.labels" class="m-4">
             <ul class="inline-block">
               <li
-                v-for="(label, index) in userinfo.profile.labels.values"
+                v-for="(label, index) in userinfo.profile.labels"
                 :key="index"
                 class="inline-block items-center px-2 py-1 mr-2 text-xs font-medium rounded text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
-                  <font-awesome-icon :icon="['fas', 'tag']" class="mr-1" size="sm" />
+                  <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="sm" />
                   {{ label.val }}
               </li>
             </ul>
+            <button
+              class="p-2 text-sm bg-blue-500 dark:bg-blue-700 text-blue-100 rounded-md focus:outline"
+              @click="editLabel()">
+                Edit labels
+            </button>
+          </div>
+          <div v-else-if="inEdit.labels" class="m-4">
+            <ul class="flex flex-row">
+              <li
+                v-for="(label, index) in editdata.labels" :key="index"
+                :id="`label-dismiss-${index}`"
+                class="inline-flex items-center px-2 py-1 mr-2 text-xs font-light rounded select-all"
+                :class="
+                definedLabels.includes(label)
+                // ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
+                // : 'text-gray-800 bg-gray-100 dark:bg-gray-700 dark:text-gray-300'
+                ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300 hover:bg-pink-300 hover:dark:bg-pink-700'
+                : 'text-gray-800 bg-gray-300 hover:bg-gray-500 dark:text-gray-200 dark:bg-slate-700 hover:dark:bg-slate-500 hover:bg-opacity-50  hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-gray-300'
+                ">
+                {{ label }}
+                <button
+                  type="button"
+                  class="inline-flex items-center p-0.5 ml-1 text-sm rounded-sm "
+                  :class="
+                    definedLabels.includes(label)
+                    ? 'text-pink-500 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
+                    : 'text-gray-400 bg-gray-300 hover:bg-gray-500 hover:text-gray-200 dark:hover:bg-slate-700 dark:hover:text-gray-300'"
+                  :data-dismiss-target="
+                    definedLabels.includes(label) ?
+                    '#badge-dismiss-pink'
+                    : '#badge-dismiss-dark'
+                    "
+                  aria-label="Remove"
+                  @click="removeLabel(label)">
+                  <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                  </svg>
+                  <span class="sr-only">Remove label</span>
+                </button>
+              </li>
+              <li>
+                <!-- add new label field -->
+                <button
+                  data-popover-target="label-input-field"
+                  data-popover-trigger="click"
+                  data-popover-placement="bottom"
+                  type="button"
+                  class="m-2 px-1.5 bg-gray-500 hover:bg-gray-400 dark:bg-gray-600 focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-200 rounded-md"
+                  >
+                    <FontAwesomeIcon :icon="['fas', 'plus']" size="2xs" />
+                </button>
+              </li>
+              aaaa
+              <div
+                data-popover
+                id="label-input-field"
+                role="tooltip"
+                class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
+                >
+                <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                  <h3 class="font-semibold text-gray-900 dark:text-white">Add new label</h3>
+                </div>
+                <AddLabelForm />
+                <div data-popper-arrow></div>
+              </div>
+            </ul>
+            <button
+              class="p-2 text-sm bg-blue-500 dark:bg-blue-700 text-blue-100 rounded-md focus:outline"
+              @click="saveLabels()">
+                Save
+            </button>
+          </div>
+
+          <!-- Last indexed -->
+          <div class="mx-4 text-sm">
+            Last indexed at
+            <time class="mx-1 font-light italic" :datetime="userinfo.profile.indexedAt">{{ DateTime.fromISO(userinfo.profile.indexedAt).toFormat('DDD TTT') }}</time>
           </div>
         </div>
       </ClientOnly>
@@ -95,30 +174,45 @@
 
 <script setup>
   import { useAppConfig } from 'nuxt/app'
-  import { ref, watch, onMounted, toRaw } from 'vue'
+  import { DateTime } from 'luxon'
+  import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import { useAuth } from '@/composables/auth'
   import { useNavigation } from '@/composables/navigation'
+  import { initPopovers } from 'flowbite'
+  import { Avatar } from 'flowbite-vue'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-  const activeTab = ref('posts')
+
+  const SIGNIN_URL = '/bsky.social/signin'
+
 
   const route = useRoute()
   const router = useRouter()
   const config = useAppConfig()
+  const navi = useNavigation()
 
   const auth = useAuth()
 
   const hasError = ref(false)
-  const showBlocks = ref(false)
-
+  const inEdit = ref({
+    labels: false
+  })
 
   const userinfoInitial = {
     profile: {},
   }
 
   const userinfo = ref(userinfoInitial)
+
+  const editdata = ref({
+    displayName: '',
+    description: {},
+    labels:[]
+  })
+
+  const definedLabels = []
 
   // Each loading state
   const loadState = ref({
@@ -129,21 +223,42 @@
 
 
   onMounted(async () => {
+    initPopovers()
+
+    auth.getAgent()
     if (!auth.isLoggedIn()) {
       try {
         await auth.restoreSession()
+
+        // load profile
+        await loadProfile()
+
       } catch (err) {
-        const navi = useNavigation()
-        if (!navi.navigate.value)
-          navi.navigate = useNavigation({ next: null, prev: null })
         // Back to current page
-        navi.setNext(route.name);
-        return navigateTo('/sign-in')
+        navi.setNext(route.name)
+        router.push({ path: SIGNIN_URL })
+        return
       }
+
+      try {
+        // load defined labels
+        const res = await fetch('/labels.json', { method: 'get' })
+        if (res.ok) {
+          const data = await res.json()
+          definedLabels.value = data.defined
+          useState('defined-labels', () => {
+            return definedLabels.value
+          })
+        }
+      } catch (err) {
+        console.warn(err)
+      }
+    } else {
+        // Back to current page
+        navi.setNext(route.name)
+        router.push({ path: SIGNIN_URL })
+        return
     }
-
-    await loadProfile()
-
   })
 
 
@@ -160,10 +275,11 @@
       if (isDev()) console.error(err)
       hasError.value = true
       updateUserInfo('profile', {
-        did: getDid() ?? 'error:unknown:unknown',
-        displayName: getHandle() ?? 'Error: Unknown',
+        did: auth.getDid() ?? 'error:unknown:unknown',
+        displayName: auth.getHandle() ?? 'Error: Unknown',
         avatar: '',
       })
+      throw err
     }
   }
 
@@ -178,6 +294,47 @@
     loadState.value[item] = true
   }
 
+  const editLabel = () => {
+    if (!inEdit.value.labels.value) {
+      editdata.value.labels = userinfo.value.profile.labels
+    }
+    inEdit.value.labels = !inEdit.value.labels
+  }
+
+
+  const addLabel = () => {
+    console.info(labels.value)
+    newLabel = newLabel.trim()
+    if (newLabel) {
+      if (labels.value.includes(newLabel)) {
+        labelWarning.value = true
+      } else {
+        labels.value.push(newLabel)
+        clearInputLabel(true)
+      }
+    }
+  }
+
+  const removeLabel = (text) => {
+    if (labels.value.findIndex((label) => label === text) !== -1) {
+      labels.value.splice(labels.value.findIndex((label) => label === text), 1)
+    }
+  }
+
+  const clearInputLabel = flush => {
+    labelWarning.value = false
+    if (flush) newLabel = ''
+  }
+
+  const saveLabels = () => {
+    if (userinfo.value.profile.labels != editdata.value.labels) {
+      if (confirm('Do you want to save changes?')) {
+        const agent = auth.getAgent()
+        agent.api.app.bsky.actor.profile.create()
+      }
+    }
+    inEdit.value.labels = false
+  }
 
 </script>
 

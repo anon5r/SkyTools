@@ -89,11 +89,11 @@
 
 <script setup>
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { ref, reactive, nextTick, onMounted, computed } from 'vue'
-  import { initFlowbite, Drawer } from 'flowbite'
+  import { ref, reactive, onMounted, computed } from 'vue'
+  import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
-  import { getDrawer, initDrawer } from '@/composables/sidebar'
+  // import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const config = useAppConfig()
   const navi = useNavigation()
@@ -147,7 +147,7 @@
   }
 
   onMounted(async () => {
-    initFlowbite()
+    initDrawers()
 
     if (auth === null)
       auth = import('@/composables/auth').then((module) => {

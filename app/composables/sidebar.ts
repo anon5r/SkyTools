@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { initFlowbite, Drawer } from 'flowbite'
+import { Drawer } from 'flowbite'
 
 /** Drawer */
 const drawer = ref(null as Drawer | null)
