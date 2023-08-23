@@ -10,7 +10,7 @@ let _isLoggedIn = false
 
 let _session: AtpSessionData | undefined = undefined
 
-const getAgent = (service?: string): BskyAgent => {
+export const getAgent = (service?: string): BskyAgent => {
   if (!_agent) {
     const config = useAppConfig()
     if (!service) service = config.bskyService
@@ -31,7 +31,10 @@ const getAgent = (service?: string): BskyAgent => {
   return _agent
 }
 
-const login = async (credentials: { identifier: string; password: string }) => {
+export const login = async (credentials: {
+  identifier: string
+  password: string
+}) => {
   try {
     const response = await getAgent().login({
       identifier: credentials.identifier,
@@ -54,7 +57,7 @@ const login = async (credentials: { identifier: string; password: string }) => {
   }
 }
 
-const logout = async () => {
+export const logout = async () => {
   try {
     if (getAgent().hasSession) getAgent().session = undefined
 
@@ -65,7 +68,7 @@ const logout = async () => {
   }
 }
 
-const restoreSession = async () => {
+export const restoreSession = async () => {
   if (process.client) {
     const credentials = sessionStorage.getItem('credentials')
     if (credentials) {
@@ -87,7 +90,7 @@ const restoreSession = async () => {
 /**
  * @returns {boolean} true if the user is logged in
  */
-const isLoggedIn = (): boolean => {
+export const isLoggedIn = (): boolean => {
   return _isLoggedIn
 }
 
@@ -95,15 +98,19 @@ const isLoggedIn = (): boolean => {
  *
  * @returns {string} the handle of the logged in user
  */
-const getHandle = (): string => {
+export const getHandle = (): string => {
   return getAgent().session?.handle ?? ''
 }
 
-const getDid = (): string => {
+export const getDid = (): string => {
   return getAgent().session?.did ?? ''
 }
 
-const getProfile = async (): Promise<ProfileViewDetailed> => {
+export const getEmail = (): string => {
+  return getAgent().session?.email ?? ''
+}
+
+export const getProfile = async (): Promise<ProfileViewDetailed> => {
   if (!getAgent()) throw new Error('Require authentication')
 
   try {
@@ -130,6 +137,7 @@ export function useAuth(service?: string) {
     restoreSession,
     getHandle,
     getDid,
+    getEmail,
     getProfile,
   }
 }
