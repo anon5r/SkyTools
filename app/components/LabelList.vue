@@ -10,8 +10,8 @@
         definedLabels.includes(label)
         // ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
         // : 'text-gray-800 bg-gray-100 dark:bg-gray-700 dark:text-gray-300'
-        ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300 hover:bg-pink-300 hover:dark:bg-pink-700'
-        : 'text-gray-800 bg-gray-300 hover:bg-gray-500 dark:text-gray-200 dark:bg-slate-700 hover:dark:bg-slate-500 hover:bg-opacity-50  hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-gray-300'
+        ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
+        : 'text-gray-800 bg-gray-300 dark:text-gray-200 dark:bg-slate-700'
         ">
         <ClientOnly>
           <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="sm" />
@@ -20,11 +20,11 @@
         <button
           v-if="props.inEdit"
           type="button"
-          class="inline-flex items-center p-0.5 ml-1 text-sm rounded-sm "
+          class="inline-flex items-center p-0.5 ml-1 text-sm rounded-sm text-inherit bg-inherit border"
           :class="
             definedLabels.includes(label)
-            ? 'text-pink-500 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
-            : 'text-gray-400 bg-gray-300 hover:bg-gray-500 hover:text-gray-200 dark:hover:bg-slate-700 dark:hover:text-gray-300'"
+            ? ' border-pink-900 dark:border-pink-800 hover:bg-pink-300 hover:dark:bg-pink-700'
+            : ' border-gray-400 dark:border-slate-600 hover:bg-gray-200 dark:hover:bg-slate-500'"
           :data-dismiss-target="
             definedLabels.includes(label)
             ? '#badge-dismiss-pink'
@@ -37,6 +37,29 @@
           </svg>
           <span class="sr-only">Remove label</span>
         </button>
+    </li>
+    <li
+      v-if="props.inEdit">
+      <!-- add new label field -->
+      <button
+        data-popover-target="label-input-field"
+        data-popover-trigger="click"
+        data-popover-placement="bottom"
+        type="button"
+        class="px-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-400 focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-200 rounded-md select-none"
+        >
+          <FontAwesomeIcon :icon="['fas', 'plus']" size="2xs" />
+      </button>
+
+      <div
+        data-popover
+        id="label-input-field"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-fit text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
+        >
+        <AddLabelForm />
+        <div data-popper-arrow></div>
+      </div>
     </li>
   </ul>
 </template>

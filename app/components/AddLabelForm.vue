@@ -17,7 +17,7 @@
       <label
         for="label"
         class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-transparent peer-focus:bg-gray-100 peer-focus:dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
-        Enter your label
+        {{ props.placeholder }}
       </label>
     </div>
     <button
@@ -31,14 +31,14 @@
         </svg>
         Processing...
       </span>
-      <span v-else>Add label</span>
+      <span v-else>Add</span>
     </button>
   </div>
 </template>
 
 <script setup>
   import { useState } from 'nuxt/app';
-  import { ref } from 'vue'
+  import { ref, defineProps } from 'vue'
   let inputLabel = ref('')
   const useLabels = () => useState('labels', () => { return [] })
   const duplicate = ref(false)
@@ -46,6 +46,13 @@
   // Official defined list of defined labels
   const useDefinedLabels = () => useState('definedLabels', () => { return [] })
   const definedLabels = useDefinedLabels()
+
+  const props = defineProps({
+    placeholder: {
+      type: String,
+      default: 'Enter a label'
+    }
+  })
 
 
   const addLabel =() =>{
