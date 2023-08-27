@@ -1,11 +1,11 @@
 <template>
   <ul
       v-if="labels"
-      class="flex flex-row">
+      class="flex flex-row flex-wrap">
     <li
       v-for="(label, index) in labels" :key="index"
       :id="`label-dismiss-${index}`"
-      class="inline-flex items-center px-2 py-1 mr-2 text-xs font-light rounded select-all"
+      class="inline-flex items-center px-2 py-1 mr-2 my-1 text-xs font-light rounded select-all"
       :class="
         definedLabels.includes(label)
         // ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
@@ -39,9 +39,9 @@
         </button>
     </li>
     <li
-      v-if="props.inEdit">
+      v-if="props.inEdit"
+      class="mr-4 inline-flex items-center my-1">
       <!-- add new label field -->
-
       <AddLabelSimple />
     </li>
   </ul>
