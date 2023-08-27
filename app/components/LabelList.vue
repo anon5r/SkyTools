@@ -41,25 +41,8 @@
     <li
       v-if="props.inEdit">
       <!-- add new label field -->
-      <button
-        data-popover-target="label-input-field"
-        data-popover-trigger="click"
-        data-popover-placement="bottom"
-        type="button"
-        class="px-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-400 focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-200 rounded-md select-none"
-        >
-          <FontAwesomeIcon :icon="['fas', 'plus']" size="2xs" />
-      </button>
 
-      <div
-        data-popover
-        id="label-input-field"
-        role="tooltip"
-        class="absolute z-10 invisible inline-block w-fit text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
-        >
-        <AddLabelForm />
-        <div data-popper-arrow></div>
-      </div>
+      <AddLabelSimple />
     </li>
   </ul>
 </template>
