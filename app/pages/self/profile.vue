@@ -210,7 +210,7 @@
     try {
       const result = await auth.getProfile()
       profile.value = result
-      labels.value = [...profile.value.labels] ?? []
+      labels.value = profile.value.labels ? profile.value.labels.map(label => { return label.val }) : []
 
     } catch (err) {
       if (isDev()) console.error(err)
@@ -259,7 +259,7 @@
               avatar: prof.avatar,
               banner: prof.banner,
               labels: {
-                $type: 'com.atproto.label.defs#selfLabel',
+                $type: 'com.atproto.label.defs#selfLabels',
                 values: labelValues,
               },
             },
@@ -272,7 +272,9 @@
           // Refresh profile
           const result = await auth.getProfile()
           profile.value = result
-          labels.value = [...profile.value.labels] ?? []
+          labels.value = profile.value.labels
+            ? profile.value.labels.map(label => { return label.val })
+            : []
           // Reset edit state
           inEdit.value.labels = false
         } catch (err) {
