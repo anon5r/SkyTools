@@ -9,14 +9,14 @@
               <!-- Avatar -->
               <a
                 v-if="!hasError && loadState.profile"
-                :href="`${config.bskyAppURL}/profile/${userinfo.profile.handle}`">
+                :href="`${config.bskyAppURL}/profile/${profile.handle}`">
                 <Avatar
                   rounded
                   bordered
                   :status="online"
                   size="lg"
-                  :img="userinfo.profile.avatar ?? ''"
-                  :alt="userinfo.profile.handle ?? ''"
+                  :img="profile.avatar ?? ''"
+                  :alt="profile.handle ?? ''"
                   class="m-2 min-w-max" />
               </a>
               <div v-else-if="!loadState.profile" role="status">
@@ -35,8 +35,8 @@
                 <!-- Disply name -->
                 {{
                   !loadState.profile ? 'Loading...' : (
-                  userinfo.profile.displayName ||
-                  userinfo.profile.handle ||
+                  profile.displayName ||
+                  profile.handle ||
                   'Unknown')
                 }}
               </h2>
@@ -47,14 +47,14 @@
                   v-if="loadState.profile"
                   :class="{ 'line-through': hasError}"
                   class="select-all at-handle">
-                  {{ userinfo.profile.handle || 'unknown.example' }}
+                  {{ profile.handle || 'unknown.example' }}
               </span>
                 <span v-else class="mt-4">loading...</span>
               </div>
               <div
                 class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
                 <!-- DID -->
-                {{ loadState.profile ? userinfo.profile.did : 'loading...' }}
+                {{ loadState.profile ? profile.did : 'loading...' }}
               </div>
             </div>
           </div>
@@ -62,109 +62,44 @@
           <!-- Follows / Following / Posts -->
           <div class="m-4 flex flex-row min-w-strech">
             <div class="mr-2 font-light text-gray-600 dark:text-slate-500">
-              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? userinfo.profile.followersCount : '???' }}</span> followers
+              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? profile.followersCount : '0' }}</span> followers
             </div>
             <div class="mx-2 font-light text-gray-600 dark:text-slate-500">
-              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? userinfo.profile.followsCount : '???' }}</span> following
+              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? profile.followsCount : '0' }}</span> following
             </div>
             <div class="ml-2 font-light text-gray-600 dark:text-slate-500">
-              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? userinfo.profile.postsCount : '???' }}</span> posts
+              <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? profile.postsCount : '0' }}</span> posts
             </div>
           </div>
 
           <!-- Description -->
           <p class="m-4 text-sm min-w-strech whitespace-pre-line">
-            {{ loadState.profile ? userinfo.profile.description : '' }}
+            {{ loadState.profile ? profile.description : '' }}
           </p>
 
-          <!-- Labels -->
-          <div v-if="userinfo.profile.labels && !inEdit.labels" class="m-4">
-            <ul class="inline-block">
-              <li
-                v-for="(label, index) in userinfo.profile.labels"
-                :key="index"
-                class="inline-block items-center px-2 py-1 mr-2 text-xs font-medium rounded text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
-                  <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="sm" />
-                  {{ label.val }}
-              </li>
-            </ul>
+          <!-- Label update -->
+          <div
+            v-if="!hasError"
+            class="ml-4 flex flex-row content-center">
             <button
-              class="p-2 text-sm bg-blue-500 dark:bg-blue-700 text-blue-100 rounded-md focus:outline"
+              class="p-2 mr-2 text-xs bg-blue-400 dark:bg-blue-950 text-blue-200 rounded-md focus:outline select-none"
               @click="editLabel()">
-                Edit labels
+                <ClientOnly>
+                  <FontAwesomeIcon :icon="
+                    inEdit.labels ? (isEqualArray(profile.labels, labels) ? ['fas', 'circle-xmark'] : ['fas', 'floppy-disk']) : ['fas', 'pen-to-square']" size="sm" />
+                  <span class="sr-only">Edit</span>
+                </ClientOnly>
             </button>
-          </div>
-          <div v-else-if="inEdit.labels" class="m-4">
-            <ul class="flex flex-row">
-              <li
-                v-for="(label, index) in editdata.labels" :key="index"
-                :id="`label-dismiss-${index}`"
-                class="inline-flex items-center px-2 py-1 mr-2 text-xs font-light rounded select-all"
-                :class="
-                definedLabels.includes(label)
-                // ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
-                // : 'text-gray-800 bg-gray-100 dark:bg-gray-700 dark:text-gray-300'
-                ? 'text-pink-800 bg-pink-100 dark:bg-pink-900 dark:text-pink-300 hover:bg-pink-300 hover:dark:bg-pink-700'
-                : 'text-gray-800 bg-gray-300 hover:bg-gray-500 dark:text-gray-200 dark:bg-slate-700 hover:dark:bg-slate-500 hover:bg-opacity-50  hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-gray-300'
-                ">
-                {{ label }}
-                <button
-                  type="button"
-                  class="inline-flex items-center p-0.5 ml-1 text-sm rounded-sm "
-                  :class="
-                    definedLabels.includes(label)
-                    ? 'text-pink-500 bg-pink-100 dark:bg-pink-900 dark:text-pink-300'
-                    : 'text-gray-400 bg-gray-300 hover:bg-gray-500 hover:text-gray-200 dark:hover:bg-slate-700 dark:hover:text-gray-300'"
-                  :data-dismiss-target="
-                    definedLabels.includes(label) ?
-                    '#badge-dismiss-pink'
-                    : '#badge-dismiss-dark'
-                    "
-                  aria-label="Remove"
-                  @click="removeLabel(label)">
-                  <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                  </svg>
-                  <span class="sr-only">Remove label</span>
-                </button>
-              </li>
-              <li>
-                <!-- add new label field -->
-                <button
-                  data-popover-target="label-input-field"
-                  data-popover-trigger="click"
-                  data-popover-placement="bottom"
-                  type="button"
-                  class="m-2 px-1.5 bg-gray-500 hover:bg-gray-400 dark:bg-gray-600 focus:ring-1 focus:outline-none focus:ring-gray-300 dark:focus:ring-gray-200 rounded-md"
-                  >
-                    <FontAwesomeIcon :icon="['fas', 'plus']" size="2xs" />
-                </button>
-              </li>
-              aaaa
-              <div
-                data-popover
-                id="label-input-field"
-                role="tooltip"
-                class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
-                >
-                <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
-                  <h3 class="font-semibold text-gray-900 dark:text-white">Add new label</h3>
-                </div>
-                <AddLabelForm />
-                <div data-popper-arrow></div>
-              </div>
-            </ul>
-            <button
-              class="p-2 text-sm bg-blue-500 dark:bg-blue-700 text-blue-100 rounded-md focus:outline"
-              @click="saveLabels()">
-                Save
-            </button>
+            <!-- Labels -->
+            <LabelList
+              :labels="labels"
+              :inEdit="inEdit.labels" />
           </div>
 
           <!-- Last indexed -->
-          <div class="mx-4 text-sm">
+          <div v-if="profile.indexedAt" class="mx-4 text-sm">
             Last indexed at
-            <time class="mx-1 font-light italic" :datetime="userinfo.profile.indexedAt">{{ DateTime.fromISO(userinfo.profile.indexedAt).toFormat('DDD TTT') }}</time>
+            <time class="mx-1 font-light italic" :datetime="profile.indexedAt">{{ DateTime.fromISO(profile.indexedAt).toFormat('DDD TTT') }}</time>
           </div>
         </div>
       </ClientOnly>
@@ -177,8 +112,9 @@
   import { DateTime } from 'luxon'
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { isDev } from '@/utils/helpers'
+  import { isDev, isEqualArray } from '@/utils/helpers'
   import { useAuth } from '@/composables/auth'
+  import { getProfile as getProfileLex } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
   import { Avatar } from 'flowbite-vue'
@@ -193,6 +129,9 @@
   const config = useAppConfig()
   const navi = useNavigation()
 
+  const useLabels = () => useState('labels', () => [])
+  const labels = useLabels()
+
   const auth = useAuth()
 
   const hasError = ref(false)
@@ -200,17 +139,24 @@
     labels: false
   })
 
-  const userinfoInitial = {
-    profile: {},
+  const profileInitial = {
+    value: {
+      did: 'did:error:??????????????',
+      handle: '',
+      displayName: '',
+      avatar: '',
+      banner: '',
+      description: '',
+      followersCount: 0,
+      followsCount: 0,
+      postsCount: 0,
+      indexedAt: '',
+      viewer: { muted: false, blockedBy: false },
+      labels: [],
+    },
   }
 
-  const userinfo = ref(userinfoInitial)
-
-  const editdata = ref({
-    displayName: '',
-    description: {},
-    labels:[]
-  })
+  const profile = ref(profileInitial)
 
   const definedLabels = []
 
@@ -220,121 +166,125 @@
   })
 
 
-
-
   onMounted(async () => {
     initPopovers()
-
-    auth.getAgent()
+    const agent = auth.getAgent()
     if (!auth.isLoggedIn()) {
       try {
         await auth.restoreSession()
 
-        // load profile
-        await loadProfile()
-
       } catch (err) {
         // Back to current page
         navi.setNext(route.name)
         router.push({ path: SIGNIN_URL })
         return
       }
+    }
+    try {
 
-      try {
-        // load defined labels
-        const res = await fetch('/labels.json', { method: 'get' })
-        if (res.ok) {
-          const data = await res.json()
-          definedLabels.value = data.defined
-          useState('defined-labels', () => {
-            return definedLabels.value
-          })
-        }
-      } catch (err) {
-        console.warn(err)
+      // load profile
+      await loadProfile()
+
+      // load defined labels
+      const res = await fetch('/labels.json', { method: 'get' })
+      if (res.ok) {
+        const data = await res.json()
+        definedLabels.value = data.defined
+        useState('defined-labels', () => {
+          return definedLabels.value
+        })
       }
-    } else {
-        // Back to current page
-        navi.setNext(route.name)
-        router.push({ path: SIGNIN_URL })
-        return
+    } catch (err) {
+      console.warn(err)
+      navi.setNext(route.name)
+      router.push({ path: SIGNIN_URL })
     }
   })
 
 
   const loadProfile = async () => {
-    userinfo.value = userinfoInitial
+    profile.value = profileInitial
     hasError.value = false
     loadState.value.profile = false
 
     try {
       const result = await auth.getProfile()
-      updateUserInfo('profile', result)
+      profile.value = result
+      labels.value = [...profile.value.labels] ?? []
 
     } catch (err) {
       if (isDev()) console.error(err)
       hasError.value = true
-      updateUserInfo('profile', {
-        did: auth.getDid() ?? 'error:unknown:unknown',
+      profile.value = Object.assign(profileInitial, {
+        did: auth.getDid() ?? 'did:error:unknown',
         displayName: auth.getHandle() ?? 'Error: Unknown',
-        avatar: '',
       })
+
       throw err
+    } finally {
+      loadState.value.profile = true
     }
   }
 
-  /**
-   * update user datum
-   * @param {string} item
-   * @param {any} value
-   */
-  const updateUserInfo = (item, value) => {
-    if (isDev()) console.log('[updateUserInfo]::', item, ' = ', value)
-    userinfo.value[item] = value
-    loadState.value[item] = true
-  }
 
   const editLabel = () => {
-    if (!inEdit.value.labels.value) {
-      editdata.value.labels = userinfo.value.profile.labels
+    if (inEdit.value.labels) {
+      saveProfile()
     }
     inEdit.value.labels = !inEdit.value.labels
   }
 
-
-  const addLabel = () => {
-    console.info(labels.value)
-    newLabel = newLabel.trim()
-    if (newLabel) {
-      if (labels.value.includes(newLabel)) {
-        labelWarning.value = true
-      } else {
-        labels.value.push(newLabel)
-        clearInputLabel(true)
-      }
+  const saveProfile = async () => {
+    if (isDev()) {
+      console.info('saveProfile')
+      console.log(profile.value.labels, labels.value)
     }
-  }
-
-  const removeLabel = (text) => {
-    if (labels.value.findIndex((label) => label === text) !== -1) {
-      labels.value.splice(labels.value.findIndex((label) => label === text), 1)
-    }
-  }
-
-  const clearInputLabel = flush => {
-    labelWarning.value = false
-    if (flush) newLabel = ''
-  }
-
-  const saveLabels = () => {
-    if (userinfo.value.profile.labels != editdata.value.labels) {
+    if (!isEqualArray(profile.value.labels, labels.value)) {
       if (confirm('Do you want to save changes?')) {
-        const agent = auth.getAgent()
-        agent.api.app.bsky.actor.profile.create()
+        try {
+          const lexProf = (await getProfileLex(profile.value.did))
+          const prof = lexProf.value
+          if (isDev()) console.log(prof)
+          const labelValues = labels.value.map((label) => ({
+            $type: 'com.atproto.label.defs#selfLabel',
+            val: label
+          }))
+          const update = {
+            repo: profile.value.handle,
+            did: profile.value.did,
+            collection: 'app.bsky.actor.profile',
+            record: {
+              description: prof.description,
+              displayName: prof.displayName,
+              avatar: prof.avatar,
+              banner: prof.banner,
+              labels: {
+                $type: 'com.atproto.label.defs#selfLabel',
+                values: labelValues,
+              },
+            },
+            rkey: 'self'
+          }
+          if (isDev()) console.log('saveProfile()::update', update)
+
+          const res = await auth.getAgent().api.com.atproto.repo.putRecord(update)
+          if (isDev()) console.log('saveProfile()::res', res)
+          // Refresh profile
+          const result = await auth.getProfile()
+          profile.value = result
+          labels.value = [...profile.value.labels] ?? []
+          // Reset edit state
+          inEdit.value.labels = false
+        } catch (err) {
+          console.error(err)
+          alert('Failed to save changes.')
+          labels.value = profile.value.labels
+        }
       }
     }
-    inEdit.value.labels = false
   }
+
+
 
 </script>
 

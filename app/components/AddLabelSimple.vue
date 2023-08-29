@@ -1,5 +1,5 @@
 <template>
-    <div class="mr-4 max-w-fit relative">
+    <div class="max-w-fit relative">
       <input
         v-model="inputLabel"
         type="text"
