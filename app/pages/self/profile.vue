@@ -60,15 +60,16 @@
               </div>
 
               <div v-if="!hasError" class="max-w-min min-w-fit p-2">
+                <!-- Edit button -->
                 <button
                   class="p-2 min-w-full text-xs bg-blue-400 dark:bg-blue-950 text-blue-200 rounded-md focus:outline select-none"
                   @click="editLabel()">
                     <ClientOnly>
-                      <span v-if="!inEdit.labels">
+                      <span v-if="!inEdit">
                         <FontAwesomeIcon :icon="['fas', 'pen-to-square']" size="sm" />
                         Edit
                       </span>
-                      <span v-else-if="isEqualArray(profile.labels, labels)">
+                      <span v-else-if="isEqualArray(profile.labels.map(label => { return label.val }), labels) || description != profile.description">
                         <FontAwesomeIcon :icon="['fas', 'circle-xmark']" size="sm" />
                         Close
                       </span>
@@ -85,23 +86,27 @@
           <div class="px-2">
 
             <!-- Follows / Following / Posts -->
-            <div class="mt-4">
-              <div class="flex flex-row min-w-strech">
-                <div class="mr-2 font-light text-gray-600 dark:text-slate-500">
-                  <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? profile.followersCount : '0' }}</span> followers
-                </div>
-                <div class="mx-2 font-light text-gray-600 dark:text-slate-500">
-                  <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? profile.followsCount : '0' }}</span> following
-                </div>
-                <div class="ml-2 font-light text-gray-600 dark:text-slate-500">
-                  <span class="font-semibold text-gray-900 dark:text-slate-200">{{ loadState.profile ? profile.postsCount : '0' }}</span> posts
-                </div>
-              </div>
+            <div v-if="loadState.profile" class="mt-4">
+              <ProfileCounters
+                :followers-count="profile.followersCount"
+                :follows-count="profile.followsCount"
+                :posts-count="profile.postsCount" />
             </div>
 
             <!-- Description -->
             <p class="my-4 text-sm min-w-strech whitespace-pre-line">
-              {{ loadState.profile ? profile.description : '' }}
+              <div v-if="loadState.profile && inEdit">
+                <textarea
+                  v-model="description"
+                  rows="5"
+                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Write your thoughts here...">
+                    {{ profile.description ?? '' }}
+                </textarea>
+              </div>
+              <div v-else>
+                {{ profile?.description ?? '' }}
+              </div>
             </p>
 
             <!-- Label update -->
@@ -111,7 +116,7 @@
               <!-- Labels -->
               <LabelList
                 :labels="labels"
-                :inEdit="inEdit.labels" />
+                :inEdit="inEdit" />
             </div>
 
             <!-- Last indexed -->
@@ -149,14 +154,14 @@
   const navi = useNavigation()
 
   const useLabels = () => useState('labels', () => [])
+  const useDescription = () => useState('description', () => [])
   const labels = useLabels()
+  const description = useDescription()
 
   const auth = useAuth()
 
   const hasError = ref(false)
-  const inEdit = ref({
-    labels: false
-  })
+  const inEdit = ref(false)
 
   const profileInitial = {
     value: {
@@ -229,7 +234,10 @@
     try {
       const result = await auth.getProfile()
       profile.value = result
-      labels.value = profile.value.labels ? profile.value.labels.map(label => { return label.val }) : []
+      description.value = profile.value.description ?? ''
+      labels.value = profile.value.labels
+        ? profile.value.labels.map(label => { return label.val })
+        : []
 
     } catch (err) {
       if (isDev()) console.error(err)
@@ -247,23 +255,24 @@
 
 
   const editLabel = () => {
-    if (inEdit.value.labels) {
+    if (inEdit.value) {
       saveProfile()
     }
-    inEdit.value.labels = !inEdit.value.labels
+    inEdit.value = !inEdit.value
   }
 
   const saveProfile = async () => {
     if (isDev()) {
       console.info('saveProfile')
-      console.log(profile.value.labels, labels.value)
     }
-    if (!isEqualArray(profile.value.labels, labels.value)) {
+    if (!isEqualArray(profile.value.labels, labels.value)
+      || profile.value.description != description.value) {
       if (confirm('Do you want to save changes?')) {
         try {
           const lexProf = (await getProfileLex(profile.value.did))
           const prof = lexProf.value
           if (isDev()) console.log(prof)
+
           const labelValues = labels.value.map((label) => ({
             $type: 'com.atproto.label.defs#selfLabel',
             val: label
@@ -273,7 +282,7 @@
             did: profile.value.did,
             collection: 'app.bsky.actor.profile',
             record: {
-              description: prof.description,
+              description: description.value,
               displayName: prof.displayName,
               avatar: prof.avatar,
               banner: prof.banner,
@@ -295,12 +304,12 @@
             ? profile.value.labels.map(label => { return label.val })
             : []
           // Reset edit state
-          inEdit.value.labels = false
+          inEdit.value = false
         } catch (err) {
           console.error(err)
           alert('Failed to save changes.')
           labels.value = profile.value.labels
-          inEdit.value.labels = true
+          inEdit.value = true
         }
       }
     }
