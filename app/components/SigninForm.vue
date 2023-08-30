@@ -8,7 +8,7 @@
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
           for="handle">
           <ClientOnly>
-          <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />
+            <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />
           </ClientOnly>
           Your handle
           </label>

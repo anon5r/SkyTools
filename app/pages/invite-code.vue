@@ -151,7 +151,6 @@
   const config = useAppConfig()
   const route = useRoute()
   const navigate = useNavigation()
-  const agent = ref(null)
 
 
   const inviteCodes = ref(null)
@@ -161,12 +160,9 @@
 
 
   const asyncLoad = async () => {
-
-    if (agent.value == null)
-      agent.value = auth.value.getAgent()
-
+    auth.value = useAuth()
     await auth.value.restoreSession()
-
+    console.log(auth.value)
     if (auth.value.isLoggedIn()) {
       inviteCodes.value = await getInviteCodes()
     } else {
@@ -175,10 +171,12 @@
   }
 
   onMounted(async () => {
-    let useAuth = import('@/composables/auth').then(async (module) => {
-        auth.value = module.useAuth()
-        await asyncLoad()
-      })
+    // let useAuth = import('@/composables/auth').then(async (module) => {
+    //     auth.value = module.useAuth()
+    //     await asyncLoad()
+    //   })
+
+    await asyncLoad()
   })
 
 
@@ -194,7 +192,7 @@
 
   /** Gets list of invite codes */
   const getInviteCodes = async () => {
-    const atproto = agent.value.api.com.atproto.server;
+    const atproto = auth.value.getAgent().api.com.atproto.server;
     try {
       const response = await atproto.getAccountInviteCodes()
       let records = []
