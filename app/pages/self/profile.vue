@@ -4,7 +4,7 @@
     <div class="w-full max-w-3xl">
       <ClientOnly>
         <div class="text-gray-900 dark:text-slate-100">
-          <div class="flex items-center">
+          <div class="mt-2 sm:mt-5 flex items-center">
             <div class="flex-grow inline-flex max-w-full">
               <div class="items-center">
                 <!-- Avatar -->
