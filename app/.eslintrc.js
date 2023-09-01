@@ -4,7 +4,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.eslint.json',
     tsconfigRootDir: __dirname,
-    extraFileExtensions: ['.vue'],
+    // extraFileExtensions: ['.vue'],
   },
   env: {
     browser: true,
@@ -14,10 +14,9 @@ module.exports = {
   extends: [
     'plugin:vue/base',
     'plugin:nuxt/recommended',
-    'airbnb-base',
-    'airbnb-typescript/base',
-    // 'eslint:recommended',
     'plugin:prettier/recommended',
+    // 'airbnb-base',
+    // 'airbnb-typescript/base',
     'prettier',
   ],
   plugins: ['@typescript-eslint', 'vue', 'prettier'],
