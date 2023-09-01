@@ -172,9 +172,8 @@
       userHandle.value = null
       userEmail.value = null
       isLoggedIn.value = false
-      navi.goNext()
     }
-    navi.goNext()
+    navi.goHome()
   }
 
   onMounted(async () => {

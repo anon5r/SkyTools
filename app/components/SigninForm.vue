@@ -124,6 +124,8 @@
           if (navigate.getNext()) {
             auth.value.isLoggedIn = true
             navigate.goNext()
+          } else {
+            navigate.goHome()
           }
         }
 

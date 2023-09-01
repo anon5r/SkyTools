@@ -47,7 +47,7 @@ export function useNavigation() {
       if (getNext()?.startsWith('/')) router.push({ path: getNext() })
       else router.push({ name: getNext() ?? 'index' })
     } catch (err) {
-      router.push({ path: '/' })
+      goHome()
     }
   }
 
@@ -56,9 +56,23 @@ export function useNavigation() {
       if (getPrev()?.startsWith('/')) router.push({ path: getPrev() })
       router.push({ name: getPrev() ?? 'index' })
     } catch (err) {
-      router.push({ path: '/' })
+      goHome()
     }
   }
 
-  return { navigate, setNext, setPrev, getNext, getPrev, clear, goNext, goPrev }
+  const goHome = (): void => {
+    router.push({ path: '/' })
+  }
+
+  return {
+    navigate,
+    setNext,
+    setPrev,
+    getNext,
+    getPrev,
+    clear,
+    goNext,
+    goPrev,
+    goHome,
+  }
 }
