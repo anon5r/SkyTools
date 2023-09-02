@@ -21,8 +21,8 @@ export const getAgent = (service?: string): BskyAgent => {
       service: service,
       persistSession: (_, sess) => {
         if (process.client && sess != null) {
-          sessionStorage.setItem('credentials', JSON.stringify(sess))
-          sessionStorage.setItem('service', service as string)
+          localStorage.setItem('credentials', JSON.stringify(sess))
+          localStorage.setItem('service', service as string)
           _session = sess
         }
       },
@@ -43,10 +43,7 @@ export const login = async (credentials: {
 
     if (response.success && process.client) {
       if (process.client)
-        sessionStorage.setItem(
-          'credentials',
-          JSON.stringify(getAgent().session)
-        )
+        localStorage.setItem('credentials', JSON.stringify(getAgent().session))
       _isLoggedIn = true
     }
 
@@ -61,7 +58,7 @@ export const logout = async () => {
   try {
     if (getAgent().hasSession) getAgent().session = undefined
 
-    if (process.client) sessionStorage.removeItem('credentials')
+    if (process.client) localStorage.removeItem('credentials')
     _isLoggedIn = false
   } catch (error) {
     console.error(error)
@@ -70,7 +67,7 @@ export const logout = async () => {
 
 export const restoreSession = async () => {
   if (process.client) {
-    const credentials = sessionStorage.getItem('credentials')
+    const credentials = localStorage.getItem('credentials')
     if (credentials) {
       try {
         const session = JSON.parse(credentials)

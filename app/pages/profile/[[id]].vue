@@ -268,7 +268,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
-  import { useSessionStorage } from '@/composables/sessionStorage'
+  import { useLocalStorage } from '@/composables/localStorage'
 
   const activeTab = ref('posts')
 
@@ -350,7 +350,7 @@
       }
     }
 
-    showBlocks.value = sessionStorage.getItem('showBlocks') == 'true'
+    showBlocks.value = localStorage.getItem('showBlocks') == 'true'
 
     if (route.params.id) {
       showProfile()

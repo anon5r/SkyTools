@@ -14,7 +14,7 @@ export function useNavigation() {
   const navigate = ref<Navigation>({ next: null, prev: null })
 
   onMounted(() => {
-    const storedSession = sessionStorage.getItem('navi')
+    const storedSession = localStorage.getItem('navi')
     if (storedSession) {
       navigate.value = JSON.parse(storedSession)
     }
@@ -22,17 +22,17 @@ export function useNavigation() {
 
   const clear = () => {
     navigate.value = { next: null, prev: null }
-    sessionStorage.removeItem('navi')
+    localStorage.removeItem('navi')
   }
 
   const setNext = (next: string): void => {
     navigate.value.next = next
-    sessionStorage.setItem('navi', JSON.stringify(navigate.value))
+    localStorage.setItem('navi', JSON.stringify(navigate.value))
   }
 
   const setPrev = (prev: string): void => {
     navigate.value.prev = prev
-    sessionStorage.setItem('navi', JSON.stringify(navigate.value))
+    localStorage.setItem('navi', JSON.stringify(navigate.value))
   }
 
   const getNext = (): string | null => {
