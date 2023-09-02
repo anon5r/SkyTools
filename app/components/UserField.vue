@@ -3,14 +3,14 @@
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
-          class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
+          class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
             <Avatar
               rounded
               :img="avatarURL"
               :alt="props.handle"
-              class="mr-2 min-w-max" />
+              class="min-w-max" />
           </a>
         </div>
         <div class="max-w-xs truncate">
