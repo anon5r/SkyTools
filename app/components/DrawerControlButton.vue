@@ -23,6 +23,7 @@
 
 <script setup>
   import { defineProps } from 'vue'
+  import { initDrawers } from 'flowbite'
   import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const props = defineProps({
@@ -49,7 +50,7 @@
   let drawer
 
   onMounted(() => {
-    initFlowbite()
+    initDrawers()
     drawer = getDrawer()
     if (!drawer) {
       initDrawer()
