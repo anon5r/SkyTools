@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "strict": true,
     "resolveJsonModule": true,
     "lib": [
@@ -11,19 +11,24 @@
       "DOM",
       "WebWorker"
     ],
+    "allowJs": true,
+    "baseUrl": ".",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "noEmit": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
-    "allowJs": true,
+    "pretty": false,
+    "removeComments": true,
     "skipLibCheck": true,
-    "noEmit": true,
-    "baseUrl": ".",
+    "sourceMap": true,
     "types": [
+      "node",
       "@types/node",
-      "@nuxt/types"
+      "@nuxt/types",
+      "@nuxt/vue-app",
     ],
     "typeRoots": [
       "types",
@@ -31,7 +36,18 @@
     ],
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
   },
   "extends": "./.nuxt/tsconfig.json",
+  "include": ["**/*.ts", "**/*.vue", "**/*.js"],
+  "exclude": [
+    "node_modules",
+    "**/dist/**",
+    "**/.nuxt/**",
+    "**/nuxt.d.ts",
+    "**/docs/**",
+  ]
 }
