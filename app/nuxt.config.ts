@@ -6,7 +6,7 @@ export default {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
 
       defaultPDS: 'bsky.social',
-      atprotoServiceSuffix: '.bsky.social',
+      atprotoServiceSuffix: 'bsky.social',
       atprotoService: 'https://bsky.social',
       serviceAppUrl: ' https://bsky.app',
       adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',

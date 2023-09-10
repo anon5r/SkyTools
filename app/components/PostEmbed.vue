@@ -22,7 +22,7 @@
             class="block max-w m-0 p-4"
             :title="props.embed.record.uri"
             @click.prevent="showPost(props.embed.record.uri)">
-            <div class="flex flex-col min-w-fit">
+            <div class="flex flex-col min-w-8">
               <div
                 class="flex flex-wrap mb-3 text-md text-gray-400 dark:text-gray-500">
                 <!-- Avatar -->
@@ -35,7 +35,7 @@
 
                 <div class="inline-flex items-center">
                   <!-- DisplayName -->
-                  <div class="ml-1 mr-2">
+                  <div v-if="post?.profile?.displayName" class="ml-1 mr-2">
                     {{ (post.profile && AppBskyActorProfile.isRecord(post.profile)) ? post.profile.displayName : post.handle }}
                   </div>
                   <div
