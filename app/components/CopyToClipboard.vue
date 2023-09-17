@@ -11,17 +11,18 @@
         toastTextColor,
         'px-4 py-2 rounded-md shadow-md bg-white dark:bg-gray-800',
       ]">
-      <font-awesome-icon
+      <FontAwesomeIcon
         :icon="[
           'fa',
           success ? 'check-circle' : 'times-circle',
-        ]"></font-awesome-icon>
+        ]"></FontAwesomeIcon>
       <span class="ml-2">{{ toastMessage }}</span>
     </div>
   </div>
 </template>
 
 <script>
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   export default {
     inheritAttrs: false,
     props: {

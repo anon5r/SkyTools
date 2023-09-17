@@ -28,7 +28,7 @@
         </h2>
         <span href="#" class="label-auth-required">
           <ClientOnly>
-            <font-awesome-icon :icon="['fas', 'lock']" class="mr-1 text-xs" />
+            <FontAwesomeIcon :icon="['fas', 'lock']" class="mr-1 text-xs" />
           </ClientOnly>
           Authentication required
         </span>
@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
   import { useAppConfig } from 'nuxt/app'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   const config = useAppConfig()
   const appName = config.title
 </script>

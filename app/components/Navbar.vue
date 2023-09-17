@@ -34,7 +34,7 @@
 
     <!-- Drawer menu -->
     <aside>
-      <DrawerSidebar id="drawer-sidebar" label="Menu" :drawer="drawer">
+      <DrawerSidebar v-if="navItems.contents" id="drawer-sidebar" label="Menu">
         <ul
           v-for="item in navItems.contents"
           :key="item.src"
@@ -50,28 +50,24 @@
 
         <hr class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
         <ClientOnly>
-          <ul
-            class="mt-1 space-y-2">
-            <li v-if="isLoggedIn">
+          <ul class="mt-1 space-y-2">
+            <li v-if="authState.isLoggedIn">
               <span
                 class="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                @<span class="select-all">{{ userHandle }}</span>
+                @<span class="select-all">{{ authState.userHandle || null }}</span>
               </span>
-            </li>
-
-            <li v-if="isLoggedIn">
-              <!-- Sign-out -->
+              <!-- Sign-in -->
               <NuxtLink
                 to="/self/profile"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 >
-                <font-awesome-icon
+                <FontAwesomeIcon
                   :icon="['fas', 'user']"
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
                 <span class="ml-3">My profile</span>
               </NuxtLink>
             </li>
-            <li v-if="isLoggedIn">
+            <li v-if="authState.isLoggedIn">
               <!-- Sign-out -->
               <NuxtLink
                 href="#sign-out"
@@ -83,27 +79,16 @@
                 <span class="ml-3">Sign out</span>
               </NuxtLink>
             </li>
-            <li v-else-if="!isLoggedIn">
+            <li v-else-if="!authState.isLoggedIn">
               <!-- Sign-in -->
               <NuxtLink
-                :to="`/${config.defaultPDS}/signin`"
+                :to="`/signin`"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <font-awesome-icon
+                <FontAwesomeIcon
                   :icon="['fas', 'right-to-bracket']"
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
                 <span class="ml-3">Sign in Bluesky</span>
               </NuxtLink>
-            </li>
-            <li v-else-if="!isLoggedIn">
-              <!-- Sign-in -->
-              <NuxtLink
-                :to="`/${config.defaultPDS}/signin`"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <font-awesome-icon
-                  :icon="['fas', 'right-to-bracket']"
-                  class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
-                <span class="ml-3">Sign in Bluesky</span>
-            </NuxtLink>
             </li>
           </ul>
         </ClientOnly>
@@ -113,42 +98,42 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRoute } from 'nuxt/app'
-  import { ref, reactive, onMounted, computed, watch } from 'vue'
+  import { useAppConfig, useRoute, useState } from 'nuxt/app'
+  import { ref, reactive, onMounted, computed } from 'vue'
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
-  import { getAgent, restoreSession, logout as destroySession, isLoggedIn as isLogin, getHandle, getEmail } from '@/composables/auth'
+  import {
+    getAgent,
+    restoreSession,
+    logout as destroySession,
+    isLoggedIn as isLogin,
+    getHandle,
+    getEmail
+  } from '@/composables/auth'
+
   // import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const config = useAppConfig()
   const route = useRoute()
-  const isLoggedIn = ref(false)
-
-
-  // const auth = useAuth()
-  const agent = ref(getAgent())
-  const userHandle = ref(null)
-  const userEmail = ref(null)
-
-  watch(isLoggedIn, (newValue) => {
-    if (newValue) {
-      // Log in
-      userHandle.value = getHandle()
-      userEmail.value = getEmail()
-    } else {
-      // Log out
-      userHandle.value = null
-      userEmail.value = null
+  const useStateAuth = () => useState('auth', () => {
+    return {
+      isLoggedIn: false,
+      userHandle: null,
+      userEmail: null,
     }
-    isLoggedIn.value = newValue
   })
+
+  const agent = ref(null)
+  const authState = useStateAuth()
+  // const drawer = getDrawer()
+
 
   // App name
   const appName = config.title
 
   // Navbar linik
-  const navItems = reactive({
+  const navItems = {
     contents: [
       {
         src: '/profile',
@@ -169,7 +154,7 @@
         requireSignin: true,
       },
     ],
-  })
+  }
 
 
   const logout = () => {
@@ -180,33 +165,32 @@
       navi.setNext(nextPage)
 
       destroySession()
-      userHandle.value = null
-      userEmail.value = null
-      isLoggedIn.value = false
+
+      alert('Signed out')
+      authState.value.isLoggedIn = false
+      authState.value.userEmail = null
+      authState.value.userHandle = null
     }
     navi.goHome()
   }
 
   onMounted(async () => {
     initDrawers()
-
     if (agent.value === null)
       agent.value = getAgent()
-      await restoreSession()
+    await restoreSession()
 
-      if (!isLogin()) {
-        agent.value = getAgent()
-        restoreSession()
-        .then((result) => {
-          if (result) {
-            isLoggedIn.value = true
-          }
-        })
-      } else
-        isLoggedIn.value = true
-  })
+    authState.value.isLoggedIn = isLogin()
 
-  computed(() => {
-    isLoggedIn.value = isLogin()
+    if (!authState.value.isLoggedIn) {
+      agent.value = getAgent()
+      restoreSession()
+      .then(result => {
+        if (result) {
+          authState.value.userEmail = null
+          authState.value.isLoggedIn = null
+        }
+      })
+    }
   })
 </script>

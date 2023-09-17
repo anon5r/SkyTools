@@ -51,7 +51,7 @@
 <script setup>
 import { defineProps, onMounted } from 'vue'
 import { useState } from 'nuxt/app';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps({
   labels: {

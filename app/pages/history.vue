@@ -52,7 +52,7 @@
             v-else
             class="relative border-l border-gray-200 dark:border-gray-700">
             <li v-for="record in results" :key="record.id" class="mb-4 ml-3">
-              <font-awesome-icon
+              <FontAwesomeIcon
                 :icon="record.icon"
                 :style="record.iconStyle"
                 class="absolute w-3 h-3 mt-1.5 -left-1.5" />
@@ -83,6 +83,7 @@
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import axios from 'axios'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const route = useRoute()
   const router = useRouter()

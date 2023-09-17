@@ -13,7 +13,7 @@
             v-if="inviteCodes"
             class="bg-white dark:bg-slate-800 rounded-lg px-3 py-2 border-0">
             <div v-if="nextDate" class="text-sm pl-3">
-              <font-awesome-icon
+              <FontAwesomeIcon
                 :icon="['fas', 'cloud-sun']"
                 class="pr-2"
                 title="Forecast" />
@@ -28,7 +28,7 @@
               data-accordion="open">
               <AccordionPanel v-for="record in inviteCodes" :key="record.code">
                 <AccordionHeader aria-expanded="false">
-                  <font-awesome-icon
+                  <FontAwesomeIcon
                     :icon="
                       record.uses?.length > 0
                         ? ['fas', 'check-double']
@@ -91,7 +91,7 @@
                           success-message="Copied!"
                           error-message="Failed to copy"
                           :display-duration="3500">
-                          <font-awesome-icon :icon="['far', 'clipboard']" />
+                          <FontAwesomeIcon :icon="['far', 'clipboard']" />
                           Copy this code!
                         </CopyToClipboard>
                       </li>
@@ -101,7 +101,7 @@
                             Available!
                           </span>
                           <span v-if="record.createdBy != record.forAccount">
-                            <font-awesome-icon
+                            <FontAwesomeIcon
                               :icon="['fas', 'gift']"
                               beat
                               style="color: #ca1643"
@@ -122,7 +122,7 @@
                           success-message="Copied!"
                           error-message="Failed to copy"
                           :display-duration="3500">
-                          <font-awesome-icon :icon="['far', 'clipboard']" />
+                          <FontAwesomeIcon :icon="['far', 'clipboard']" />
                           Copy this code!
                         </CopyToClipboard>
                       </li>
@@ -138,7 +138,7 @@
             </Accordion>
           </div>
           <div v-else>
-            <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
+            <FontAwesomeIcon :icon="['fas', 'spinner']" spin-pulse />
             Loading...
           </div>
         </div>
@@ -153,6 +153,7 @@
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'

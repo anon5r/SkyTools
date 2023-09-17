@@ -2,31 +2,51 @@
     <div class="w-full max-w-xs mx-auto">
     <form
       class="bg-white dark:bg-slate-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h4 class="text-2xl font-bold pb-4">Sign-in to Bluesky</h4>
-        <div class="mb-4">
+      <h4 class="text-2xl font-bold pb-4">Sign-in with AT-Protocol</h4>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
+          for="service">
+        <ClientOnly>
+          <FontAwesomeIcon :icon="['fas', 'box']" class="pr-2" />
+        </ClientOnly>
+        PDS
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
+          id="handle"
+          v-model="pds"
+          type="text"
+          autocomplete=""
+          placeholder="ex. bsky.social"
+          @focusout="validateHandle"
+          tabindex="4"
+        />
+      </div>
+      <div class="mb-4">
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
           for="handle">
-          <ClientOnly>
-            <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />
-          </ClientOnly>
-          Your handle
-          </label>
-          <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
-            id="handle"
-            v-model="handle"
-            type="text"
-            autocomplete="username"
-            placeholder="ex. example.bsky.social"
-            @focusout="validateHandle"
-            tabindex="1"
-          />
-        </div>
-        <div class="mb-3">
+        <ClientOnly>
+          <FontAwesomeIcon :icon="['fas', 'user']" class="pr-2" />
+        </ClientOnly>
+        Your handle
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
+          id="handle"
+          v-model="handle"
+          type="text"
+          autocomplete="username"
+          placeholder="ex. example.bsky.social"
+          @focusout="validateHandle"
+          tabindex="1"
+        />
+      </div>
+      <div class="mb-3">
         <label class="block text-base font-bold mb-2 pt-1" for="password">
           <ClientOnly>
-          <font-awesome-icon :icon="['fas', 'key']" class="pr-2" />
+          <FontAwesomeIcon :icon="['fas', 'key']" class="pr-2" />
           </ClientOnly>
           App Password
           </label>
@@ -50,16 +70,16 @@
         <p class="text-red-500 text-xs italic" v-show="validateError">
           {{ validateError }}
         </p>
-        </div>
-        <div class="flex items-center justify-between">
-          <button
-          class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap rounded outline-blue-800 dark:outline-blue-300 focus:outline-2 focus:shadow-outline"
-            type="button"
-            @click="submitForm"
-            tabindex="3">
-            Sign in
-          </button>
-        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <button
+        class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap rounded outline-blue-800 dark:outline-blue-300 focus:outline-2 focus:shadow-outline"
+          type="button"
+          @click="submitForm"
+          tabindex="3">
+          Sign in
+        </button>
+      </div>
       <div
         class="block px-1 py-2 text-red-500 text-xs italic"
         v-show="errorMessage">
@@ -72,6 +92,7 @@
 <script setup>
   import { useAppConfig, useRoute } from 'nuxt/app'
   import { ref, defineProps } from 'vue'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '~/utils/helpers'
   import lexicons from '~/utils/lexicons'
   import { useAuth } from '~/composables/auth'
@@ -86,6 +107,13 @@
   const errorMessage = ref('')
   const validateError = ref('')
   const pds = route.params.service ? `.${route.params.service}` : config.defaultSuffix
+
+  const useStateAuth = () => useState('auth', () => ({
+    isLoggedIn: false,
+    userHandle: null,
+    userEmail: null,
+  }))
+
 
   const props = defineProps({
     service: {
@@ -121,6 +149,12 @@
     if (!validateError.value) {
       try {
         if (await auth.value.login({identifier: handle.value, password: password.value})) {
+          const stateAuth = useStateAuth()
+          console.log(stateAuth)
+          stateAuth.isLoggedIn = true
+          stateAuth.userEmail = auth.value.userEmail
+          stateAuth.userHandle = auth.value.userHandle
+
           if (navigate.getNext()) {
             auth.value.isLoggedIn = true
             navigate.goNext()
