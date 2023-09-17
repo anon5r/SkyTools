@@ -33,6 +33,7 @@ module.exports = {
   },
   darkMode: 'class',
   plugins: [require('flowbite/plugin')],
+  // modules: ['@nuxtjs/color-mode'],
   colors: {
     gray: colors.gray,
     blue: colors.sky,
