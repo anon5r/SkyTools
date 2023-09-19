@@ -94,17 +94,6 @@
                 <span class="ml-3">Sign in Bluesky</span>
               </NuxtLink>
             </li>
-            <li v-else-if="!isLoggedIn">
-              <!-- Sign-in -->
-              <NuxtLink
-                :to="`/${config.defaultPDS}/signin`"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FontAwesomeIcon
-                  :icon="['fas', 'right-to-bracket']"
-                  class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
-                <span class="ml-3">Sign in Bluesky</span>
-            </NuxtLink>
-            </li>
           </ul>
         </ClientOnly>
       </DrawerSidebar>
@@ -113,8 +102,8 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRoute } from 'nuxt/app'
-  import { ref, reactive, onMounted, computed, watch } from 'vue'
+  import { useAppConfig, useRoute, useState } from 'nuxt/app'
+  import { ref, onMounted } from 'vue'
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
@@ -123,32 +112,20 @@
 
   const config = useAppConfig()
   const route = useRoute()
-  const isLoggedIn = ref(false)
+  //const isLoggedIn = ref(false)
 
 
   // const auth = useAuth()
   const agent = ref(getAgent())
   const userHandle = ref(null)
   const userEmail = ref(null)
-
-  watch(isLoggedIn, (newValue) => {
-    if (newValue) {
-      // Log in
-      userHandle.value = getHandle()
-      userEmail.value = getEmail()
-    } else {
-      // Log out
-      userHandle.value = null
-      userEmail.value = null
-    }
-    isLoggedIn.value = newValue
-  })
+  const useLoginState = () => useState('loginState', () => { return false })
 
   // App name
   const appName = config.title
 
   // Navbar linik
-  const navItems = reactive({
+  const navItems = {
     contents: [
       {
         src: '/profile',
@@ -169,12 +146,13 @@
         requireSignin: true,
       },
     ],
-  })
+  }
 
 
   const logout = () => {
 
     const navi = useNavigation()
+    const isLoggedIn = useLoginState()
     if (isLogin()) {
       const nextPage = route.fullPath
       navi.setNext(nextPage)
@@ -192,21 +170,20 @@
 
     if (agent.value === null)
       agent.value = getAgent()
-      await restoreSession()
+    await restoreSession()
+    const isLoggedIn = useLoginState()
 
-      if (!isLogin()) {
-        agent.value = getAgent()
-        restoreSession()
-        .then((result) => {
-          if (result) {
-            isLoggedIn.value = true
-          }
-        })
-      } else
-        isLoggedIn.value = true
-  })
-
-  computed(() => {
-    isLoggedIn.value = isLogin()
+    if (!isLogin()) {
+      agent.value = getAgent()
+      restoreSession()
+      .then((result) => {
+        if (result) {
+          isLoggedIn.value = true
+          userHandle.value = getHandle()
+          userEmail.value = getEmail()
+        }
+      })
+    } else
+      isLoggedIn.value = true
   })
 </script>
