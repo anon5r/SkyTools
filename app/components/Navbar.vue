@@ -52,14 +52,14 @@
         <ClientOnly>
           <ul
             class="mt-1 space-y-2">
-            <li v-if="isLoggedIn && userHandle">
+            <li v-if="loginState.isLoggedIn && loginState.userHandle">
               <span
                 class="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                @<span class="select-all">{{ userHandle }}</span>
+                @<span class="select-all">{{ loginState.userHandle }}</span>
               </span>
             </li>
 
-            <li v-if="isLoggedIn">
+            <li v-if="loginState.isLoggedIn">
               <!-- Profile -->
               <NuxtLink
                 to="/self/profile"
@@ -71,7 +71,7 @@
                 <span class="ml-3">My profile</span>
               </NuxtLink>
             </li>
-            <li v-if="isLoggedIn">
+            <li v-if="loginState.isLoggedIn">
               <!-- Sign-out -->
               <NuxtLink
                 href="#sign-out"
@@ -83,7 +83,7 @@
                 <span class="ml-3">Sign out</span>
               </NuxtLink>
             </li>
-            <li v-else-if="!isLoggedIn">
+            <li v-else-if="!loginState.isLoggedIn">
               <!-- Sign-in -->
               <NuxtLink
                 :to="`/${config.defaultPDS}/signin`"
@@ -117,8 +117,11 @@
   const agent = ref(getAgent())
   const userHandle = ref(null)
   const userEmail = ref(null)
-  const useLoginState = () => useState('loginState', () => { return false })
-  const isLoggedIn = useLoginState()
+  const useLoginState = () => useState('loginState', () => { return {
+    session: AtpSessionData,
+    isLoggedIn: false,
+  }})
+  const loginState = useLoginState()
 
   // App name
   const appName = config.title
@@ -156,9 +159,10 @@
       navi.setNext(nextPage)
 
       destroySession()
-      userHandle.value = null
-      userEmail.value = null
-      isLoggedIn.value = false
+      const loginState = useLoginState()
+      loginState.value.userHandle = null
+      loginState.value.userEmail = null
+      loginState.value.isLoggedIn = false
     }
     navi.goHome()
   }
@@ -176,13 +180,13 @@
         restoreSession()
         .then((result) => {
           if (result) {
-            isLoggedIn.value = true
-            userHandle.value = getHandle()
-            userEmail.value = getEmail()
+            loginState.value.isLoggedIn = true
+            // loginState.value.userHandle = getHandle()
+            // loginState.value.userEmail = getEmail()
           }
         })
       } else
-        isLoggedIn.value = true
+        loginState.value.isLoggedIn = true
     }
   })
 </script>

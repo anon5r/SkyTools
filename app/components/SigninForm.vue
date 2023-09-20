@@ -79,8 +79,8 @@
   const config = useAppConfig()
   const route = useRoute()
   const navigate = useNavigation()
-  const useLoginState = () => useState('loginState', () => { return false })
-  const isLoggedIn = useLoginState()
+  const useLoginState = () => useState('loginState', () => { return { isLoggedIn: false, userHandle: '', userEmail: '', }})
+  const loginState = useLoginState()
   const auth = ref(null)
   const handle = ref('')
   const password = ref('')
@@ -124,7 +124,7 @@
         if (await auth.value.login({identifier: handle.value, password: password.value})) {
           if (navigate.getNext() !== null && navigate.getNext() !== route.fullPath) {
             auth.value.isLoggedIn = true
-            isLoggedIn.value = true
+            loginState.value.isLoggedIn = true
             navigate.goNext()
           } else {
             navigate.goHome()
