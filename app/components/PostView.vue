@@ -11,7 +11,7 @@
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
-              class="min-w-max" />
+              class="min-w-max avatar-object-cover" />
           </NuxtLink>
         </div>
         <div class="max-w-xs truncate">
@@ -193,6 +193,9 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
   }
 
   .post-text a:link {

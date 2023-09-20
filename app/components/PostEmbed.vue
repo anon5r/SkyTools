@@ -31,7 +31,7 @@
                   size="xs"
                   :img="post.avatarURL"
                   :alt="post.handle"
-                  class="inline-flex mr-1 min-w-max" />
+                  class="inline-flex mr-1 min-w-max avatar-object-cover" />
 
                 <div class="inline-flex items-center">
                   <!-- DisplayName -->
@@ -171,6 +171,9 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
   }
   .max-w-xxs {
     max-width: 15rem;
