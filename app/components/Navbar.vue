@@ -52,7 +52,7 @@
         <ClientOnly>
           <ul
             class="mt-1 space-y-2">
-            <li v-if="isLoggedIn">
+            <li v-if="isLoggedIn && userHandle">
               <span
                 class="text-sm font-semibold text-gray-500 dark:text-gray-400">
                 @<span class="select-all">{{ userHandle }}</span>
@@ -60,7 +60,7 @@
             </li>
 
             <li v-if="isLoggedIn">
-              <!-- Sign-out -->
+              <!-- Profile -->
               <NuxtLink
                 to="/self/profile"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -108,11 +108,9 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
   import { getAgent, restoreSession, logout as destroySession, isLoggedIn as isLogin, getHandle, getEmail } from '@/composables/auth'
-  // import { getDrawer, initDrawer } from '@/composables/sidebar'
 
   const config = useAppConfig()
   const route = useRoute()
-  //const isLoggedIn = ref(false)
 
 
   // const auth = useAuth()
@@ -120,6 +118,7 @@
   const userHandle = ref(null)
   const userEmail = ref(null)
   const useLoginState = () => useState('loginState', () => { return false })
+  const isLoggedIn = useLoginState()
 
   // App name
   const appName = config.title
@@ -152,7 +151,6 @@
   const logout = () => {
 
     const navi = useNavigation()
-    const isLoggedIn = useLoginState()
     if (isLogin()) {
       const nextPage = route.fullPath
       navi.setNext(nextPage)
@@ -167,23 +165,24 @@
 
   onMounted(async () => {
     initDrawers()
+    if (process.client) {
 
-    if (agent.value === null)
-      agent.value = getAgent()
-    await restoreSession()
-    const isLoggedIn = useLoginState()
+      if (agent.value === null)
+        agent.value = getAgent()
+      await restoreSession()
 
-    if (!isLogin()) {
-      agent.value = getAgent()
-      restoreSession()
-      .then((result) => {
-        if (result) {
-          isLoggedIn.value = true
-          userHandle.value = getHandle()
-          userEmail.value = getEmail()
-        }
-      })
-    } else
-      isLoggedIn.value = true
+      if (!isLogin()) {
+        agent.value = getAgent()
+        restoreSession()
+        .then((result) => {
+          if (result) {
+            isLoggedIn.value = true
+            userHandle.value = getHandle()
+            userEmail.value = getEmail()
+          }
+        })
+      } else
+        isLoggedIn.value = true
+    }
   })
 </script>

@@ -121,7 +121,7 @@
   import { defineProps, defineEmits, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
-  import * as lexicons from '@/utils/lexicons'
+  import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
@@ -160,12 +160,7 @@
   const postURL = ref('#')
 
   onMounted(async () => {
-    // postURL.value = await lexicons.buildPostURL(
-    //   config.bskyAppURL,
-    //   props.post.uri,
-    //   props.handle
-    // )
-    const atUri = lexicons.parseAtUri(props.post.uri)
+    const atUri = parseAtUri(props.post.uri)
     postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey)
   })
 
