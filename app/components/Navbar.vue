@@ -118,8 +118,10 @@
   const userHandle = ref(null)
   const userEmail = ref(null)
   const useLoginState = () => useState('loginState', () => { return {
-    session: AtpSessionData,
     isLoggedIn: false,
+    userdid: undefined,
+    userHandle: undefined,
+    userEmail: undefined,
   }})
   const loginState = useLoginState()
 
