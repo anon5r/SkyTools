@@ -49,7 +49,8 @@
                   size="lg"
                   :img="loadState.avatarURL ? userinfo.avatarURL : ''"
                   :alt="loadState.details ? userinfo.details.handle : ''"
-                  class="m-2 min-w-max" />
+                  class="m-2 min-w-max avatar-object-conver"
+                   />
               </a>
               <div v-else-if="!loadState.avatarURL" role="status">
                   <svg aria-hidden="true" class="inline w-16 h-16 m-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -791,5 +792,8 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+  .avatar-object-conver :deep(img) {
+    @apply ring-1 ring-blue-300 dark:ring-blue-800 object-cover;
   }
 </style>
