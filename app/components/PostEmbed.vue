@@ -61,10 +61,10 @@
                       class="flex">
                       <img
                         :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
-                          props.did
+                          parseAtUri(post.record.data.uri).did
                         }/${img.image.ref.toString()}`"
                         :alt="img.alt"
-                        class="h-min max-w-xxs rounded-lg" />
+                        class="h-min max-w-xxs rounded-lg object-cover" />
                     </div>
                   </div>
                 </div>
@@ -99,7 +99,7 @@
                 props.did
               }/${img.image.ref.toString()}`"
               :alt="img.alt"
-              class="h-min max-w-xs rounded-lg" />
+              class="h-min max-w-xs rounded-lg object-cover" />
           </a>
         </div>
       </div>
@@ -110,7 +110,7 @@
 <script setup>
   import { defineProps, ref, onMounted, toRaw } from 'vue'
   import { useAppConfig } from 'nuxt/app'
-  import * as lexicons from '@/utils/lexicons'
+  import { buildPostURL, parseAtUri } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
   import { Avatar } from 'flowbite-vue'
   import { AppBskyActorProfile } from '@atproto/api'
@@ -150,7 +150,7 @@
     } else if (props.embed.$type === 'app.bsky.embed.images' || props.embed.$type === 'app.bsky.embed.recordWithMedia') {
       // Images
       // Post URL
-      postURL.value = await lexicons.buildPostURL(
+      postURL.value = await buildPostURL(
         config.bskyAppURL,
         props.embed.images[0].image.uri
       )
