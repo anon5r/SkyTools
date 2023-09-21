@@ -145,6 +145,9 @@ export default {
       ({ weeks: 2 } as object),
     cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
   },
+  build: {
+    transpile: ['@atproto/api'],
+  },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
     'flowbite/dist/flowbite.css',

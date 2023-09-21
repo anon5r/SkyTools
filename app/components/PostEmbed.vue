@@ -58,13 +58,13 @@
                     <div
                       v-for="img of post.record.data.value.embed.images"
                       :key="img.image.ref.toString()"
-                      class="flex">
+                      class="flex max-w-fit">
                       <img
                         :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
                           parseAtUri(post.record.data.uri).did
                         }/${img.image.ref.toString()}`"
                         :alt="img.alt"
-                        class="h-min max-w-xxs rounded-lg object-cover" />
+                        class="max-w-xxs rounded-lg object-cover" />
                     </div>
                   </div>
                 </div>
@@ -99,7 +99,7 @@
                 props.did
               }/${img.image.ref.toString()}`"
               :alt="img.alt"
-              class="h-min max-w-xs rounded-lg object-cover" />
+              class="max-w-xxs rounded-lg object-cover" />
           </a>
         </div>
       </div>
