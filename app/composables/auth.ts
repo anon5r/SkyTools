@@ -1,14 +1,12 @@
 import { ref, Ref } from 'vue'
 import { useAppConfig, useState } from 'nuxt/app'
-import AtpAgent, {
-  BskyAgent,
-  AtpSessionData,
-  AppBskyActorGetProfile,
-} from '@atproto/api'
+import { BskyAgent, AtpSessionData } from '@atproto/api'
 import { isDev } from '@/utils/helpers'
 import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
 const _agent: Ref<BskyAgent | null> = ref(null)
+
+const credentialKey = 'credentials'
 
 let _isLoggedIn = false
 
@@ -25,7 +23,7 @@ export const getAgent = (service?: string): BskyAgent => {
       service: service,
       persistSession: (_, sess) => {
         if (process.client && sess != null) {
-          localStorage.setItem('credentials', JSON.stringify(sess))
+          localStorage.setItem(credentialKey, JSON.stringify(sess))
           localStorage.setItem('service', service as string)
           _session = sess
         }
@@ -62,7 +60,7 @@ export const login = async (credentials: {
 
     if (response.success && process.client) {
       if (process.client) {
-        localStorage.setItem('credentials', JSON.stringify(getAgent().session))
+        localStorage.setItem(credentialKey, JSON.stringify(getAgent().session))
         _isLoggedIn = true
         const useLoginState = useState('loginState', initLoginState)
         console.log(useLoginState.value)
@@ -90,7 +88,7 @@ export const logout = async () => {
     }
 
     if (process.client) {
-      localStorage.removeItem('credentials')
+      localStorage.removeItem(credentialKey)
       const useLoginState = useState('loginState', initLoginState)
       useLoginState.value = initLoginState()
     }
@@ -102,7 +100,7 @@ export const logout = async () => {
 
 export const restoreSession = async () => {
   if (process.client) {
-    const credentials = localStorage.getItem('credentials')
+    const credentials = localStorage.getItem(credentialKey)
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
