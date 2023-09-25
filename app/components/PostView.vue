@@ -11,7 +11,7 @@
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
-              class="min-w-max" />
+              class="min-w-max avatar-object-cover" />
           </NuxtLink>
         </div>
         <div class="max-w-xs truncate">
@@ -121,7 +121,7 @@
   import { defineProps, defineEmits, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
-  import * as lexicons from '@/utils/lexicons'
+  import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
@@ -160,12 +160,7 @@
   const postURL = ref('#')
 
   onMounted(async () => {
-    // postURL.value = await lexicons.buildPostURL(
-    //   config.bskyAppURL,
-    //   props.post.uri,
-    //   props.handle
-    // )
-    const atUri = lexicons.parseAtUri(props.post.uri)
+    const atUri = parseAtUri(props.post.uri)
     postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey)
   })
 
@@ -193,6 +188,9 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
   }
 
   .post-text a:link {

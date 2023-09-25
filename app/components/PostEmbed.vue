@@ -22,7 +22,7 @@
             class="block max-w m-0 p-4"
             :title="props.embed.record.uri"
             @click.prevent="showPost(props.embed.record.uri)">
-            <div class="flex flex-col min-w-fit">
+            <div class="flex flex-col min-w-8">
               <div
                 class="flex flex-wrap mb-3 text-md text-gray-400 dark:text-gray-500">
                 <!-- Avatar -->
@@ -31,11 +31,11 @@
                   size="xs"
                   :img="post.avatarURL"
                   :alt="post.handle"
-                  class="inline-flex mr-1 min-w-max" />
+                  class="inline-flex mr-1 min-w-max avatar-object-cover" />
 
                 <div class="inline-flex items-center">
                   <!-- DisplayName -->
-                  <div class="ml-1 mr-2">
+                  <div v-if="post?.profile?.displayName" class="ml-1 mr-2">
                     {{ (post.profile && AppBskyActorProfile.isRecord(post.profile)) ? post.profile.displayName : post.handle }}
                   </div>
                   <div
@@ -58,13 +58,13 @@
                     <div
                       v-for="img of post.record.data.value.embed.images"
                       :key="img.image.ref.toString()"
-                      class="flex">
+                      class="flex max-w-fit">
                       <img
                         :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
-                          props.did
+                          parseAtUri(post.record.data.uri).did
                         }/${img.image.ref.toString()}`"
                         :alt="img.alt"
-                        class="h-min max-w-xxs rounded-lg" />
+                        class="max-w-xxs rounded-lg object-cover" />
                     </div>
                   </div>
                 </div>
@@ -99,7 +99,7 @@
                 props.did
               }/${img.image.ref.toString()}`"
               :alt="img.alt"
-              class="h-min max-w-xs rounded-lg" />
+              class="max-w-xxs rounded-lg object-cover" />
           </a>
         </div>
       </div>
@@ -110,7 +110,7 @@
 <script setup>
   import { defineProps, ref, onMounted, toRaw } from 'vue'
   import { useAppConfig } from 'nuxt/app'
-  import * as lexicons from '@/utils/lexicons'
+  import { buildPostURL, parseAtUri } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
   import { Avatar } from 'flowbite-vue'
   import { AppBskyActorProfile } from '@atproto/api'
@@ -150,7 +150,7 @@
     } else if (props.embed.$type === 'app.bsky.embed.images' || props.embed.$type === 'app.bsky.embed.recordWithMedia') {
       // Images
       // Post URL
-      postURL.value = await lexicons.buildPostURL(
+      postURL.value = await buildPostURL(
         config.bskyAppURL,
         props.embed.images[0].image.uri
       )
@@ -171,6 +171,9 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
   }
   .max-w-xxs {
     max-width: 15rem;

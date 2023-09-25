@@ -10,7 +10,7 @@
               rounded
               :img="avatarURL"
               :alt="props.handle"
-              class="min-w-max" />
+              class="min-w-max avatar-object-cover" />
           </a>
         </div>
         <div class="max-w-xs truncate">
@@ -88,3 +88,9 @@
     emits('showProfile', props.handle)
   }
 </script>
+
+<style scoped>
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
+  }
+</style>

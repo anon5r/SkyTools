@@ -1,23 +1,27 @@
-import { ref } from 'vue'
-import { useAppConfig } from 'nuxt/app'
-import { BskyAgent, AtpSessionData, AppBskyActorGetProfile } from '@atproto/api'
+import { ref, Ref } from 'vue'
+import { useAppConfig, useState } from 'nuxt/app'
+import AtpAgent, {
+  BskyAgent,
+  AtpSessionData,
+  AppBskyActorGetProfile,
+} from '@atproto/api'
 import { isDev } from '@/utils/helpers'
 import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
-let _agent: BskyAgent | null = null
+const _agent: Ref<BskyAgent | null> = ref(null)
 
 let _isLoggedIn = false
 
 let _session: AtpSessionData | undefined = undefined
 
 export const getAgent = (service?: string): BskyAgent => {
-  if (!_agent) {
+  if (!_agent.value) {
     const config = useAppConfig()
     if (!service) service = config.bskyService as string
     else if (service.length > 0 && !service.startsWith('https://'))
       service = `https://${service}`
 
-    _agent = new BskyAgent({
+    _agent.value = new BskyAgent({
       service: service,
       persistSession: (_, sess) => {
         if (process.client && sess != null) {
@@ -28,7 +32,21 @@ export const getAgent = (service?: string): BskyAgent => {
       },
     })
   }
-  return _agent
+  return _agent.value
+}
+
+const initLoginState = (): {
+  isLoggedIn: boolean
+  userEmail: string | undefined
+  userDid: string | undefined
+  userHandle: string | undefined
+} => {
+  return {
+    isLoggedIn: false,
+    userEmail: undefined,
+    userDid: undefined,
+    userHandle: undefined,
+  }
 }
 
 export const login = async (credentials: {
@@ -43,9 +61,18 @@ export const login = async (credentials: {
     })
 
     if (response.success && process.client) {
-      if (process.client)
+      if (process.client) {
         localStorage.setItem('credentials', JSON.stringify(getAgent().session))
-      _isLoggedIn = true
+        _isLoggedIn = true
+        const useLoginState = useState('loginState', initLoginState)
+        console.log(useLoginState.value)
+        useLoginState.value = {
+          isLoggedIn: true,
+          userHandle: getAgent().session?.handle ?? undefined,
+          userDid: getAgent().session?.did ?? undefined,
+          userEmail: getAgent().session?.email ?? undefined,
+        }
+      }
     }
 
     return response.success
@@ -57,9 +84,16 @@ export const login = async (credentials: {
 
 export const logout = async () => {
   try {
-    if (getAgent().hasSession) getAgent().session = undefined
+    if (getAgent().hasSession) {
+      await getAgent().api.com.atproto.server.deleteSession()
+      getAgent().session = undefined
+    }
 
-    if (process.client) localStorage.removeItem('credentials')
+    if (process.client) {
+      localStorage.removeItem('credentials')
+      const useLoginState = useState('loginState', initLoginState)
+      useLoginState.value = initLoginState()
+    }
     _isLoggedIn = false
   } catch (error) {
     console.error(error)
@@ -74,6 +108,18 @@ export const restoreSession = async () => {
         const session = JSON.parse(credentials)
         const res = await getAgent().resumeSession(session)
         _isLoggedIn = res.success
+        const useLoginState: Ref<{
+          isLoggedIn: boolean
+          userHandle: string | undefined
+          userDid: string | undefined
+          userEmail: string | undefined
+        }> = useState('loginState', initLoginState)
+        useLoginState.value = {
+          isLoggedIn: res.success,
+          userHandle: res.data.handle ?? undefined,
+          userDid: res.data.did ?? undefined,
+          userEmail: res.data.email ?? undefined,
+        }
       } catch (err: any) {
         if (isDev()) console.error(err)
         if (err.response.status == 400) {
@@ -89,7 +135,8 @@ export const restoreSession = async () => {
  * @returns {boolean} true if the user is logged in
  */
 export const isLoggedIn = (): boolean => {
-  return _isLoggedIn
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.isLoggedIn
 }
 
 /**
@@ -97,15 +144,18 @@ export const isLoggedIn = (): boolean => {
  * @returns {string} the handle of the logged in user
  */
 export const getHandle = (): string => {
-  return getAgent().session?.handle ?? ''
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.session?.handle ?? ''
 }
 
 export const getDid = (): string => {
-  return getAgent().session?.did ?? ''
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.session?.did ?? ''
 }
 
 export const getEmail = (): string => {
-  return getAgent().session?.email ?? ''
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.session?.email ?? ''
 }
 
 export const getProfile = async (): Promise<ProfileViewDetailed> => {
@@ -124,9 +174,7 @@ export const getProfile = async (): Promise<ProfileViewDetailed> => {
   }
 }
 
-export function useAuth(service?: string) {
-  _agent = getAgent(service)
-
+export function useAuth() {
   return {
     login,
     logout,

@@ -50,13 +50,17 @@
 
         <hr class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
         <ClientOnly>
-          <ul class="mt-1 space-y-2">
-            <li v-if="authState.isLoggedIn">
+          <ul
+            class="mt-1 space-y-2">
+            <li v-if="loginState.isLoggedIn && loginState.userHandle">
               <span
                 class="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                @<span class="select-all">{{ authState.userHandle || null }}</span>
+                @<span class="select-all">{{ loginState.userHandle }}</span>
               </span>
-              <!-- Sign-in -->
+            </li>
+
+            <li v-if="loginState.isLoggedIn">
+              <!-- Profile -->
               <NuxtLink
                 to="/self/profile"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -67,7 +71,7 @@
                 <span class="ml-3">My profile</span>
               </NuxtLink>
             </li>
-            <li v-if="authState.isLoggedIn">
+            <li v-if="loginState.isLoggedIn">
               <!-- Sign-out -->
               <NuxtLink
                 href="#sign-out"
@@ -79,7 +83,7 @@
                 <span class="ml-3">Sign out</span>
               </NuxtLink>
             </li>
-            <li v-else-if="!authState.isLoggedIn">
+            <li v-else-if="!loginState.isLoggedIn">
               <!-- Sign-in -->
               <NuxtLink
                 :to="`/signin`"
@@ -99,30 +103,25 @@
 
 <script setup>
   import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { ref, reactive, onMounted, computed } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
-  import {
-    getAgent,
-    restoreSession,
-    logout as destroySession,
-    isLoggedIn as isLogin,
-    getHandle,
-    getEmail
-  } from '@/composables/auth'
-
-  // import { getDrawer, initDrawer } from '@/composables/sidebar'
+  import { getAgent, restoreSession, logout as destroySession, isLoggedIn as isLogin, getHandle, getEmail } from '@/composables/auth'
 
   const config = useAppConfig()
   const route = useRoute()
-  const useStateAuth = () => useState('auth', () => {
-    return {
-      isLoggedIn: false,
-      userHandle: null,
-      userEmail: null,
-    }
-  })
+
+
+  const userHandle = ref(null)
+  const userEmail = ref(null)
+  const useLoginState = () => useState('loginState', () => { return {
+    isLoggedIn: false,
+    userdid: undefined,
+    userHandle: undefined,
+    userEmail: undefined,
+  }})
+  const loginState = useLoginState()
 
   const agent = ref(null)
   const authState = useStateAuth()
@@ -165,32 +164,34 @@
       navi.setNext(nextPage)
 
       destroySession()
-
-      alert('Signed out')
-      authState.value.isLoggedIn = false
-      authState.value.userEmail = null
-      authState.value.userHandle = null
+      const loginState = useLoginState()
+      loginState.value.userHandle = null
+      loginState.value.userEmail = null
+      loginState.value.isLoggedIn = false
     }
     navi.goHome()
   }
 
   onMounted(async () => {
     initDrawers()
-    if (agent.value === null)
-      agent.value = getAgent()
-    await restoreSession()
+    if (process.client) {
 
-    authState.value.isLoggedIn = isLogin()
+      if (agent.value === null)
+        agent.value = getAgent()
+      await restoreSession()
 
-    if (!authState.value.isLoggedIn) {
-      agent.value = getAgent()
-      restoreSession()
-      .then(result => {
-        if (result) {
-          authState.value.userEmail = null
-          authState.value.isLoggedIn = null
-        }
-      })
+      if (!isLogin()) {
+        agent.value = getAgent()
+        restoreSession()
+        .then((result) => {
+          if (result) {
+            loginState.value.isLoggedIn = true
+            // loginState.value.userHandle = getHandle()
+            // loginState.value.userEmail = getEmail()
+          }
+        })
+      } else
+        loginState.value.isLoggedIn = true
     }
   })
 </script>
