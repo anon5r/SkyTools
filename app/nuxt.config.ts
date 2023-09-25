@@ -1,5 +1,7 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 export default {
   runtimeConfig: {
     public: {
@@ -146,7 +148,7 @@ export default {
     cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
   },
   build: {
-    transpile: ['@atproto/api'],
+    transpile: isProduction ? ['@atproto/api'] : [],
   },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
