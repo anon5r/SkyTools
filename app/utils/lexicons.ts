@@ -54,7 +54,7 @@ export const formatIdentifier = (id: string) => {
     id = id.startsWith('at://') ? id.substring(5) : id
     if (!id.startsWith('did:')) id = id.startsWith('@') ? id.substring(1) : id
     if (!id.startsWith('did:') && !id.includes('.')) {
-      id += `.${config.defaultSuffix}` // default xxx -> xxx.bsky.social
+      id = `${id}.${config.defaultSuffix}` // default xxx -> xxx.bsky.social
     }
   }
   return id

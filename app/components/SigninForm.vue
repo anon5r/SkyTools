@@ -106,7 +106,7 @@
   const password = ref('')
   const errorMessage = ref('')
   const validateError = ref('')
-  const pds = route.params.service ? `.${route.params.service}` : config.defaultSuffix
+  const pds = route.params.service ? route.params.service : config.defaultPDS
 
   const useStateAuth = () => useState('auth', () => ({
     isLoggedIn: false,
@@ -132,7 +132,7 @@
 
   const validateHandle =() => {
     if (handle && handle.value.length > 0 && !handle.value.includes('.')) {
-      handle.value = handle.value + pds
+      handle.value = `${handle.value}.${config.defaultSuffix}`
     }
   }
 
@@ -148,9 +148,9 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        if (await auth.value.login({identifier: handle.value, password: password.value})) {
+        if (await auth.value.login({identifier: handle.value, password: password.value, pds: pds})) {
           const stateAuth = useStateAuth()
-          console.log(stateAuth)
+          if (isDev()) console.log(stateAuth)
           stateAuth.isLoggedIn = true
           stateAuth.userEmail = auth.value.userEmail
           stateAuth.userHandle = auth.value.userHandle

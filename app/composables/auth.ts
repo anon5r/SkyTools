@@ -13,7 +13,7 @@ let _session: AtpSessionData | undefined = undefined
 export const getAgent = (service?: string): BskyAgent => {
   if (!_agent) {
     const config = useAppConfig()
-    if (!service) service = config.bskyService
+    if (!service) service = config.bskyService as string
     else if (service.length > 0 && !service.startsWith('https://'))
       service = `https://${service}`
 
@@ -32,11 +32,12 @@ export const getAgent = (service?: string): BskyAgent => {
 }
 
 export const login = async (credentials: {
+  pds?: string
   identifier: string
   password: string
 }) => {
   try {
-    const response = await getAgent().login({
+    const response = await getAgent(credentials.pds).login({
       identifier: credentials.identifier,
       password: credentials.password,
     })
