@@ -124,7 +124,6 @@
   const loginState = useLoginState()
 
   const agent = ref(null)
-  const authState = useStateAuth()
   // const drawer = getDrawer()
 
 
