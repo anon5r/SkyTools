@@ -142,6 +142,40 @@
             Loading...
           </div>
         </div>
+
+        <!-- Modal dialog -->
+        <Modal v-if="blocked" persistent>
+          <template #header>
+            <div class="flex items-center text-lg">
+              <ClientOnly>
+                <font-awesome-icon :icon="['fas', 'triangle-exclamation']" />
+              </ClientOnly>
+              This feature is temporarily restricted
+            </div>
+          </template>
+          <template #body>
+            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              The API to obtain invitation codes was available to anyone without the user's permission.
+            </p>
+            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              However, this feature is restricted for logins using the App Password.
+            </p>
+            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              In the future, this functionality will be available with the user's consent.
+            </p>
+            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              The feature will be closed for the time being. Thank you.
+            </p>
+          </template>
+          <template #footer>
+            <div class="flex justify-between">
+              <button @click="navigate.goHome" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Go back
+              </button>
+            </div>
+          </template>
+        </Modal>
+
       </ClientOnly>
     </div>
   </div>
@@ -153,7 +187,7 @@
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
-  import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'flowbite-vue'
+  import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Modal } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
 
@@ -162,7 +196,6 @@
   const config = useAppConfig()
   const route = useRoute()
   const navigate = useNavigation()
-  const agent = ref(null)
 
 
   const inviteCodes = ref(null)
@@ -170,14 +203,13 @@
 
   const auth = ref(null)
 
+  const blocked = ref(false)
+
 
   const asyncLoad = async () => {
-
-    if (agent.value == null)
-      agent.value = auth.value.getAgent()
-
+    auth.value = useAuth()
     await auth.value.restoreSession()
-
+    console.log(auth.value)
     if (auth.value.isLoggedIn()) {
       inviteCodes.value = await getInviteCodes()
     } else {
@@ -186,10 +218,12 @@
   }
 
   onMounted(async () => {
-    let useAuth = import('@/composables/auth').then(async (module) => {
-        auth.value = module.useAuth()
-        await asyncLoad()
-      })
+    // let useAuth = import('@/composables/auth').then(async (module) => {
+    //     auth.value = module.useAuth()
+    //     await asyncLoad()
+    //   })
+
+    await asyncLoad()
   })
 
 
@@ -205,7 +239,7 @@
 
   /** Gets list of invite codes */
   const getInviteCodes = async () => {
-    const atproto = agent.value.api.com.atproto.server;
+    const atproto = auth.value.getAgent().api.com.atproto.server;
     try {
       const response = await atproto.getAccountInviteCodes()
       let records = []
@@ -254,7 +288,12 @@
       return records
     } catch (error) {
       if (isDev()) console.error(error)
-      loadSigninForm()
+      if (error?.status === 400) {
+        // Display blocked message
+        blocked.value = true
+      } else {
+        loadSigninForm()
+      }
     }
   }
 </script>

@@ -17,12 +17,12 @@
               :disabled="!isLoadingState(loadState)" />
             <label
               for="handle_did"
-              class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-gray-100 dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
+              class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-translate px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:bg-gray-100 dark:peer-focus:bg-slate-900 left-1">
               Handle or DID
             </label>
           </div>
           <button
-            class="px-5 py-3 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md"
+            class="px-5 py-3 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md px-2 py-1"
             @click.prevent="profileEvent"
             :disabled="!isLoadingState(loadState)">
             <span v-if="!isLoadingState(loadState)" class="flex flex-inline">
@@ -49,7 +49,8 @@
                   size="lg"
                   :img="loadState.avatarURL ? userinfo.avatarURL : ''"
                   :alt="loadState.details ? userinfo.details.handle : ''"
-                  class="m-2 min-w-max" />
+                  class="m-2 min-w-max avatar-object-conver"
+                   />
               </a>
               <div v-else-if="!loadState.avatarURL" role="status">
                   <svg aria-hidden="true" class="inline w-16 h-16 m-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -84,7 +85,7 @@
                 <span v-else class="mt-4">loading...</span>
               </div>
               <div
-                class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-600 select-all">
+                class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
                 <!-- DID -->
                 {{ loadState.details ? userinfo.details.did : 'loading...' }}
               </div>
@@ -268,6 +269,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { Avatar, Tabs, Tab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
+  import { useLocalStorage } from '@/composables/localStorage'
 
   const activeTab = ref('posts')
 
@@ -349,7 +351,7 @@
       }
     }
 
-    showBlocks.value = sessionStorage.getItem('showBlocks') == 'true'
+    showBlocks.value = localStorage.getItem('showBlocks') == 'true'
 
     if (route.params.id) {
       showProfile()
@@ -790,5 +792,8 @@
 <style scoped>
   .at-handle::before {
     content: '@';
+  }
+  .avatar-object-conver :deep(img) {
+    @apply ring-1 ring-blue-300 dark:ring-blue-800 object-cover;
   }
 </style>

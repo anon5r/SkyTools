@@ -34,9 +34,4 @@
   const route = useRoute()
 
   const pds = route.params.service
-
-  const isRedirected = computed(() => {
-      const navi = useNavigation()
-      return (navi.getNext())
-  })
 </script>

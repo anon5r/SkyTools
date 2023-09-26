@@ -72,10 +72,5 @@
       require: false,
       default: false,
     },
-    drawer: {
-      type: Object,
-      require: false,
-      default: false,
-    },
   })
 </script>

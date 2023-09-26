@@ -48,6 +48,7 @@ class ClientPost {
     lexicons
       .getProfile(did)
       .then(profile => {
+        console.log(profile )
         this._profile = profile
         this._avatarURL = lexicons.buildAvatarURL(cdnURL, did, this._profile)
       })
@@ -78,6 +79,7 @@ class ClientPost {
     }
 
     try {
+      // Load avatar and profile
       await client.getProfileAndAvatar(did)
     } catch (err) {
       if (isDev()) console.error(err)

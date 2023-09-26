@@ -6,7 +6,7 @@ export default {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
 
       defaultPDS: 'bsky.social',
-      atprotoServiceSuffix: '.bsky.social',
+      atprotoServiceSuffix: 'bsky.social',
       atprotoService: 'https://bsky.social',
       serviceAppUrl: ' https://bsky.app',
       adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
@@ -15,7 +15,7 @@ export default {
     },
   },
   app: {
-    ssr: true,
+    ssr: false,
     darkmode: 'class',
     head: {
       title: 'SkyTools',
@@ -144,6 +144,9 @@ export default {
         JSON.parse(process.env.INVITE_CODE_FREQ)) ||
       ({ weeks: 2 } as object),
     cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
+  },
+  build: {
+    transpile: ['@atproto/api'],
   },
   modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
   css: [
