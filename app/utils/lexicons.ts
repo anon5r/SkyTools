@@ -1,16 +1,11 @@
 import axios from 'axios'
-import { isDev } from '@/utils/helpers'
-import {
-  AppBskyActorProfile,
+import type {
   AppBskyFeedPost,
-  // AtUri,
-  AtpAgent,
   ComAtprotoRepoGetRecord,
   ComAtprotoRepoListRecords,
 } from '@atproto/api'
-import { AtUri } from '@atproto/uri'
-// import * as Proto from '@atproto/api'
-// const { AtpAgent } = Proto
+import { AppBskyActorProfile, AtUri, AtpAgent } from '@atproto/api'
+import { isDev } from '@/utils/helpers'
 
 const plcURL = 'https://plc.directory'
 let atp: AtpAgent | null = null
@@ -54,7 +49,7 @@ export const formatIdentifier = (id: string) => {
     id = id.startsWith('at://') ? id.substring(5) : id
     if (!id.startsWith('did:')) id = id.startsWith('@') ? id.substring(1) : id
     if (!id.startsWith('did:') && !id.includes('.')) {
-      id = `${id}.${config.defaultSuffix}` // default xxx -> xxx.bsky.social
+      id += `.${config.defaultSuffix}` // default xxx -> xxx.bsky.social
     }
   }
   return id
@@ -67,7 +62,7 @@ export const formatIdentifier = (id: string) => {
  */
 export const resolveDID = async (
   identifier: string,
-  onlyHandle: boolean = true
+  onlyHandle = true
 ): Promise<string> => {
   try {
     let requestUrl
@@ -189,8 +184,8 @@ export const getRecord = async (
 ): Promise<ComAtprotoRepoGetRecord.Response | any> => {
   try {
     const response = await getAgent().api.com.atproto.repo.getRecord({
-      repo: repo,
-      collection: collection,
+      repo,
+      collection,
       rkey: recordKey,
     })
 
@@ -219,15 +214,15 @@ export const getRecord = async (
 export const listRecords = async (
   collection: string,
   identifier: string,
-  limit: number = 50,
+  limit = 50,
   cursor: string | undefined = undefined
 ): Promise<ComAtprotoRepoListRecords.Response> => {
   try {
     const response = await getAgent().api.com.atproto.repo.listRecords({
-      collection: collection,
+      collection,
       repo: identifier,
-      limit: limit,
-      cursor: cursor,
+      limit,
+      cursor,
     })
 
     if (response) return response
@@ -247,8 +242,8 @@ export const listRecords = async (
 export const getBlob = async (did: string, cid: string): Promise<string> => {
   try {
     const response = await getAgent().com.atproto.sync.getBlob({
-      did: did,
-      cid: cid,
+      did,
+      cid,
     })
     if (response.data) {
       const blobObject = new Blob([response.data], {
@@ -294,7 +289,7 @@ export const describeRepo = async (id: string): Promise<any> => {
     const response = await axios({
       url: `${config.bskyService}/xrpc/com.atproto.repo.describeRepo`,
       method: 'GET',
-      params: params,
+      params,
     })
 
     if (response.data) {
@@ -337,8 +332,12 @@ export const buildAvatarURL = (
   profile: AppBskyActorProfile.Record
 ) => {
   // if (isDev()) console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
-  //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${(AppBskyActorProfile.isRecord(profile) && !profile.value) ? profile.avatar?.ref : profile.value?.avatar.ref}`
+  // return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
+  return `${cdnURL}/${config.defaultPDS}/image/${did}/${
+    AppBskyActorProfile.isRecord(profile) && !profile.value
+      ? profile.avatar?.ref
+      : profile.value?.avatar.ref
+  }`
 }
 
 /**
@@ -354,8 +353,8 @@ export const buildPostURL = async (
   handle?: string
 ) => {
   const aturi = parseAtUri(uri)
-  //if (isDev()) console.log('[Lexicons] buildPostURL::aturi(parsed) = ', aturi)
-  //if (isDev()) console.log('[Lexicons] buildPostURL::handle(param) = ', handle)
+  // if (isDev()) console.log('[Lexicons] buildPostURL::aturi(parsed) = ', aturi)
+  // if (isDev()) console.log('[Lexicons] buildPostURL::handle(param) = ', handle)
   if (handle === undefined) {
     try {
       handle = await resolveDID(aturi.did)
@@ -363,7 +362,7 @@ export const buildPostURL = async (
       handle = aturi.did
     }
   }
-  //if (isDev()) console.log('[Lexicons] buildPostURL::handle = ', handle)
+  // if (isDev()) console.log('[Lexicons] buildPostURL::handle = ', handle)
   return `${urlPrefix}/profile/${handle}/post/${aturi.rkey}`
 }
 
