@@ -17,7 +17,7 @@
             clip-rule="evenodd"></path>
         </svg>
         <span class="sr-only">Info</span>
-        This feature requires logged in to Bluesky.
+        This feature requires login.
       </div>
     </div>
     <div class="w-full max-w-md">
@@ -27,11 +27,5 @@
 </template>
 
 <script setup type="ts">
-  import { useRoute } from 'nuxt/app'
-  import { computed } from 'vue'
-  import { useNavigation } from '@/composables/navigation'
-
-  const route = useRoute()
-
-  const pds = route.params.service
+  const isRedirected = ref(false)
 </script>
