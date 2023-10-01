@@ -1,10 +1,6 @@
 import { ref, Ref } from 'vue'
 import { useAppConfig, useState } from 'nuxt/app'
-import AtpAgent, {
-  BskyAgent,
-  AtpSessionData,
-  AppBskyActorGetProfile,
-} from '@atproto/api'
+import { BskyAgent, AtpSessionData } from '@atproto/api'
 import { isDev } from '@/utils/helpers'
 import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 

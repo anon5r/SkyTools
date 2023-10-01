@@ -3,14 +3,11 @@ import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
   AppBskyFeedPost,
-  // AtUri,
+  AtUri,
   AtpAgent,
   ComAtprotoRepoGetRecord,
   ComAtprotoRepoListRecords,
 } from '@atproto/api'
-import { AtUri } from '@atproto/uri'
-// import * as Proto from '@atproto/api'
-// const { AtpAgent } = Proto
 
 const plcURL = 'https://plc.directory'
 let atp: AtpAgent | null = null
@@ -338,7 +335,11 @@ export const buildAvatarURL = (
 ) => {
   // if (isDev()) console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
   //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${(AppBskyActorProfile.isRecord(profile) && !profile.value) ? profile.avatar?.ref : profile.value?.avatar.ref}`
+  return `${cdnURL}/${config.defaultPDS}/image/${did}/${
+    AppBskyActorProfile.isRecord(profile) && !profile.value
+      ? profile.avatar?.ref
+      : profile.value?.avatar.ref
+  }`
 }
 
 /**

@@ -121,7 +121,8 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        if (await auth.value.login({identifier: handle.value, password: password.value})) {
+        isProcessing.value = true
+        if (await auth.value.login({identifier: handle.value, password: password.value, pds: pds.value})) {
           if (navigate.getNext() !== null && navigate.getNext() !== route.fullPath) {
             auth.value.isLoggedIn = true
             loginState.value.isLoggedIn = true
@@ -139,6 +140,8 @@
         } else {
           errorMessage.value = 'Failed to log in, please check your credentials and try again.'
         }
+      } finally {
+        isProcessing.value = false
       }
     }
   }
