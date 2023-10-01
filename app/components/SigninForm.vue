@@ -2,8 +2,8 @@
     <div class="w-full max-w-xs mx-auto">
     <form
       class="bg-white dark:bg-slate-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <div class="mb-4">
       <h4 class="text-2xl font-bold pb-4">Sign-in with <span class="line-through">AT-Protocol</span> <span class="text-blue-600">Bluesky</span></h4>
+      <!-- <div class="mb-4">
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
           for="service">
@@ -21,6 +21,7 @@
           placeholder="ex. bsky.social"
           tabindex="1"
         />
+      </div> -->
       <div class="mb-4">
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
