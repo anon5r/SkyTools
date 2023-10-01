@@ -45,8 +45,8 @@
                     "
                     class="mr-2" />
                   <a
-                    @click="toggleUsed"
-                    :class="{ 'line-through': record.uses?.length > 0 }">
+                    :class="{ 'line-through': record.uses?.length > 0 }"
+                    @click="toggleUsed">
                     {{ record.code }}
                   </a>
                 </AccordionHeader>
@@ -169,7 +169,7 @@
           </template>
           <template #footer>
             <div class="flex justify-between">
-              <button @click="navigate.goHome" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" @click="navigate.goHome">
                 Go back
               </button>
             </div>
@@ -185,10 +185,10 @@
   import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { useAuth } from '~/composables/auth'
-  import { useNavigation } from '~/composables/navigation'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Modal } from 'flowbite-vue'
+  import { useAuth } from '~/composables/auth'
+  import { useNavigation } from '~/composables/navigation'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
 

@@ -63,7 +63,7 @@
                 <!-- Edit button -->
                 <button
                   class="p-2 min-w-full text-xs bg-blue-400 dark:bg-blue-950 text-blue-200 rounded-md focus:outline select-none"
-                  @click="editLabel()" :class="!loadState.update ? 'disabled' : ''">
+                  :class="!loadState.update ? 'disabled' : ''" @click="editLabel()">
                     <ClientOnly>
                       <span v-if="!loadState.update">
                         <div role="status" class="inline-block leading-tight">
@@ -123,7 +123,7 @@
               <!-- Labels -->
               <LabelList
                 :labels="labels"
-                :inEdit="inEdit" />
+                :in-edit="inEdit" />
             </div>
 
             <!-- Last indexed -->
@@ -157,13 +157,13 @@
   import { DateTime } from 'luxon'
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
+  import { initPopovers } from 'flowbite'
+  import { Avatar } from 'flowbite-vue'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev, isEqualArray } from '@/utils/helpers'
   import { useAuth } from '@/composables/auth'
   import { getProfile as getProfileLex } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
-  import { initPopovers } from 'flowbite'
-  import { Avatar } from 'flowbite-vue'
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 
   const SIGNIN_URL = '/bsky.social/signin'
@@ -275,7 +275,7 @@
         did: auth.getDid() ?? 'did:error:unknown',
         displayName: auth.getHandle() ?? 'Error: Unknown',
       })
-      if (err.message == 'Not Found') {
+      if (err.message === 'Not Found') {
         alerts.value.error = true
         alerts.value.message = 'Profile not found.'
       } else {
@@ -295,7 +295,7 @@
     try {
       if (inEdit.value
         && (!isEqualArray(profile.value.labels.map(label => { return label.val }), labels.value)
-          || profile.value.description != description.value)) {
+          || profile.value.description !== description.value)) {
         await saveProfile()
         alerts.value.error = false
         inEdit.value = false
@@ -328,7 +328,7 @@
 
       if (labels.value.length > 0) {
         const invalidLabels = labels.value.filter(label => {
-          return ['\\','"',"'"].includes(label)
+          return ['\\','"','\''].includes(label)
         })
         if (invalidLabels.length > 0) {
           throw new Error(`Invalid labels: ${invalidLabels.join(', ')}`)

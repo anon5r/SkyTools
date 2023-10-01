@@ -1,8 +1,10 @@
-import { ref, Ref } from 'vue'
+import type { Ref } from 'vue'
+import { ref } from 'vue'
 import { useAppConfig, useState } from 'nuxt/app'
-import { BskyAgent, AtpSessionData } from '@atproto/api'
+import type { AtpSessionData } from '@atproto/api'
+import { BskyAgent } from '@atproto/api'
+import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 import { isDev } from '@/utils/helpers'
-import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
 const _agent: Ref<BskyAgent | null> = ref(null)
 
@@ -10,22 +12,20 @@ const credentialKey = 'credentials'
 
 let _isLoggedIn = false
 
-let _session: AtpSessionData | undefined = undefined
-
-export const getAgent = (service?: string): BskyAgent => {
+export const getAgent = (service?: string | undefined): BskyAgent => {
   if (!_agent.value) {
-    const config = useAppConfig()
-    if (!service) service = config.bskyService as string
-    else if (service.length > 0 && !service.startsWith('https://'))
-      service = `https://${service}`
-
+    if (!service) {
+      const config = useAppConfig()
+      service = config.defaultPDS as string
+    }
+    console.log('service: ', service)
     _agent.value = new BskyAgent({
-      service: service,
+      service: `https://${service}`,
       persistSession: (_, sess) => {
         if (process.client && sess != null) {
-          localStorage.setItem(credentialKey, JSON.stringify(sess))
+          const session = JSON.stringify(sess)
+          localStorage.setItem(credentialKey, session)
           localStorage.setItem('service', service as string)
-          _session = sess
         }
       },
     })
@@ -48,27 +48,30 @@ const initLoginState = (): {
 }
 
 export const login = async (credentials: {
-  pds?: string
   identifier: string
   password: string
+  pds: string
 }) => {
   try {
-    const response = await getAgent(credentials.pds).login({
+    const config = useAppConfig()
+    const agent = getAgent(credentials.pds ?? config.defaultPDS)
+    const response = await agent.login({
       identifier: credentials.identifier,
       password: credentials.password,
     })
 
     if (response.success && process.client) {
       if (process.client) {
-        localStorage.setItem(credentialKey, JSON.stringify(getAgent().session))
+        localStorage.setItem('service', credentials.pds ?? config.defaultPDS)
+        localStorage.setItem(credentialKey, JSON.stringify(agent.session))
         _isLoggedIn = true
         const useLoginState = useState('loginState', initLoginState)
         console.log(useLoginState.value)
         useLoginState.value = {
           isLoggedIn: true,
-          userHandle: getAgent().session?.handle ?? undefined,
-          userDid: getAgent().session?.did ?? undefined,
-          userEmail: getAgent().session?.email ?? undefined,
+          userHandle: agent.session?.handle ?? undefined,
+          userDid: agent.session?.did ?? undefined,
+          userEmail: agent.session?.email ?? undefined,
         }
       }
     }
@@ -82,9 +85,10 @@ export const login = async (credentials: {
 
 export const logout = async () => {
   try {
-    if (getAgent().hasSession) {
-      await getAgent().api.com.atproto.server.deleteSession()
-      getAgent().session = undefined
+    const agent = getAgent()
+    if (agent.hasSession) {
+      await agent.api.com.atproto.server.deleteSession()
+      agent.session = undefined
     }
 
     if (process.client) {
@@ -104,7 +108,9 @@ export const restoreSession = async () => {
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
-        const res = await getAgent().resumeSession(session)
+        const config = useAppConfig()
+        const pds = localStorage.getItem('service') ?? config.defaultPDS
+        const res = await getAgent(pds).resumeSession(session)
         _isLoggedIn = res.success
         const useLoginState: Ref<{
           isLoggedIn: boolean
@@ -156,12 +162,16 @@ export const getEmail = (): string => {
   return useLoginState.value.session?.email ?? ''
 }
 
-export const getProfile = async (): Promise<ProfileViewDetailed> => {
-  if (!getAgent()) throw new Error('Require authentication')
+export const getProfile = async (
+  pds?: string
+): Promise<ProfileViewDetailed> => {
+  pds = pds ?? useAppConfig().defaultPDS
+  if (!getAgent(pds)) throw new Error('Require authentication')
 
   try {
-    const result = await getAgent().api.app.bsky.actor.getProfile({
-      actor: getAgent().session?.did as string,
+    const agent = getAgent(pds)
+    const result = await agent.api.app.bsky.actor.getProfile({
+      actor: agent.session?.did as string,
     })
 
     if (!result.success) throw new Error('Could not get profile')
