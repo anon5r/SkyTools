@@ -2,8 +2,8 @@
     <div class="w-full max-w-xs mx-auto">
     <form
       class="bg-white dark:bg-slate-700 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h4 class="text-2xl font-bold pb-4">Sign-in with AT-Protocol</h4>
       <div class="mb-4">
+      <h4 class="text-2xl font-bold pb-4">Sign-in with <span class="line-through">AT-Protocol</span> <span class="text-blue-600">Bluesky</span></h4>
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
           for="service">
@@ -13,16 +13,14 @@
         PDS
         </label>
         <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
           id="handle"
           v-model="pds"
+          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
           autocomplete=""
           placeholder="ex. bsky.social"
-          @focusout="validateHandle"
-          tabindex="4"
+          tabindex="1"
         />
-      </div>
       <div class="mb-4">
         <label
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
@@ -33,14 +31,14 @@
         Your handle
         </label>
         <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
           id="handle"
           v-model="handle"
+          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
           autocomplete="username"
           placeholder="ex. example.bsky.social"
+          tabindex="2"
           @focusout="validateHandle"
-          tabindex="1"
         />
       </div>
       <div class="mb-3">
@@ -51,38 +49,42 @@
           App Password
           </label>
           <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
             v-model="password"
+            class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 mb-3 leading-tight focus:outline-none focus:shadow-outline"
             type="password"
             autocomplete="current-password"
             placeholder="xxxx-xxxx-xxxx-xxxx"
-            @input="validatePassword"
-            tabindex="2" />
+            tabindex="3"
+            @input="validatePassword" />
         <p class="text-sm text-right">
           <a
             :href="`${config.bskyAppURL}/settings/app-passwords`"
             class="text-blue-600 dark:text-blue-400 underline"
-            tabindex="4">
+            tabindex="6">
             Create App Password
           </a>
         </p>
-        <p class="text-red-500 text-xs italic" v-show="validateError">
+        <p v-show="validateError" class="text-red-500 text-xs italic">
           {{ validateError }}
         </p>
       </div>
       <div class="flex items-center justify-between">
         <button
-        class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap rounded outline-blue-800 dark:outline-blue-300 focus:outline-2 focus:shadow-outline"
+          class=" py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold whitespace-nowrap rounded outline-blue-800 dark:outline-blue-300 focus:outline-2 focus:shadow-outline"
           type="button"
-          @click="submitForm"
-          tabindex="3">
+          tabindex="5"
+          :disabled="isProcessing"
+          @click="submitForm">
           Sign in
+          <ClientOnly>
+            <FontAwesomeIcon :icon="['fas', 'spinner']" spin-pulse :class="`${isProcessing ? 'inline-block' : 'hidden'}`" />
+          </ClientOnly>
         </button>
       </div>
       <div
-        class="block px-1 py-2 text-red-500 text-xs italic"
-        v-show="errorMessage">
+        v-show="errorMessage"
+        class="block px-1 py-2 text-red-500 text-xs italic">
         {{ errorMessage }}
       </div>
       </form>
@@ -97,24 +99,6 @@
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
 
-  const config = useAppConfig()
-  const route = useRoute()
-  const navigate = useNavigation()
-  const useLoginState = () => useState('loginState', () => { return { isLoggedIn: false, userHandle: '', userEmail: '', }})
-  const loginState = useLoginState()
-  const auth = ref(null)
-  const handle = ref('')
-  const password = ref('')
-  const errorMessage = ref('')
-  const validateError = ref('')
-  const pds = route.params.service ? route.params.service : config.defaultPDS
-
-  const useStateAuth = () => useState('auth', () => ({
-    isLoggedIn: false,
-    userHandle: null,
-    userEmail: null,
-  }))
-
 
   const props = defineProps({
     service: {
@@ -124,15 +108,35 @@
     },
   })
 
+  const config = useAppConfig()
+  const route = useRoute()
+  const navigate = useNavigation()
+  const useLoginState = () => useState('loginState', () => { return { isLoggedIn: false, userHandle: '', userEmail: '', }})
+  const loginState = useLoginState()
+  const auth = ref(null)
+  const pds = ref(props.service ?? config.defaultPDS)
+  const handle = ref('')
+  const password = ref('')
+  const errorMessage = ref('')
+  const validateError = ref('')
+  const isProcessing = ref(false)
+
+  const useStateAuth = () => useState('auth', () => ({
+    isLoggedIn: false,
+    userHandle: null,
+    userEmail: null,
+  }))
+
 
   onMounted(async () => {
+    pds.value = props.service ?? config.defaultPDS
     if (auth.value == null)
       auth.value = await useAuth()
   })
 
 
   const validateHandle =() => {
-    if (handle && handle.value.length > 0 && !handle.value.includes('.')) {
+    if (handle.value && handle.value.length > 0 && !handle.value.includes('.')) {
       handle.value = `${handle.value}.${config.defaultSuffix}`
     }
   }
@@ -149,7 +153,7 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        if (await auth.value.login({identifier: handle.value, password: password.value})) {
+        if (await auth.value.login({identifier: handle.value, password: password.value, pds: pds.value})) {
           if (navigate.getNext() !== null && navigate.getNext() !== route.fullPath) {
             auth.value.isLoggedIn = true
             loginState.value.isLoggedIn = true
@@ -158,11 +162,10 @@
             navigate.goHome()
           }
         }
-
       } catch (err) {
         if (isDev()) console.error(err)
 
-        if (err.error && err.message) {1
+        if (err.error && err.message) {
           errorMessage.value = err.message
         } else {
           errorMessage.value = 'Failed to log in, please check your credentials and try again.'
