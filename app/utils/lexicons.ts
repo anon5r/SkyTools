@@ -21,7 +21,7 @@ let config = {
 export const setConfig = (newConfig: typeof config) => {
   // if (isDev()) console.log('[Lexicons] setConfig::newConfig = ', newConfig)
   config = { ...config, ...newConfig }
-  atp = new AtpAgent({ service: config.bskyService })
+  atp = new AtpAgent({ service: `https://${config.defaultPDS}` })
 }
 
 export const getConfig = (): {
@@ -34,9 +34,10 @@ export const getConfig = (): {
   return config
 }
 
-export const getAgent = (): AtpAgent => {
+export const getAgent = (pds?: string): AtpAgent => {
   if (!atp) {
-    atp = new AtpAgent({ service: config.bskyService })
+    pds = pds ?? localStorage.getItem('service') ?? config.defaultPDS
+    atp = new AtpAgent({ service: `https://${pds}` })
   }
   return atp
 }
@@ -58,17 +59,22 @@ export const formatIdentifier = (id: string) => {
 /**
  * Convert DID to at-proto-uri or handle to DID
  * @param {string} identifier DID
+ * @param {boolean} onlyHandle Return only handle
+ * @param {string} pds PDS hostname
  * @returns {string} Handle
  */
 export const resolveDID = async (
   identifier: string,
-  onlyHandle = true
+  onlyHandle = true,
+  pds?: string
 ): Promise<string> => {
   try {
     let requestUrl
     if (identifier.startsWith('did:')) requestUrl = `${plcURL}/${identifier}`
     else
-      requestUrl = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+      requestUrl = `https://${
+        pds ?? config.defaultPDS
+      }/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
 
     const res = await axios.get(requestUrl)
 
@@ -94,11 +100,16 @@ export const resolveDID = async (
 /**
  *
  * @param {string} identifier Handle
+ * @param {string} pds PDS hostname
  * @returns {string} DID
  */
-export const resolveHandle = async (identifier: string): Promise<string> => {
-  const host = identifier.substring(identifier.indexOf('.') + 1)
-  const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+export const resolveHandle = async (
+  identifier: string,
+  pds?: string
+): Promise<string> => {
+  const url = `https://${
+    pds ?? config.defaultPDS
+  }/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
     if (identifier.length > 253) throw new Error('Too long identifier')
     const res = await axios.get(url)
@@ -123,7 +134,6 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
 export const getIdentityAuditLogs = async (
   identifier: string
 ): Promise<any> => {
-  const host = identifier.substring(identifier.indexOf('.') + 1)
   const url = `${plcURL}/${identifier}/log/audit`
   try {
     const res = await axios.get(url)
@@ -281,13 +291,16 @@ export const getPost = async (
 /**
  * Get identifier details
  * @param {string} id handle or DID
+ * @param {string} pds PDS hostname
  */
-export const describeRepo = async (id: string): Promise<any> => {
+export const describeRepo = async (id: string, pds?: string): Promise<any> => {
   try {
     const params = new URLSearchParams()
     params.append('repo', id)
     const response = await axios({
-      url: `${config.bskyService}/xrpc/com.atproto.repo.describeRepo`,
+      url: `https://${
+        pds ?? config.defaultPDS
+      }/xrpc/com.atproto.repo.describeRepo`,
       method: 'GET',
       params,
     })
@@ -329,11 +342,12 @@ export const getProfile = async (
 export const buildAvatarURL = (
   cdnURL: string,
   did: string,
-  profile: AppBskyActorProfile.Record
+  profile: AppBskyActorProfile.Record,
+  pds: string | undefined = undefined
 ) => {
   // if (isDev()) console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
   // return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${
+  return `${cdnURL}/${pds ?? config.defaultPDS}/image/${did}/${
     AppBskyActorProfile.isRecord(profile) && !profile.value
       ? profile.avatar?.ref
       : profile.value?.avatar.ref
