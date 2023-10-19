@@ -495,7 +495,7 @@
    * @param {any} value
    */
   const updateUserInfo = (item, value) => {
-    if (isDev()) console.log('[updateUserInfo]::', item, ' = ', value)
+    // if (isDev()) console.log('[updateUserInfo]::', item, ' = ', value)
     userinfo.value[item] = value
     loadState.value[item] = true
   }
@@ -506,7 +506,7 @@
    * @param {array} records
    */
   const addRecordsUserInfo = (item, records) => {
-    if (isDev()) console.log('[addItemsToUserInfo] ::', item, ' = ', records)
+    // if (isDev()) console.log('[addItemsToUserInfo] ::', item, ' = ', records)
     records.forEach(record => {
       userinfo.value[item].push(record)
     })
@@ -581,7 +581,7 @@
 
       if (response.success) {
         if (isDev()) console.log('posts = ', response.data)
-        cursors.value['posts'] = response.data.cursor
+        cursors.value.posts = response.data.cursor
         return response.data.records
       } else {
         return []
@@ -654,7 +654,7 @@
         })
 
         const likeList = await Promise.all(records)
-        cursors.value['like'] = response.data.cursor
+        cursors.value.like = response.data.cursor
         if (isDev()) console.log('fetchLike = ', likeList)
         return likeList
       } else {
@@ -714,7 +714,7 @@
           }
         })
         const resolvedFollowers = await Promise.all(records)
-        cursors.value['following'] = response.data.cursor
+        cursors.value.following = response.data.cursor
         if (isDev()) console.log('fetchFollow = ', resolvedFollowers)
         return resolvedFollowers
       } else {
@@ -775,7 +775,7 @@
           }
         })
         const resolvedBlocks = await Promise.all(records)
-        cursors.value['blocks'] = response.data.cursor
+        cursors.value.blocks = response.data.cursor
         if (isDev()) console.log('fetchBlocks = ', resolvedBlocks)
         return resolvedBlocks
       } else {
