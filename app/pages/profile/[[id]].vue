@@ -384,9 +384,9 @@
     activeTab.value = 'posts'
 
     try {
-      await getDetails(identifier)
+      await loadDetails(identifier)
       try {
-        await getProfile(identifier)
+        await loadProfile(identifier)
       } catch (err) {
         // If the profile has never been updated,
         // it cannot be retrieved from the repository
@@ -516,12 +516,12 @@
    * Get identifier details
    * @param {string} id handle or DID
    */
-  const getDetails = async id => {
+  const loadDetails = async id => {
     const details = await lexicons.describeRepo(id)
     updateUserInfo('details', details)
   }
 
-  const getProfile = async id => {
+  const loadProfile = async id => {
     const profile = await lexicons.getProfile(id)
 
     if (profile) {

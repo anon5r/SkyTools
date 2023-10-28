@@ -159,7 +159,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
   import { useAuth } from '@/composables/auth'
-  import { getProfile as getProfileLex } from '@/utils/lexicons'
+  import { getProfile as getProfileLexicons } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
   import { Avatar } from 'flowbite-vue'
@@ -322,7 +322,7 @@
     }
 
     if (confirm('Do you want to save changes?')) {
-      const lexProf = (await getProfileLex(profile.value.did))
+      const lexProf = (await getProfileLexicons(profile.value.did))
       const prof = lexProf.value
       if (isDev()) console.log(prof)
 
