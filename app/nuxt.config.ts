@@ -15,7 +15,7 @@ export default {
     },
   },
   app: {
-    ssr: false,
+    ssr: true,
     darkmode: 'class',
     head: {
       title: 'SkyTools',
