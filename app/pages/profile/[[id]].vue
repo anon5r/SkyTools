@@ -43,7 +43,7 @@
               <a
                 v-if="!hasError && loadState.avatarURL"
                 :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
-                <Avatar
+                <fwb-avatar
                   rounded
                   bordered
                   size="lg"
@@ -60,7 +60,7 @@
                   <span class="sr-only">Loading...</span>
               </div>
               <div v-else>
-                <Avatar rounded bordered size="lg" class="m-2 min-w-max" />
+                <fwb-avatar rounded bordered size="lg" class="m-2 min-w-max" />
               </div>
             </div>
             <div>
@@ -110,8 +110,8 @@
         </div>
 
         <div class="pt-4">
-          <tabs v-model="activeTab" class="pt-1 px-1">
-            <tab name="posts" title="Posts" id="posts">
+          <fwb-tabs v-model="activeTab" class="pt-1 px-1">
+            <fwb-tab name="posts" title="Posts" id="posts">
               <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
                 <div v-for="record of userinfo.posts" :key="record.cid">
@@ -147,9 +147,9 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
 
-            <tab name="following" title="Following" id="following">
+            <fwb-tab name="following" title="Following" id="following">
               <!-- Following -->
               <div v-if="userinfo.following.length > 0">
                 <ul>
@@ -180,10 +180,10 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
 
 
-            <tab name="like" title="Like" id="like">
+            <fwb-tab name="like" title="Like" id="like">
               <!-- Like -->
               <div v-if="userinfo.like.length > 0">
                 <ul>
@@ -220,7 +220,7 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
 
 
             <tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
@@ -255,7 +255,7 @@
                 </button>
               </div>
             </tab>
-          </tabs>
+          </fwb-tabs>
         </div>
       </ClientOnly>
     </div>
@@ -267,7 +267,7 @@
   import { useAppConfig } from 'nuxt/app'
   import { ref, watch, onMounted, toRaw } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { Avatar, Tabs, Tab } from 'flowbite-vue'
+  import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import { useLocalStorage } from '@/composables/localStorage'
 

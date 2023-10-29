@@ -22,12 +22,12 @@
                 <span class="bold">{{ nextDate }}</span>
               </span>
             </div>
-            <Accordion
+            <fwb-accordion
               class="py-2 px-2 text-gray-600 dark:text-gray-400"
               always-open="false"
               data-accordion="open">
-              <AccordionPanel v-for="record in inviteCodes" :key="record.code">
-                <AccordionHeader aria-expanded="false">
+                <fwb-accordion-panel v-for="record in inviteCodes" :key="record.code">
+                <fwb-accordion-header aria-expanded="false">
                   <font-awesome-icon
                     :icon="
                       record.uses?.length > 0
@@ -49,8 +49,8 @@
                     :class="{ 'line-through': record.uses?.length > 0 }">
                     {{ record.code }}
                   </a>
-                </AccordionHeader>
-                <AccordionContent>
+                <fwb-accordion-header aria-expanded="false">
+                <fwb-accordion-content>
                   <div v-if="record.createdAt">
                     <div>
                       Issued at
@@ -133,9 +133,9 @@
                       No code issued
                     </span>
                   </div>
-                </AccordionContent>
-              </AccordionPanel>
-            </Accordion>
+                </fwb-accordion-content>
+              </fwb-accordion-panel>
+            </fwb-accordion>
           </div>
           <div v-else>
             <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
@@ -144,7 +144,7 @@
         </div>
 
         <!-- Modal dialog -->
-        <Modal v-if="blocked" persistent>
+        <fwb-modal v-if="blocked" persistent>
           <template #header>
             <div class="flex items-center text-lg">
               <ClientOnly>
@@ -174,7 +174,7 @@
               </button>
             </div>
           </template>
-        </Modal>
+        </fwb-modal>
 
       </ClientOnly>
     </div>
@@ -187,7 +187,7 @@
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
-  import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Modal } from 'flowbite-vue'
+  import { FwbAccordion, FwbAccordionPanel, FwbAccordionHeader, FwbAccordionContent, FwbModal } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
 

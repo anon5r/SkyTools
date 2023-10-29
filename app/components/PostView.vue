@@ -7,7 +7,7 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <NuxtLink :to="getPermaLink(props.handle)" @click.prevent="clickProfile">
-            <Avatar
+            <fwb-avatar
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
@@ -116,7 +116,7 @@
 </template>
 
 <script setup>
-  import { Avatar } from 'flowbite-vue'
+  import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, defineEmits, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'

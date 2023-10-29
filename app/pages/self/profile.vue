@@ -11,7 +11,7 @@
                 <a
                   v-if="!hasError && loadState.profile"
                   :href="`${config.bskyAppURL}/profile/${profile.handle}`">
-                  <Avatar
+                  <fwb-avatar
                     rounded
                     bordered
                     :status="online"
@@ -28,7 +28,7 @@
                     <span class="sr-only">Loading...</span>
                 </div>
                 <div v-else>
-                  <Avatar rounded bordered size="lg" class="m-2 md:m-1 min-w-max" />
+                  <fwb-avatar rounded bordered size="lg" class="m-2 md:m-1 min-w-max" />
                 </div>
               </div>
               <div class="px-3 md:px-1 w-24 grow">
@@ -73,15 +73,15 @@
                         Wait...
                       </span>
                       <span v-else-if="!inEdit">
-                        <FontAwesomeIcon :icon="['fas', 'pen-to-square']" size="sm" />
+                        <font-awesome-icon :icon="['fas', 'pen-to-square']" size="sm" />
                         Edit
                       </span>
                       <span v-else-if="isEqualArray(profile.labels.map(label => { return label.val }), labels) || description != profile.description">
-                        <FontAwesomeIcon :icon="['fas', 'circle-xmark']" size="sm" />
+                        <font-awesome-icon :icon="['fas', 'circle-xmark']" size="sm" />
                         Close
                       </span>
                       <span v-else>
-                        <FontAwesomeIcon :icon="['fas', 'floppy-disk']" size="sm" />
+                        <font-awesome-icon :icon="['fas', 'floppy-disk']" size="sm" />
                         Save
                       </span>
                     </ClientOnly>
@@ -162,7 +162,7 @@
   import { getProfile as getProfileLexicons } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
-  import { Avatar } from 'flowbite-vue'
+  import { FwbAvatar } from 'flowbite-vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 

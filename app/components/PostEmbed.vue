@@ -26,7 +26,7 @@
               <div
                 class="flex flex-wrap mb-3 text-md text-gray-400 dark:text-gray-500">
                 <!-- Avatar -->
-                <Avatar
+                <fwb-avatar
                   rounded
                   size="xs"
                   :img="post.avatarURL"
@@ -112,7 +112,7 @@
   import { useAppConfig } from 'nuxt/app'
   import { buildPostURL, parseAtUri } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
-  import { Avatar } from 'flowbite-vue'
+  import { FwbAvatar } from 'flowbite-vue'
   import { AppBskyActorProfile } from '@atproto/api'
 
   const config = useAppConfig()
