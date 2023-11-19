@@ -121,7 +121,7 @@
                     :handle="userinfo.details.handle"
                     :avatar_url="userinfo.avatarURL ?? 'about:blank'"
                     :display_name="
-                      userinfo.profile
+                      userinfo.profile?.value.displayName
                         ? userinfo.profile.value.displayName
                         : userinfo.details.handle
                     "
@@ -398,7 +398,7 @@
             avatar: null,
             banner: null,
             description: '',
-            displayName: identifier,
+            displayName: null,
           },
         }
         updateUserInfo('profile', profile)

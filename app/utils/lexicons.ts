@@ -1,12 +1,11 @@
 import axios from 'axios'
 import { isDev } from '@/utils/helpers'
+import { AtUri, AtpAgent } from '@atproto/api'
 import {
   AppBskyActorProfile,
-  AppBskyFeedPost,
-  AtUri,
-  AtpAgent,
-  ComAtprotoRepoGetRecord,
-  ComAtprotoRepoListRecords,
+  type AppBskyFeedPost,
+  type ComAtprotoRepoGetRecord,
+  type ComAtprotoRepoListRecords,
 } from '@atproto/api'
 
 const plcURL = 'https://plc.directory'
@@ -36,7 +35,7 @@ export const getConfig = (): {
   return config
 }
 
-export const getAgent = (): AtpAgent => {
+export const createAtpAgent = (): AtpAgent => {
   if (!atp) {
     atp = new AtpAgent({ service: config.bskyService })
   }
@@ -185,7 +184,7 @@ export const getRecord = async (
   recordKey: string
 ): Promise<ComAtprotoRepoGetRecord.Response | any> => {
   try {
-    const response = await getAgent().api.com.atproto.repo.getRecord({
+    const response = await createAtpAgent().api.com.atproto.repo.getRecord({
       repo: repo,
       collection: collection,
       rkey: recordKey,
@@ -220,7 +219,7 @@ export const listRecords = async (
   cursor: string | undefined = undefined
 ): Promise<ComAtprotoRepoListRecords.Response> => {
   try {
-    const response = await getAgent().api.com.atproto.repo.listRecords({
+    const response = await createAtpAgent().api.com.atproto.repo.listRecords({
       collection: collection,
       repo: identifier,
       limit: limit,
@@ -243,7 +242,7 @@ export const listRecords = async (
  */
 export const getBlob = async (did: string, cid: string): Promise<string> => {
   try {
-    const response = await getAgent().com.atproto.sync.getBlob({
+    const response = await createAtpAgent().com.atproto.sync.getBlob({
       did: did,
       cid: cid,
     })
@@ -313,7 +312,7 @@ export const describeRepo = async (id: string): Promise<any> => {
  * @param {string} id
  * @return AppBskyActorProfile.Record
  */
-export const getProfile = async (
+export const loadProfile = async (
   id: string
 ): Promise<AppBskyActorProfile.Record> => {
   const profile = await getRecord('app.bsky.actor.profile', id, 'self')
@@ -382,7 +381,7 @@ export default {
   listRecords,
   getRecord,
   buildAvatarURL,
-  getProfile,
+  loadProfile,
   describeRepo,
   buildPostURL,
 }

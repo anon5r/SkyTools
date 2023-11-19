@@ -26,7 +26,7 @@
               class="py-2 px-2 text-gray-600 dark:text-gray-400"
               always-open="false"
               data-accordion="open">
-                <fwb-accordion-panel v-for="record in inviteCodes" :key="record.code">
+              <fwb-accordion-panel v-for="record in inviteCodes" :key="record.code">
                 <fwb-accordion-header aria-expanded="false">
                   <font-awesome-icon
                     :icon="
@@ -49,7 +49,7 @@
                     :class="{ 'line-through': record.uses?.length > 0 }">
                     {{ record.code }}
                   </a>
-                <fwb-accordion-header aria-expanded="false">
+                </fwb-accordion-header>
                 <fwb-accordion-content>
                   <div v-if="record.createdAt">
                     <div>
@@ -185,13 +185,12 @@
   import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { useAuth } from '~/composables/auth'
+  import { getAgent, restoreSession, isLoggedIn } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
   import { FwbAccordion, FwbAccordionPanel, FwbAccordionHeader, FwbAccordionContent, FwbModal } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
-
-  const isLoggedIn = ref(false)
+  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
   const config = useAppConfig()
   const route = useRoute()
@@ -201,16 +200,12 @@
   const inviteCodes = ref(null)
   const nextDate = ref(null)
 
-  const auth = ref(null)
-
   const blocked = ref(false)
 
 
   const asyncLoad = async () => {
-    auth.value = useAuth()
-    await auth.value.restoreSession()
-    console.log(auth.value)
-    if (auth.value.isLoggedIn()) {
+    await restoreSession()
+    if (isLoggedIn()) {
       inviteCodes.value = await getInviteCodes()
     } else {
       loadSigninForm()
@@ -239,7 +234,7 @@
 
   /** Gets list of invite codes */
   const getInviteCodes = async () => {
-    const atproto = auth.value.getAgent().api.com.atproto.server;
+    const atproto = (await getAgent()).api.com.atproto.server;
     try {
       const response = await atproto.getAccountInviteCodes()
       let records = []
