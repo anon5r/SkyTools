@@ -1,6 +1,4 @@
-import { defineNuxtConfig } from 'nuxt/config'
-
-export default {
+export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
@@ -14,9 +12,9 @@ export default {
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
     },
   },
+  ssr: true,
+  devtools: { enabled: true, timeline: { enabled: true } },
   app: {
-    ssr: true,
-    darkmode: 'class',
     head: {
       title: 'SkyTools',
       meta: [
@@ -25,7 +23,10 @@ export default {
           name: 'viewport',
           content:
             'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover',
-          description: 'SkyTools is a tools for the Bluesky',
+        },
+        {
+          name: 'description',
+          content: 'SkyTools is a tools for the Bluesky',
         },
         {
           name: 'theme-color',
@@ -145,16 +146,17 @@ export default {
       ({ weeks: 2 } as object),
     cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
   },
-  build: {
-    transpile: ['@atproto/api'],
-  },
-  modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    'nuxt-cloudflare-analytics',
+    '@nuxt/devtools',
+  ],
   css: [
     'flowbite/dist/flowbite.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/css/main.css',
   ],
-  plugins: ['@/plugins/fontawesome.client.ts', '@/plugins/analytics.client.ts'],
+  plugins: ['@/plugins/analytics.client.ts'],
   cloudflareAnalytics: {
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
@@ -162,4 +164,4 @@ export default {
   routeRules: {
     '/lookup': { redirect: '/profile' },
   },
-}
+})
