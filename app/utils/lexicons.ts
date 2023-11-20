@@ -334,11 +334,10 @@ export const buildAvatarURL = (
 ) => {
   // if (isDev()) console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
   //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${
-    AppBskyActorProfile.isRecord(profile) && !profile.value
-      ? profile.avatar?.ref
-      : profile.value?.avatar.ref
-  }`
+  const avatarRef = AppBskyActorProfile.isRecord(profile) && !profile.value
+    ? profile.avatar?.ref
+    : profile.value?.avatar.ref
+  return `${cdnURL}/${config.defaultPDS}/image/${did}/${avatarRef}`
 }
 
 /**

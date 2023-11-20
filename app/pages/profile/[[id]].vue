@@ -223,7 +223,7 @@
             </fwb-tab>
 
 
-            <tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
+            <fwb-tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
@@ -254,7 +254,7 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
           </fwb-tabs>
         </div>
       </ClientOnly>
@@ -269,6 +269,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
+  import * as lexicons from '@/utils/lexicons'
   import { useLocalStorage } from '@/composables/localStorage'
 
   const activeTab = ref('posts')
@@ -340,7 +341,6 @@
     return Object.values(obj).every(value => value === true)
   }
 
-  let lexicons
   onMounted(async () => {
     if (!lexicons) {
       lexicons = await import('@/utils/lexicons')
@@ -351,7 +351,8 @@
       }
     }
 
-    showBlocks.value = localStorage.getItem('showBlocks') == 'true'
+    showBlocks.value = localStorage.getItem('_easter') == 'true'
+    console.log('showBlock:: ==> ', showBlocks.value)
 
     if (route.params.id) {
       showProfile()
@@ -522,7 +523,7 @@
   }
 
   const loadProfile = async id => {
-    const profile = await lexicons.getProfile(id)
+    const profile = await lexicons.loadProfile(id)
 
     if (profile) {
       updateUserInfo('profile', profile)
@@ -626,7 +627,7 @@
 
           let profile, avatar, handle = null
           try {
-            profile = await lexicons.getProfile(recordUri.did)
+            profile = await lexicons.loadProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
           } catch (err) {
             console.info('Not set profile: ', recordUri.did)
@@ -694,7 +695,7 @@
           }
 
           try {
-            profile = await lexicons.getProfile(record.value.subject)
+            profile = await lexicons.loadProfile(record.value.subject)
           } catch (err) {
             // following, but the account has been removed
             console.info('No profile exists: ', record.value.subject)
@@ -754,7 +755,7 @@
             console.warn('Could not resolve handle (deleted?): ', record.value.subject)
           }
           try {
-            profile = await lexicons.getProfile(record.value.subject)
+            profile = await lexicons.loadProfile(record.value.subject)
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)
