@@ -13,8 +13,12 @@ export default defineNuxtConfig({
     },
   },
   ssr: true,
-  devtools: { enabled: true, timeline: { enabled: true } },
-  app: {
+  devtools: {
+    enabled: process.env.NODE_ENV === 'development',
+    timeline: {enabled: process.env.NODE_ENV === 'development'},
+  },
+
+    app: {
     head: {
       title: 'SkyTools',
       meta: [
@@ -160,7 +164,10 @@ export default defineNuxtConfig({
   cloudflareAnalytics: {
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
-
+  build: {
+    transpile: process.env.NODE_ENV === 'production'
+      ? ['@atproto/api'] : [],
+  },
   routeRules: {
     '/lookup': { redirect: '/profile' },
   },
