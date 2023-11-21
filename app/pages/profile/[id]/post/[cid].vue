@@ -23,7 +23,7 @@ import {  useAppConfig } from 'nuxt/app'
 import { ref, onMounted, toRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { isDev } from '~/utils/helpers'
-import { resolveHandle, resolveDID, getProfile, buildAvatarURL, getPost } from '~/utils/lexicons'
+import { resolveHandle, resolveDID, buildAvatarURL, getPost } from '~/utils/lexicons'
 
 const route = useRoute()
 console.log(route.params)
@@ -70,7 +70,7 @@ onMounted(async () => {
   } catch (e) {}
   try {
     record.value = await getPost(did.value, postID.value)
-    console.log(toRaw(record.value))
+    if (isDev()) console.log(toRaw(record.value))
   } catch (e) {
 
   }
