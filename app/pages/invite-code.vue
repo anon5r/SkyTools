@@ -150,18 +150,18 @@
               <ClientOnly>
                 <font-awesome-icon :icon="['fas', 'triangle-exclamation']" />
               </ClientOnly>
-              This feature is temporarily restricted
+              We temporarily closed this feature
             </div>
           </template>
           <template #body>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              The API to obtain invitation codes was available to anyone without the user's permission.
+              The API to get invitation codes was available to anyone without the user’s permission.
             </p>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              However, this feature is restricted for logins using the App Password.
+              However, we only allow logins using the App Password for our service.
             </p>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              In the future, this functionality will be available with the user's consent.
+              In the future, this functionality will be available with the user’s consent.
             </p>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
               The feature will be closed for the time being. Thank you.
