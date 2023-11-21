@@ -6,7 +6,7 @@
           class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
-            <Avatar
+            <fwb-avatar
               rounded
               :img="avatarURL"
               :alt="props.handle"
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-  import { Avatar } from 'flowbite-vue'
+  import { FwbAvatar } from 'flowbite-vue'
   import { useAppConfig } from 'nuxt/app'
   import { defineProps, defineEmits, onMounted, ref } from 'vue'
   import { buildAvatarURL } from '@/utils/lexicons'

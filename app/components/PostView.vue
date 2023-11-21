@@ -7,7 +7,7 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <NuxtLink :to="getPermaLink(props.handle)" @click.prevent="clickProfile">
-            <Avatar
+            <fwb-avatar
               rounded
               :img="props.avatar_url"
               :alt="props.handle"
@@ -65,8 +65,7 @@
       <div v-if="!props.removed" class="break-words whitespace-pre-line">
         <div class="text-sm">
 
-          <!-- <RitchText :post="props.post" /> -->
-          {{ props.post.value.text }}
+          <RitchText :post="props.post" />
         </div>
       </div>
       <div v-else class="italic">This post may have been removed.</div>
@@ -90,8 +89,8 @@
         <!-- Labels -->
         <ul v-if="props.post.value.labels?.values" class="inline-block">
           <li
-            v-if="props.post.value.labels?.values.length > 0"
             v-for="(label, index) in props.post.value.labels?.values"
+            v-if="props.post.value.label.values.length > 0"
             :key="index"
             class="inline-block items-center px-1 py-0.5 mr-2 text-xs font-medium rounded"
             :class="
@@ -117,12 +116,11 @@
 </template>
 
 <script setup>
-  import { Avatar } from 'flowbite-vue'
+  import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, defineEmits, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import { parseAtUri } from '@/utils/lexicons'
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
 
@@ -159,9 +157,9 @@
 
   const postURL = ref('#')
 
-  onMounted(async () => {
+  onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey)
+    postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey, '')
   })
 
   /**
@@ -175,11 +173,12 @@
    *
    * @param {string} handleOrDid
    * @param {string} postID
+   * @param {string} appViewURL
    * @return {string} path or URL
    */
   const getPermaLink = (handleOrDid, postID) => {
     if (postID)
-      return `${config.bskyAppURL}/profile/${handleOrDid}/post/${postID}`
+      return `/profile/${handleOrDid}/post/${postID}`
     return `/profile/${handleOrDid}`
   }
 

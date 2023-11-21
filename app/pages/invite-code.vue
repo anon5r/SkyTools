@@ -22,12 +22,12 @@
                 <span class="bold">{{ nextDate }}</span>
               </span>
             </div>
-            <Accordion
+            <fwb-accordion
               class="py-2 px-2 text-gray-600 dark:text-gray-400"
               always-open="false"
               data-accordion="open">
-              <AccordionPanel v-for="record in inviteCodes" :key="record.code">
-                <AccordionHeader aria-expanded="false">
+              <fwb-accordion-panel v-for="record in inviteCodes" :key="record.code">
+                <fwb-accordion-header aria-expanded="false">
                   <font-awesome-icon
                     :icon="
                       record.uses?.length > 0
@@ -49,8 +49,8 @@
                     :class="{ 'line-through': record.uses?.length > 0 }">
                     {{ record.code }}
                   </a>
-                </AccordionHeader>
-                <AccordionContent>
+                </fwb-accordion-header>
+                <fwb-accordion-content>
                   <div v-if="record.createdAt">
                     <div>
                       Issued at
@@ -133,9 +133,9 @@
                       No code issued
                     </span>
                   </div>
-                </AccordionContent>
-              </AccordionPanel>
-            </Accordion>
+                </fwb-accordion-content>
+              </fwb-accordion-panel>
+            </fwb-accordion>
           </div>
           <div v-else>
             <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
@@ -144,24 +144,24 @@
         </div>
 
         <!-- Modal dialog -->
-        <Modal v-if="blocked" persistent>
+        <fwb-modal v-if="blocked" persistent>
           <template #header>
             <div class="flex items-center text-lg">
               <ClientOnly>
                 <font-awesome-icon :icon="['fas', 'triangle-exclamation']" />
               </ClientOnly>
-              This feature is temporarily restricted
+              We temporarily closed this feature
             </div>
           </template>
           <template #body>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              The API to obtain invitation codes was available to anyone without the user's permission.
+              The API to get invitation codes was available to anyone without the user’s permission.
             </p>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              However, this feature is restricted for logins using the App Password.
+              However, we only allow logins using the App Password for our service.
             </p>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              In the future, this functionality will be available with the user's consent.
+              In the future, this functionality will be available with the user’s consent.
             </p>
             <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
               The feature will be closed for the time being. Thank you.
@@ -174,7 +174,7 @@
               </button>
             </div>
           </template>
-        </Modal>
+        </fwb-modal>
 
       </ClientOnly>
     </div>
@@ -185,13 +185,12 @@
   import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
-  import { useAuth } from '~/composables/auth'
+  import { getAgent, restoreSession, isLoggedIn } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
-  import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Modal } from 'flowbite-vue'
+  import { FwbAccordion, FwbAccordionPanel, FwbAccordionHeader, FwbAccordionContent, FwbModal } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
-
-  const isLoggedIn = ref(false)
+  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
   const config = useAppConfig()
   const route = useRoute()
@@ -201,16 +200,12 @@
   const inviteCodes = ref(null)
   const nextDate = ref(null)
 
-  const auth = ref(null)
-
   const blocked = ref(false)
 
 
   const asyncLoad = async () => {
-    auth.value = useAuth()
-    await auth.value.restoreSession()
-    console.log(auth.value)
-    if (auth.value.isLoggedIn()) {
+    await restoreSession()
+    if (isLoggedIn()) {
       inviteCodes.value = await getInviteCodes()
     } else {
       loadSigninForm()
@@ -239,7 +234,7 @@
 
   /** Gets list of invite codes */
   const getInviteCodes = async () => {
-    const atproto = auth.value.getAgent().api.com.atproto.server;
+    const atproto = (await getAgent()).api.com.atproto.server;
     try {
       const response = await atproto.getAccountInviteCodes()
       let records = []

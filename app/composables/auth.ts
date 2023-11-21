@@ -1,20 +1,31 @@
-import { ref, Ref } from 'vue'
-import { useAppConfig, useState } from 'nuxt/app'
-import AtpAgent, {
-  BskyAgent,
-  AtpSessionData,
-  AppBskyActorGetProfile,
-} from '@atproto/api'
-import { isDev } from '@/utils/helpers'
-import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
+import type { AtpSessionEvent, AtpSessionData } from '@atproto/api'
+import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
+import { BskyAgent } from '@atproto/api'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
 
-const _agent: Ref<BskyAgent | null> = ref(null)
+let _agent: Ref<BskyAgent | null> = ref(null)
 
-let _isLoggedIn = false
+let _isLoggedIn: boolean = false
 
 let _session: AtpSessionData | undefined = undefined
 
-export const getAgent = (service?: string): BskyAgent => {
+const initLoginState = (): {
+  isLoggedIn: boolean
+  userEmail: string | undefined
+  userDid: string | undefined
+  userHandle: string | undefined
+  session?: AtpSessionData
+} => {
+  return {
+    isLoggedIn: false,
+    userEmail: undefined,
+    userDid: undefined,
+    userHandle: undefined,
+  }
+}
+
+const getAgent = async (service?: string): Promise<BskyAgent> => {
   if (!_agent.value) {
     const config = useAppConfig()
     if (!service) service = config.bskyService
@@ -23,7 +34,7 @@ export const getAgent = (service?: string): BskyAgent => {
 
     _agent.value = new BskyAgent({
       service: service,
-      persistSession: (_, sess) => {
+      persistSession: (event: AtpSessionEvent, sess?: AtpSessionData) => {
         if (process.client && sess != null) {
           localStorage.setItem('credentials', JSON.stringify(sess))
           localStorage.setItem('service', service as string)
@@ -35,41 +46,30 @@ export const getAgent = (service?: string): BskyAgent => {
   return _agent.value
 }
 
-const initLoginState = (): {
-  isLoggedIn: boolean
-  userEmail: string | undefined
-  userDid: string | undefined
-  userHandle: string | undefined
-} => {
-  return {
-    isLoggedIn: false,
-    userEmail: undefined,
-    userDid: undefined,
-    userHandle: undefined,
-  }
-}
+export { getAgent, initLoginState }
 
 export const login = async (credentials: {
   identifier: string
   password: string
 }) => {
+  const agent: BskyAgent = await getAgent()
   try {
-    const response = await getAgent().login({
+    const response = await agent.login({
       identifier: credentials.identifier,
       password: credentials.password,
     })
 
     if (response.success && process.client) {
       if (process.client) {
-        localStorage.setItem('credentials', JSON.stringify(getAgent().session))
+        localStorage.setItem('credentials', JSON.stringify(agent.session))
         _isLoggedIn = true
         const useLoginState = useState('loginState', initLoginState)
         console.log(useLoginState.value)
         useLoginState.value = {
           isLoggedIn: true,
-          userHandle: getAgent().session?.handle ?? undefined,
-          userDid: getAgent().session?.did ?? undefined,
-          userEmail: getAgent().session?.email ?? undefined,
+          userHandle: agent.session?.handle ?? undefined,
+          userDid: agent.session?.did ?? undefined,
+          userEmail: agent.session?.email ?? undefined,
         }
       }
     }
@@ -81,11 +81,12 @@ export const login = async (credentials: {
   }
 }
 
-export const logout = async () => {
+export const logout = async (): Promise<void> => {
   try {
-    if (getAgent().hasSession) {
-      await getAgent().api.com.atproto.server.deleteSession()
-      getAgent().session = undefined
+    const agent = await getAgent()
+    if (agent.hasSession) {
+      await agent.api.com.atproto.server.deleteSession()
+      agent.session = undefined
     }
 
     if (process.client) {
@@ -99,13 +100,14 @@ export const logout = async () => {
   }
 }
 
-export const restoreSession = async () => {
+export const restoreSession = async (): Promise<void> => {
   if (process.client) {
-    const credentials = localStorage.getItem('credentials')
+    const credentials: string | null = localStorage.getItem('credentials')
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
-        const res = await getAgent().resumeSession(session)
+        const agent: BskyAgent = await getAgent()
+        const res = await agent.resumeSession(session)
         _isLoggedIn = res.success
         const useLoginState: Ref<{
           isLoggedIn: boolean
@@ -140,7 +142,7 @@ export const isLoggedIn = (): boolean => {
 
 /**
  *
- * @returns {string} the handle of the logged in user
+ * @returns {string} the handle of the logged-in user
  */
 export const getHandle = (): string => {
   const useLoginState = useState('loginState', initLoginState)
@@ -157,12 +159,13 @@ export const getEmail = (): string => {
   return useLoginState.value.session?.email ?? ''
 }
 
-export const getProfile = async (): Promise<ProfileViewDetailed> => {
-  if (!getAgent()) throw new Error('Require authentication')
+export const getProfile = async () => {
+  const agent: BskyAgent = await getAgent()
+  if (!agent) throw new Error('Require authentication')
 
   try {
-    const result = await getAgent().api.app.bsky.actor.getProfile({
-      actor: getAgent().session?.did as string,
+    const result = await agent.api.app.bsky.actor.getProfile({
+      actor: agent.session?.did as string,
     })
 
     if (!result.success) throw new Error('Could not get profile')
