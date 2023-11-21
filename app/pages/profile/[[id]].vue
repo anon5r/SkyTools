@@ -342,13 +342,9 @@
   }
 
   onMounted(async () => {
-    if (!lexicons) {
-      lexicons = await import('@/utils/lexicons')
-
-      lexicons.setConfig(toRaw(config))
-      if (route.params.id) {
-        showProfile()
-      }
+    lexicons.setConfig(toRaw(config))
+    if (route.params.id) {
+      showProfile()
     }
 
     showBlocks.value = localStorage.getItem('_easter') == 'true'
