@@ -130,7 +130,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.idea/aws.xml
-.idea/modules.xml
-.idea/skytools.iml
-.idea/vcs.xml
+# JetBrains IDEs
+.idea
