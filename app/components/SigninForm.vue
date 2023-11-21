@@ -75,6 +75,8 @@
   import { isDev } from '~/utils/helpers'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
+  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+
 
   const config = useAppConfig()
   const route = useRoute()
@@ -86,7 +88,8 @@
   const password = ref('')
   const errorMessage = ref('')
   const validateError = ref('')
-  const pds = route.params.service ? `.${route.params.service}` : config.defaultSuffix
+  const isProcessing = ref(false)
+  const pds = route.params.service ? `.${route.params.service}` : `.${config.defaultSuffix}`
 
   const props = defineProps({
     service: {
