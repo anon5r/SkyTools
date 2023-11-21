@@ -158,7 +158,7 @@
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
-  import { useAuth } from '@/composables/auth'
+  import { getAgent, isLoggedIn, getDid, getHandle, getProfile } from '@/composables/auth'
   import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
@@ -178,8 +178,6 @@
   const useDescription = () => useState('description', () => [])
   const labels = useLabels()
   const description = useDescription()
-
-  const auth = useAuth()
 
   const hasError = ref(false)
   const inEdit = ref(false)
@@ -217,15 +215,15 @@
 
   onMounted(async () => {
     initPopovers()
-    const agent = auth.getAgent()
-    if (!auth.isLoggedIn()) {
+    const agent = getAgent()
+    if (!isLoggedIn()) {
       try {
-        await auth.restoreSession()
+        await restoreSession()
 
       } catch (err) {
         // Back to current page
         navi.setNext(route.name)
-        router.push({ path: SIGNIN_URL })
+        await router.push({path: SIGNIN_URL})
         return
       }
     }
@@ -246,7 +244,7 @@
     } catch (err) {
       console.warn(err)
       navi.setNext(route.name)
-      router.push({ path: SIGNIN_URL })
+      await router.push({path: SIGNIN_URL})
     }
   })
 
@@ -261,7 +259,7 @@
     loadState.value = { profile: false, update: false }
 
     try {
-      const result = await auth.getProfile()
+      const result = await getProfile()
       profile.value = result
       description.value = profile.value.description ?? ''
       labels.value = profile.value.labels
@@ -272,10 +270,10 @@
       if (isDev()) console.error(err)
       hasError.value = true
       profile.value = Object.assign(profileInitial, {
-        did: auth.getDid() ?? 'did:error:unknown',
-        displayName: auth.getHandle() ?? 'Error: Unknown',
+        did: getDid() ?? 'did:error:unknown',
+        displayName: getHandle() ?? 'Error: Unknown',
       })
-      if (err.message == 'Not Found') {
+      if (err.message === 'Not Found') {
         alerts.value.error = true
         alerts.value.message = 'Profile not found.'
       } else {
@@ -295,7 +293,7 @@
     try {
       if (inEdit.value
         && (!isEqualArray(profile.value.labels.map(label => { return label.val }), labels.value)
-          || profile.value.description != description.value)) {
+          || profile.value.description !== description.value)) {
         await saveProfile()
         alerts.value.error = false
         inEdit.value = false
@@ -357,11 +355,10 @@
       }
       if (isDev()) console.log('saveProfile()::update', update)
 
-      const res = await auth.getAgent().api.com.atproto.repo.putRecord(update)
+      const res = await (await getAgent()).api.com.atproto.repo.putRecord(update)
       if (isDev()) console.log('saveProfile()::res', res)
       // Refresh profile
-      const result = await auth.getProfile()
-      profile.value = result
+      profile.value = await getProfile()
       description.value = profile.value.description ?? ''
       labels.value = profile.value.labels
         ? profile.value.labels.map(label => { return label.val })
