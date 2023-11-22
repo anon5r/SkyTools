@@ -11,7 +11,7 @@
                 <a
                   v-if="!hasError && loadState.profile"
                   :href="`${config.bskyAppURL}/profile/${profile.handle}`">
-                  <Avatar
+                  <fwb-avatar
                     rounded
                     bordered
                     :status="online"
@@ -28,7 +28,7 @@
                     <span class="sr-only">Loading...</span>
                 </div>
                 <div v-else>
-                  <Avatar rounded bordered size="lg" class="m-2 md:m-1 min-w-max" />
+                  <fwb-avatar rounded bordered size="lg" class="m-2 md:m-1 min-w-max" />
                 </div>
               </div>
               <div class="px-3 md:px-1 w-24 grow">
@@ -73,15 +73,15 @@
                         Wait...
                       </span>
                       <span v-else-if="!inEdit">
-                        <FontAwesomeIcon :icon="['fas', 'pen-to-square']" size="sm" />
+                        <font-awesome-icon :icon="['fas', 'pen-to-square']" size="sm" />
                         Edit
                       </span>
                       <span v-else-if="isEqualArray(profile.labels.map(label => { return label.val }), labels) || description != profile.description">
-                        <FontAwesomeIcon :icon="['fas', 'circle-xmark']" size="sm" />
+                        <font-awesome-icon :icon="['fas', 'circle-xmark']" size="sm" />
                         Close
                       </span>
                       <span v-else>
-                        <FontAwesomeIcon :icon="['fas', 'floppy-disk']" size="sm" />
+                        <font-awesome-icon :icon="['fas', 'floppy-disk']" size="sm" />
                         Save
                       </span>
                     </ClientOnly>
@@ -158,11 +158,11 @@
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
-  import { useAuth } from '@/composables/auth'
-  import { getProfile as getProfileLex } from '@/utils/lexicons'
+  import { getAgent, isLoggedIn, getDid, getHandle, getProfile } from '@/composables/auth'
+  import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
-  import { Avatar } from 'flowbite-vue'
+  import { FwbAvatar } from 'flowbite-vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 
@@ -178,8 +178,6 @@
   const useDescription = () => useState('description', () => [])
   const labels = useLabels()
   const description = useDescription()
-
-  const auth = useAuth()
 
   const hasError = ref(false)
   const inEdit = ref(false)
@@ -217,15 +215,15 @@
 
   onMounted(async () => {
     initPopovers()
-    const agent = auth.getAgent()
-    if (!auth.isLoggedIn()) {
+    const agent = getAgent()
+    if (!isLoggedIn()) {
       try {
-        await auth.restoreSession()
+        await restoreSession()
 
       } catch (err) {
         // Back to current page
         navi.setNext(route.name)
-        router.push({ path: SIGNIN_URL })
+        await router.push({path: SIGNIN_URL})
         return
       }
     }
@@ -246,7 +244,7 @@
     } catch (err) {
       console.warn(err)
       navi.setNext(route.name)
-      router.push({ path: SIGNIN_URL })
+      await router.push({path: SIGNIN_URL})
     }
   })
 
@@ -261,7 +259,7 @@
     loadState.value = { profile: false, update: false }
 
     try {
-      const result = await auth.getProfile()
+      const result = await getProfile()
       profile.value = result
       description.value = profile.value.description ?? ''
       labels.value = profile.value.labels
@@ -272,10 +270,10 @@
       if (isDev()) console.error(err)
       hasError.value = true
       profile.value = Object.assign(profileInitial, {
-        did: auth.getDid() ?? 'did:error:unknown',
-        displayName: auth.getHandle() ?? 'Error: Unknown',
+        did: getDid() ?? 'did:error:unknown',
+        displayName: getHandle() ?? 'Error: Unknown',
       })
-      if (err.message == 'Not Found') {
+      if (err.message === 'Not Found') {
         alerts.value.error = true
         alerts.value.message = 'Profile not found.'
       } else {
@@ -295,7 +293,7 @@
     try {
       if (inEdit.value
         && (!isEqualArray(profile.value.labels.map(label => { return label.val }), labels.value)
-          || profile.value.description != description.value)) {
+          || profile.value.description !== description.value)) {
         await saveProfile()
         alerts.value.error = false
         inEdit.value = false
@@ -322,7 +320,7 @@
     }
 
     if (confirm('Do you want to save changes?')) {
-      const lexProf = (await getProfileLex(profile.value.did))
+      const lexProf = (await loadProfileLexicon(profile.value.did))
       const prof = lexProf.value
       if (isDev()) console.log(prof)
 
@@ -357,11 +355,10 @@
       }
       if (isDev()) console.log('saveProfile()::update', update)
 
-      const res = await auth.getAgent().api.com.atproto.repo.putRecord(update)
+      const res = await (await getAgent()).api.com.atproto.repo.putRecord(update)
       if (isDev()) console.log('saveProfile()::res', res)
       // Refresh profile
-      const result = await auth.getProfile()
-      profile.value = result
+      profile.value = await getProfile()
       description.value = profile.value.description ?? ''
       labels.value = profile.value.labels
         ? profile.value.labels.map(label => { return label.val })

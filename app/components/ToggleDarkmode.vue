@@ -76,12 +76,13 @@
         toggleTheme()
       if (toggleCount.value == 15) {
         toggleCount.value = 0
-        if (!localStorage.getItem('showBlocks') || localStorage.getItem('showBlocks') === 'false') {
+        if (!localStorage.getItem('_easter') || localStorage.getItem('_easter') === 'false') {
           alert('Found the Easter egg!')
-          localStorage.setItem('showBlocks', 'true')
+          localStorage.setItem('_easter', 'true')
         } else {
           alert('Lost an egg...')
-          localStorage.setItem('showBlocks', 'false')
+          localStorage.setItem('_easter', 'false')
+          localStorage.removeItem('_easter')
         }
       }
     } else {

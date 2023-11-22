@@ -65,7 +65,7 @@
                 to="/self/profile"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 >
-                <FontAwesomeIcon
+                <font-awesome-icon
                   :icon="['fas', 'user']"
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
                 <span class="ml-3">My profile</span>
@@ -77,7 +77,7 @@
                 href="#sign-out"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 @click.prevent="logout">
-                <FontAwesomeIcon
+                <font-awesome-icon
                   :icon="['fas', 'right-from-bracket']"
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
                 <span class="ml-3">Sign out</span>
@@ -88,7 +88,7 @@
               <NuxtLink
                 :to="`/${config.defaultPDS}/signin`"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <FontAwesomeIcon
+                <font-awesome-icon
                   :icon="['fas', 'right-to-bracket']"
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
                 <span class="ml-3">Sign in Bluesky</span>

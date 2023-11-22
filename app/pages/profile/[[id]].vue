@@ -43,7 +43,7 @@
               <a
                 v-if="!hasError && loadState.avatarURL"
                 :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
-                <Avatar
+                <fwb-avatar
                   rounded
                   bordered
                   size="lg"
@@ -60,7 +60,7 @@
                   <span class="sr-only">Loading...</span>
               </div>
               <div v-else>
-                <Avatar rounded bordered size="lg" class="m-2 min-w-max" />
+                <fwb-avatar rounded bordered size="lg" class="m-2 min-w-max" />
               </div>
             </div>
             <div>
@@ -110,8 +110,8 @@
         </div>
 
         <div class="pt-4">
-          <tabs v-model="activeTab" class="pt-1 px-1">
-            <tab name="posts" title="Posts" id="posts">
+          <fwb-tabs v-model="activeTab" class="pt-1 px-1">
+            <fwb-tab name="posts" title="Posts" id="posts">
               <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
                 <div v-for="record of userinfo.posts" :key="record.cid">
@@ -121,7 +121,7 @@
                     :handle="userinfo.details.handle"
                     :avatar_url="userinfo.avatarURL ?? 'about:blank'"
                     :display_name="
-                      userinfo.profile
+                      userinfo.profile?.value.displayName
                         ? userinfo.profile.value.displayName
                         : userinfo.details.handle
                     "
@@ -147,9 +147,9 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
 
-            <tab name="following" title="Following" id="following">
+            <fwb-tab name="following" title="Following" id="following">
               <!-- Following -->
               <div v-if="userinfo.following.length > 0">
                 <ul>
@@ -180,10 +180,10 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
 
 
-            <tab name="like" title="Like" id="like">
+            <fwb-tab name="like" title="Like" id="like">
               <!-- Like -->
               <div v-if="userinfo.like.length > 0">
                 <ul>
@@ -220,10 +220,10 @@
                   Load more
                 </button>
               </div>
-            </tab>
+            </fwb-tab>
 
 
-            <tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
+            <fwb-tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
@@ -254,8 +254,8 @@
                   Load more
                 </button>
               </div>
-            </tab>
-          </tabs>
+            </fwb-tab>
+          </fwb-tabs>
         </div>
       </ClientOnly>
     </div>
@@ -267,8 +267,9 @@
   import { useAppConfig } from 'nuxt/app'
   import { ref, watch, onMounted, toRaw } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { Avatar, Tabs, Tab } from 'flowbite-vue'
+  import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
+  import * as lexicons from '@/utils/lexicons'
   import { useLocalStorage } from '@/composables/localStorage'
 
   const activeTab = ref('posts')
@@ -340,18 +341,14 @@
     return Object.values(obj).every(value => value === true)
   }
 
-  let lexicons
   onMounted(async () => {
-    if (!lexicons) {
-      lexicons = await import('@/utils/lexicons')
-
-      lexicons.setConfig(toRaw(config))
-      if (route.params.id) {
-        showProfile()
-      }
+    lexicons.setConfig(toRaw(config))
+    if (route.params.id) {
+      showProfile()
     }
 
-    showBlocks.value = localStorage.getItem('showBlocks') == 'true'
+    showBlocks.value = localStorage.getItem('_easter') == 'true'
+    console.log('showBlock:: ==> ', showBlocks.value)
 
     if (route.params.id) {
       showProfile()
@@ -384,9 +381,9 @@
     activeTab.value = 'posts'
 
     try {
-      await getDetails(identifier)
+      await loadDetails(identifier)
       try {
-        await getProfile(identifier)
+        await loadProfile(identifier)
       } catch (err) {
         // If the profile has never been updated,
         // it cannot be retrieved from the repository
@@ -398,7 +395,7 @@
             avatar: null,
             banner: null,
             description: '',
-            displayName: identifier,
+            displayName: null,
           },
         }
         updateUserInfo('profile', profile)
@@ -516,13 +513,13 @@
    * Get identifier details
    * @param {string} id handle or DID
    */
-  const getDetails = async id => {
+  const loadDetails = async id => {
     const details = await lexicons.describeRepo(id)
     updateUserInfo('details', details)
   }
 
-  const getProfile = async id => {
-    const profile = await lexicons.getProfile(id)
+  const loadProfile = async id => {
+    const profile = await lexicons.loadProfile(id)
 
     if (profile) {
       updateUserInfo('profile', profile)
@@ -626,7 +623,7 @@
 
           let profile, avatar, handle = null
           try {
-            profile = await lexicons.getProfile(recordUri.did)
+            profile = await lexicons.loadProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
           } catch (err) {
             console.info('Not set profile: ', recordUri.did)
@@ -694,7 +691,7 @@
           }
 
           try {
-            profile = await lexicons.getProfile(record.value.subject)
+            profile = await lexicons.loadProfile(record.value.subject)
           } catch (err) {
             // following, but the account has been removed
             console.info('No profile exists: ', record.value.subject)
@@ -754,7 +751,7 @@
             console.warn('Could not resolve handle (deleted?): ', record.value.subject)
           }
           try {
-            profile = await lexicons.getProfile(record.value.subject)
+            profile = await lexicons.loadProfile(record.value.subject)
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)

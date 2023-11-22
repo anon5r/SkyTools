@@ -3,5 +3,9 @@
   "compilerOptions": {
     "allowJs": true
   },
-  "include": ["src", ".*.js"]
+  "include": ["src", ".*.js",
+    "tailwind.config.js",],
+  "parserOptions": {
+    "extraFileExtensions": ["*.vue"]
+  }
 }

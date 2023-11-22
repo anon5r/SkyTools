@@ -1,6 +1,5 @@
 import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
 import * as lexicons from '@/utils/lexicons'
-import { App } from 'nuxt/dist/app/compat/capi'
 
 const cdnURL = process.env.cdnPrefix || 'https://cdn-skytools.anon5r.com/proxy'
 
@@ -46,9 +45,9 @@ class ClientPost {
    */
   protected async getProfileAndAvatar(did: string): Promise<void> {
     lexicons
-      .getProfile(did)
+      .loadProfile(did)
       .then(profile => {
-        console.log(profile )
+        console.log(profile)
         this._profile = profile
         this._avatarURL = lexicons.buildAvatarURL(cdnURL, did, this._profile)
       })

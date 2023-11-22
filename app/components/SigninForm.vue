@@ -75,6 +75,8 @@
   import { isDev } from '~/utils/helpers'
   import { useAuth } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
+  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+
 
   const config = useAppConfig()
   const route = useRoute()
@@ -86,7 +88,8 @@
   const password = ref('')
   const errorMessage = ref('')
   const validateError = ref('')
-  const pds = route.params.service ? `.${route.params.service}` : config.defaultSuffix
+  const isProcessing = ref(false)
+  const pds = route.params.service ? `.${route.params.service}` : `.${config.defaultSuffix}`
 
   const props = defineProps({
     service: {
@@ -121,7 +124,8 @@
   const submitForm = async () => {
     if (!validateError.value) {
       try {
-        if (await auth.value.login({identifier: handle.value, password: password.value})) {
+        isProcessing.value = true
+        if (await auth.value.login({identifier: handle.value, password: password.value, pds: pds.value})) {
           if (navigate.getNext() !== null && navigate.getNext() !== route.fullPath) {
             auth.value.isLoggedIn = true
             loginState.value.isLoggedIn = true
@@ -139,6 +143,8 @@
         } else {
           errorMessage.value = 'Failed to log in, please check your credentials and try again.'
         }
+      } finally {
+        isProcessing.value = false
       }
     }
   }
