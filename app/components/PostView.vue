@@ -54,10 +54,10 @@
       <!-- has reply ? -->
       <div v-if="!props.removed">
         <AtHandleLink
-          v-if="props.post.value.reply"
+          v-if="props.post.value && props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
           class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
-          <FontAwesomeIcon :icon="['fas', 'reply']" />
+          <font-awesome-icon :icon="['fas', 'reply']" />
           Reply
         </AtHandleLink>
       </div>
@@ -121,6 +121,7 @@
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import { parseAtUri } from '@/utils/lexicons'
+  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
   const config = useAppConfig()
 
@@ -160,6 +161,7 @@
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
     postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey, '')
+    console.log('props.post = ', props.post)
   })
 
   /**
