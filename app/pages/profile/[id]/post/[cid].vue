@@ -102,18 +102,11 @@ onMounted(async () => {
     displayName.value = handle.value
   } catch (e) {}
 
-  useHead({
+  useSeoMeta({
     title: `${config.title} - ${handleOrDid.value}`,
-    meta: [
-      {
-        property: 'og:image',
-        content: `${config.prodURLPrefix}/images/ogp/profile.png`
-      },
-      {
-        property: 'twitter:image',
-        content: `${config.prodURLPrefix}/images/ogp/profile.png`
-      },
-    ]
+    ogTitle: `${config.title} - ${handleOrDid.value}`,
+    ogImage: `${config.prodURLPrefix}/images/ogp/profile.png`,
+    twitterCard: 'summary',
   })
   try {
     profile.value = await loadProfile(did.value)
@@ -149,29 +142,19 @@ onMounted(async () => {
       text = text.substr(0, 128) + '...'
     }
 
-    useHead({
+    useSeoMeta({
       title: `${config.title} - ${displayName.value} ${textShort}`,
-      meta: [
-        {
-          property: 'og:title',
-          content: `${config.title} - ${displayName.value} ${textShort}`
-        },
-        {
-          property: 'twitter:title',
-          content: `${config.title} - ${displayName.value} ${textShort}`
-        },
-        {
-          property: 'og:description',
-          content: text
-        },
-        {
-          property: 'twitter:description',
-          content: text
-        },
-      ]
+      ogTitle: `${config.title} - ${displayName.value} ${textShort}`,
+      description: text,
+      ogDescription: text,
     })
   } catch (e) {
     console.error(e)
+
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Post not found or removed.'
+    })
   }
 
 })
