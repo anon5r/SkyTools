@@ -102,6 +102,19 @@ onMounted(async () => {
     displayName.value = handle.value
   } catch (e) {}
 
+  useHead({
+    title: `${config.title} - ${handleOrDid.value}`,
+    meta: [
+      {
+        property: 'og:image',
+        content: `${config.prodURLPrefix}/images/ogp/profile.png`
+      },
+      {
+        property: 'twitter:image',
+        content: `${config.prodURLPrefix}/images/ogp/profile.png`
+      },
+    ]
+  })
   try {
     profile.value = await loadProfile(did.value)
     console.log(profile.value)
@@ -122,10 +135,41 @@ onMounted(async () => {
         }
       }
     }
-    if (isDev()) {
-      console.log('Post record:')
-      console.log(toRaw(record.value))
+
+    // get post for description
+    let text = record.value.value.text
+    // remove line breaks
+    text = text.replace(/\r?\n/g, '')
+    // to short text for title
+    let textShort = text
+    if (textShort.length > 32) {
+      textShort = textShort.substr(0, 32) + '...'
     }
+    if (text.length > 128) {
+      text = text.substr(0, 128) + '...'
+    }
+
+    useHead({
+      title: `${config.title} - ${displayName.value} ${textShort}`,
+      meta: [
+        {
+          property: 'og:title',
+          content: `${config.title} - ${displayName.value} ${textShort}`
+        },
+        {
+          property: 'twitter:title',
+          content: `${config.title} - ${displayName.value} ${textShort}`
+        },
+        {
+          property: 'og:description',
+          content: text
+        },
+        {
+          property: 'twitter:description',
+          content: text
+        },
+      ]
+    })
   } catch (e) {
     console.error(e)
   }
