@@ -130,23 +130,23 @@ onMounted(async () => {
     }
 
     // get post for description
-    let text = record.value.value.text
+    let description = record.value.value.text
     // remove line breaks
-    text = text.replace(/\r?\n/g, '')
+    description = description.replace(/(?:\r?\n)+/g, ' ')
     // to short text for title
-    let textShort = text
-    if (textShort.length > 32) {
-      textShort = textShort.substr(0, 32) + '...'
+    let descShort = description
+    if (descShort.length > 32) {
+      descShort = descShort.substr(0, 32) + '...'
     }
-    if (text.length > 128) {
-      text = text.substr(0, 128) + '...'
+    if (description.length > 128) {
+      description = description.substr(0, 128) + '...'
     }
 
     useSeoMeta({
-      title: `${config.title} - ${displayName.value} ${textShort}`,
-      ogTitle: `${config.title} - ${displayName.value} ${textShort}`,
-      description: text,
-      ogDescription: text,
+      title: `${config.title} - ${displayName.value} ${descShort}`,
+      ogTitle: `${config.title} - ${displayName.value} ${descShort}`,
+      description: description,
+      ogDescription: description,
     })
   } catch (e) {
     console.error(e)
