@@ -14,15 +14,13 @@ module.exports = {
   extends: [
     'plugin:nuxt/recommended',
     'eslint:recommended',
-    '@vue/essential',
-    'prettier',
-    'prettier/vue',
-    'prettier/@typescript-eslint',
+    'plugin:vue/vue3-essential',
+    '@vue/eslint-config-typescript/recommended',
+    '@vue/eslint-config-prettier',
   ],
   plugins: ['vue', 'prettier', 'unused-imports'],
   rules: {
     'import/prefer-default-export': 'off',
-    '@typescript-eslint/quotes': ['warn', 'single'],
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
   },
   // ignorePatterns: ['node_modules', '.nuxt', 'dist'],
