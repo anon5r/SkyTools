@@ -66,10 +66,8 @@
 import { useAppConfig } from 'nuxt/app'
 import { ref, onMounted, toRaw } from 'vue'
 import { useRoute } from 'vue-router'
-import { isDev } from '~/utils/helpers'
 import { resolveHandle, resolveDID, loadProfile, buildAvatarURL, getPost } from '~/utils/lexicons'
 import {FwbAvatar} from "flowbite-vue";
-import {DateTime} from "luxon";
 
 const route = useRoute()
 const handleOrDid = ref(route.params.id)
