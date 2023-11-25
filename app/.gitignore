@@ -21,3 +21,6 @@ dist
 
 
 public/_ca
+
+# Wrangler
+.wrangler
