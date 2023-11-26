@@ -171,6 +171,12 @@ export default defineNuxtConfig({
       ? ['@atproto/api'] : [],
   },
   routeRules: {
-    '/lookup': { redirect: '/profile' },
+    // Generated at build time for SEO purpose
+    '/': { prerender: true },
+    '/about': { prerender: true },
+    '/profile': { prerender: true },
+    '/invite-code': { prerender: true },
+    '/profile/:did': { swr: 3600 },
+    '/lookup': { redirect: '/profile' }
   },
 })
