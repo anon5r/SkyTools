@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-max text-base dark:text-slate-300 bg-gray-100 dark:bg-slate-900">
+  <div
+    class="min-h-max text-base dark:text-slate-300 bg-gray-100 dark:bg-slate-900">
     <header>
       <Navbar />
     </header>
@@ -9,27 +10,28 @@
           <div class="mx-auto max-w-screen-sm text-center">
             <h1
               class="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl text-gray-300 dark:text-slate-500">
-              {{ error.statusCode }}
+              {{ props.error.statusCode }}
             </h1>
             <div
               class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
-              <div v-if="error.statusCode === 404">
+              <div v-if="props.error.statusCode === 404">
                 <p>
                   <code>{{ $route.path }}</code>
                 </p>
                 is not found.
               </div>
               <div v-else>
-                {{ error.statusMessage }}
+                {{ props.error.statusMessage }}
               </div>
             </div>
-            <div class="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
-              <p v-if="error.statusCode === 404">
-                The page you are looking for might have been removed had its name
-                changed or is temporarily unavailable.
+            <div
+              class="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
+              <p v-if="props.error.statusCode === 404">
+                The page you are looking for might have been removed had its
+                name changed or is temporarily unavailable.
               </p>
               <p v-else>
-                {{ error.description }}
+                {{ props.error.description }}
               </p>
             </div>
             <a
@@ -49,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  error: Object
-})
+  const props = defineProps({
+    error: Object,
+  })
 </script>
