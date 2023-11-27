@@ -7,7 +7,7 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <NuxtLink
-            :to="getPermaLink(props.handle)"
+            :to="getParmaLink(props.handle)"
             @click.prevent="clickProfile">
             <fwb-avatar
               rounded
@@ -19,7 +19,7 @@
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <NuxtLink
-            :href="getPermaLink(props.handle)"
+            :href="getParmaLink(props.handle)"
             @click.prevent="clickProfile">
             {{ props.display_name }}
           </NuxtLink>
@@ -27,7 +27,7 @@
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <NuxtLink
-              :href="getPermaLink(props.handle)"
+              :href="getParmaLink(props.handle)"
               @click.prevent="clickProfile">
               {{ props.handle }}
             </NuxtLink>
@@ -171,7 +171,7 @@
 
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey, '')
+    postURL.value = getParmaLink(props.handle ?? atUri.did, atUri.rkey, '')
     console.log('props.post = ', props.post)
   })
 
@@ -189,7 +189,7 @@
    * @param {string} appViewURL
    * @return {string} path or URL
    */
-  const getPermaLink = (handleOrDid, postID) => {
+  const getParmaLink = (handleOrDid, postID) => {
     if (postID) return `/profile/${handleOrDid}/post/${postID}`
     return `/profile/${handleOrDid}`
   }

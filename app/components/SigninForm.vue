@@ -80,7 +80,10 @@
   const route = useRoute()
   const navigate = useNavigation()
   const useLoginState = () =>
-    useState<{ isLoggedIn: boolean; userHandle: string; userEmail: string }>('loginState', () => {
+    useState <
+    { isLoggedIn: boolean, userHandle: string, userEmail: string } >
+    ('loginState',
+    () => {
       return { isLoggedIn: false, userHandle: '', userEmail: '' }
     })
   const loginState = useLoginState()
@@ -92,7 +95,7 @@
   const isProcessing = ref(false)
   const pds = route.params.service
     ? `.${route.params.service}`
-    : (`.${props.service}` ?? `.${config.defaultSuffix}`)
+    : `.${props.service}` ?? `.${config.defaultSuffix}`
 
   const props = defineProps({
     service: {
