@@ -35,12 +35,11 @@
 
 <script setup lang="ts">
   import { ref, onMounted, defineComponent } from 'vue'
-  import { isDev } from '@/utils/helpers'
   import type { Ref } from 'vue'
 
   defineComponent({ name: 'ToggleDarkmode' })
 
-  const isDarkTheme = ref<Boolean>(false)
+  const isDarkTheme = ref<boolean>(false)
 
   const toggleCount: Ref<number> = ref<number>(0)
   const clickTimestamp: Ref<number> = ref<number>(0)
@@ -68,15 +67,16 @@
     }
   }
 
-
-  const toggleMode = (e: Event) => {
+  const toggleMode = () => {
     if (Date.now() - clickTimestamp.value < 300) {
       toggleCount.value++
-      if (toggleCount.value <= 5)
-        toggleTheme()
+      if (toggleCount.value <= 5) toggleTheme()
       if (toggleCount.value == 15) {
         toggleCount.value = 0
-        if (!localStorage.getItem('_easter') || localStorage.getItem('_easter') === 'false') {
+        if (
+          !localStorage.getItem('_easter') ||
+          localStorage.getItem('_easter') === 'false'
+        ) {
           alert('Found the Easter egg!')
           localStorage.setItem('_easter', 'true')
         } else {

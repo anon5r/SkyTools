@@ -3,8 +3,7 @@
     class="flex flex-col items-center min-h-screen md:pt-30 sm:pt-30 bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
     <div class="w-full max-w-3xl">
       <ClientOnly>
-        <div
-          class="px-3 py-3 flex flex-row justify-between items-center">
+        <div class="px-3 py-3 flex flex-row justify-between items-center">
           <div class="mr-4 relative w-full">
             <input
               v-model="id"
@@ -26,9 +25,19 @@
             @click.prevent="profileEvent"
             :disabled="!isLoadingState(loadState)">
             <span v-if="!isLoadingState(loadState)" class="flex flex-inline">
-              <svg aria-hidden="true" role="status" class="inline w-4 h-4 mt-1 mr-2 text-gray-200 animate-spin dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="#1C64F2"/>
+              <svg
+                aria-hidden="true"
+                role="status"
+                class="inline w-4 h-4 mt-1 mr-2 text-gray-200 animate-spin dark:text-gray-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor" />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="#1C64F2" />
               </svg>
               Loading...
             </span>
@@ -49,15 +58,23 @@
                   size="lg"
                   :img="loadState.avatarURL ? userinfo.avatarURL : ''"
                   :alt="loadState.details ? userinfo.details.handle : ''"
-                  class="m-2 min-w-max avatar-object-conver"
-                   />
+                  class="m-2 min-w-max avatar-object-conver" />
               </a>
               <div v-else-if="!loadState.avatarURL" role="status">
-                  <svg aria-hidden="true" class="inline w-16 h-16 m-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                      <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                  </svg>
-                  <span class="sr-only">Loading...</span>
+                <svg
+                  aria-hidden="true"
+                  class="inline w-16 h-16 m-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                  viewBox="0 0 100 101"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor" />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill" />
+                </svg>
+                <span class="sr-only">Loading...</span>
               </div>
               <div v-else>
                 <fwb-avatar rounded bordered size="lg" class="m-2 min-w-max" />
@@ -67,10 +84,11 @@
               <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                 <!-- Disply name -->
                 {{
-                  !loadState.profile ? 'Loading...' : (
-                  userinfo.profile?.value?.displayName ||
-                  userinfo.details.handle ||
-                  'Unknown')
+                  !loadState.profile
+                    ? 'Loading...'
+                    : userinfo.profile?.value?.displayName ||
+                      userinfo.details.handle ||
+                      'Unknown'
                 }}
               </h2>
               <div
@@ -78,10 +96,10 @@
                 <!-- Handle -->
                 <span
                   v-if="loadState.details"
-                  :class="{ 'line-through': hasError}"
+                  :class="{ 'line-through': hasError }"
                   class="select-all at-handle">
                   {{ userinfo.details.handle || 'unknown.example' }}
-              </span>
+                </span>
                 <span v-else class="mt-4">loading...</span>
               </div>
               <div
@@ -102,8 +120,11 @@
                 v-for="(label, index) in userinfo.profile.value.labels.values"
                 :key="index"
                 class="inline-block items-center px-2 py-1 mr-2 text-xs font-medium rounded text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
-                  <font-awesome-icon :icon="['fas', 'tag']" class="mr-1" size="sm" />
-                  {{ label.val }}
+                <font-awesome-icon
+                  :icon="['fas', 'tag']"
+                  class="mr-1"
+                  size="sm" />
+                {{ label.val }}
               </li>
             </ul>
           </div>
@@ -133,16 +154,27 @@
 
               <div v-if="!loadState.posts" class="flex mt-4 mx-2">
                 <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
                   </svg>
                   <span class="sr-only">Loading...</span>
                 </div>
                 Loading...
               </div>
               <div v-if="cursors.posts" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('posts')"
+                <button
+                  class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
+                  @click="loadMore('posts')"
                   :disabled="!loadState.posts">
                   Load more
                 </button>
@@ -166,22 +198,34 @@
 
               <div v-if="!loadState.following" class="flex mt-4 mx-2">
                 <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
                   </svg>
                   <span class="sr-only">Loading...</span>
                 </div>
                 Loading...
               </div>
-              <div v-if="cursors.following" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('following')"
-                :disabled="!loadState.following">
+              <div
+                v-if="cursors.following"
+                class="flex justify-center pt-2 pb-6">
+                <button
+                  class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
+                  @click="loadMore('following')"
+                  :disabled="!loadState.following">
                   Load more
                 </button>
               </div>
             </fwb-tab>
-
 
             <fwb-tab name="like" title="Like" id="like">
               <!-- Like -->
@@ -196,7 +240,8 @@
                       :display_name="
                         record.profile
                           ? record.profile.value.displayName
-                          : record.handle"
+                          : record.handle
+                      "
                       :post="record.post"
                       @show-profile="showProfile" />
                   </li>
@@ -206,28 +251,40 @@
 
               <div v-if="!loadState.like" class="flex mt-4 mx-2">
                 <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
                   </svg>
                   <span class="sr-only">Loading...</span>
                 </div>
                 Loading...
               </div>
               <div v-if="cursors.like" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('like')"
+                <button
+                  class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
+                  @click="loadMore('like')"
                   :disabled="!loadState.like">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-
             <fwb-tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
-                  {{ record }}
+                  {{
+                    record
+                  }}
                   <li v-for="record of userinfo.blocks" :key="record.cid">
                     <UserField
                       :did="record.value.subject"
@@ -240,16 +297,29 @@
               <div v-else class="mt-4 mx-2">No blocking anyone.</div>
               <div v-if="!loadState.blocks" class="flex mt-4 mx-2">
                 <div role="status">
-                  <svg aria-hidden="true" class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
                   </svg>
                   <span class="sr-only">Loading...</span>
                 </div>
                 Loading...
               </div>
-              <div v-if="userinfo.blocks.length > 0 && cursors.blocks" class="flex justify-center pt-2 pb-6">
-                <button class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400" @click="loadMore('blocks')"
+              <div
+                v-if="userinfo.blocks.length > 0 && cursors.blocks"
+                class="flex justify-center pt-2 pb-6">
+                <button
+                  class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
+                  @click="loadMore('blocks')"
                   :disabled="!loadState.blocks">
                   Load more
                 </button>
@@ -290,7 +360,6 @@
   const hasError = ref(false)
   const showBlocks = ref(false)
 
-
   const userinfoInitial = {
     details: {},
     profile: {},
@@ -322,7 +391,6 @@
     blocks: undefined,
   })
 
-
   /**
    * Batch update all values
    * @param {*} obj
@@ -337,7 +405,7 @@
    * Loading state
    * @param {object} obj
    */
-  const isLoadingState = (obj) => {
+  const isLoadingState = obj => {
     return Object.values(obj).every(value => value === true)
   }
 
@@ -368,15 +436,12 @@
     hasError.value = false
     updateAllValues(loadState.value, false)
 
-
     if (!identifier) {
       identifier = lexicons.formatIdentifier(id.value)
     }
-    if (identifier.length > 253)
-      throw new Error('Identifier is too long')
+    if (identifier.length > 253) throw new Error('Identifier is too long')
     id.value = identifier
-    if (route.params.id !== identifier)
-      router.push(`/profile/${identifier}`)
+    if (route.params.id !== identifier) router.push(`/profile/${identifier}`)
 
     activeTab.value = 'posts'
 
@@ -389,7 +454,7 @@
         // it cannot be retrieved from the repository
         console.info('No profile user: ', identifier)
         // Set as dummy
-        let profile = {
+        const profile = {
           value: {
             $type: 'app.bsky.actor.profile',
             avatar: null,
@@ -402,7 +467,10 @@
         updateUserInfo('avatarURL', null)
       }
 
-      let posts, follow, like, blocks = []
+      let posts,
+        follow,
+        like,
+        blocks = []
       // Fetch posts
       fetchPosts(identifier, fetchCount)
         .then(resolve => {
@@ -430,7 +498,7 @@
           updateUserInfo('like', like)
         })
         .catch(err => {
-            if (isDev()) console.warn(err)
+          if (isDev()) console.warn(err)
         })
 
       if (showBlocks.value) {
@@ -439,7 +507,7 @@
             blocks = resolve
             updateUserInfo('blocks', blocks)
           })
-          .catch (err => {
+          .catch(err => {
             if (isDev()) console.warn(err)
             updateUserInfo('blocks', [])
           })
@@ -447,11 +515,8 @@
         updateUserInfo('blocks', [])
       }
 
-
-
       if (isDev()) console.log('UserInfo = ', toRaw(userinfo))
       if (isDev()) console.log('Cursors = ', toRaw(cursors))
-
     } catch (err) {
       if (isDev()) console.error(err)
       hasError.value = true
@@ -542,7 +607,7 @@
    *
    * @param {*} name
    */
-  const loadMore = async (name) => {
+  const loadMore = async name => {
     let records = []
     const cursor = cursors.value[name]
     if (cursor === undefined || cursor === null) return
@@ -572,7 +637,7 @@
         'app.bsky.feed.post',
         id,
         limit,
-        cursor,
+        cursor
       )
 
       if (response.success) {
@@ -603,14 +668,15 @@
         'app.bsky.feed.like',
         id,
         limit,
-        cursor,
+        cursor
       )
 
       if (response.success) {
         if (isDev()) console.log('app.bsky.feed.like = ', response.data)
         const records = response.data.records.map(async record => {
           const recordUri = lexicons.parseAtUri(record.value.subject.uri)
-          let post = {}, removed = false
+          let post = {},
+            removed = false
           try {
             post = await lexicons.getPost(recordUri.did, recordUri.rkey)
           } catch (err) {
@@ -621,7 +687,9 @@
             }
           }
 
-          let profile, avatar, handle = null
+          let profile,
+            avatar,
+            handle = null
           try {
             profile = await lexicons.loadProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
@@ -642,10 +710,14 @@
             did: recordUri.did,
             handle: handle,
             avatarURL: avatar,
-            post: post.success ? post.data : { value: {
-                createdAt: '1970-01-01 09:00:00Z',
-                text: 'The post may have been deleted.',
-              }},
+            post: post.success
+              ? post.data
+              : {
+                  value: {
+                    createdAt: '1970-01-01 09:00:00Z',
+                    text: 'The post may have been deleted.',
+                  },
+                },
           }
         })
 
@@ -678,16 +750,19 @@
         'app.bsky.graph.follow',
         id,
         limit,
-        cursor,
+        cursor
       )
       if (response.success) {
         const records = response.data.records.map(async record => {
           let handle = '',
-          profile = {}
+            profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
           } catch (err) {
-            console.warn('Could not resolve handle (deleted?): ', record.value.subject)
+            console.warn(
+              'Could not resolve handle (deleted?): ',
+              record.value.subject
+            )
           }
 
           try {
@@ -700,7 +775,7 @@
                 description: '',
                 avatar: '',
                 banner: null,
-              }
+              },
             })
           }
           return {
@@ -725,7 +800,6 @@
     }
   }
 
-
   /**
    * Fetch blocks
    * @param {string} id handle or DID
@@ -738,17 +812,20 @@
         'app.bsky.graph.block',
         id,
         limit,
-        cursor,
+        cursor
       )
       if (response.success) {
         //if (isDev()) console.log("fetchBlocks = ", response.data)
         const records = response.data.records.map(async record => {
           let handle = '',
-          profile = {}
+            profile = {}
           try {
             handle = await lexicons.resolveDID(record.value.subject)
           } catch (err) {
-            console.warn('Could not resolve handle (deleted?): ', record.value.subject)
+            console.warn(
+              'Could not resolve handle (deleted?): ',
+              record.value.subject
+            )
           }
           try {
             profile = await lexicons.loadProfile(record.value.subject)

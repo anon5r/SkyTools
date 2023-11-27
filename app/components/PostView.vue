@@ -6,7 +6,9 @@
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <NuxtLink :to="getPermaLink(props.handle)" @click.prevent="clickProfile">
+          <NuxtLink
+            :to="getPermaLink(props.handle)"
+            @click.prevent="clickProfile">
             <fwb-avatar
               rounded
               :img="props.avatar_url"
@@ -16,13 +18,17 @@
         </div>
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
-          <NuxtLink :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
+          <NuxtLink
+            :href="getPermaLink(props.handle)"
+            @click.prevent="clickProfile">
             {{ props.display_name }}
           </NuxtLink>
           <div
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <NuxtLink :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
+            <NuxtLink
+              :href="getPermaLink(props.handle)"
+              @click.prevent="clickProfile">
               {{ props.handle }}
             </NuxtLink>
           </div>
@@ -64,7 +70,6 @@
       <!-- Post message -->
       <div v-if="!props.removed" class="break-words whitespace-pre-line">
         <div class="text-sm">
-
           <RitchText :post="props.post" />
         </div>
       </div>
@@ -76,7 +81,8 @@
             <PostEmbed :did="did" :embed="props.post.value.embed" />
             <template #fallback>
               <div class="flex justify-center">
-                <div class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
+                <div
+                  class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
               </div>
             </template>
           </Suspense>
@@ -87,22 +93,27 @@
     <div class="flex justify-end items-end">
       <div v-if="!props.removed" class="mt-3 inline-box">
         <!-- Labels -->
-        <ul v-if="props.post.value.labels?.values" class="inline-block">
+        <ul
+          v-if="
+            props.post.value.labels?.values &&
+            props.post.value.label.values.length > 0
+          "
+          class="inline-block">
           <li
             v-for="(label, index) in props.post.value.labels?.values"
-            v-if="props.post.value.label.values.length > 0"
             :key="index"
             class="inline-block items-center px-1 py-0.5 mr-2 text-xs font-medium rounded"
             :class="
-            label.val === '!warn'
-            ? `text-yellow-800 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300`
-            : label.val === 'porn' || label.val === 'nsfw'
-            ? `text-pink-500 bg-pink-100 dark:bg-pink-700 dark:text-pink-300`
-            : label.val === 'spam'
-            ? `text-zinc-800 bg-zinc-100 dark:bg-zin-900 dark:text-zinc-300`
-            : `text-indigo-800 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-300`
+              label.val === '!warn'
+                ? `text-yellow-800 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300`
+                : label.val === 'porn' || label.val === 'nsfw'
+                  ? `text-pink-500 bg-pink-100 dark:bg-pink-700 dark:text-pink-300`
+                  : label.val === 'spam'
+                    ? `text-zinc-800 bg-zinc-100 dark:bg-zin-900 dark:text-zinc-300`
+                    : `text-indigo-800 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-300`
             ">
-              <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="xs" />{{ label.val }}
+            <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="xs" />
+            {{ label.val }}
           </li>
         </ul>
       </div>
@@ -121,7 +132,7 @@
   import { DateTime } from 'luxon'
   import { useAppConfig } from 'nuxt/app'
   import { parseAtUri } from '@/utils/lexicons'
-  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
 
@@ -179,11 +190,9 @@
    * @return {string} path or URL
    */
   const getPermaLink = (handleOrDid, postID) => {
-    if (postID)
-      return `/profile/${handleOrDid}/post/${postID}`
+    if (postID) return `/profile/${handleOrDid}/post/${postID}`
     return `/profile/${handleOrDid}`
   }
-
 </script>
 
 <style scoped>
