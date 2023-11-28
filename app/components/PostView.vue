@@ -130,11 +130,8 @@
   import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, defineEmits, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
-  import { useAppConfig } from 'nuxt/app'
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-  const config = useAppConfig()
 
   const props = defineProps({
     did: {

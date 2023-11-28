@@ -147,7 +147,9 @@
                         : userinfo.details.handle
                     "
                     :post="toRaw(record)"
-                    @show-profile="showProfile"></PostView>
+                    @show-profile="
+                      showProfile(userinfo.details.handle)
+                    "></PostView>
                 </div>
               </div>
               <div v-else class="mt-4 mx-2">There are no posts.</div>
@@ -190,7 +192,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      @show-profile="showProfile" />
+                      @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
               </div>
@@ -243,7 +245,7 @@
                           : record.handle
                       "
                       :post="record.post"
-                      @show-profile="showProfile" />
+                      @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
               </div>
@@ -290,7 +292,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      @show-profile="showProfile" />
+                      @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
               </div>
@@ -340,7 +342,6 @@
   import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
-  import { useLocalStorage } from '@/composables/localStorage'
 
   const activeTab = ref('posts')
 
@@ -411,15 +412,15 @@
 
   onMounted(async () => {
     lexicons.setConfig(toRaw(config))
-    if (route.params.id) {
-      showProfile()
+    if (id.value) {
+      showProfile(id.value)
     }
 
     showBlocks.value = localStorage.getItem('_easter') == 'true'
     console.log('showBlock:: ==> ', showBlocks.value)
 
     if (route.params.id) {
-      showProfile()
+      showProfile(route.params.id)
     }
   })
 
@@ -428,7 +429,7 @@
   }
 
   const profileEvent = async () => {
-    await showProfile()
+    await showProfile(id.value)
   }
 
   const showProfile = async identifier => {

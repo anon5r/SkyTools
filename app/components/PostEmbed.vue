@@ -67,7 +67,7 @@
                       v-for="img of post.record.data.value.embed.images"
                       :key="img.image.ref.toString()"
                       class="flex max-w-fit">
-                      <img
+                      <LazyNuxtImg
                         :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
                           parseAtUri(post.record.data.uri).did
                         }/${img.image.ref.toString()}`"
@@ -175,7 +175,7 @@
   }
 
   const showPost = atURI => {
-    // TODO In-app individual post view
+    // In-app individual post view
     window.open(atURI ?? postURL.value, '_blank')
   }
 </script>
