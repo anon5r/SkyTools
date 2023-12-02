@@ -21,7 +21,7 @@
             </label>
           </div>
           <button
-            class="px-5 py-3 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md px-2 py-1"
+            class="px-5 py-3 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md"
             @click.prevent="profileEvent"
             :disabled="!isLoadingState(loadState)">
             <span v-if="!isLoadingState(loadState)" class="flex flex-inline">
@@ -58,7 +58,7 @@
                   size="lg"
                   :img="loadState.avatarURL ? userinfo.avatarURL : ''"
                   :alt="loadState.details ? userinfo.details.handle : ''"
-                  class="m-2 min-w-max avatar-object-conver" />
+                  class="m-2 min-w-max avatar-object-cover" />
               </a>
               <div v-else-if="!loadState.avatarURL" role="status">
                 <svg
@@ -110,7 +110,7 @@
             </div>
           </div>
 
-          <p class="m-4 min-w-strech whitespace-pre-line">
+          <p class="m-4 min-w-stretch whitespace-pre-line">
             {{ loadState.profile ? userinfo.profile.value?.description : '' }}
           </p>
           <!-- Labels -->
@@ -342,6 +342,7 @@
   import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const activeTab = ref('posts')
 
@@ -362,7 +363,9 @@
   const showBlocks = ref(false)
 
   const userinfoInitial = {
-    details: {},
+    details: {
+      did: '',
+    },
     profile: {},
     avatarURL: '',
     posts: [],
@@ -413,14 +416,14 @@
   onMounted(async () => {
     lexicons.setConfig(toRaw(config))
     if (id.value) {
-      showProfile(id.value)
+      await showProfile(id.value)
     }
 
-    showBlocks.value = localStorage.getItem('_easter') == 'true'
+    showBlocks.value = localStorage.getItem('_easter') === 'true'
     console.log('showBlock:: ==> ', showBlocks.value)
 
     if (route.params.id) {
-      showProfile(route.params.id)
+      await showProfile(route.params.id)
     }
   })
 
@@ -442,7 +445,8 @@
     }
     if (identifier.length > 253) throw new Error('Identifier is too long')
     id.value = identifier
-    if (route.params.id !== identifier) router.push(`/profile/${identifier}`)
+    if (route.params.id !== identifier)
+      await router.push(`/profile/${identifier}`)
 
     activeTab.value = 'posts'
 
@@ -454,7 +458,7 @@
         // If the profile has never been updated,
         // it cannot be retrieved from the repository
         console.info('No profile user: ', identifier)
-        // Set as dummy
+        // Set as test double
         const profile = {
           value: {
             $type: 'app.bsky.actor.profile',
@@ -538,7 +542,7 @@
       } else {
         userinfo.value.details = {
           handle: id.value,
-          did: 'error:unknown:uknown',
+          did: 'error:unknown:unknown',
         }
       }
       if (axios.isAxiosError(err)) {
@@ -688,9 +692,7 @@
             }
           }
 
-          let profile,
-            avatar,
-            handle = null
+          let avatar, profile, handle
           try {
             profile = await lexicons.loadProfile(recordUri.did)
             avatar = buildAvatarURL(recordUri.did, profile.value)
@@ -819,7 +821,7 @@
         //if (isDev()) console.log("fetchBlocks = ", response.data)
         const records = response.data.records.map(async record => {
           let handle = '',
-            profile = {}
+            profile
           try {
             handle = await lexicons.resolveDID(record.value.subject)
           } catch (err) {
@@ -868,7 +870,7 @@
   .at-handle::before {
     content: '@';
   }
-  .avatar-object-conver :deep(img) {
+  .avatar-object-cover :deep(img) {
     @apply ring-1 ring-blue-300 dark:ring-blue-800 object-cover;
   }
 </style>
