@@ -156,6 +156,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     'nuxt-cloudflare-analytics',
     '@nuxt/devtools',
+    "@nuxt/image"
   ],
   css: [
     'flowbite/dist/flowbite.css',
