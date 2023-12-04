@@ -41,7 +41,8 @@
     "vue": "^3.3.8",
     "vue-eslint-parser": "^9.3.1",
     "vue-router": "^4.2.5",
-    "wrangler": "^3.17.1"
+    "wrangler": "^3.17.1",
+    "yarn": "2.4.3"
   },
   "dependencies": {
     "@atproto/api": "^0.6.21",
@@ -58,8 +59,7 @@
     "flowbite": "^2.0.0",
     "flowbite-vue": "^0.1.0",
     "luxon": "^3.4",
-    "nuxt-cloudflare-analytics": "^1.0.8",
-    "yarn": "2.4.3"
+    "nuxt-cloudflare-analytics": "^1.0.8"
   },
   "version": "3.5.1"
 }
