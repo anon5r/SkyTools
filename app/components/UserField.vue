@@ -47,7 +47,7 @@
 <script setup>
   import { FwbAvatar } from 'flowbite-vue'
   import { useAppConfig } from 'nuxt/app'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { defineProps, onMounted, ref } from 'vue'
   import { buildAvatarURL } from '@/utils/lexicons'
 
   const config = useAppConfig()

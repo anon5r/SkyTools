@@ -128,7 +128,7 @@
 
 <script setup>
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { defineProps, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
