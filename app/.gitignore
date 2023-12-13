@@ -24,3 +24,6 @@ public/_ca
 
 # Wrangler
 .wrangler
+
+# Yarn
+.yarn
