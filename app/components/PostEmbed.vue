@@ -175,17 +175,16 @@
       // Images
       /** @type {ValidationResult} img */
       const validRes = AppBskyEmbedImages.validateMain(props.embed)
-      console.log(validRes)
       if (validRes.success) {
         for (const img of validRes.value.images) {
-          console.log(img.image)
           postURL.value = await buildPostURL(
             config.bskyAppURL,
             img.image.original.ref,
             props.did
           )
           // Post URL
-          console.log('props.embed.images postURL.value ==== ', postURL.value)
+          if (isDev())
+            console.log('props.embed.images postURL.value ==== ', postURL.value)
         }
       }
       //
@@ -198,7 +197,7 @@
   })
 
   const loadPostData = async atURI => {
-    console.log('PostEmbed.loadPostData(atURI) ==> ', atURI)
+    if (isDev()) console.log('PostEmbed.loadPostData(atURI) ==> ', atURI)
     return await ClientPost.load(
       toRaw(config),
       atURI ?? props.embed.value.record.uri

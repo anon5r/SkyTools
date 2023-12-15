@@ -113,11 +113,10 @@
     })
     try {
       profile.value = await loadProfile(did.value)
-      console.log(profile.value)
       avatarURL.value = buildAvatarURL(
         config.cdnPrefix,
         did.value,
-        profile.value
+        profile.value.value
       )
       displayName.value = profile.value.value.displayName
     } catch (e) {

@@ -132,6 +132,7 @@
   import { DateTime } from 'luxon'
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { isDev } from '~/utils/helpers'
 
   const props = defineProps({
     did: {
@@ -168,8 +169,12 @@
 
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = getParmaLink(props.handle ?? atUri.did, atUri.rkey, '')
-    console.log('props.post = ', props.post)
+    postURL.value = getParmaLink(props.handle ?? atUri.did, atUri.rkey)
+    if (isDev()) {
+      console.log(atUri)
+      console.log('props.post = ', props.post)
+      console.log('postURL = ', postURL.value)
+    }
   })
 
   /**
