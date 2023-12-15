@@ -21,24 +21,38 @@
                     class="m-2 md:m-1 min-w-max" />
                 </a>
                 <div v-else-if="!loadState.profile" role="status">
-                    <svg aria-hidden="true" class="inline w-16 h-16 m-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                    </svg>
-                    <span class="sr-only">Loading...</span>
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-16 h-16 m-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
+                  </svg>
+                  <span class="sr-only">Loading...</span>
                 </div>
                 <div v-else>
-                  <fwb-avatar rounded bordered size="lg" class="m-2 md:m-1 min-w-max" />
+                  <fwb-avatar
+                    rounded
+                    bordered
+                    size="lg"
+                    class="m-2 md:m-1 min-w-max" />
                 </div>
               </div>
               <div class="px-3 md:px-1 w-24 grow">
-                <h2 class="text-3xl truncate text-ellipsis" :class="{ 'text-red-600': hasError }">
+                <h2
+                  class="text-3xl truncate text-ellipsis"
+                  :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
-                    !loadState.profile ? 'Loading...' : (
-                    profile.displayName ||
-                    profile.handle ||
-                    'Unknown')
+                    !loadState.profile
+                      ? 'Loading...'
+                      : profile.displayName || profile.handle || 'Unknown'
                   }}
                 </h2>
                 <div
@@ -46,11 +60,14 @@
                   <!-- Handle -->
                   <span
                     v-if="loadState.profile"
-                    :class="{ 'line-through': hasError}"
+                    :class="{ 'line-through': hasError }"
                     class="select-all at-handle truncate text-ellipsis">
                     {{ profile.handle || 'unknown.example' }}
-                </span>
-                  <span v-else class="mt-4"><Label></Label>oading...</span>
+                  </span>
+                  <span v-else class="mt-4">
+                    <Label></Label>
+                    oading...
+                  </span>
                 </div>
                 <div
                   class="text-sm sm:text-xs truncate text-ellipsis font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
@@ -63,35 +80,61 @@
                 <!-- Edit button -->
                 <button
                   class="p-2 min-w-full text-xs bg-blue-400 dark:bg-blue-950 text-blue-200 rounded-md focus:outline select-none"
-                  @click="editLabel()" :class="!loadState.update ? 'disabled' : ''">
-                    <ClientOnly>
-                      <span v-if="!loadState.update">
-                        <div role="status" class="inline-block leading-tight">
-                          <svg aria-hidden="true" class="w-4 h-4 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-400 dark:fill-blue-700" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
-                          <span class="sr-only">Processing...</span>
-                        </div>
-                        Wait...
-                      </span>
-                      <span v-else-if="!inEdit">
-                        <font-awesome-icon :icon="['fas', 'pen-to-square']" size="sm" />
-                        Edit
-                      </span>
-                      <span v-else-if="isEqualArray(profile.labels.map(label => { return label.val }), labels) || description != profile.description">
-                        <font-awesome-icon :icon="['fas', 'circle-xmark']" size="sm" />
-                        Close
-                      </span>
-                      <span v-else>
-                        <font-awesome-icon :icon="['fas', 'floppy-disk']" size="sm" />
-                        Save
-                      </span>
-                    </ClientOnly>
+                  @click="editLabel()"
+                  :class="!loadState.update ? 'disabled' : ''">
+                  <ClientOnly>
+                    <span v-if="!loadState.update">
+                      <div role="status" class="inline-block leading-tight">
+                        <svg
+                          aria-hidden="true"
+                          class="w-4 h-4 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-400 dark:fill-blue-700"
+                          viewBox="0 0 100 101"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                            fill="currentColor" />
+                          <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                            fill="currentFill" />
+                        </svg>
+                        <span class="sr-only">Processing...</span>
+                      </div>
+                      Wait...
+                    </span>
+                    <span v-else-if="!inEdit">
+                      <font-awesome-icon
+                        :icon="['fas', 'pen-to-square']"
+                        size="sm" />
+                      Edit
+                    </span>
+                    <span
+                      v-else-if="
+                        isEqualArray(
+                          profile.labels.map(label => {
+                            return label.val
+                          }),
+                          labels
+                        ) || description != profile.description
+                      ">
+                      <font-awesome-icon
+                        :icon="['fas', 'circle-xmark']"
+                        size="sm" />
+                      Close
+                    </span>
+                    <span v-else>
+                      <font-awesome-icon
+                        :icon="['fas', 'floppy-disk']"
+                        size="sm" />
+                      Save
+                    </span>
+                  </ClientOnly>
                 </button>
               </div>
             </div>
           </div>
 
           <div class="px-2">
-
             <!-- Follows / Following / Posts -->
             <div v-if="loadState.profile" class="mt-4">
               <ProfileCounters
@@ -101,7 +144,7 @@
             </div>
 
             <!-- Description -->
-            <p class="my-4 text-sm min-w-strech whitespace-pre-line">
+            <div class="my-4 text-sm min-w-strech whitespace-pre-line">
               <div v-if="loadState.profile && inEdit">
                 <textarea
                   v-model="description"
@@ -114,35 +157,43 @@
               <div v-else>
                 {{ profile?.description ?? '' }}
               </div>
-            </p>
+            </div>
 
             <!-- Label update -->
-            <div
-              v-if="!hasError"
-              class="flex flex-row content-center">
+            <div v-if="!hasError" class="flex flex-row content-center">
               <!-- Labels -->
-              <LabelList
-                :labels="labels"
-                :inEdit="inEdit" />
+              <LabelList :labels="labels" :inEdit="inEdit" />
             </div>
 
             <!-- Last indexed -->
             <div v-if="profile.indexedAt" class="text-sm">
               Last indexed at
-              <time class="mx-1 font-light italic" :datetime="profile.indexedAt">{{ DateTime.fromISO(profile.indexedAt).toFormat('DDD TTT') }}</time>
+              <time
+                class="mx-1 font-light italic"
+                :datetime="profile.indexedAt">
+                {{ DateTime.fromISO(profile.indexedAt).toFormat('DDD TTT') }}
+              </time>
             </div>
           </div>
 
-
           <!-- Error alerts -->
           <div v-if="alerts.error">
-            <div class="flex items-center p-4 mx-2 my-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+            <div
+              class="flex items-center p-4 mx-2 my-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+              role="alert">
+              <svg
+                class="flex-shrink-0 inline w-4 h-4 mr-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20">
+                <path
+                  d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
               </svg>
               <span class="sr-only">Error</span>
               <div>
-                <span class="font-semibold mr-2">Error</span> {{ alerts.message }}
+                <span class="font-semibold mr-2">Error</span>
+                {{ alerts.message }}
               </div>
             </div>
           </div>
@@ -153,21 +204,26 @@
 </template>
 
 <script setup>
-  import { useAppConfig } from 'nuxt/app'
+  import { useAppConfig, useState } from 'nuxt/app'
   import { DateTime } from 'luxon'
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
-  import { getAgent, isLoggedIn, getDid, getHandle, getProfile } from '@/composables/auth'
+  import {
+    getAgent,
+    isLoggedIn,
+    getDid,
+    getHandle,
+    getProfile,
+    restoreSession,
+  } from '@/composables/auth'
   import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
   import { FwbAvatar } from 'flowbite-vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-
   const SIGNIN_URL = '/bsky.social/signin'
-
 
   const route = useRoute()
   const router = useRouter()
@@ -210,25 +266,21 @@
   })
 
   const alerts = ref({ error: false, message: '' })
-  const processing = ref(false)
-
 
   onMounted(async () => {
     initPopovers()
-    const agent = getAgent()
+    await getAgent()
     if (!isLoggedIn()) {
       try {
         await restoreSession()
-
       } catch (err) {
         // Back to current page
         navi.setNext(route.name)
-        await router.push({path: SIGNIN_URL})
+        await router.push({ path: SIGNIN_URL })
         return
       }
     }
     try {
-
       // load profile
       await loadProfile()
 
@@ -244,10 +296,9 @@
     } catch (err) {
       console.warn(err)
       navi.setNext(route.name)
-      await router.push({path: SIGNIN_URL})
+      await router.push({ path: SIGNIN_URL })
     }
   })
-
 
   const loadProfile = async () => {
     // Clear errors
@@ -259,13 +310,13 @@
     loadState.value = { profile: false, update: false }
 
     try {
-      const result = await getProfile()
-      profile.value = result
+      profile.value = await getProfile()
       description.value = profile.value.description ?? ''
       labels.value = profile.value.labels
-        ? profile.value.labels.map(label => { return label.val })
+        ? profile.value.labels.map(label => {
+            return label.val
+          })
         : []
-
     } catch (err) {
       if (isDev()) console.error(err)
       hasError.value = true
@@ -288,17 +339,22 @@
     }
   }
 
-
   const editLabel = async () => {
     try {
-      if (inEdit.value
-        && (!isEqualArray(profile.value.labels.map(label => { return label.val }), labels.value)
-          || profile.value.description !== description.value)) {
+      if (
+        inEdit.value &&
+        (!isEqualArray(
+          profile.value.labels.map(label => {
+            return label.val
+          }),
+          labels.value
+        ) ||
+          profile.value.description !== description.value)
+      ) {
         await saveProfile()
         alerts.value.error = false
         inEdit.value = false
-      } else
-        inEdit.value = !inEdit.value
+      } else inEdit.value = !inEdit.value
     } catch (err) {
       console.error(err)
       inEdit.value = true
@@ -320,22 +376,22 @@
     }
 
     if (confirm('Do you want to save changes?')) {
-      const lexProf = (await loadProfileLexicon(profile.value.did))
+      const lexProf = await loadProfileLexicon(profile.value.did)
       const prof = lexProf.value
       if (isDev()) console.log(prof)
 
       if (labels.value.length > 0) {
         const invalidLabels = labels.value.filter(label => {
-          return ['\\','"',"'"].includes(label)
+          return ['\\', '"', "'"].includes(label)
         })
         if (invalidLabels.length > 0) {
           throw new Error(`Invalid labels: ${invalidLabels.join(', ')}`)
         }
       }
 
-      const labelValues = labels.value.map((label) => ({
+      const labelValues = labels.value.map(label => ({
         $type: 'com.atproto.label.defs#selfLabel',
-        val: label
+        val: label,
       }))
       const update = {
         repo: profile.value.handle,
@@ -351,25 +407,26 @@
             values: labelValues,
           },
         },
-        rkey: 'self'
+        rkey: 'self',
       }
       if (isDev()) console.log('saveProfile()::update', update)
 
-      const res = await (await getAgent()).api.com.atproto.repo.putRecord(update)
+      const res = await (
+        await getAgent()
+      ).api.com.atproto.repo.putRecord(update)
       if (isDev()) console.log('saveProfile()::res', res)
       // Refresh profile
       profile.value = await getProfile()
       description.value = profile.value.description ?? ''
       labels.value = profile.value.labels
-        ? profile.value.labels.map(label => { return label.val })
+        ? profile.value.labels.map(label => {
+            return label.val
+          })
         : []
       // Reset edit state
       inEdit.value = false
     }
   }
-
-
-
 </script>
 
 <style scoped>

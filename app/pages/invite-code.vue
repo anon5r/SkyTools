@@ -26,22 +26,24 @@
               class="py-2 px-2 text-gray-600 dark:text-gray-400"
               always-open="false"
               data-accordion="open">
-              <fwb-accordion-panel v-for="record in inviteCodes" :key="record.code">
+              <fwb-accordion-panel
+                v-for="record in inviteCodes"
+                :key="record.code">
                 <fwb-accordion-header aria-expanded="false">
                   <font-awesome-icon
                     :icon="
                       record.uses?.length > 0
                         ? ['fas', 'check-double']
                         : record.disabled
-                        ? ['fas', 'ban']
-                        : ['fas', 'check']
+                          ? ['fas', 'ban']
+                          : ['fas', 'check']
                     "
                     :style="
                       record.uses?.length > 0
                         ? { color: 'text-gray-900' }
                         : record.disabled
-                        ? { color: '#e00000' }
-                        : { color: '#18b404' }
+                          ? { color: '#e00000' }
+                          : { color: '#18b404' }
                     "
                     class="mr-2" />
                   <a
@@ -72,7 +74,8 @@
                         </div>
                         <div>
                           <span
-                            class="text-sm italic text-gray-300 dark:text-gray-700" select-all>
+                            class="text-sm italic text-gray-300 dark:text-gray-700"
+                            select-all>
                             {{ use.usedBy }}
                           </span>
                         </div>
@@ -154,28 +157,37 @@
             </div>
           </template>
           <template #body>
-            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              The API to get invitation codes was available to anyone without the user’s permission.
+            <p
+              class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              The API to get invitation codes was available to anyone without
+              the user’s permission.
             </p>
-            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              However, we only allow logins using the App Password for our service.
+            <p
+              class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              However, we only allow logins using the App Password for our
+              service.
             </p>
-            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              In the future, this functionality will be available with the user’s consent.
+            <p
+              class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              In the future, this functionality will be available with the
+              user’s consent.
             </p>
-            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+            <p
+              class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
               The feature will be closed for the time being. Thank you.
             </p>
           </template>
           <template #footer>
             <div class="flex justify-between">
-              <button @click="navigate.goHome" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              <button
+                @click="navigate.goHome"
+                type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Go back
               </button>
             </div>
           </template>
         </fwb-modal>
-
       </ClientOnly>
     </div>
   </div>
@@ -187,21 +199,25 @@
   import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
   import { getAgent, restoreSession, isLoggedIn } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
-  import { FwbAccordion, FwbAccordionPanel, FwbAccordionHeader, FwbAccordionContent, FwbModal } from 'flowbite-vue'
+  import {
+    FwbAccordion,
+    FwbAccordionPanel,
+    FwbAccordionHeader,
+    FwbAccordionContent,
+    FwbModal,
+  } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
   import { resolveDID } from '~/utils/lexicons'
-  import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
   const route = useRoute()
   const navigate = useNavigation()
 
-
   const inviteCodes = ref(null)
   const nextDate = ref(null)
 
   const blocked = ref(false)
-
 
   const asyncLoad = async () => {
     await restoreSession()
@@ -221,20 +237,18 @@
     await asyncLoad()
   })
 
-
-
   // Go sign-in page
   const loadSigninForm = async () => {
     const router = useRouter()
     const serviceURL = new URL(config.bskyService)
     // Back to current page
-    navigate.setNext(route.name);
+    navigate.setNext(route.name)
     await router.push({ path: `${serviceURL.hostname}/signin` })
   }
 
   /** Gets list of invite codes */
   const getInviteCodes = async () => {
-    const atproto = (await getAgent()).api.com.atproto.server;
+    const atproto = (await getAgent()).api.com.atproto.server
     try {
       const response = await atproto.getAccountInviteCodes()
       let records = []
@@ -243,9 +257,8 @@
       if (response.success && response.data.codes.length > 0) {
         // Sort order to descending order by createdAt field
         response.data.codes.sort((a, b) => {
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-
+          return new Date(b.createdAt) - new Date(a.createdAt)
+        })
 
         for (const record of response.data.codes) {
           // Resolve to handle from DID
@@ -253,32 +266,37 @@
             ...use,
             alsoKnownAs: await resolveDID(use.usedBy, true),
             usedAtLocal: DateTime.fromISO(use.usedAt).toFormat('DDD TTT'),
-          }));
-          const resolvedUses = await Promise.all(rewriteUses);
+          }))
+          const resolvedUses = await Promise.all(rewriteUses)
           // invite code
           const row = {
             ...record,
             showDetail: false,
-            createdAtLocal: DateTime.fromISO(record.createdAt).toFormat('DDD TTT'),
-            uses: resolvedUses
-          };
-          records.push(row);
+            createdAtLocal: DateTime.fromISO(record.createdAt).toFormat(
+              'DDD TTT'
+            ),
+            uses: resolvedUses,
+          }
+          records.push(row)
         }
         // will be get next new code date..
-        nextDate.value = DateTime.fromISO(records[0].createdAt).plus(config.inviteCodeFreq).toFormat('DDD')
+        nextDate.value = DateTime.fromISO(records[0].createdAt)
+          .plus(config.inviteCodeFreq)
+          .toFormat('DDD')
       } else {
-        records = [{
-          code: 'No code available',
-          available: 0,
-          showDetail: false,
-          disabled: true,
-          localCreatedAt: '',
-          uses: []
-        }]
+        records = [
+          {
+            code: 'No code available',
+            available: 0,
+            showDetail: false,
+            disabled: true,
+            localCreatedAt: '',
+            uses: [],
+          },
+        ]
       }
 
-      if (records == null)
-        throw new Error('Failed to get response')
+      if (records == null) throw new Error('Failed to get response')
 
       return records
     } catch (error) {

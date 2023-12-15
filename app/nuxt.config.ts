@@ -10,6 +10,7 @@ export default defineNuxtConfig({
       adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
+      prodURLPrefix: 'https://skytools.anon5r.com',
     },
   },
   ssr: true,
@@ -18,7 +19,7 @@ export default defineNuxtConfig({
     timeline: {enabled: process.env.NODE_ENV === 'development'},
   },
 
-    app: {
+  app: {
     head: {
       title: 'SkyTools',
       meta: [
@@ -51,7 +52,7 @@ export default defineNuxtConfig({
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
 
-        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:card', content: 'summary_image' },
         { name: 'twitter:title', content: 'SkyTools' },
         { name: 'twitter:site', content: '@anon5r' },
         {
@@ -149,11 +150,13 @@ export default defineNuxtConfig({
         JSON.parse(process.env.INVITE_CODE_FREQ)) ||
       ({ weeks: 2 } as object),
     cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
+    prodURLPrefix: process.env.OGP_PREFIX || 'https://skytools.anon5r.com',
   },
   modules: [
     '@nuxtjs/tailwindcss',
     'nuxt-cloudflare-analytics',
     '@nuxt/devtools',
+    "@nuxt/image"
   ],
   css: [
     'flowbite/dist/flowbite.css',
@@ -169,6 +172,12 @@ export default defineNuxtConfig({
       ? ['@atproto/api'] : [],
   },
   routeRules: {
-    '/lookup': { redirect: '/profile' },
+    // Generated at build time for SEO purpose
+    '/': { prerender: true },
+    '/about': { prerender: true },
+    '/profile': { prerender: true },
+    '/invite-code': { prerender: true },
+    '/profile/:did': { swr: 3600 },
+    '/lookup': { redirect: '/profile' }
   },
 })

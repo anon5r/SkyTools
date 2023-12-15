@@ -19,7 +19,11 @@
             :href="`/profile/${props.handle}`"
             class=""
             @click.prevent="clickProfile">
-            {{ props.profile?.value.displayName ? props.profile.value.displayName : props.handle }}
+            {{
+              props.profile?.value.displayName
+                ? props.profile.value.displayName
+                : props.handle
+            }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
@@ -43,7 +47,7 @@
 <script setup>
   import { FwbAvatar } from 'flowbite-vue'
   import { useAppConfig } from 'nuxt/app'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { defineProps, onMounted, ref } from 'vue'
   import { buildAvatarURL } from '@/utils/lexicons'
 
   const config = useAppConfig()

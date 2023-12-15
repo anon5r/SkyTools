@@ -48,14 +48,15 @@
         </ul>
         <!-- -------------------- -->
 
-        <hr class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
+        <hr
+          class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700" />
         <ClientOnly>
-          <ul
-            class="mt-1 space-y-2">
+          <ul class="mt-1 space-y-2">
             <li v-if="loginState.isLoggedIn && loginState.userHandle">
               <span
                 class="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                @<span class="select-all">{{ loginState.userHandle }}</span>
+                @
+                <span class="select-all">{{ loginState.userHandle }}</span>
               </span>
             </li>
 
@@ -63,8 +64,7 @@
               <!-- Profile -->
               <NuxtLink
                 to="/self/profile"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                 <font-awesome-icon
                   :icon="['fas', 'user']"
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
@@ -107,22 +107,26 @@
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
-  import { getAgent, restoreSession, logout as destroySession, isLoggedIn as isLogin, getHandle, getEmail } from '@/composables/auth'
+  import {
+    getAgent,
+    restoreSession,
+    logout as destroySession,
+    isLoggedIn as isLogin,
+  } from '@/composables/auth'
 
   const config = useAppConfig()
   const route = useRoute()
 
-
-  // const auth = useAuth()
   const agent = ref(getAgent())
-  const userHandle = ref(null)
-  const userEmail = ref(null)
-  const useLoginState = () => useState('loginState', () => { return {
-    isLoggedIn: false,
-    userdid: undefined,
-    userHandle: undefined,
-    userEmail: undefined,
-  }})
+  const useLoginState = () =>
+    useState('loginState', () => {
+      return {
+        isLoggedIn: false,
+        userdid: undefined,
+        userHandle: undefined,
+        userEmail: undefined,
+      }
+    })
   const loginState = useLoginState()
 
   // App name
@@ -152,9 +156,7 @@
     ],
   }
 
-
   const logout = () => {
-
     const navi = useNavigation()
     if (isLogin()) {
       const nextPage = route.fullPath
@@ -172,23 +174,17 @@
   onMounted(async () => {
     initDrawers()
     if (process.client) {
-
-      if (agent.value === null)
-        agent.value = getAgent()
+      if (agent.value === null) agent.value = getAgent()
       await restoreSession()
 
       if (!isLogin()) {
         agent.value = getAgent()
-        restoreSession()
-        .then((result) => {
+        restoreSession().then(result => {
           if (result) {
             loginState.value.isLoggedIn = true
-            // loginState.value.userHandle = getHandle()
-            // loginState.value.userEmail = getEmail()
           }
         })
-      } else
-        loginState.value.isLoggedIn = true
+      } else loginState.value.isLoggedIn = true
     }
   })
 </script>

@@ -6,7 +6,9 @@
         <div
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <NuxtLink :to="getPermaLink(props.handle)" @click.prevent="clickProfile">
+          <NuxtLink
+            :to="getParmaLink(props.handle)"
+            @click.prevent="clickProfile">
             <fwb-avatar
               rounded
               :img="props.avatar_url"
@@ -16,13 +18,17 @@
         </div>
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
-          <NuxtLink :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
+          <NuxtLink
+            :href="getParmaLink(props.handle)"
+            @click.prevent="clickProfile">
             {{ props.display_name }}
           </NuxtLink>
           <div
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <NuxtLink :href="getPermaLink(props.handle)" @click.prevent="clickProfile">
+            <NuxtLink
+              :href="getParmaLink(props.handle)"
+              @click.prevent="clickProfile">
               {{ props.handle }}
             </NuxtLink>
           </div>
@@ -54,17 +60,16 @@
       <!-- has reply ? -->
       <div v-if="!props.removed">
         <AtHandleLink
-          v-if="props.post.value.reply"
+          v-if="props.post.value && props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
           class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
-          <FontAwesomeIcon :icon="['fas', 'reply']" />
+          <font-awesome-icon :icon="['fas', 'reply']" />
           Reply
         </AtHandleLink>
       </div>
       <!-- Post message -->
       <div v-if="!props.removed" class="break-words whitespace-pre-line">
         <div class="text-sm">
-
           <RitchText :post="props.post" />
         </div>
       </div>
@@ -72,11 +77,12 @@
       <div v-if="!props.removed && props.post.value.embed">
         <KeepAlive>
           <Suspense>
-            <!-- Embeded (image, record...) -->
+            <!-- Embedded (image, record...) -->
             <PostEmbed :did="did" :embed="props.post.value.embed" />
             <template #fallback>
               <div class="flex justify-center">
-                <div class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
+                <div
+                  class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
               </div>
             </template>
           </Suspense>
@@ -87,22 +93,27 @@
     <div class="flex justify-end items-end">
       <div v-if="!props.removed" class="mt-3 inline-box">
         <!-- Labels -->
-        <ul v-if="props.post.value.labels?.values" class="inline-block">
+        <ul
+          v-if="
+            props.post.value.labels?.values &&
+            props.post.value.label.values.length > 0
+          "
+          class="inline-block">
           <li
             v-for="(label, index) in props.post.value.labels?.values"
-            v-if="props.post.value.label.values.length > 0"
             :key="index"
             class="inline-block items-center px-1 py-0.5 mr-2 text-xs font-medium rounded"
             :class="
-            label.val === '!warn'
-            ? `text-yellow-800 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300`
-            : label.val === 'porn' || label.val === 'nsfw'
-            ? `text-pink-500 bg-pink-100 dark:bg-pink-700 dark:text-pink-300`
-            : label.val === 'spam'
-            ? `text-zinc-800 bg-zinc-100 dark:bg-zin-900 dark:text-zinc-300`
-            : `text-indigo-800 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-300`
+              label.val === '!warn'
+                ? `text-yellow-800 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300`
+                : label.val === 'porn' || label.val === 'nsfw'
+                  ? `text-pink-500 bg-pink-100 dark:bg-pink-700 dark:text-pink-300`
+                  : label.val === 'spam'
+                    ? `text-zinc-800 bg-zinc-100 dark:bg-zin-900 dark:text-zinc-300`
+                    : `text-indigo-800 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-300`
             ">
-              <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="xs" />{{ label.val }}
+            <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="xs" />
+            {{ label.val }}
           </li>
         </ul>
       </div>
@@ -117,12 +128,11 @@
 
 <script setup>
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { defineProps, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
-  import { useAppConfig } from 'nuxt/app'
   import { parseAtUri } from '@/utils/lexicons'
-
-  const config = useAppConfig()
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { isDev } from '~/utils/helpers'
 
   const props = defineProps({
     did: {
@@ -159,7 +169,12 @@
 
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = getPermaLink(props.handle ?? atUri.did, atUri.rkey, '')
+    postURL.value = getParmaLink(props.handle ?? atUri.did, atUri.rkey)
+    if (isDev()) {
+      console.log(atUri)
+      console.log('props.post = ', props.post)
+      console.log('postURL = ', postURL.value)
+    }
   })
 
   /**
@@ -176,12 +191,10 @@
    * @param {string} appViewURL
    * @return {string} path or URL
    */
-  const getPermaLink = (handleOrDid, postID) => {
-    if (postID)
-      return `/profile/${handleOrDid}/post/${postID}`
+  const getParmaLink = (handleOrDid, postID) => {
+    if (postID) return `/profile/${handleOrDid}/post/${postID}`
     return `/profile/${handleOrDid}`
   }
-
 </script>
 
 <style scoped>

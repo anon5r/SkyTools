@@ -1,14 +1,11 @@
 import type { AtpSessionEvent, AtpSessionData } from '@atproto/api'
-import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 import { BskyAgent } from '@atproto/api'
+import { useState, useAppConfig } from 'nuxt/app'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
+import { isDev } from '~/utils/helpers'
 
 let _agent: Ref<BskyAgent | null> = ref(null)
-
-let _isLoggedIn: boolean = false
-
-let _session: AtpSessionData | undefined = undefined
 
 const initLoginState = (): {
   isLoggedIn: boolean
@@ -38,7 +35,6 @@ const getAgent = async (service?: string): Promise<BskyAgent> => {
         if (process.client && sess != null) {
           localStorage.setItem('credentials', JSON.stringify(sess))
           localStorage.setItem('service', service as string)
-          _session = sess
         }
       },
     })
@@ -62,7 +58,6 @@ export const login = async (credentials: {
     if (response.success && process.client) {
       if (process.client) {
         localStorage.setItem('credentials', JSON.stringify(agent.session))
-        _isLoggedIn = true
         const useLoginState = useState('loginState', initLoginState)
         console.log(useLoginState.value)
         useLoginState.value = {
@@ -94,7 +89,6 @@ export const logout = async (): Promise<void> => {
       const useLoginState = useState('loginState', initLoginState)
       useLoginState.value = initLoginState()
     }
-    _isLoggedIn = false
   } catch (error) {
     console.error(error)
   }
@@ -108,12 +102,12 @@ export const restoreSession = async (): Promise<void> => {
         const session = JSON.parse(credentials)
         const agent: BskyAgent = await getAgent()
         const res = await agent.resumeSession(session)
-        _isLoggedIn = res.success
         const useLoginState: Ref<{
           isLoggedIn: boolean
           userHandle: string | undefined
           userDid: string | undefined
           userEmail: string | undefined
+          // eslint-disable-next-line no-undef
         }> = useState('loginState', initLoginState)
         useLoginState.value = {
           isLoggedIn: res.success,
@@ -163,17 +157,13 @@ export const getProfile = async () => {
   const agent: BskyAgent = await getAgent()
   if (!agent) throw new Error('Require authentication')
 
-  try {
-    const result = await agent.api.app.bsky.actor.getProfile({
-      actor: agent.session?.did as string,
-    })
+  const result = await agent.api.app.bsky.actor.getProfile({
+    actor: agent.session?.did as string,
+  })
 
-    if (!result.success) throw new Error('Could not get profile')
+  if (!result.success) throw new Error('Could not get profile')
 
-    return result.data
-  } catch (err) {
-    throw err
-  }
+  return result.data
 }
 
 export function useAuth() {
