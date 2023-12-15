@@ -77,7 +77,7 @@
       <div v-if="!props.removed && props.post.value.embed">
         <KeepAlive>
           <Suspense>
-            <!-- Embeded (image, record...) -->
+            <!-- Embedded (image, record...) -->
             <PostEmbed :did="did" :embed="props.post.value.embed" />
             <template #fallback>
               <div class="flex justify-center">

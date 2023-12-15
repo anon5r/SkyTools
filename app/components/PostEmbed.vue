@@ -119,7 +119,12 @@
   import { buildPostURL, parseAtUri } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
   import { FwbAvatar } from 'flowbite-vue'
-  import { AppBskyActorProfile } from '@atproto/api'
+  import {
+    AppBskyActorProfile,
+    AppBskyEmbedImages,
+    AppBskyEmbedRecord,
+    AppBskyEmbedRecordWithMedia,
+  } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
 
   const config = useAppConfig()
@@ -147,31 +152,57 @@
   })
 
   onMounted(async () => {
-    if (props.embed.$type === 'app.bsky.embed.record') {
+    if (isDev()) {
+      console.log(
+        '[PostEmbed.vue:EmbedRecords] ',
+        AppBskyEmbedRecord.isMain(props.embed)
+      )
+      console.log(
+        '[PostEmbed.vue:EmbedImages] ',
+        AppBskyEmbedImages.isMain(props.embed)
+      )
+    }
+    if (AppBskyEmbedRecord.isMain(props.embed)) {
       // Quoted posts
-      post.value = await loadPostData(config, props.did, props.embed.record.uri)
+      post.value = await loadPostData(props.embed.record.uri)
       if (isDev()) console.log('post(ClientPost) ', post.value)
       // Post URL
       postURL.value = post.value.appUrl
     } else if (
-      props.embed.$type === 'app.bsky.embed.images' ||
-      props.embed.$type === 'app.bsky.embed.recordWithMedia'
+      AppBskyEmbedImages.isMain(props.embed) ||
+      AppBskyEmbedRecordWithMedia.isMain(props.embed)
     ) {
       // Images
-      // Post URL
-      postURL.value = await buildPostURL(
-        config.bskyAppURL,
-        props.embed.images[0].image.uri
-      )
+      /** @type {ValidationResult} img */
+      const validRes = AppBskyEmbedImages.validateMain(props.embed)
+      console.log(validRes)
+      if (validRes.success) {
+        for (const img of validRes.value.images) {
+          console.log(img.image)
+          postURL.value = await buildPostURL(
+            config.bskyAppURL,
+            img.image.original.ref,
+            props.did
+          )
+          // Post URL
+          console.log('props.embed.images postURL.value ==== ', postURL.value)
+        }
+      }
+      //
+      // postURL.value = await buildPostURL(
+      //   config.bskyAppURL,
+      //   /** @props.embed.images {AppBskyEmbedImages} */
+      //   props.embed.images[0].image.uri
+      // )
     }
   })
 
   const loadPostData = async atURI => {
-    const client = await ClientPost.load(
+    console.log('PostEmbed.loadPostData(atURI) ==> ', atURI)
+    return await ClientPost.load(
       toRaw(config),
-      atURI ?? props.embed.record.uri
+      atURI ?? props.embed.value.record.uri
     )
-    return client
   }
 
   const showPost = atURI => {
