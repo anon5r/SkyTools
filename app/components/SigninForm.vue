@@ -70,32 +70,15 @@
 
 <script setup>
   import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { ref, defineProps, onMounted } from 'vue'
+  import { ref, defineProps } from 'vue'
   import { isDev } from '~/utils/helpers'
-  import { useAuth } from '~/composables/auth'
+  import { initLoginState, login as AuthLogin } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
   const route = useRoute()
   const navigate = useNavigation()
-  const useLoginState = () =>
-    useState <
-    { isLoggedIn: boolean, userHandle: string, userEmail: string } >
-    ('loginState',
-    () => {
-      return { isLoggedIn: false, userHandle: '', userEmail: '' }
-    })
-  const loginState = useLoginState()
-  const auth = ref(null)
-  const handle = ref('')
-  const password = ref('')
-  const errorMessage = ref('')
-  const validateError = ref('')
-  const isProcessing = ref(false)
-  const pds = route.params.service
-    ? `.${route.params.service}`
-    : `.${props.service}` ?? `.${config.defaultSuffix}`
 
   const props = defineProps({
     service: {
@@ -104,10 +87,16 @@
       default: 'bsky.social',
     },
   })
-
-  onMounted(async () => {
-    if (auth.value == null) auth.value = await useAuth()
-  })
+  const useLoginState = () => useState('loginState', initLoginState)
+  const loginState = useLoginState()
+  const handle = ref('')
+  const password = ref('')
+  const errorMessage = ref('')
+  const validateError = ref('')
+  const isProcessing = ref(false)
+  const pds = route.params.service
+    ? `.${route.params.service}`
+    : `.${props.service}` ?? `.${config.defaultSuffix}`
 
   const validateHandle = () => {
     if (
@@ -134,7 +123,7 @@
       try {
         isProcessing.value = true
         if (
-          await auth.value.login({
+          await AuthLogin({
             identifier: handle.value,
             password: password.value,
             pds: pds.value,
@@ -144,7 +133,6 @@
             navigate.getNext() !== null &&
             navigate.getNext() !== route.fullPath
           ) {
-            auth.value.isLoggedIn = true
             loginState.value.isLoggedIn = true
             navigate.goNext()
           } else {

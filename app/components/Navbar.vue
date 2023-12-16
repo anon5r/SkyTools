@@ -112,21 +112,14 @@
     restoreSession,
     logout as destroySession,
     isLoggedIn as isLogin,
+    initLoginState,
   } from '@/composables/auth'
 
   const config = useAppConfig()
   const route = useRoute()
 
   const agent = ref(getAgent())
-  const useLoginState = () =>
-    useState('loginState', () => {
-      return {
-        isLoggedIn: false,
-        userdid: undefined,
-        userHandle: undefined,
-        userEmail: undefined,
-      }
-    })
+  const useLoginState = () => useState('loginState', initLoginState)
   const loginState = useLoginState()
 
   // App name

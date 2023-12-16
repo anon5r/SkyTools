@@ -1,19 +1,21 @@
 import type { AtpSessionEvent, AtpSessionData } from '@atproto/api'
+import type { Ref } from 'vue'
 import { BskyAgent } from '@atproto/api'
 import { useState, useAppConfig } from 'nuxt/app'
 import { ref } from 'vue'
-import type { Ref } from 'vue'
 import { isDev } from '~/utils/helpers'
+
+declare interface LoginState {
+  isLoggedIn: boolean
+  userHandle: string | undefined
+  userDid: string | undefined
+  userEmail: string | undefined
+  session?: AtpSessionData | undefined
+}
 
 let _agent: Ref<BskyAgent | null> = ref(null)
 
-const initLoginState = (): {
-  isLoggedIn: boolean
-  userEmail: string | undefined
-  userDid: string | undefined
-  userHandle: string | undefined
-  session?: AtpSessionData
-} => {
+const initLoginState = (): LoginState => {
   return {
     isLoggedIn: false,
     userEmail: undefined,
@@ -102,13 +104,7 @@ export const restoreSession = async (): Promise<void> => {
         const session = JSON.parse(credentials)
         const agent: BskyAgent = await getAgent()
         const res = await agent.resumeSession(session)
-        const useLoginState: Ref<{
-          isLoggedIn: boolean
-          userHandle: string | undefined
-          userDid: string | undefined
-          userEmail: string | undefined
-          // eslint-disable-next-line no-undef
-        }> = useState('loginState', initLoginState)
+        const useLoginState = useState('loginState', initLoginState)
         useLoginState.value = {
           isLoggedIn: res.success,
           userHandle: res.data.handle ?? undefined,
@@ -177,5 +173,6 @@ export function useAuth() {
     getDid,
     getEmail,
     getProfile,
+    initLoginState,
   }
 }
