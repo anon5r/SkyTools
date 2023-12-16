@@ -33,7 +33,7 @@
               :icon="['fas', 'triangle-exclamation']"
               class="mr-1 text-xs" />
           </ClientOnly>
-          Temporary restricted
+          Temporary closed
         </span>
         <span href="#" class="label-auth-required">
           <ClientOnly>

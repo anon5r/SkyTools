@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   ssr: true,
   devtools: {
     enabled: process.env.NODE_ENV === 'development',
-    timeline: {enabled: process.env.NODE_ENV === 'development'},
+    timeline: { enabled: process.env.NODE_ENV === 'development' },
   },
 
   app: {
@@ -156,7 +156,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     'nuxt-cloudflare-analytics',
     '@nuxt/devtools',
-    "@nuxt/image"
+    '@nuxt/image',
   ],
   css: [
     'flowbite/dist/flowbite.css',
@@ -168,8 +168,7 @@ export default defineNuxtConfig({
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
   build: {
-    transpile: process.env.NODE_ENV === 'production'
-      ? ['@atproto/api'] : [],
+    transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
   },
   routeRules: {
     // Generated at build time for SEO purpose
@@ -178,6 +177,6 @@ export default defineNuxtConfig({
     '/profile': { prerender: true },
     '/invite-code': { prerender: true },
     '/profile/:did': { swr: 3600 },
-    '/lookup': { redirect: '/profile' }
+    '/lookup': { redirect: '/profile' },
   },
 })
