@@ -9,7 +9,7 @@
             :config="config"
             :did="did"
             :handle="handle"
-            :avatar_url="avatarURL ?? 'about:blank'"
+            :avatar_url="avatarURL ?? null"
             :display_name="displayName"
             :post="toRaw(record)" />
         </div>
@@ -106,8 +106,12 @@
     }
 
     useSeoMeta({
-      title: `${config.title} - ${handleOrDid.value}`,
-      ogTitle: `${config.title} - ${handleOrDid.value}`,
+      title: `Post | ${config.title} ${
+        handleOrDid.value ?? '- ' + handleOrDid.value
+      }`,
+      ogTitle: `Post | ${config.title} ${
+        handleOrDid.value ?? '- ' + handleOrDid.value
+      }`,
       ogImage: `${config.prodURLPrefix}/images/ogp/profile.png`,
       twitterCard: 'summary',
     })

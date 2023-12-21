@@ -196,7 +196,7 @@
 <script setup lang="js">
   import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
-  import { useAppConfig, useRoute, useRouter } from 'nuxt/app'
+  import { useAppConfig, useRoute, useRouter, useSeoMeta } from 'nuxt/app'
   import { getAgent, restoreSession, isLoggedIn } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
   import {
@@ -227,6 +227,12 @@
       loadSigninForm()
     }
   }
+  useSeoMeta({
+    title: `Invite code | ${config.title}`,
+    ogTitle: `Invite code | ${config.title}`,
+    ogImage: `${config.prodURLPrefix}/images/ogp/invitecode.png`,
+    twitterCard: 'summary',
+  })
 
   onMounted(async () => {
     // let useAuth = import('@/composables/auth').then(async (module) => {

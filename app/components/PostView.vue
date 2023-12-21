@@ -11,7 +11,7 @@
             @click.prevent="clickProfile">
             <fwb-avatar
               rounded
-              :img="props.avatar_url"
+              :img="props.avatar_url ?? null"
               :alt="props.handle"
               class="min-w-max avatar-object-cover" />
           </NuxtLink>

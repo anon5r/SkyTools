@@ -61,9 +61,14 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta } from 'nuxt/app'
   const config = useAppConfig()
   const appName = config.title
+  useSeoMeta({
+    title: config.title,
+    ogTitle: config.title,
+    ogImage: `${config.cdnPrefix}/images/ogp/default.png`,
+  })
 </script>
 
 <style scoped>

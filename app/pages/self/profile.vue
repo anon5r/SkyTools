@@ -204,7 +204,7 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useState } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta, useState } from 'nuxt/app'
   import { DateTime } from 'luxon'
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
@@ -283,6 +283,12 @@
     try {
       // load profile
       await loadProfile()
+
+      useSeoMeta({
+        title: `My page | ${config.title}`,
+        ogTitle: `My page | ${config.title}`,
+        ogImage: `${config.prodURLPrefix}/images/ogp/profile.png`,
+      })
 
       // load defined labels
       const res = await fetch('/labels.json', { method: 'get' })

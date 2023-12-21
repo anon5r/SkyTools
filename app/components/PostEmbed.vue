@@ -4,19 +4,9 @@
       <!-- Embed Record -->
       <div
         class="max-w my-2 ml-8 mr-2 text-sm overflow-ellipsis bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <ClientOnly
+        <div
           fallback-tag="div"
           class="flex items-center max-w mr-3 text-md text-gray-900 dark:text-white">
-          <template #placeholder>
-            <a
-              href="#"
-              class="block m-0 p-4"
-              :title="props.embed.record.uri"
-              @click.prevent="loadPostData(props.embed.record.uri)">
-              Loading...
-              <div>{{ props.embed.record.uri }}</div>
-            </a>
-          </template>
           <a
             v-if="post && !post.isRemoved"
             :href="postUrl ?? '#'"
@@ -27,18 +17,22 @@
               <div
                 class="flex flex-wrap mb-3 text-md text-gray-400 dark:text-gray-500">
                 <!-- Avatar -->
+                {{ post.profile }}
+                {{ getProfile(post.profile) }}
                 <fwb-avatar
                   rounded
                   size="xs"
-                  :img="post.avatarURL"
+                  :img="getProfile(post.profile).img ?? undefined"
                   :alt="post.handle"
                   class="inline-flex mr-1 min-w-max avatar-object-cover" />
 
                 <div class="inline-flex items-center">
                   <!-- DisplayName -->
+                  {{ post.profile.value.displayName }}
                   <div v-if="post?.profile?.displayName" class="ml-1 mr-2">
                     {{
-                      post.profile && AppBskyActorProfile.isRecord(post.profile)
+                      post.profile &&
+                      AppBskyActorProfile.isRecord(post.profile.value)
                         ? post.profile.displayName
                         : post.handle
                     }}
@@ -82,7 +76,7 @@
           <div v-else-if="post && post.isRemoved" class="p-4">
             This post has been removed
           </div>
-        </ClientOnly>
+        </div>
       </div>
     </div>
     <div

@@ -336,7 +336,7 @@
 
 <script setup>
   import axios from 'axios'
-  import { useAppConfig } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta } from 'nuxt/app'
   import { ref, watch, onMounted, toRaw } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
@@ -415,8 +415,19 @@
 
   onMounted(async () => {
     lexicons.setConfig(toRaw(config))
+
+    useSeoMeta({
+      title: `Profile | ${config.title} ${id.value ?? ' - ' + id.value}`,
+      ogTitle: `Profile | ${config.title} ${id.value ?? ' - ' + id.value}`,
+      ogImage: `${config.prodURLPrefix}/images/ogp/profile.png`,
+      twitterCard: 'summary',
+    })
+
     if (id.value) {
       await showProfile(id.value)
+      useSeoMeta({
+        title: `Profile | ${config.title} - ${userinfo.value.profile.value.displayName} (${userinfo.value.details.handle})`,
+      })
     }
 
     showBlocks.value = localStorage.getItem('_easter') === 'true'
