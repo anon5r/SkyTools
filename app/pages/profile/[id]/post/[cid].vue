@@ -23,7 +23,6 @@
                   <!-- Avatar -->
                   <fwb-avatar
                     rounded
-                    img="about:blank"
                     :alt="handleOrDid"
                     class="min-w-max avatar-object-cover" />
                 </div>
