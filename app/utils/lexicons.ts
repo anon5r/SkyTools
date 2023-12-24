@@ -342,6 +342,17 @@ export const buildAvatarURL = (
   return `${cdnURL}/${config.defaultPDS}/image/${did}/${avatarRef}`
 }
 
+export const buildBannerURL = (
+  cdnURL: string,
+  did: string,
+  profile: AppBskyActorProfile.Record
+) => {
+  if (!AppBskyActorProfile.isRecord(profile))
+    throw new Error('Invalid profile record')
+  const avatarRef = profile.banner?.ref
+  return `${cdnURL}/${config.defaultPDS}/image/${did}/${avatarRef}`
+}
+
 /**
  * Build post page URL for App
  * @param {string} urlPrefix App URL prefix
