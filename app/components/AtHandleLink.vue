@@ -1,6 +1,10 @@
 <template>
   <a :href="postURL" class="text-blue-700 dark:text-blue-500">
-    <slot>@{{ handle }}</slot>
+    <slot v-if="!props.withHandle || !$slots.default()">@{{ handle }}</slot>
+    <template v-else>
+      <slot />
+      @{{ handle }}
+    </template>
   </a>
 </template>
 
@@ -18,12 +22,16 @@
       type: String,
       require: true,
     },
+    withHandle: {
+      type: Boolean,
+      require: false,
+      default: false,
+    },
   })
 
   onMounted(async () => {
     const parseUri = parseAtUri(props.aturi)
-    const resolveHandle = await resolveDID(parseUri.did)
-    handle.value = resolveHandle
+    handle.value = await resolveDID(parseUri.did)
     postURL.value = await buildPostURL(config.bskyAppURL, props.aturi)
   })
 </script>

@@ -62,7 +62,8 @@
         <AtHandleLink
           v-if="props.post.value && props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
-          class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
+          :with-handle="true"
+          class="inline-block font-light text-xs text-gray-600 hover:text-gray-500 border border-gray-500 hover:bg-gray-200 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
           <font-awesome-icon :icon="['fas', 'reply']" />
           Reply
         </AtHandleLink>
