@@ -169,6 +169,7 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
+    analyze: process.env.NODE_ENV !== 'production',
   },
   routeRules: {
     // Generated at build time for SEO purpose
