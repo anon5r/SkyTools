@@ -104,7 +104,7 @@
                   }}
                 </h2>
                 <div
-                  class="text-sm font-semibold text-gray-500 dark:text-slate-500">
+                  class="text-sm font-semibold text-gray-600 dark:text-slate-400">
                   <!-- Handle -->
                   <span
                     v-if="loadState.details"
@@ -115,7 +115,7 @@
                   <span v-else class="mt-4">loading...</span>
                 </div>
                 <div
-                  class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
+                  class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-600 dark:text-slate-400 select-all">
                   <!-- DID -->
                   {{ loadState.details ? userinfo.details.did : 'loading...' }}
                 </div>
@@ -350,9 +350,9 @@
 <script setup>
   import axios from 'axios'
   import { useAppConfig, useSeoMeta } from 'nuxt/app'
-  import { ref, watch, onMounted, toRaw } from 'vue'
+  import { onMounted, ref, toRaw, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { FwbAvatar, FwbTabs, FwbTab } from 'flowbite-vue'
+  import { FwbAvatar, FwbTab, FwbTabs } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -636,10 +636,10 @@
    * Build avatar URL
    */
   const buildAvatarURL = (did, profile) => {
-    return lexicons.buildAvatarURL(config.cdnPrefix, did, profile)
+    return lexicons.buildBlobRefURL(config.cdnPrefix, did, profile, 'avatar')
   }
   const buildBannerURL = (did, profile) => {
-    return lexicons.buildBannerURL(config.cdnPrefix, did, profile)
+    return lexicons.buildBlobRefURL(config.cdnPrefix, did, profile, 'banner')
   }
 
   /**

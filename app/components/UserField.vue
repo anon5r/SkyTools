@@ -48,7 +48,7 @@
   import { FwbAvatar } from 'flowbite-vue'
   import { useAppConfig } from 'nuxt/app'
   import { defineProps, onMounted, ref } from 'vue'
-  import { buildAvatarURL } from '@/utils/lexicons'
+  import { buildBlobRefURL } from '@/utils/lexicons'
 
   const config = useAppConfig()
 
@@ -78,7 +78,7 @@
   onMounted(() => {
     if (props.profile) {
       if (props.profile.value.avatar) {
-        const url = buildAvatarURL(
+        const url = buildBlobRefURL(
           config.cdnPrefix,
           props.did,
           props.profile.value

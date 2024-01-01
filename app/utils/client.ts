@@ -8,23 +8,44 @@ class ClientPost {
   private _atUri: { [key: string]: string } = {}
   private _profile: AppBskyActorProfile.Record | null = null
   private _handle: string | undefined = undefined
-  private _avatarURL: string | null = null
   private _appUrl: string | null = null
   private _record: AppBskyFeedPost.Record | null = null
   private _removed: boolean = false
+  private _avatarURL: string | null = null
+  private _bannerURL: string | null = null
 
   public get atUri(): { [key: string]: string } {
     return this._atUri
   }
-
+  public get did(): string | undefined {
+    return this._atUri.did
+  }
   public get profile(): AppBskyActorProfile.Record {
     return this._profile as AppBskyActorProfile.Record
   }
+  /**
+   * Returns the handle value.
+   * @return {string | undefined} The handle value.
+   */
   public get handle(): string | undefined {
     return this._handle
   }
+  /**
+   * Returns the URL of the blob for the user.
+   * The URL is constructed using the CDN URL, user's DID, user's profile, and 'avatar' as the blob reference.
+   *
+   * @returns The URL of the avatar.
+   */
   public get avatarURL(): string | null {
     return this._avatarURL
+  }
+  /**
+   * Retrieve the banner URL for the given actor profile.
+   *
+   * @returns {string} The URL of the banner.
+   */
+  public get bannerURL(): string | null {
+    return this._bannerURL
   }
   public get appUrl(): string | null {
     return this._appUrl
@@ -38,23 +59,6 @@ class ClientPost {
 
   private constructor(config: any) {
     lexicons.setConfig(config)
-  }
-
-  /**
-   * Get profile and avatar from DID
-   * @param did string DID
-   */
-  protected async getProfileAndAvatar(did: string): Promise<void> {
-    lexicons
-      .loadProfile(did)
-      .then(profile => {
-        console.log(profile)
-        this._profile = profile
-        this._avatarURL = lexicons.buildAvatarURL(cdnURL, did, this._profile)
-      })
-      .catch(err => {
-        throw err
-      })
   }
 
   /**
@@ -79,8 +83,24 @@ class ClientPost {
     }
 
     try {
-      // Load avatar and profile
-      await client.getProfileAndAvatar(did)
+      // Load profile
+      client._profile = await lexicons.loadProfile(did)
+
+      // Avatar
+      client._avatarURL = lexicons.buildBlobRefURL(
+        cdnURL,
+        client.atUri.did,
+        client.profile.value as AppBskyActorProfile.Record,
+        'avatar'
+      )
+
+      // Banner
+      client._bannerURL = lexicons.buildBlobRefURL(
+        cdnURL,
+        client.atUri.did,
+        client.profile.value as AppBskyActorProfile.Record,
+        'banner'
+      )
     } catch (err) {
       if (isDev()) console.error(err)
       console.info('No profile: ' + did)

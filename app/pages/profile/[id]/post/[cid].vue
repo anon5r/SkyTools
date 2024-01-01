@@ -59,14 +59,14 @@
 
 <script setup>
   import { useAppConfig, useSeoMeta } from 'nuxt/app'
-  import { ref, onMounted, toRaw } from 'vue'
+  import { onMounted, ref, toRaw } from 'vue'
   import { useRoute } from 'vue-router'
   import {
-    resolveHandle,
-    resolveDID,
-    loadProfile,
-    buildAvatarURL,
+    buildBlobRefURL,
     getPost,
+    loadProfile,
+    resolveDID,
+    resolveHandle,
   } from '~/utils/lexicons'
   import { FwbAvatar } from 'flowbite-vue'
   import { showError } from '#app/composables/error'
@@ -116,10 +116,11 @@
     })
     try {
       profile.value = await loadProfile(did.value)
-      avatarURL.value = buildAvatarURL(
+      avatarURL.value = buildBlobRefURL(
         config.cdnPrefix,
         did.value,
-        profile.value.value
+        profile.value.value,
+        'avatar'
       )
       displayName.value = profile.value.value.displayName
     } catch (e) {
