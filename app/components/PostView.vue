@@ -7,11 +7,11 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <NuxtLink
-            :to="getParmaLink(props.handle)"
+            :to="ClientPost.getPermanentLink(props.handle)"
             @click.prevent="clickProfile">
             <fwb-avatar
               rounded
-              :img="props.avatar_url"
+              :img="props.avatar_url ?? null"
               :alt="props.handle"
               class="min-w-max avatar-object-cover" />
           </NuxtLink>
@@ -19,15 +19,15 @@
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <NuxtLink
-            :href="getParmaLink(props.handle)"
+            :href="ClientPost.getPermanentLink(props.handle)"
             @click.prevent="clickProfile">
-            {{ props.display_name }}
+            {{ props.display_name ?? props.handle }}
           </NuxtLink>
           <div
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <NuxtLink
-              :href="getParmaLink(props.handle)"
+              :href="ClientPost.getPermanentLink(props.handle)"
               @click.prevent="clickProfile">
               {{ props.handle }}
             </NuxtLink>
@@ -52,7 +52,7 @@
               }}
             </time>
           </NuxtLink>
-          <time v-else>--------</time>
+          <time v-else>--</time>
         </div>
       </div>
     </div>
@@ -62,7 +62,8 @@
         <AtHandleLink
           v-if="props.post.value && props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
-          class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
+          :with-handle="true"
+          class="inline-block font-light text-xs text-gray-600 hover:text-gray-500 border border-gray-500 hover:bg-gray-200 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
           <font-awesome-icon :icon="['fas', 'reply']" />
           Reply
         </AtHandleLink>
@@ -133,6 +134,7 @@
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '~/utils/helpers'
+  import { ClientPost } from '@/utils/client'
 
   const props = defineProps({
     did: {
@@ -148,7 +150,7 @@
     display_name: {
       type: String,
       required: true,
-      default: 'Nobody',
+      default: undefined,
     },
     avatar_url: {
       type: String,
@@ -169,7 +171,10 @@
 
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = getParmaLink(props.handle ?? atUri.did, atUri.rkey)
+    postURL.value = ClientPost.getPermanentLink(
+      props.handle ?? atUri.did,
+      atUri.rkey
+    )
     if (isDev()) {
       console.log(atUri)
       console.log('props.post = ', props.post)
@@ -182,18 +187,6 @@
    */
   const clickProfile = () => {
     emits('showProfile', props.handle)
-  }
-
-  /**
-   *
-   * @param {string} handleOrDid
-   * @param {string} postID
-   * @param {string} appViewURL
-   * @return {string} path or URL
-   */
-  const getParmaLink = (handleOrDid, postID) => {
-    if (postID) return `/profile/${handleOrDid}/post/${postID}`
-    return `/profile/${handleOrDid}`
   }
 </script>
 

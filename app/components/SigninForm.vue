@@ -70,7 +70,7 @@
 
 <script setup>
   import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { ref, defineProps } from 'vue'
+  import { defineProps, ref } from 'vue'
   import { isDev } from '~/utils/helpers'
   import { initLoginState, login as AuthLogin } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'

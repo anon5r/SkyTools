@@ -34,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, defineComponent } from 'vue'
   import type { Ref } from 'vue'
+  import { defineComponent, onMounted, ref } from 'vue'
 
   defineComponent({ name: 'ToggleDarkmode' })
 

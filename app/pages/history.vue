@@ -79,11 +79,12 @@
   import { isDev } from '@/utils/helpers'
   import {
     formatIdentifier,
-    resolveHandle,
     getIdentityAuditLogs,
+    resolveHandle,
   } from '@/utils/lexicons'
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
+  import { useAppConfig, useSeoMeta } from 'nuxt/app'
   import axios from 'axios'
 
   const route = useRoute()
@@ -92,11 +93,27 @@
   const handle = ref(route.query.id || '')
   const results = ref([])
   const hasError = ref(false)
+  const config = useAppConfig()
 
+  useSeoMeta({
+    title: `Handle history | ${config.title}`,
+    ogTitle: `Handle history | ${config.title}`,
+    ogImage: `${config.prodURLPrefix}/images/ogp/history.png`,
+    twitterCard: 'summary',
+  })
   onMounted(() => {
     if (route.query.id) handle.value = route.query.id
 
     if (handle.value.length > 0) getHistory(handle.value)
+
+    useSeoMeta({
+      title: `Handle history | ${config.title} ${
+        handle.value ?? '- ' + handle.value
+      }`,
+      ogTitle: `Handle history | ${config.title} - ${
+        handle.value ?? '- ' + handle.value
+      }`,
+    })
   })
 
   const focusout = () => {

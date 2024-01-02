@@ -70,8 +70,8 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import { useAppConfig } from 'nuxt/app'
+  import { onMounted, ref } from 'vue'
+  import { useAppConfig, useSeoMeta } from 'nuxt/app'
   import { resolveDID } from '~/utils/lexicons'
 
   const config = useAppConfig()
@@ -88,6 +88,12 @@
   }
 
   onMounted(async () => {
+    useSeoMeta({
+      title: `About | ${config.title}`,
+      ogTitle: `About | ${config.title}`,
+      ogImage: `${config.prodURLPrefix}/images/ogp/default.png`,
+      twitterCard: 'summary',
+    })
     const handle = await resolveDID(config.adminDID, true)
     if (handle) {
       adminHandle.value = handle

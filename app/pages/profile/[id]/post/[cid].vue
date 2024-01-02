@@ -9,7 +9,7 @@
             :config="config"
             :did="did"
             :handle="handle"
-            :avatar_url="avatarURL ?? 'about:blank'"
+            :avatar_url="avatarURL ?? null"
             :display_name="displayName"
             :post="toRaw(record)" />
         </div>
@@ -23,7 +23,6 @@
                   <!-- Avatar -->
                   <fwb-avatar
                     rounded
-                    img="about:blank"
                     :alt="handleOrDid"
                     class="min-w-max avatar-object-cover" />
                 </div>
@@ -60,14 +59,14 @@
 
 <script setup>
   import { useAppConfig, useSeoMeta } from 'nuxt/app'
-  import { ref, onMounted, toRaw } from 'vue'
+  import { onMounted, ref, toRaw } from 'vue'
   import { useRoute } from 'vue-router'
   import {
-    resolveHandle,
-    resolveDID,
-    loadProfile,
-    buildAvatarURL,
+    buildBlobRefURL,
     getPost,
+    loadProfile,
+    resolveDID,
+    resolveHandle,
   } from '~/utils/lexicons'
   import { FwbAvatar } from 'flowbite-vue'
   import { showError } from '#app/composables/error'
@@ -95,30 +94,40 @@
   onMounted(async () => {
     try {
       did.value = await resolveHandle(handleOrDid.value)
-    } catch (e) {
-      console.error(e)
-    }
-    try {
+
       handle.value = await resolveDID(did.value)
       displayName.value = handle.value
     } catch (e) {
       console.error(e)
     }
+    if (!did.value) {
+      try {
+        handle.value = await resolveDID(did.value)
+        displayName.value = handle.value
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
     useSeoMeta({
-      title: `${config.title} - ${handleOrDid.value}`,
-      ogTitle: `${config.title} - ${handleOrDid.value}`,
+      title: `Post | ${config.title} ${
+        handleOrDid.value ?? '- ' + handleOrDid.value
+      }`,
+      ogTitle: `Post | ${config.title} ${
+        handleOrDid.value ?? '- ' + handleOrDid.value
+      }`,
       ogImage: `${config.prodURLPrefix}/images/ogp/profile.png`,
       twitterCard: 'summary',
     })
     try {
-      profile.value = await loadProfile(did.value)
-      avatarURL.value = buildAvatarURL(
+      profile.value = await loadProfile(did.value, false)
+      avatarURL.value = buildBlobRefURL(
         config.cdnPrefix,
         did.value,
-        profile.value.value
+        profile.value,
+        'avatar'
       )
-      displayName.value = profile.value.value.displayName
+      displayName.value = profile.value.displayName
     } catch (e) {
       console.error(e)
     }

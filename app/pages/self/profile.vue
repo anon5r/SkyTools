@@ -66,7 +66,7 @@
                   </span>
                   <span v-else class="mt-4">
                     <Label></Label>
-                    oading...
+                    Loading...
                   </span>
                 </div>
                 <div
@@ -204,17 +204,17 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useState } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta, useState } from 'nuxt/app'
   import { DateTime } from 'luxon'
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
   import {
     getAgent,
-    isLoggedIn,
     getDid,
     getHandle,
     getProfile,
+    isLoggedIn,
     restoreSession,
   } from '@/composables/auth'
   import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
@@ -283,6 +283,12 @@
     try {
       // load profile
       await loadProfile()
+
+      useSeoMeta({
+        title: `My page | ${config.title}`,
+        ogTitle: `My page | ${config.title}`,
+        ogImage: `${config.prodURLPrefix}/images/ogp/profile.png`,
+      })
 
       // load defined labels
       const res = await fetch('/labels.json', { method: 'get' })
@@ -376,8 +382,7 @@
     }
 
     if (confirm('Do you want to save changes?')) {
-      const lexProf = await loadProfileLexicon(profile.value.did)
-      const prof = lexProf.value
+      const prof = await loadProfileLexicon(profile.value.did)
       if (isDev()) console.log(prof)
 
       if (labels.value.length > 0) {

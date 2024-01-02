@@ -50,7 +50,8 @@
 
 <script setup>
   import { useState } from 'nuxt/app'
-  import { ref, defineProps } from 'vue'
+  import { defineProps, ref } from 'vue'
+
   const inputLabel = ref('')
   const useLabels = () =>
     useState('labels', () => {
