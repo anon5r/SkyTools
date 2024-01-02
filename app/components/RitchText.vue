@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
   import type { Ref } from 'vue'
-  import { ref, defineProps } from 'vue'
+  import { defineProps, ref } from 'vue'
   import { AppBskyRichtextFacet, RichText, UnicodeString } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
 

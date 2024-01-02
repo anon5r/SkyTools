@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-  import { defineProps, ref, onMounted } from 'vue'
+  import { defineProps, onMounted, ref } from 'vue'
   import { useAppConfig } from 'nuxt/app'
-  import { parseAtUri, resolveDID, buildPostURL } from '@/utils/lexicons'
+  import { buildPostURL, parseAtUri, resolveDID } from '@/utils/lexicons'
 
   const config = useAppConfig()
   const handle = ref('')

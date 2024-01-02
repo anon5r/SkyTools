@@ -79,10 +79,10 @@
   import { isDev } from '@/utils/helpers'
   import {
     formatIdentifier,
-    resolveHandle,
     getIdentityAuditLogs,
+    resolveHandle,
   } from '@/utils/lexicons'
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { useAppConfig, useSeoMeta } from 'nuxt/app'
   import axios from 'axios'

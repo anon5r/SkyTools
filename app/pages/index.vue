@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
   import { useAppConfig, useSeoMeta } from 'nuxt/app'
+
   const config = useAppConfig()
   const appName = config.title
   useSeoMeta({

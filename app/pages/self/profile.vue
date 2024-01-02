@@ -66,7 +66,7 @@
                   </span>
                   <span v-else class="mt-4">
                     <Label></Label>
-                    oading...
+                    Loading...
                   </span>
                 </div>
                 <div
@@ -206,15 +206,15 @@
 <script setup>
   import { useAppConfig, useSeoMeta, useState } from 'nuxt/app'
   import { DateTime } from 'luxon'
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
   import {
     getAgent,
-    isLoggedIn,
     getDid,
     getHandle,
     getProfile,
+    isLoggedIn,
     restoreSession,
   } from '@/composables/auth'
   import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'

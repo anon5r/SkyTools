@@ -197,13 +197,13 @@
   import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
   import { useAppConfig, useRoute, useRouter, useSeoMeta } from 'nuxt/app'
-  import { getAgent, restoreSession, isLoggedIn } from '~/composables/auth'
+  import { getAgent, isLoggedIn, restoreSession } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
   import {
     FwbAccordion,
-    FwbAccordionPanel,
-    FwbAccordionHeader,
     FwbAccordionContent,
+    FwbAccordionHeader,
+    FwbAccordionPanel,
     FwbModal,
   } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'

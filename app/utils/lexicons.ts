@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { isDev } from '@/utils/helpers'
-import { AtUri, AtpAgent } from '@atproto/api'
 import {
   AppBskyActorProfile,
   type AppBskyFeedPost,
+  AtpAgent,
+  AtUri,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
 } from '@atproto/api'

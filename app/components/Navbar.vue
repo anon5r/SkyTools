@@ -103,16 +103,16 @@
 
 <script setup>
   import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'
   import {
     getAgent,
-    restoreSession,
-    logout as destroySession,
-    isLoggedIn as isLogin,
     initLoginState,
+    isLoggedIn as isLogin,
+    logout as destroySession,
+    restoreSession,
   } from '@/composables/auth'
 
   const config = useAppConfig()
