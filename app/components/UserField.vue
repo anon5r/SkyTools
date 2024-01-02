@@ -19,7 +19,11 @@
             :href="`/profile/${props.handle}`"
             class=""
             @click.prevent="clickProfile">
-            {{ props.profile?.value.displayName ? props.profile.value.displayName : props.handle }}
+            {{
+              props.profile?.displayName
+                ? props.profile.displayName
+                : props.handle
+            }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
@@ -35,7 +39,7 @@
     </div>
     <div class="text-sm pl-14 pr-16 max-w-fit truncate">
       <!-- Description -->
-      {{ props.profile ? props.profile.value.description : '' }}
+      {{ props.profile ? props.profile.description : '' }}
     </div>
   </div>
 </template>
@@ -43,8 +47,8 @@
 <script setup>
   import { FwbAvatar } from 'flowbite-vue'
   import { useAppConfig } from 'nuxt/app'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
-  import { buildAvatarURL } from '@/utils/lexicons'
+  import { defineProps, onMounted, ref } from 'vue'
+  import { buildBlobRefURL } from '@/utils/lexicons'
 
   const config = useAppConfig()
 
@@ -55,12 +59,10 @@
       type: Object,
       default: () => {
         return {
-          value: {
-            displayName: '',
-            description: '',
-            avatar: '',
-            banner: null,
-          },
+          displayName: '',
+          description: '',
+          avatar: '',
+          banner: null,
         }
       },
     },
@@ -73,11 +75,12 @@
 
   onMounted(() => {
     if (props.profile) {
-      if (props.profile.value.avatar) {
-        const url = buildAvatarURL(
+      if (props.profile.avatar) {
+        const url = buildBlobRefURL(
           config.cdnPrefix,
           props.did,
-          props.profile.value
+          props.profile,
+          'avatar'
         )
         avatarURL.value = url
       }

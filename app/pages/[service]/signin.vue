@@ -28,8 +28,6 @@
 
 <script setup type="ts">
   import { useRoute } from 'nuxt/app'
-  import { computed } from 'vue'
-  import { useNavigation } from '@/composables/navigation'
 
   const route = useRoute()
 

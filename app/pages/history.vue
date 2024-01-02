@@ -8,8 +8,7 @@
           class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-1 px-2">
           Identify history
         </div>
-        <div
-          class="px-3 py-3 flex flex-row justify-between items-center">
+        <div class="px-3 py-3 flex flex-row justify-between items-center">
           <div class="mr-2 relative w-full">
             <input
               v-model="handle"
@@ -60,8 +59,11 @@
                 class="mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                 {{ record.createdAt }}
               </time>
-              <p class="mb-1 text-base font-sans at-handle select-all">{{ record.handle.replace('at://','') }}</p>
-              <div class="mb-5 text-xs font-mono text-gray-300 dark:text-slate-500 select-all">
+              <p class="mb-1 text-base font-sans at-handle select-all">
+                {{ record.handle.replace('at://', '') }}
+              </p>
+              <div
+                class="mb-5 text-xs font-mono text-gray-300 dark:text-slate-500 select-all">
                 {{ record.did }}
               </div>
             </li>
@@ -77,11 +79,12 @@
   import { isDev } from '@/utils/helpers'
   import {
     formatIdentifier,
-    resolveHandle,
     getIdentityAuditLogs,
+    resolveHandle,
   } from '@/utils/lexicons'
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
+  import { useAppConfig, useSeoMeta } from 'nuxt/app'
   import axios from 'axios'
 
   const route = useRoute()
@@ -90,11 +93,27 @@
   const handle = ref(route.query.id || '')
   const results = ref([])
   const hasError = ref(false)
+  const config = useAppConfig()
 
+  useSeoMeta({
+    title: `Handle history | ${config.title}`,
+    ogTitle: `Handle history | ${config.title}`,
+    ogImage: `${config.prodURLPrefix}/images/ogp/history.png`,
+    twitterCard: 'summary',
+  })
   onMounted(() => {
     if (route.query.id) handle.value = route.query.id
 
     if (handle.value.length > 0) getHistory(handle.value)
+
+    useSeoMeta({
+      title: `Handle history | ${config.title} ${
+        handle.value ?? '- ' + handle.value
+      }`,
+      ogTitle: `Handle history | ${config.title} - ${
+        handle.value ?? '- ' + handle.value
+      }`,
+    })
   })
 
   const focusout = () => {
@@ -133,33 +152,32 @@
       const res = await getIdentityAuditLogs(did)
 
       if (res.length > 0) {
-        let records = res.reverse()
-        let items = []
-        for (let idx in records) {
-          let record, icon, style
-          record = records[idx]
+        const records = res.reverse()
+        const items = []
+        for (const idx in records) {
+          let icon, style
           icon = ['fas', 'square-minus']
           style = { color: '#cccccc' }
           if (idx == 0) {
             icon = ['fas', 'circle-check']
             style = { color: '#18b404' }
           } else if (
-            record.operation.type === 'create' ||
-            record.operation.prev === null
+            records[idx].operation.type === 'create' ||
+            records[idx].operation.prev === null
           ) {
             icon = ['fas', 'flag']
             style = { color: '#ea2a63' }
           }
           items.push({
-            id: record.cid,
+            id: records[idx].cid,
             icon: icon,
             iconStyle: style,
-            createdAt: DateTime.fromISO(record.createdAt).toString(),
-            handle: record.operation.handle
-              ? record.operation.handle
-              : record.operation.alsoKnownAs[0],
-            did: record.did,
-            _raw: record.operation,
+            createdAt: DateTime.fromISO(records[idx].createdAt).toString(),
+            handle: records[idx].operation.handle
+              ? records[idx].operation.handle
+              : records[idx].operation.alsoKnownAs[0],
+            did: records[idx].did,
+            _raw: records[idx].operation,
           })
         }
         results.value = items

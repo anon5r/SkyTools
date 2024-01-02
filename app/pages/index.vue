@@ -23,14 +23,17 @@
         </p>
       </NuxtLink>
       <NuxtLink to="/invite-code" class="feature-card">
-        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2 line-through">
+        <h2
+          class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2 line-through">
           Invite code
         </h2>
         <span href="#" class="label-maintain">
           <ClientOnly>
-            <font-awesome-icon :icon="['fas', 'triangle-exclamation']" class="mr-1 text-xs" />
+            <font-awesome-icon
+              :icon="['fas', 'triangle-exclamation']"
+              class="mr-1 text-xs" />
           </ClientOnly>
-          Temporary restricted
+          Temporary closed
         </span>
         <span href="#" class="label-auth-required">
           <ClientOnly>
@@ -38,10 +41,10 @@
           </ClientOnly>
           Authentication required
         </span>
-        <p class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4 line-through">
-          View history of invite code grants, usage (and
-          whom used). To use this feature, you must be logged into Bluesky
-          using AppPassword.
+        <p
+          class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4 line-through">
+          View history of invite code grants, usage (and whom used). To use this
+          feature, you must be logged into Bluesky using AppPassword.
         </p>
       </NuxtLink>
       <NuxtLink to="/history" class="feature-card">
@@ -49,8 +52,8 @@
           Identity history
         </h2>
         <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
-          You can view handle history of identity creation, update, and deletion.
-          This feature will be merge Profile page in the future.
+          You can view handle history of identity creation, update, and
+          deletion. This feature will be merge Profile page in the future.
         </p>
       </NuxtLink>
     </div>
@@ -58,9 +61,15 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta } from 'nuxt/app'
+
   const config = useAppConfig()
   const appName = config.title
+  useSeoMeta({
+    title: config.title,
+    ogTitle: config.title,
+    ogImage: `${config.cdnPrefix}/images/ogp/default.png`,
+  })
 </script>
 
 <style scoped>

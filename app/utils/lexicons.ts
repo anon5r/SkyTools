@@ -1,12 +1,14 @@
 import axios from 'axios'
 import { isDev } from '@/utils/helpers'
-import { AtUri, AtpAgent } from '@atproto/api'
 import {
   AppBskyActorProfile,
   type AppBskyFeedPost,
+  AtpAgent,
+  AtUri,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
 } from '@atproto/api'
+import type { BlobRef } from '@atproto/lexicon'
 
 const plcURL = 'https://plc.directory'
 let atp: AtpAgent | null = null
@@ -20,7 +22,6 @@ let config = {
 }
 
 export const setConfig = (newConfig: typeof config) => {
-  // if (isDev()) console.log('[Lexicons] setConfig::newConfig = ', newConfig)
   config = { ...config, ...newConfig }
   atp = new AtpAgent({ service: config.bskyService })
 }
@@ -59,7 +60,9 @@ export const formatIdentifier = (id: string) => {
 /**
  * Convert DID to at-proto-uri or handle to DID
  * @param {string} identifier DID
+ * @param {boolean} onlyHandle Return only handle
  * @returns {string} Handle
+ * @throws {Error} Invalid DID
  */
 export const resolveDID = async (
   identifier: string,
@@ -74,7 +77,6 @@ export const resolveDID = async (
     const res = await axios.get(requestUrl)
 
     if (res.data?.did) {
-      // if (isDev()) console.log('[Lexicons] resolveDID::response.data = ', res.data)
       return res.data.did.trim() as string
     } else if (res.data?.alsoKnownAs) {
       const handle = res.data.alsoKnownAs[0]
@@ -82,7 +84,7 @@ export const resolveDID = async (
         ? formatIdentifier(handle).trim()
         : (handle.trim() as string)
     }
-    throw new Error('Invalid DID')
+    throw new Error(`Invalid DID: '${identifier}'`)
   } catch (error: any) {
     if (isDev()) {
       console.error('[Lexicons] resolveDID::response.Error')
@@ -96,14 +98,14 @@ export const resolveDID = async (
  *
  * @param {string} identifier Handle
  * @returns {string} DID
+ * @throws {Error} Invalid handle
  */
 export const resolveHandle = async (identifier: string): Promise<string> => {
-  const host = identifier.substring(identifier.indexOf('.') + 1)
   const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
-    if (identifier.length > 253) throw new Error('Too long identifier')
+    if (!identifier.startsWith('did:') && identifier.length > 253)
+      throw new Error('Too long identifier')
     const res = await axios.get(url)
-    // if (isDev()) console.log('[Lexicons] resolveHandle::response.data = ', res)
 
     if (res.data?.did) return res.data.did as string
     throw new Error('Failed to resolve handle')
@@ -120,15 +122,14 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
  *
  * @param {string} identifier
  * @returns
+ * @throws {Error} Invalid handle
  */
 export const getIdentityAuditLogs = async (
   identifier: string
 ): Promise<any> => {
-  const host = identifier.substring(identifier.indexOf('.') + 1)
   const url = `${plcURL}/${identifier}/log/audit`
   try {
     const res = await axios.get(url)
-    // if (isDev()) console.log('[Lexicons] getIdentityAuditLogs::response.data = ', res)
 
     if (res.data) return res.data as any
     throw new Error('Failed to resolve handle')
@@ -145,17 +146,14 @@ export const getIdentityAuditLogs = async (
  * Parsing at-proto-uri
  * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abbcde12345
  * @return {object<string, string>} {did: did:plc:xxxxxxxxxxxxx, collection: app.bsky.feed.post, key: abbcde12345}
+ * @throws {Error} Invalid URI format
  */
 export const parseAtUri = (uri: string): { [key: string]: string } => {
-  try {
-    const aturi = new AtUri(uri)
-    return {
-      did: aturi.host,
-      collection: aturi.collection,
-      rkey: aturi.rkey,
-    }
-  } catch (err) {
-    throw err
+  const aturi = new AtUri(uri)
+  return {
+    did: aturi.host,
+    collection: aturi.collection,
+    rkey: aturi.rkey,
   }
 }
 
@@ -173,10 +171,11 @@ export const parseDID = (did: string): { [key: string]: string } => {
 
 /**
  * Fetch posts
- * @param string collection
- * @param string repo
- * @param string recordKey
  * @return ComAtprotoRepoGetRecord.Response
+ * @param {string} collection
+ * @param {string} repo
+ * @param {string} recordKey
+ * @return Promise<ComAtProtoRepoGetRecord.Response|any>
  */
 export const getRecord = async (
   collection: string,
@@ -191,7 +190,6 @@ export const getRecord = async (
     })
 
     if (response.data) {
-      // if (isDev()) console.log('[Lexicons] getRecord::response.data = ', response.data)
       return response
     }
     throw new Error('Record not found')
@@ -294,7 +292,6 @@ export const describeRepo = async (id: string): Promise<any> => {
     })
 
     if (response.data) {
-      // if (isDev()) console.log('[Lexicons] describeRepo::response.data = ', response.data)
       return response.data
     }
     throw new Error('Failed to get details')
@@ -310,59 +307,66 @@ export const describeRepo = async (id: string): Promise<any> => {
 /**
  * Get account profile
  * @param {string} id
+ * @param {boolean | undefined} withHeader default: false
  * @return AppBskyActorProfile.Record
  */
 export const loadProfile = async (
-  id: string
+  id: string,
+  withHeader?: boolean
 ): Promise<AppBskyActorProfile.Record> => {
+  if (withHeader === undefined) withHeader = false
   const profile = await getRecord('app.bsky.actor.profile', id, 'self')
-  // if (isDev()) console.log('[Lexicons] getProfile::profile = ', profile.data)
-  return profile.data as AppBskyActorProfile.Record
+  return withHeader
+    ? profile.data
+    : (profile.data.value as AppBskyActorProfile.Record)
 }
 
 /**
- * Build avatar image URL with com.atproto.sync.getBlob
- * @param {string} serviceURL https://bsky.social
+ * Build blob image URL with com.atproto.sync.getBlob
+ * @param {string} cdnURL https://av-cdn.bsky.social
  * @param {string} did DID
- * @param {ProfileRecord} profile ProfileRecord object
- * @returns
+ * @param {AppBskyActorProfile.Record} record ProfileRecord object
+ * @param {string} itemName "avatar" | "banner"
+ * @returns {string}
+ * @throws {Error} Invalid profile record
  */
-export const buildAvatarURL = (
+export const buildBlobRefURL = (
   cdnURL: string,
   did: string,
-  profile: AppBskyActorProfile.Record
-) => {
-  // if (isDev()) console.log('[Lexicons] buildAvatarURL::profile = ', profile?.avatar)
-  //return `${cdnURL}/xrpc/com.atproto.sync.getBlob?did=${did}&cid=${profile.avatar?.ref}`
-  const avatarRef = AppBskyActorProfile.isRecord(profile) && !profile.value
-    ? profile.avatar?.ref
-    : profile.value?.avatar.ref
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${avatarRef}`
+  record: AppBskyActorProfile.Record,
+  itemName: string
+): string => {
+  if (!AppBskyActorProfile.isRecord(record))
+    throw new Error(`Invalid profile record: ${did}`)
+  if (record[itemName] === undefined) {
+    console.error(`Not found blob field "${itemName}" in profile : ${did}`)
+    return ''
+  }
+  const itemRef = (record[itemName] as BlobRef).ref
+  return `${cdnURL}/${config.defaultPDS}/image/${did}/${itemRef}`
 }
 
 /**
- * Build post page URL for App
+ * Build posts URL for App
  * @param {string} urlPrefix App URL prefix
  * @param {string} uri At Uri
- * @param {string} handle? Handle
+ * @param {string | undefined} handle Handle
  * @returns {string}
  */
 export const buildPostURL = async (
   urlPrefix: string,
   uri: string,
   handle?: string
-) => {
+): Promise<string> => {
   const aturi = parseAtUri(uri)
-  //if (isDev()) console.log('[Lexicons] buildPostURL::aturi(parsed) = ', aturi)
-  //if (isDev()) console.log('[Lexicons] buildPostURL::handle(param) = ', handle)
   if (handle === undefined) {
     try {
+      if (isDev()) console.log(aturi)
       handle = await resolveDID(aturi.did)
     } catch (er) {
       handle = aturi.did
     }
   }
-  //if (isDev()) console.log('[Lexicons] buildPostURL::handle = ', handle)
   return `${urlPrefix}/profile/${handle}/post/${aturi.rkey}`
 }
 
@@ -379,7 +383,7 @@ export default {
   getBlob,
   listRecords,
   getRecord,
-  buildAvatarURL,
+  buildBlobRefURL,
   loadProfile,
   describeRepo,
   buildPostURL,
