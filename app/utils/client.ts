@@ -93,7 +93,7 @@ class ClientPost {
       client._avatarURL = lexicons.buildBlobRefURL(
         cdnURL,
         client.atUri.did,
-        client.profile.value as AppBskyActorProfile.Record,
+        client.profile as AppBskyActorProfile.Record,
         'avatar'
       )
 
@@ -101,7 +101,7 @@ class ClientPost {
       client._bannerURL = lexicons.buildBlobRefURL(
         cdnURL,
         client.atUri.did,
-        client.profile.value as AppBskyActorProfile.Record,
+        client.profile as AppBskyActorProfile.Record,
         'banner'
       )
     } catch (err) {

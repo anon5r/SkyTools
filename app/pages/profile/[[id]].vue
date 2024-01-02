@@ -98,7 +98,7 @@
                   {{
                     !loadState.profile
                       ? 'Loading...'
-                      : userinfo.profile?.value?.displayName ||
+                      : userinfo.profile?.displayName ||
                         userinfo.details.handle ||
                         'Unknown'
                   }}
@@ -123,13 +123,13 @@
             </div>
 
             <p class="m-4 min-w-stretch whitespace-pre-line">
-              {{ loadState.profile ? userinfo.profile.value?.description : '' }}
+              {{ loadState.profile ? userinfo.profile?.description : '' }}
             </p>
             <!-- Labels -->
-            <div v-if="userinfo.profile.value?.labels" class="m-4">
+            <div v-if="userinfo.profile?.labels" class="m-4">
               <ul class="inline-block">
                 <li
-                  v-for="(label, index) in userinfo.profile.value.labels.values"
+                  v-for="(label, index) in userinfo.profile.labels.values"
                   :key="index"
                   class="inline-block items-center px-2 py-1 mr-2 text-xs font-medium rounded text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
                   <font-awesome-icon
@@ -155,8 +155,8 @@
                     :handle="userinfo.details.handle"
                     :avatar_url="userinfo.avatarURL ?? 'about:blank'"
                     :display_name="
-                      userinfo.profile?.value.displayName
-                        ? userinfo.profile.value.displayName
+                      userinfo.profile?.displayName
+                        ? userinfo.profile.displayName
                         : userinfo.details.handle
                     "
                     :post="toRaw(record)"
@@ -254,7 +254,7 @@
                       :avatar_url="record.avatarURL"
                       :display_name="
                         record.profile
-                          ? record.profile.value.displayName
+                          ? record.profile.displayName
                           : record.handle
                       "
                       :post="record.post"
@@ -441,7 +441,7 @@
     if (id.value) {
       await showProfile(id.value)
       useSeoMeta({
-        title: `Profile | ${config.title} - ${userinfo.value.profile.value.displayName} (${userinfo.value.details.handle})`,
+        title: `Profile | ${config.title} - ${userinfo.value.profile.displayName} (${userinfo.value.details.handle})`,
       })
     }
 
@@ -615,31 +615,25 @@
   }
 
   const loadProfile = async id => {
-    const profile = await lexicons.loadProfile(id)
+    const profile = await lexicons.loadProfile(id, false)
 
     if (profile) {
       updateUserInfo('profile', profile)
-      const avatarURL = buildAvatarURL(
+      const avatarURL = lexicons.buildBlobRefURL(
+        config.cdnPrefix,
         userinfo.value.details.did,
-        profile.value
+        profile,
+        'avatar'
       )
       updateUserInfo('avatarURL', avatarURL)
-      const bannerURL = buildBannerURL(
+      const bannerURL = lexicons.buildBlobRefURL(
+        config.cdnPrefix,
         userinfo.value.details.did,
-        profile.value
+        profile,
+        'banner'
       )
       updateUserInfo('bannerURL', bannerURL)
     }
-  }
-
-  /**
-   * Build avatar URL
-   */
-  const buildAvatarURL = (did, profile) => {
-    return lexicons.buildBlobRefURL(config.cdnPrefix, did, profile, 'avatar')
-  }
-  const buildBannerURL = (did, profile) => {
-    return lexicons.buildBlobRefURL(config.cdnPrefix, did, profile, 'banner')
   }
 
   /**
@@ -729,9 +723,19 @@
 
           let avatar, banner, profile, handle
           try {
-            profile = await lexicons.loadProfile(did)
-            avatar = buildAvatarURL(did, profile.value)
-            banner = buildBannerURL(did, profile.valie)
+            profile = await lexicons.loadProfile(did, false)
+            avatar = lexicons.buildBlobRefURL(
+              config.cdnPrefix,
+              did,
+              profile,
+              'avatar'
+            )
+            banner = lexicons.buildBlobRefURL(
+              config.cdnPrefix,
+              did,
+              profile,
+              'banner'
+            )
           } catch (err) {
             console.info('Not set profile: ', did)
           }
@@ -806,16 +810,14 @@
           }
 
           try {
-            profile = await lexicons.loadProfile(record.value.subject)
+            profile = await lexicons.loadProfile(record.value.subject, false)
           } catch (err) {
             // following, but the account has been removed
             console.info('No profile exists: ', record.value.subject)
             profile = Object.assign(profile, {
-              value: {
-                description: '',
-                avatar: '',
-                banner: null,
-              },
+              description: '',
+              avatar: '',
+              banner: null,
             })
           }
           return {
@@ -868,17 +870,15 @@
             )
           }
           try {
-            profile = await lexicons.loadProfile(record.value.subject)
+            profile = await lexicons.loadProfile(record.value.subject, false)
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)
             //
             profile = {
-              value: {
-                description: '',
-                avatar: '',
-                banner: null,
-              },
+              description: '',
+              avatar: '',
+              banner: null,
             }
           }
           return {

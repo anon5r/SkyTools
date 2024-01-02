@@ -382,8 +382,7 @@
     }
 
     if (confirm('Do you want to save changes?')) {
-      const lexProf = await loadProfileLexicon(profile.value.did)
-      const prof = lexProf.value
+      const prof = await loadProfileLexicon(profile.value.did)
       if (isDev()) console.log(prof)
 
       if (labels.value.length > 0) {

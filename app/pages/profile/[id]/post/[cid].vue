@@ -115,14 +115,14 @@
       twitterCard: 'summary',
     })
     try {
-      profile.value = await loadProfile(did.value)
+      profile.value = await loadProfile(did.value, false)
       avatarURL.value = buildBlobRefURL(
         config.cdnPrefix,
         did.value,
-        profile.value.value,
+        profile.value,
         'avatar'
       )
-      displayName.value = profile.value.value.displayName
+      displayName.value = profile.value.displayName
     } catch (e) {
       console.error(e)
     }

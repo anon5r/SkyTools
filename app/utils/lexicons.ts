@@ -306,13 +306,18 @@ export const describeRepo = async (id: string): Promise<any> => {
 /**
  * Get account profile
  * @param {string} id
+ * @param {boolean | undefined} withHeader default: false
  * @return AppBskyActorProfile.Record
  */
 export const loadProfile = async (
-  id: string
+  id: string,
+  withHeader?: boolean
 ): Promise<AppBskyActorProfile.Record> => {
+  if (withHeader === undefined) withHeader = false
   const profile = await getRecord('app.bsky.actor.profile', id, 'self')
-  return profile.data as AppBskyActorProfile.Record
+  return withHeader
+    ? profile.data
+    : (profile.data.value as AppBskyActorProfile.Record)
 }
 
 /**

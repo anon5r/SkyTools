@@ -36,10 +36,8 @@
 
                 <div class="inline-flex items-center">
                   <!-- DisplayName -->
-                  <div
-                    v-if="post?.profile?.value.displayName"
-                    class="ml-1 mr-2">
-                    {{ post.profile ? post.profile.value.displayName : '' }}
+                  <div v-if="post?.profile?.displayName" class="ml-1 mr-2">
+                    {{ post.profile ? post.profile.displayName : '' }}
                   </div>
                   <div
                     class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
