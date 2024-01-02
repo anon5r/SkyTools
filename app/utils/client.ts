@@ -56,6 +56,9 @@ class ClientPost {
   public get isRemoved(): boolean {
     return this._removed
   }
+  public parmaURL(): string {
+    return ClientPost.getParmaLink(this.handle, this.atUri.rkey)
+  }
 
   private constructor(config: any) {
     lexicons.setConfig(config)
@@ -127,6 +130,20 @@ class ClientPost {
     }
 
     return client
+  }
+
+  /**
+   *
+   * @param {string | null} handleOrDid
+   * @param {string} postID
+   * @return {string} path or URL
+   */
+  public static getParmaLink = (
+    handleOrDid: string | undefined,
+    postID: string
+  ): string => {
+    if (postID) return `/profile/${handleOrDid}/post/${postID}`
+    return `/profile/${handleOrDid}`
   }
 }
 

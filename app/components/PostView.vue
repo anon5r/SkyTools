@@ -7,7 +7,7 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <NuxtLink
-            :to="getParmaLink(props.handle)"
+            :to="ClientPost.getParmaLink(props.handle)"
             @click.prevent="clickProfile">
             <fwb-avatar
               rounded
@@ -19,7 +19,7 @@
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <NuxtLink
-            :href="getParmaLink(props.handle)"
+            :href="ClientPost.getParmaLink(props.handle)"
             @click.prevent="clickProfile">
             {{ props.display_name }}
           </NuxtLink>
@@ -27,7 +27,7 @@
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <NuxtLink
-              :href="getParmaLink(props.handle)"
+              :href="ClientPost.getParmaLink(props.handle)"
               @click.prevent="clickProfile">
               {{ props.handle }}
             </NuxtLink>
@@ -134,6 +134,7 @@
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '~/utils/helpers'
+  import { ClientPost } from '@/utils/client'
 
   const props = defineProps({
     did: {
@@ -170,7 +171,10 @@
 
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = getParmaLink(props.handle ?? atUri.did, atUri.rkey)
+    postURL.value = ClientPost.getParmaLink(
+      props.handle ?? atUri.did,
+      atUri.rkey
+    )
     if (isDev()) {
       console.log(atUri)
       console.log('props.post = ', props.post)
@@ -183,18 +187,6 @@
    */
   const clickProfile = () => {
     emits('showProfile', props.handle)
-  }
-
-  /**
-   *
-   * @param {string} handleOrDid
-   * @param {string} postID
-   * @param {string} appViewURL
-   * @return {string} path or URL
-   */
-  const getParmaLink = (handleOrDid, postID) => {
-    if (postID) return `/profile/${handleOrDid}/post/${postID}`
-    return `/profile/${handleOrDid}`
   }
 </script>
 

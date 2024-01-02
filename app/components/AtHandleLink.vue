@@ -10,10 +10,9 @@
 
 <script setup>
   import { defineProps, onMounted, ref } from 'vue'
-  import { useAppConfig } from 'nuxt/app'
-  import { buildPostURL, parseAtUri, resolveDID } from '@/utils/lexicons'
+  import { parseAtUri, resolveDID } from '@/utils/lexicons'
+  import { ClientPost } from '@/utils/client'
 
-  const config = useAppConfig()
   const handle = ref('')
   const postURL = ref('#')
 
@@ -32,6 +31,9 @@
   onMounted(async () => {
     const parseUri = parseAtUri(props.aturi)
     handle.value = await resolveDID(parseUri.did)
-    postURL.value = await buildPostURL(config.bskyAppURL, props.aturi)
+    postURL.value = ClientPost.getParmaLink(
+      handle.value ?? parseUri.did,
+      parseUri.rkey
+    )
   })
 </script>
