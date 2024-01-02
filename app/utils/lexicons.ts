@@ -103,7 +103,8 @@ export const resolveDID = async (
 export const resolveHandle = async (identifier: string): Promise<string> => {
   const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
-    if (identifier.length > 253) throw new Error('Too long identifier')
+    if (!identifier.startsWith('did:') && identifier.length > 253)
+      throw new Error('Too long identifier')
     const res = await axios.get(url)
 
     if (res.data?.did) return res.data.did as string
@@ -336,8 +337,11 @@ export const buildBlobRefURL = (
   itemName: string
 ): string => {
   if (!AppBskyActorProfile.isRecord(record))
-    throw new Error('Invalid profile record')
-
+    throw new Error(`Invalid profile record: ${did}`)
+  if (record[itemName] === undefined) {
+    console.error(`Not found blob field "${itemName}" in profile : ${did}`)
+    return ''
+  }
   const itemRef = (record[itemName] as BlobRef).ref
   return `${cdnURL}/${config.defaultPDS}/image/${did}/${itemRef}`
 }

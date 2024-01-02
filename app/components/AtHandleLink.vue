@@ -31,7 +31,7 @@
   onMounted(async () => {
     const parseUri = parseAtUri(props.aturi)
     handle.value = await resolveDID(parseUri.did)
-    postURL.value = ClientPost.getParmaLink(
+    postURL.value = ClientPost.getPermanentLink(
       handle.value ?? parseUri.did,
       parseUri.rkey
     )

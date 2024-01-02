@@ -17,12 +17,11 @@
               <div>{{ props.embed.record.uri }}</div>
             </a>
           </template>
-          <a
+          <NuxtLink
             v-if="post && !post.isRemoved"
-            :href="postUrl ?? '#'"
+            :to="postURL"
             class="block max-w m-0 p-4"
-            :title="props.embed.record.uri"
-            @click.prevent="showPost(props.embed.record.uri)">
+            :title="props.embed.record.uri">
             <div class="flex flex-col min-w-8">
               <div
                 class="flex flex-wrap mb-3 text-md text-gray-400 dark:text-gray-500">
@@ -74,7 +73,7 @@
                 </div>
               </div>
             </div>
-          </a>
+          </NuxtLink>
           <div v-else-if="post && post.isRemoved" class="p-4">
             This post has been removed
           </div>
@@ -157,7 +156,7 @@
       post.value = await loadPostData(props.embed.record.uri)
       if (isDev()) console.log('post(ClientPost) ', post.value)
       // Post URL
-      postURL.value = post.value.appUrl
+      postURL.value = post.value.permaURL()
     } else if (
       AppBskyEmbedImages.isMain(props.embed) ||
       AppBskyEmbedRecordWithMedia.isMain(props.embed)
@@ -187,21 +186,16 @@
   })
 
   /**
-   * Loads post data from a given at-URI.
+   * Loads post-data from a given at-URI.
    *
-   * @param {string} atURI - The ATURI to load the post data from.
-   * @returns {Promise<ClientPost>} - A promise that resolves to the loaded post data as a ClientPost object.
+   * @param {string} atURI - The ATURI to load the post-data from.
+   * @returns {Promise<ClientPost>} - A promise that resolves to the loaded post-data as a ClientPost object.
    */
   const loadPostData = async atURI => {
     const postURI = atURI ?? props.embed.value.record.uri
     if (isDev()) console.log('PostEmbed.loadPostData(atURI) ==> ', postURI)
     const client = await ClientPost.load(config, postURI)
     return client
-  }
-
-  const showPost = atURI => {
-    // In-app individual post view
-    window.open(atURI ?? postURL.value, '_blank')
   }
 </script>
 

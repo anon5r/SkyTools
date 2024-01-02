@@ -7,7 +7,7 @@
           class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
           <NuxtLink
-            :to="ClientPost.getParmaLink(props.handle)"
+            :to="ClientPost.getPermanentLink(props.handle)"
             @click.prevent="clickProfile">
             <fwb-avatar
               rounded
@@ -19,15 +19,15 @@
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <NuxtLink
-            :href="ClientPost.getParmaLink(props.handle)"
+            :href="ClientPost.getPermanentLink(props.handle)"
             @click.prevent="clickProfile">
-            {{ props.display_name }}
+            {{ props.display_name ?? props.handle }}
           </NuxtLink>
           <div
             class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <NuxtLink
-              :href="ClientPost.getParmaLink(props.handle)"
+              :href="ClientPost.getPermanentLink(props.handle)"
               @click.prevent="clickProfile">
               {{ props.handle }}
             </NuxtLink>
@@ -52,7 +52,7 @@
               }}
             </time>
           </NuxtLink>
-          <time v-else>--------</time>
+          <time v-else>--</time>
         </div>
       </div>
     </div>
@@ -150,7 +150,7 @@
     display_name: {
       type: String,
       required: true,
-      default: 'Nobody',
+      default: undefined,
     },
     avatar_url: {
       type: String,
@@ -171,7 +171,7 @@
 
   onMounted(() => {
     const atUri = parseAtUri(props.post.uri)
-    postURL.value = ClientPost.getParmaLink(
+    postURL.value = ClientPost.getPermanentLink(
       props.handle ?? atUri.did,
       atUri.rkey
     )

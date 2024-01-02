@@ -47,6 +47,11 @@ class ClientPost {
   public get bannerURL(): string | null {
     return this._bannerURL
   }
+
+  /**
+   * Retrieves the application URL.
+   * @return {string | null} The application URL, or null if it is not set.
+   */
   public get appUrl(): string | null {
     return this._appUrl
   }
@@ -56,8 +61,8 @@ class ClientPost {
   public get isRemoved(): boolean {
     return this._removed
   }
-  public parmaURL(): string {
-    return ClientPost.getParmaLink(this.handle, this.atUri.rkey)
+  public permaURL(): string {
+    return ClientPost.getPermanentLink(this.handle, this.atUri.rkey)
   }
 
   private constructor(config: any) {
@@ -138,7 +143,7 @@ class ClientPost {
    * @param {string} postID
    * @return {string} path or URL
    */
-  public static getParmaLink = (
+  public static getPermanentLink = (
     handleOrDid: string | undefined,
     postID: string
   ): string => {

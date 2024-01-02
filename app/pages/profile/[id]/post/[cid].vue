@@ -94,14 +94,19 @@
   onMounted(async () => {
     try {
       did.value = await resolveHandle(handleOrDid.value)
-    } catch (e) {
-      console.error(e)
-    }
-    try {
+
       handle.value = await resolveDID(did.value)
       displayName.value = handle.value
     } catch (e) {
       console.error(e)
+    }
+    if (!did.value) {
+      try {
+        handle.value = await resolveDID(did.value)
+        displayName.value = handle.value
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     useSeoMeta({
