@@ -1,7 +1,7 @@
 <template>
   <div>
     <button @click="copyToClipboard" v-bind="$attrs">
-      <slot></slot>
+      <slot />
     </button>
     <div
       v-show="showToast"
@@ -22,7 +22,10 @@
 </template>
 
 <script>
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
   export default {
+    components: { FontAwesomeIcon },
     inheritAttrs: false,
     props: {
       copyText: String,
@@ -57,16 +60,13 @@
     },
     computed: {
       toastPosition() {
-        switch (this.position) {
-          case 'top-right':
-            return 'top-4 right-4'
-          case 'top-left':
-            return 'top-4 left-4'
-          case 'bottom-right':
-            return 'bottom-4 right-4'
-          case 'bottom-left':
-            return 'bottom-4 left-4'
+        const positions = {
+          'top-right': 'top-4 right-4',
+          'top-left': 'top-4 left-4',
+          'bottom-right': 'bottom-4 right-4',
+          'bottom-left': 'bottom-4 left-4',
         }
+        return positions[this.position]
       },
       toastTextColor() {
         return this.success ? 'text-green-600' : 'text-red-600'

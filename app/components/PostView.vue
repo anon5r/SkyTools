@@ -1,6 +1,7 @@
 <template>
   <article
-    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
+    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
+    :id="`post-${props.post.cid}`">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -35,12 +36,48 @@
         </div>
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
+        <ClientOnly>
+          <DropdownMenuButton icon="vertical" :id="`${props.post.cid}`">
+            <!-- dropdown menu -->
+            <ul
+              class="py-2 text-sm text-gray-600 dark:text-slate-400"
+              :aria-labelledby="`dropdown-${props.post.cid}`">
+              <li>
+                <NuxtLink
+                  :to="`${config.bskyAppURL}${postURL}`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Open in Bluesky
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']" />
+                </NuxtLink>
+              </li>
+              <li>
+                <CopyToClipboard
+                  :copy-text="props.post.uri"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-sm w-[calc(100%)]"
+                  success-message="Copied!"
+                  error-message="Failed to copy"
+                  :display-duration="3500">
+                  Copy at-uri
+                  <font-awesome-icon :icon="['far', 'clipboard']" />
+                </CopyToClipboard>
+              </li>
+            </ul>
+            <div class="py-2">
+              <div
+                v-if="!props.removed && props.post.value.langs"
+                class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
+                Lang: {{ props.post.value.langs.join(',') }}
+              </div>
+            </div>
+          </DropdownMenuButton>
+        </ClientOnly>
         <div class="pt-1">
           <NuxtLink v-if="!props.removed" :to="postURL">
             <!-- Created datetime -->
             <time
               v-if="!props.removed"
-              pubdate
+              pubdate="pubdate"
               :datetime="props.post.value.createdAt"
               :title="DateTime.fromISO(props.post.value.createdAt).toString()"
               class="text-sm font-light">
@@ -118,16 +155,12 @@
           </li>
         </ul>
       </div>
-      <div
-        v-if="!props.removed && props.post.value.langs"
-        class="justify-start items-baseline text-xs text-right text-gray-400 dark:text-gray-700">
-        Lang: {{ props.post.value.langs.join(',') }}
-      </div>
     </div>
   </article>
 </template>
 
 <script setup>
+  import { useAppConfig } from 'nuxt/app'
   import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
@@ -135,6 +168,7 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '~/utils/helpers'
   import { ClientPost } from '@/utils/client'
+  import DropdownMenuButton from '~/components/DropdownMenuButton.vue'
 
   const props = defineProps({
     did: {
@@ -164,6 +198,7 @@
     },
     removed: Boolean,
   })
+  const config = useAppConfig()
 
   const emits = defineEmits(['showProfile'])
 
