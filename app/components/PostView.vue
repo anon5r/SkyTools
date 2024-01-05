@@ -69,6 +69,11 @@
                 class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
                 Lang: {{ props.post.value.langs.join(',') }}
               </div>
+              <div
+                v-if="!props.removed && props.post.value.via"
+                class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
+                Via: {{ props.post.value.via ?? 'none' }}
+              </div>
             </div>
           </DropdownMenuButton>
         </ClientOnly>
