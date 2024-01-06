@@ -165,9 +165,9 @@
 </template>
 
 <script setup>
-  import { useAppConfig } from 'nuxt/app'
+  import { useAppConfig, onMounted, ref } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, onMounted, ref } from 'vue'
+  import { defineProps } from 'vue'
   import { DateTime } from 'luxon'
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

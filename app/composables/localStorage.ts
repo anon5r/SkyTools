@@ -1,4 +1,4 @@
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect } from '#imports'
 
 export function useLocalStorage(key: string) {
   // Get initial value from localStorage

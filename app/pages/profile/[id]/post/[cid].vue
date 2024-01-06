@@ -59,9 +59,14 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
-  import { onMounted, ref, toRaw } from 'vue'
-  import { useRoute } from 'vue-router'
+  import {
+    useAppConfig,
+    useSeoMeta,
+    ref,
+    toRaw,
+    onMounted,
+    useRoute,
+  } from '#imports'
   import {
     buildBlobRefURL,
     getPost,

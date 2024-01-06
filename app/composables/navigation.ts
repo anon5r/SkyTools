@@ -1,5 +1,4 @@
-import { onMounted, ref } from 'vue'
-import { useAppConfig, useRouter } from 'nuxt/app'
+import { useAppConfig, useRouter, ref, onMounted } from '#imports'
 
 interface Navigation {
   next: string | null

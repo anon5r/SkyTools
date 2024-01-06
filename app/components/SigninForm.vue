@@ -69,8 +69,8 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { defineProps, ref } from 'vue'
+  import { useAppConfig, ref, useRoute, useState } from '#imports'
+  import { defineProps } from 'vue'
   import { isDev } from '~/utils/helpers'
   import { initLoginState, login as AuthLogin } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'

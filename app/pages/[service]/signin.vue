@@ -27,7 +27,7 @@
 </template>
 
 <script setup type="ts">
-  import { useRoute } from 'nuxt/app'
+  import { useRoute } from '#imports'
 
   const route = useRoute()
 
