@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref } from '#imports'
 import { Drawer } from 'flowbite'
 
 /** Drawer */

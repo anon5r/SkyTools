@@ -1,8 +1,7 @@
 import type { AtpSessionData, AtpSessionEvent } from '@atproto/api'
 import { BskyAgent } from '@atproto/api'
-import type { Ref } from 'vue'
-import { ref } from 'vue'
-import { useAppConfig, useState } from 'nuxt/app'
+import type { Ref } from '#imports'
+import { useAppConfig, useState, ref } from '#imports'
 import { isDev } from '~/utils/helpers'
 
 declare interface LoginState {

@@ -10,7 +10,7 @@
     "analyze": "nuxt analyze",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
-    "pages:dev": "wrangler pages dev --compatibility-date=2023-11-21 --proxy 3000 -- yarn run dev",
+    "pages:dev": "wrangler pages dev --compatibility-date=2023-11-21 --proxy 3000 -- npm run dev",
     "pages:build": "NITRO_PRESET=cloudflare-pages nuxt build",
     "pages:deploy": "npm run build && wrangler pages deploy ./dist"
   },
@@ -43,7 +43,7 @@
     "vue": "^3.3.11",
     "vue-eslint-parser": "^9.3.2",
     "vue-router": "^4.2.5",
-    "wrangler": "3.22.2"
+    "wrangler": "^3.22.3"
   },
   "dependencies": {
     "@atproto/api": "^0.7.4",

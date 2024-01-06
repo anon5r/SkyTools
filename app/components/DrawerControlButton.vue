@@ -11,7 +11,8 @@
 </template>
 
 <script setup>
-  import { defineProps, onMounted } from 'vue'
+  import { onMounted } from '#imports'
+  import { defineProps } from 'vue'
   import { initDrawers } from 'flowbite'
   import { getDrawer, initDrawer } from '@/composables/sidebar'
 
