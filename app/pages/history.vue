@@ -82,9 +82,14 @@
     getIdentityAuditLogs,
     resolveHandle,
   } from '@/utils/lexicons'
-  import { onMounted, ref } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
+  import {
+    useAppConfig,
+    useSeoMeta,
+    onMounted,
+    ref,
+    useRoute,
+    useRouter,
+  } from '#imports'
   import axios from 'axios'
 
   const route = useRoute()

@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta } from '#imports'
 
   const config = useAppConfig()
   const appName = config.title

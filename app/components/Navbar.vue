@@ -102,8 +102,7 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, useAppConfig, useRoute, useState } from '#imports'
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'

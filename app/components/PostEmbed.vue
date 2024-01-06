@@ -109,8 +109,8 @@
 </template>
 
 <script setup>
-  import { defineProps, onMounted, ref } from 'vue'
-  import { useAppConfig } from 'nuxt/app'
+  import { defineProps } from 'vue'
+  import { useAppConfig, onMounted, ref } from '#imports'
   import { buildPostURL, parseAtUri } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
   import { FwbAvatar } from 'flowbite-vue'

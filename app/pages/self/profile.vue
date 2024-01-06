@@ -204,10 +204,16 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useSeoMeta, useState } from 'nuxt/app'
+  import {
+    useAppConfig,
+    useSeoMeta,
+    useState,
+    onMounted,
+    ref,
+    useRoute,
+    useRouter,
+  } from '#imports'
   import { DateTime } from 'luxon'
-  import { onMounted, ref } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
   import { isDev, isEqualArray } from '@/utils/helpers'
   import {
     getAgent,

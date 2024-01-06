@@ -41,7 +41,7 @@
             <!-- dropdown menu -->
             <ul
               class="py-2 text-sm text-gray-600 dark:text-slate-400"
-              :aria-labelledby="`dropdown-${props.post.cid}`">
+              :aria-labelledby="`dropdown-${props.post.cid}-button`">
               <li>
                 <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
@@ -165,15 +165,14 @@
 </template>
 
 <script setup>
-  import { useAppConfig } from 'nuxt/app'
+  import { useAppConfig, onMounted, ref } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, onMounted, ref } from 'vue'
+  import { defineProps } from 'vue'
   import { DateTime } from 'luxon'
   import { parseAtUri } from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '~/utils/helpers'
   import { ClientPost } from '@/utils/client'
-  import DropdownMenuButton from '~/components/DropdownMenuButton.vue'
 
   const props = defineProps({
     did: {

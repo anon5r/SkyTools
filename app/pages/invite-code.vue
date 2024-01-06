@@ -194,9 +194,15 @@
 </template>
 
 <script setup lang="js">
-  import { onMounted, ref } from 'vue'
   import { DateTime } from 'luxon'
-  import { useAppConfig, useRoute, useRouter, useSeoMeta } from 'nuxt/app'
+  import {
+    useAppConfig,
+    useRoute,
+    useRouter,
+    useSeoMeta,
+    onMounted,
+    ref,
+  } from '#imports'
   import { getAgent, isLoggedIn, restoreSession } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
   import {

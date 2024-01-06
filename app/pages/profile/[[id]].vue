@@ -349,9 +349,16 @@
 
 <script setup>
   import axios from 'axios'
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
-  import { onMounted, ref, toRaw, watch } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
+  import {
+    onMounted,
+    useRoute,
+    useRouter,
+    useAppConfig,
+    useSeoMeta,
+    ref,
+    toRaw,
+    watch,
+  } from '#imports'
   import { FwbAvatar, FwbTab, FwbTabs } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
