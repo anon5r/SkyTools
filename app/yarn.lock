@@ -7803,9 +7803,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miniflare@npm:3.20231218.0":
-  version: 3.20231218.0
-  resolution: "miniflare@npm:3.20231218.0"
+"miniflare@npm:3.20231218.1":
+  version: 3.20231218.1
+  resolution: "miniflare@npm:3.20231218.1"
   dependencies:
     "@cspotcode/source-map-support": 0.8.1
     acorn: ^8.8.0
@@ -7821,7 +7821,7 @@ __metadata:
     zod: ^3.20.6
   bin:
     miniflare: bootstrap.js
-  checksum: 9fff03f208043790ea16407d87d8598f3935efac4cd7726ac25e26d526ad33e969fc89d5cd414fa0218dd731543af4d2f91fa996e8c39c4c6fe4badc91061e6f
+  checksum: cea643257a4ce0e3e308d0a364d9286ad9b0afcae28d84ebf64eea59b154103e71f2ebbab896c733e05984c4dcdcb24381495ef0c30df124fcf0aa701452cc61
   languageName: node
   linkType: hard
 
@@ -8505,7 +8505,7 @@ __metadata:
     vue: ^3.3.11
     vue-eslint-parser: ^9.3.2
     vue-router: ^4.2.5
-    wrangler: 3.22.2
+    wrangler: ^3.22.3
   languageName: unknown
   linkType: soft
 
@@ -12099,9 +12099,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.22.2":
-  version: 3.22.2
-  resolution: "wrangler@npm:3.22.2"
+"wrangler@npm:^3.22.3":
+  version: 3.22.3
+  resolution: "wrangler@npm:3.22.3"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@cspotcode/source-map-support": 0.8.1
@@ -12111,7 +12111,7 @@ __metadata:
     chokidar: ^3.5.3
     esbuild: 0.17.19
     fsevents: ~2.3.2
-    miniflare: 3.20231218.0
+    miniflare: 3.20231218.1
     nanoid: ^3.3.3
     path-to-regexp: ^6.2.0
     resolve.exports: ^2.0.2
@@ -12124,7 +12124,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: e55f2d96bee9e7d4a3099732ee8303c953d53eff5cccc4cf97545ecd8ccea3abd7e0fb4bef22d3a554587dbd0d5476537bf7f6e09eddba472cca894a53785408
+  checksum: d7ca9dd307020cedd3d7bf4983c8569b2d7711ba9653d71298f406e6bfd4703eaa8a9385d863eaeeb33a5c2f9062102e63cb9c8e20078b34ffb06e915bbb5dc5
   languageName: node
   linkType: hard
 
