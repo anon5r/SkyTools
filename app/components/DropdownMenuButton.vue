@@ -2,7 +2,7 @@
   <div>
     <button
       :id="`dropdown-${props.id}-button`"
-      :data-dropdown-toggle="`dropdown-${props.id}-menu-context`"
+      :data-dropdown-toggle="`dropdown-${props.id}-context`"
       :data-dropdown-placement="props.placement ?? 'bottom-end'"
       class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
       type="button">
@@ -28,19 +28,18 @@
           d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
       </svg>
     </button>
-  </div>
-
-  <!-- Dropdown menu -->
-  <div
-    :id="`dropdown-${props.id}-menu-context`"
-    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-    <slot />
+    <!-- Dropdown menu -->
+    <div
+      :id="`dropdown-${props.id}-context`"
+      class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+      <slot />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { onMounted } from '#imports'
   import { initDropdowns } from 'flowbite'
-  initDropdowns()
   const props = defineProps({
     icon: {
       type: String,
@@ -50,11 +49,16 @@
     id: {
       type: String,
       require: false,
+      default: 'none',
     },
     props: {
       type: String,
+      require: false,
       default: 'bottom',
     },
+  })
+  onMounted(() => {
+    initDropdowns()
   })
 </script>
 

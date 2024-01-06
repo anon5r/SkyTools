@@ -41,7 +41,7 @@
             <!-- dropdown menu -->
             <ul
               class="py-2 text-sm text-gray-600 dark:text-slate-400"
-              :aria-labelledby="`dropdown-${props.post.cid}`">
+              :aria-labelledby="`dropdown-${props.post.cid}-button`">
               <li>
                 <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
@@ -173,7 +173,6 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '~/utils/helpers'
   import { ClientPost } from '@/utils/client'
-  import DropdownMenuButton from '~/components/DropdownMenuButton.vue'
 
   const props = defineProps({
     did: {
