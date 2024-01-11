@@ -93,6 +93,8 @@
 
   const profile = ref(null)
   const record = ref(null)
+  const easterMode = ref(false)
+  const noUnauthenticated = ref(false)
 
   onMounted(async () => {
     try {
@@ -111,6 +113,7 @@
         console.error(e)
       }
     }
+    easterMode.value = localStorage.getItem('_easter') === 'true'
 
     useSeoMeta({
       title: `Post | ${config.title} ${
@@ -127,6 +130,7 @@
 
       // Prevent users who are not logged in from viewing
       if (
+        !easterMode.value &&
         !isLoggedIn() &&
         profile.value.labels &&
         profile.value.labels.values.filter(v => {
@@ -146,8 +150,17 @@
     } catch (e) {
       console.error(e)
       errorMessage.value = e.message
-      if (e.name === 'UnauthorizedError') throw e
+
+      if (e.name === 'UnauthorizedError') {
+        noUnauthenticated.value = true
+        throw showError({
+          statusCode: 403,
+          statusMessage: 'You should log-in with Bluesky.',
+        })
+        // throw e
+      }
     }
+
     try {
       const result = await getPost(did.value, postID.value)
       record.value = result.success
