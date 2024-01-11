@@ -339,7 +339,7 @@ export const buildBlobRefURL = (
   if (!AppBskyActorProfile.isRecord(record))
     throw new Error(`Invalid profile record: ${did}`)
   if (record[itemName] === undefined) {
-    console.error(`Not found blob field "${itemName}" in profile : ${did}`)
+    console.warn(`Not found blob field "${itemName}" in profile : ${did}`)
     return ''
   }
   const itemRef = (record[itemName] as BlobRef).ref

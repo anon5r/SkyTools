@@ -14,6 +14,9 @@ declare interface LoginState {
 
 let _agent: Ref<BskyAgent | null> = ref(null)
 
+const keyCredentials = 'credentials'
+const keyService = 'service'
+
 const initLoginState = (): LoginState => {
   return {
     isLoggedIn: false,
@@ -34,8 +37,8 @@ const getAgent = async (service?: string): Promise<BskyAgent> => {
       service: service,
       persistSession: (event: AtpSessionEvent, sess?: AtpSessionData) => {
         if (process.client && sess != null) {
-          localStorage.setItem('credentials', JSON.stringify(sess))
-          localStorage.setItem('service', service as string)
+          localStorage.setItem(keyCredentials, JSON.stringify(sess))
+          localStorage.setItem(keyService, service as string)
         }
       },
     })
@@ -58,7 +61,7 @@ export const login = async (credentials: {
 
     if (response.success && process.client) {
       if (process.client) {
-        localStorage.setItem('credentials', JSON.stringify(agent.session))
+        localStorage.setItem(keyCredentials, JSON.stringify(agent.session))
         const useLoginState = useState('loginState', initLoginState)
         console.log(useLoginState.value)
         useLoginState.value = {
@@ -84,20 +87,19 @@ export const logout = async (): Promise<void> => {
       await agent.api.com.atproto.server.deleteSession()
       agent.session = undefined
     }
-
-    if (process.client) {
-      localStorage.removeItem('credentials')
-      const useLoginState = useState('loginState', initLoginState)
-      useLoginState.value = initLoginState()
-    }
   } catch (error) {
     console.error(error)
+  }
+  if (process.client) {
+    localStorage.removeItem(keyCredentials)
+    const useLoginState = useState('loginState', initLoginState)
+    useLoginState.value = initLoginState()
   }
 }
 
 export const restoreSession = async (): Promise<void> => {
   if (process.client) {
-    const credentials: string | null = localStorage.getItem('credentials')
+    const credentials: string | null = localStorage.getItem(keyCredentials)
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
@@ -126,7 +128,7 @@ export const restoreSession = async (): Promise<void> => {
  */
 export const isLoggedIn = (): boolean => {
   const useLoginState = useState('loginState', initLoginState)
-  return useLoginState.value.isLoggedIn
+  return useLoginState.value?.isLoggedIn
 }
 
 /**

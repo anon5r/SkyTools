@@ -52,7 +52,7 @@
           class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700" />
         <ClientOnly>
           <ul class="mt-1 space-y-2">
-            <li v-if="loginState.isLoggedIn && loginState.userHandle">
+            <li v-if="isLogin() && loginState.userHandle">
               <span
                 class="text-sm font-semibold text-gray-500 dark:text-gray-400">
                 @
@@ -60,7 +60,7 @@
               </span>
             </li>
 
-            <li v-if="loginState.isLoggedIn">
+            <li v-if="isLogin()">
               <!-- Profile -->
               <NuxtLink
                 to="/self/profile"
@@ -71,7 +71,7 @@
                 <span class="ml-3">My profile</span>
               </NuxtLink>
             </li>
-            <li v-if="loginState.isLoggedIn">
+            <li v-if="isLogin()">
               <!-- Sign-out -->
               <NuxtLink
                 href="#sign-out"
@@ -83,7 +83,7 @@
                 <span class="ml-3">Sign out</span>
               </NuxtLink>
             </li>
-            <li v-else-if="!loginState.isLoggedIn">
+            <li v-else-if="!isLogin()">
               <!-- Sign-in -->
               <NuxtLink
                 :to="`/${config.defaultPDS}/signin`"
@@ -120,6 +120,7 @@
   const agent = ref(getAgent())
   const useLoginState = () => useState('loginState', initLoginState)
   const loginState = useLoginState()
+  const noRestore = ref(false)
 
   // App name
   const appName = config.title
@@ -158,8 +159,10 @@
       const loginState = useLoginState()
       loginState.value.userHandle = null
       loginState.value.userEmail = null
-      loginState.value.isLoggedIn = false
+      loginState.value.session = null
+      loginState.value = null
     }
+    noRestore.value = true
     navi.goHome()
   }
 
@@ -169,14 +172,17 @@
       if (agent.value === null) agent.value = getAgent()
       await restoreSession()
 
-      if (!isLogin()) {
-        agent.value = getAgent()
-        restoreSession().then(result => {
-          if (result) {
-            loginState.value.isLoggedIn = true
-          }
-        })
-      } else loginState.value.isLoggedIn = true
+      if (!noRestore.value) {
+        if (!isLogin()) {
+          agent.value = getAgent()
+          restoreSession().then(result => {
+            noRestore.value = false
+            if (result) {
+              loginState.value.isLoggedIn = true
+            }
+          })
+        } else loginState.value.isLoggedIn = true
+      }
     }
   })
 </script>
