@@ -3,14 +3,14 @@
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
-          class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
+          class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
-            <Avatar
+          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
+            <fwb-avatar
               rounded
               :img="avatarURL"
               :alt="props.handle"
-              class="mr-2 min-w-max" />
+              class="min-w-max avatar-object-cover" />
           </a>
         </div>
         <div class="max-w-xs truncate">
@@ -18,15 +18,19 @@
           <a
             :href="`/profile/${props.handle}`"
             class=""
-            @click.prevent="showProfile">
-            {{ props.profile ? props.profile.value.displayName : props.handle }}
+            @click.prevent="clickProfile">
+            {{
+              props.profile?.displayName
+                ? props.profile.displayName
+                : props.handle
+            }}
           </a>
           <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <a
               :href="`/profile/${props.handle}`"
               class="truncate"
-              @click.prevent="showProfile">
+              @click.prevent="clickProfile">
               @{{ props.handle }}
             </a>
           </p>
@@ -35,16 +39,15 @@
     </div>
     <div class="text-sm pl-14 pr-16 max-w-fit truncate">
       <!-- Description -->
-      {{ props.profile ? props.profile.value.description : '' }}
+      {{ props.profile ? props.profile.description : '' }}
     </div>
   </div>
 </template>
 
 <script setup>
-  import { Avatar } from 'flowbite-vue'
-  import { useAppConfig } from 'nuxt/app'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
-  import { buildAvatarURL } from '@/utils/lexicons'
+  import { FwbAvatar } from 'flowbite-vue'
+  import { useAppConfig, onMounted, ref } from '#imports'
+  import { buildBlobRefURL } from '@/utils/lexicons'
 
   const config = useAppConfig()
 
@@ -55,36 +58,41 @@
       type: Object,
       default: () => {
         return {
-          value: {
-            displayName: '',
-            description: '',
-            avatar: '',
-            banner: null,
-          },
+          displayName: '',
+          description: '',
+          avatar: '',
+          banner: null,
         }
       },
     },
     handle: String,
   })
 
-  const emits = defineEmits({ lookup: null })
+  const emits = defineEmits(['showProfile'])
 
   const avatarURL = ref('')
 
   onMounted(() => {
     if (props.profile) {
-      if (props.profile.value.avatar) {
-        const url = buildAvatarURL(
+      if (props.profile.avatar) {
+        const url = buildBlobRefURL(
           config.cdnPrefix,
           props.did,
-          props.profile.value
+          props.profile,
+          'avatar'
         )
         avatarURL.value = url
       }
     }
   })
 
-  const showProfile = () => {
-    emits('lookup', props.handle)
+  const clickProfile = () => {
+    emits('showProfile', props.handle)
   }
 </script>
+
+<style scoped>
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
+  }
+</style>

@@ -44,8 +44,7 @@
       class="absolute bottom-0 left-0 justify-center p-4 space-x-4 w-full lg:flex z-20 border-r">
       <NuxtLink
         to="/about"
-        class="inline-flex justify-start py-1 px-5 text-sm text-gray-600 dark:text-slate-300"
-        @click="clickLink">
+        class="inline-flex justify-start py-1 px-5 text-sm text-gray-600 dark:text-slate-300">
         About
       </NuxtLink>
 
@@ -70,11 +69,6 @@
     },
     closeButton: {
       type: Boolean,
-      require: false,
-      default: false,
-    },
-    drawer: {
-      type: Object,
       require: false,
       default: false,
     },

@@ -27,16 +27,9 @@
 </template>
 
 <script setup type="ts">
-  import { useRoute } from 'nuxt/app'
-  import { computed } from 'vue'
-  import { useNavigation } from '@/composables/navigation'
+  import { useRoute } from '#imports'
 
   const route = useRoute()
 
   const pds = route.params.service
-
-  const isRedirected = computed(() => {
-      const navi = useNavigation()
-      return (navi.getNext())
-  })
 </script>

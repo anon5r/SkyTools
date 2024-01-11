@@ -1,15 +1,19 @@
 <template>
   <a :href="postURL" class="text-blue-700 dark:text-blue-500">
-    <slot>@{{ handle }}</slot>
+    <slot v-if="!props.withHandle || !$slots.default()">@{{ handle }}</slot>
+    <template v-else>
+      <slot />
+      @{{ handle }}
+    </template>
   </a>
 </template>
 
 <script setup>
-  import { defineProps, ref, onMounted } from 'vue'
-  import { useAppConfig } from 'nuxt/app'
-  import { parseAtUri, resolveDID, buildPostURL } from '@/utils/lexicons'
+  import { onMounted, ref } from '#imports'
+  import { defineProps } from 'vue'
+  import { parseAtUri, resolveDID } from '@/utils/lexicons'
+  import { ClientPost } from '@/utils/client'
 
-  const config = useAppConfig()
   const handle = ref('')
   const postURL = ref('#')
 
@@ -18,12 +22,19 @@
       type: String,
       require: true,
     },
+    withHandle: {
+      type: Boolean,
+      require: false,
+      default: false,
+    },
   })
 
   onMounted(async () => {
     const parseUri = parseAtUri(props.aturi)
-    const resolveHandle = await resolveDID(parseUri.did)
-    handle.value = resolveHandle
-    postURL.value = await buildPostURL(config.bskyAppURL, props.aturi)
+    handle.value = await resolveDID(parseUri.did)
+    postURL.value = ClientPost.getPermanentLink(
+      handle.value ?? parseUri.did,
+      parseUri.rkey
+    )
   })
 </script>

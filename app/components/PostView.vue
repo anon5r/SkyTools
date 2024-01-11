@@ -1,93 +1,178 @@
 <template>
   <article
-    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
+    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
+    :id="`post-${props.post.cid}`">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
-          class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
+          class="inline-flex items-center mr-1 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
-            <Avatar
+          <NuxtLink
+            :to="ClientPost.getPermanentLink(props.handle)"
+            @click.prevent="clickProfile">
+            <fwb-avatar
               rounded
-              :img="props.avatar_url"
+              :img="props.avatar_url ?? null"
               :alt="props.handle"
-              class="mr-3 min-w-max" />
-          </a>
+              class="min-w-max avatar-object-cover" />
+          </NuxtLink>
         </div>
-        <div class="truncate">
+        <div class="max-w-xs truncate">
           <!-- DisplayName -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="showProfile">
-            {{ props.display_name }}
-          </a>
+          <NuxtLink
+            :href="ClientPost.getPermanentLink(props.handle)"
+            @click.prevent="clickProfile">
+            {{ props.display_name ?? props.handle }}
+          </NuxtLink>
           <div
-            class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
+            class="at-handle text-xs font-mono truncate text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a :href="`/profile/${props.did}`" @click.prevent="showProfile">
-              @{{ props.handle }}
-            </a>
+            <NuxtLink
+              :href="ClientPost.getPermanentLink(props.handle)"
+              @click.prevent="clickProfile">
+              {{ props.handle }}
+            </NuxtLink>
           </div>
         </div>
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
+        <ClientOnly>
+          <DropdownMenuButton icon="vertical" :id="`${props.post.cid}`">
+            <!-- dropdown menu -->
+            <ul
+              class="py-2 text-sm text-gray-600 dark:text-slate-400"
+              :aria-labelledby="`dropdown-${props.post.cid}-button`">
+              <li>
+                <NuxtLink
+                  :to="`${config.bskyAppURL}${postURL}`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Open in Bluesky
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']" />
+                </NuxtLink>
+              </li>
+              <li>
+                <CopyToClipboard
+                  :copy-text="props.post.uri"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-sm w-[calc(100%)]"
+                  success-message="Copied!"
+                  error-message="Failed to copy"
+                  :display-duration="3500">
+                  Copy at-uri
+                  <font-awesome-icon :icon="['far', 'clipboard']" />
+                </CopyToClipboard>
+              </li>
+            </ul>
+            <div class="py-2">
+              <div
+                v-if="!props.removed && props.post.value.langs"
+                class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
+                Lang: {{ props.post.value.langs.join(',') }}
+              </div>
+              <div
+                v-if="!props.removed && props.post.value.via"
+                class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
+                Via: {{ props.post.value.via ?? 'none' }}
+              </div>
+            </div>
+          </DropdownMenuButton>
+        </ClientOnly>
         <div class="pt-1">
-          <a v-if="!props.removed" :href="postURL">
+          <NuxtLink v-if="!props.removed" :to="postURL">
+            <!-- Created datetime -->
             <time
               v-if="!props.removed"
-              pubdate
+              pubdate="pubdate"
               :datetime="props.post.value.createdAt"
               :title="DateTime.fromISO(props.post.value.createdAt).toString()"
               class="text-sm font-light">
+              <!-- Display time as relative -->
               {{
                 DateTime.fromISO(props.post.value.createdAt).toRelative({
                   style: 'short',
                 })
               }}
             </time>
-          </a>
-          <time v-else>--------</time>
+          </NuxtLink>
+          <time v-else>--</time>
         </div>
       </div>
     </div>
-    <div class="text-gray-500 dark:text-gray-400">
+    <div class="pl-3 pr-4 text-gray-500 dark:text-gray-400">
       <!-- has reply ? -->
       <div v-if="!props.removed">
         <AtHandleLink
-          v-if="props.post.value.reply"
+          v-if="props.post.value && props.post.value.reply"
           :aturi="props.post.value.reply.parent.uri"
-          class="inline-block font-light text-xs text-gray-600 hover:text-white border border-gray-700 hover:bg-gray-800 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
+          :with-handle="true"
+          class="inline-block font-light text-xs text-gray-600 hover:text-gray-500 border border-gray-500 hover:bg-gray-200 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-3 py-1 text-center mr-1 mb-1 dark:border-slate-500 dark:text-slate-500 dark:hover:text-white dark:hover:bg-slate-500 dark:focus:ring-slate-800">
           <font-awesome-icon :icon="['fas', 'reply']" />
           Reply
         </AtHandleLink>
       </div>
       <!-- Post message -->
-      <div v-if="!props.removed" class="break-words">
-        {{ props.post.value.text }}
+      <div v-if="!props.removed" class="break-words whitespace-pre-line">
+        <div class="text-sm">
+          <RitchText :post="props.post" />
+        </div>
       </div>
       <div v-else class="italic">This post may have been removed.</div>
       <div v-if="!props.removed && props.post.value.embed">
-        <!-- Embeded (image, record...) -->
-        <PostEmbed :did="did" :embed="props.post.value.embed" />
+        <KeepAlive>
+          <Suspense>
+            <!-- Embedded (image, record...) -->
+            <PostEmbed :did="did" :embed="props.post.value.embed" />
+            <template #fallback>
+              <div class="flex justify-center">
+                <div
+                  class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            </template>
+          </Suspense>
+        </KeepAlive>
       </div>
     </div>
 
-    <div class="flex justify-end">
-      <div
-        v-if="!props.removed && props.post.value.langs"
-        class="justify-start items-baseline text-xs text-right text-gray-400 dark:text-gray-700">
-        Lang: {{ props.post.value.langs.join(',') }}
+    <div class="flex justify-end items-end">
+      <div v-if="!props.removed" class="mt-3 inline-box">
+        <!-- Labels -->
+        <ul
+          v-if="
+            props.post.value.labels?.values &&
+            props.post.value.label.values.length > 0
+          "
+          class="inline-block">
+          <li
+            v-for="(label, index) in props.post.value.labels?.values"
+            :key="index"
+            class="inline-block items-center px-1 py-0.5 mr-2 text-xs font-medium rounded"
+            :class="
+              label.val === '!warn'
+                ? `text-yellow-800 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300`
+                : label.val === 'porn' || label.val === 'nsfw'
+                  ? `text-pink-500 bg-pink-100 dark:bg-pink-700 dark:text-pink-300`
+                  : label.val === 'spam'
+                    ? `text-zinc-800 bg-zinc-100 dark:bg-zin-900 dark:text-zinc-300`
+                    : `text-indigo-800 bg-indigo-100 dark:bg-indigo-900 dark:text-indigo-300`
+            ">
+            <FontAwesomeIcon :icon="['fas', 'tag']" class="mr-1" size="xs" />
+            {{ label.val }}
+          </li>
+        </ul>
       </div>
     </div>
   </article>
 </template>
 
 <script setup>
-  import { Avatar } from 'flowbite-vue'
-  import { defineProps, defineEmits, onMounted, ref } from 'vue'
+  import { useAppConfig, onMounted, ref } from '#imports'
+  import { FwbAvatar } from 'flowbite-vue'
+  import { defineProps } from 'vue'
   import { DateTime } from 'luxon'
-  import { useAppConfig } from 'nuxt/app'
-  import * as lexicons from '@/utils/lexicons'
-
-  const config = useAppConfig()
+  import { parseAtUri } from '@/utils/lexicons'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { isDev } from '~/utils/helpers'
+  import { ClientPost } from '@/utils/client'
 
   const props = defineProps({
     did: {
@@ -103,7 +188,7 @@
     display_name: {
       type: String,
       required: true,
-      default: 'Nobody',
+      default: undefined,
     },
     avatar_url: {
       type: String,
@@ -117,20 +202,45 @@
     },
     removed: Boolean,
   })
+  const config = useAppConfig()
 
-  const emits = defineEmits({ lookup: null })
+  const emits = defineEmits(['showProfile'])
 
   const postURL = ref('#')
 
-  onMounted(async () => {
-    postURL.value = await lexicons.buildPostURL(
-      config.bskyAppURL,
-      props.post.uri,
-      props.handle
+  onMounted(() => {
+    const atUri = parseAtUri(props.post.uri)
+    postURL.value = ClientPost.getPermanentLink(
+      props.handle ?? atUri.did,
+      atUri.rkey
     )
+    if (isDev()) {
+      console.log(atUri)
+      console.log('props.post = ', props.post)
+      console.log('postURL = ', postURL.value)
+    }
   })
 
-  const showProfile = () => {
-    emits('lookup', props.handle)
+  /**
+   * @return void
+   */
+  const clickProfile = () => {
+    emits('showProfile', props.handle)
   }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+  .avatar-object-cover :deep(img) {
+    @apply object-cover;
+  }
+
+  .post-text a:link {
+    @apply text-blue-500 dark:text-blue-400;
+  }
+  .post-text a:hover {
+    @apply text-blue-400 dark:text-blue-500;
+  }
+</style>

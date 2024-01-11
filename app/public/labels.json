@@ -1,0 +1,30 @@
+{
+  "defined": [
+    "!hide",
+    "!no-promote",
+    "!warn",
+    "dmca-violation",
+    "doxxing",
+    "porn",
+    "sexual",
+    "nudity",
+    "nsfl",
+    "corpse",
+    "gore",
+    "torture",
+    "self-harm",
+    "intolerant-race",
+    "intolerant-gender",
+    "intolerant-sexual-orientation",
+    "intolerant-religion",
+    "intolerant",
+    "icon-intolerant",
+    "threat",
+    "spoiler",
+    "spam",
+    "account-security",
+    "net-abuse",
+    "impersonation",
+    "scam"
+  ]
+}

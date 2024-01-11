@@ -1,22 +1,27 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
-export default {
+export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
 
       defaultPDS: 'bsky.social',
-      atprotoServiceSuffix: '.bsky.social',
+      atprotoServiceSuffix: 'bsky.social',
       atprotoService: 'https://bsky.social',
       serviceAppUrl: ' https://bsky.app',
       adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
+      prodURLPrefix: 'https://skytools.anon5r.com',
     },
   },
+  ssr: false,
+  devtools: {
+    enabled: process.env.NODE_ENV === 'development',
+    timeline: { enabled: process.env.NODE_ENV === 'development' },
+  },
+
   app: {
-    ssr: true,
-    darkmode: 'class',
     head: {
       title: 'SkyTools',
       meta: [
@@ -25,11 +30,44 @@ export default {
           name: 'viewport',
           content:
             'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover',
-          description: 'SkyTools is a tools for the Bluesky',
+        },
+        {
+          name: 'description',
+          content: 'SkyTools is a tools for the Bluesky',
         },
         {
           name: 'theme-color',
           content: '#ccf2ff',
+        },
+        { property: 'og:site_name', content: 'SkyTools' },
+        { property: 'og:title', content: 'SkyTools' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: 'https://bsky.social' },
+        {
+          property: 'og:description',
+          content: 'SkyTools is a tools for the Bluesky',
+        },
+        {
+          property: 'og:image',
+          content: 'https://skytools.anon5r.com/images/default.png',
+        },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+
+        { name: 'twitter:card', content: 'summary_image' },
+        { name: 'twitter:title', content: 'SkyTools' },
+        { name: 'twitter:site', content: '@anon5r' },
+        {
+          name: 'twitter:creator',
+          content: 'https://bsky.app/profile/did:plc:c22jdrqhoajyj5ca7e56a3ke',
+        },
+        {
+          name: 'twitter:description',
+          content: 'SkyTools is a tools for the Bluesky',
+        },
+        {
+          name: 'twitter:image',
+          content: 'https://skytools.anon5r.com/images/default.png',
         },
       ],
       link: [
@@ -114,19 +152,34 @@ export default {
         JSON.parse(process.env.INVITE_CODE_FREQ)) ||
       ({ weeks: 2 } as object),
     cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
+    prodURLPrefix: process.env.OGP_PREFIX || 'https://skytools.anon5r.com',
   },
-  modules: ['@nuxtjs/tailwindcss', 'nuxt-cloudflare-analytics'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    'nuxt-cloudflare-analytics',
+    '@nuxt/devtools',
+    '@nuxt/image',
+  ],
   css: [
     'flowbite/dist/flowbite.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/css/main.css',
   ],
-  plugins: ['@/plugins/fontawesome.client.ts', '@/plugins/analytics.client.ts'],
+  plugins: ['@/plugins/analytics.client.ts'],
   cloudflareAnalytics: {
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
-
+  build: {
+    transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
+    analyze: process.env.NODE_ENV !== 'production',
+  },
   routeRules: {
+    // Generated at build time for SEO purpose
+    '/': { prerender: true },
+    '/about': { prerender: true },
+    '/profile': { prerender: true },
+    '/invite-code': { prerender: true },
+    '/profile/:did': { swr: 3600 },
     '/lookup': { redirect: '/profile' },
   },
-}
+})

@@ -1,44 +1,73 @@
-import { ref } from 'vue'
-import { useAppConfig } from 'nuxt/app'
+import type { AtpSessionData, AtpSessionEvent } from '@atproto/api'
 import { BskyAgent } from '@atproto/api'
-import { isDev } from '@/utils/helpers'
+import type { Ref } from '#imports'
+import { useAppConfig, useState, ref } from '#imports'
+import { isDev } from '~/utils/helpers'
 
-let _agent: BskyAgent | null = null
+declare interface LoginState {
+  isLoggedIn: boolean
+  userHandle: string | undefined
+  userDid: string | undefined
+  userEmail: string | undefined
+  session?: AtpSessionData | undefined
+}
 
-let _isLoggedIn = false
+let _agent: Ref<BskyAgent | null> = ref(null)
 
-const getAgent = (service?: string): BskyAgent => {
-  if (!_agent) {
+const initLoginState = (): LoginState => {
+  return {
+    isLoggedIn: false,
+    userEmail: undefined,
+    userDid: undefined,
+    userHandle: undefined,
+  }
+}
+
+const getAgent = async (service?: string): Promise<BskyAgent> => {
+  if (!_agent.value) {
     const config = useAppConfig()
     if (!service) service = config.bskyService
     else if (service.length > 0 && !service.startsWith('https://'))
       service = `https://${service}`
 
-    _agent = new BskyAgent({
+    _agent.value = new BskyAgent({
       service: service,
-      persistSession: (_, sess) => {
-        if (process.client && sess != null)
-          sessionStorage.setItem('credentials', JSON.stringify(sess))
+      persistSession: (event: AtpSessionEvent, sess?: AtpSessionData) => {
+        if (process.client && sess != null) {
+          localStorage.setItem('credentials', JSON.stringify(sess))
+          localStorage.setItem('service', service as string)
+        }
       },
     })
   }
-  return _agent
+  return _agent.value
 }
 
-const login = async (credentials: { identifier: string; password: string }) => {
+export { getAgent, initLoginState }
+
+export const login = async (credentials: {
+  identifier: string
+  password: string
+}) => {
+  const agent: BskyAgent = await getAgent()
   try {
-    const response = await getAgent().login({
+    const response = await agent.login({
       identifier: credentials.identifier,
       password: credentials.password,
     })
 
     if (response.success && process.client) {
-      if (process.client)
-        sessionStorage.setItem(
-          'credentials',
-          JSON.stringify(getAgent().session)
-        )
-      _isLoggedIn = true
+      if (process.client) {
+        localStorage.setItem('credentials', JSON.stringify(agent.session))
+        const useLoginState = useState('loginState', initLoginState)
+        console.log(useLoginState.value)
+        useLoginState.value = {
+          isLoggedIn: true,
+          userHandle: agent.session?.handle ?? undefined,
+          userDid: agent.session?.did ?? undefined,
+          userEmail: agent.session?.email ?? undefined,
+        }
+      }
     }
 
     return response.success
@@ -48,25 +77,39 @@ const login = async (credentials: { identifier: string; password: string }) => {
   }
 }
 
-const logout = async () => {
+export const logout = async (): Promise<void> => {
   try {
-    if (getAgent().hasSession) getAgent().session = undefined
+    const agent = await getAgent()
+    if (agent.hasSession) {
+      await agent.api.com.atproto.server.deleteSession()
+      agent.session = undefined
+    }
 
-    if (process.client) sessionStorage.removeItem('credentials')
-    _isLoggedIn = false
+    if (process.client) {
+      localStorage.removeItem('credentials')
+      const useLoginState = useState('loginState', initLoginState)
+      useLoginState.value = initLoginState()
+    }
   } catch (error) {
     console.error(error)
   }
 }
 
-const restoreSession = async () => {
+export const restoreSession = async (): Promise<void> => {
   if (process.client) {
-    const credentials = sessionStorage.getItem('credentials')
+    const credentials: string | null = localStorage.getItem('credentials')
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
-        const res = await getAgent().resumeSession(session)
-        _isLoggedIn = res.success
+        const agent: BskyAgent = await getAgent()
+        const res = await agent.resumeSession(session)
+        const useLoginState = useState('loginState', initLoginState)
+        useLoginState.value = {
+          isLoggedIn: res.success,
+          userHandle: res.data.handle ?? undefined,
+          userDid: res.data.did ?? undefined,
+          userEmail: res.data.email ?? undefined,
+        }
       } catch (err: any) {
         if (isDev()) console.error(err)
         if (err.response.status == 400) {
@@ -81,21 +124,44 @@ const restoreSession = async () => {
 /**
  * @returns {boolean} true if the user is logged in
  */
-const isLoggedIn = (): boolean => {
-  return _isLoggedIn
+export const isLoggedIn = (): boolean => {
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.isLoggedIn
 }
 
 /**
  *
- * @returns {string} the handle of the logged in user
+ * @returns {string} the handle of the logged-in user
  */
-const getHandle = () => {
-  return getAgent().session?.handle ?? ''
+export const getHandle = (): string => {
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.session?.handle ?? ''
 }
 
-export function useAuth(service?: string) {
-  _agent = getAgent(service)
+export const getDid = (): string => {
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.session?.did ?? ''
+}
 
+export const getEmail = (): string => {
+  const useLoginState = useState('loginState', initLoginState)
+  return useLoginState.value.session?.email ?? ''
+}
+
+export const getProfile = async () => {
+  const agent: BskyAgent = await getAgent()
+  if (!agent) throw new Error('Require authentication')
+
+  const result = await agent.api.app.bsky.actor.getProfile({
+    actor: agent.session?.did as string,
+  })
+
+  if (!result.success) throw new Error('Could not get profile')
+
+  return result.data
+}
+
+export function useAuth() {
   return {
     login,
     logout,
@@ -103,5 +169,9 @@ export function useAuth(service?: string) {
     getAgent,
     restoreSession,
     getHandle,
+    getDid,
+    getEmail,
+    getProfile,
+    initLoginState,
   }
 }

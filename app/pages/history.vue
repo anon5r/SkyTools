@@ -1,30 +1,34 @@
 <template>
   <div
     class="flex justify-center items-start lg:items-center pt-9 lg:pt-0 min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-200 px-4">
-    <div class="w-full max-w-md">
+    <div class="mt-4 w-full max-w-md">
       <div
-        class="border-2 mt-4 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
+        class="border-2 mt-5 border-gray-200 dark:border-slate-500 bg-white dark:bg-slate-800 shadow-md rounded-lg md:px-3 md:py-2 mb-4">
         <div
-          class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-2 px-2">
-          Enter current handle or DID
+          class="block text-gray-700 dark:text-slate-200 text-lg font-semibold py-1 px-2">
+          Identify history
         </div>
-        <div
-          class="flex items-center m-2 bg-gray-200 dark:bg-slate-700 rounded-md">
-          <div class="w-full p-2">
+        <div class="px-3 py-3 flex flex-row justify-between items-center">
+          <div class="mr-2 relative w-full">
             <input
-              class="bg-transparent rounded-md w-full text-gray-700 dark:text-gray-300"
               v-model="handle"
+              type="text"
+              id="handle_did"
+              class="block px-2.5 pb-2 pt-2 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=""
               @focusout="focusout"
-              @keyup.enter="submit"
-              placeholder="ex. example.bsky.social or did:plc:xxxxxxxxxxx" />
+              @keyup.enter="submit" />
+            <label
+              for="handle_did"
+              class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-transparent px-2 peer-focus:px-2 peer-focus:bg-white peer-focus:dark:bg-slate-800 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
+              Handle or DID
+            </label>
           </div>
-          <div class="p-2">
-            <button
-              class="bg-blue-500 dark:bg-blue-700 text-white dark:text-slate-300 rounded-md px-2 py-1"
-              @click="submit">
-              Submit
-            </button>
-          </div>
+          <button
+            class="px-3 py-1.5 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md"
+            @click.prevent="submit">
+            Submit
+          </button>
         </div>
       </div>
 
@@ -55,8 +59,11 @@
                 class="mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                 {{ record.createdAt }}
               </time>
-              <p class="mb-1 text-base font-normal">{{ record.handle }}</p>
-              <div class="mb-5 text-xs text-gray-300 dark:text-slate-500">
+              <p class="mb-1 text-base font-sans at-handle select-all">
+                {{ record.handle.replace('at://', '') }}
+              </p>
+              <div
+                class="mb-5 text-xs font-mono text-gray-300 dark:text-slate-500 select-all">
                 {{ record.did }}
               </div>
             </li>
@@ -72,12 +79,19 @@
   import { isDev } from '@/utils/helpers'
   import {
     formatIdentifier,
-    resolveHandle,
     getIdentityAuditLogs,
+    resolveHandle,
   } from '@/utils/lexicons'
-  import { ref, onMounted } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
+  import {
+    useAppConfig,
+    useSeoMeta,
+    onMounted,
+    ref,
+    useRoute,
+    useRouter,
+  } from '#imports'
   import axios from 'axios'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const route = useRoute()
   const router = useRouter()
@@ -85,11 +99,27 @@
   const handle = ref(route.query.id || '')
   const results = ref([])
   const hasError = ref(false)
+  const config = useAppConfig()
 
+  useSeoMeta({
+    title: `Handle history | ${config.title}`,
+    ogTitle: `Handle history | ${config.title}`,
+    ogImage: `${config.prodURLPrefix}/images/ogp/history.png`,
+    twitterCard: 'summary',
+  })
   onMounted(() => {
     if (route.query.id) handle.value = route.query.id
 
     if (handle.value.length > 0) getHistory(handle.value)
+
+    useSeoMeta({
+      title: `Handle history | ${config.title} ${
+        handle.value ?? '- ' + handle.value
+      }`,
+      ogTitle: `Handle history | ${config.title} - ${
+        handle.value ?? '- ' + handle.value
+      }`,
+    })
   })
 
   const focusout = () => {
@@ -128,33 +158,32 @@
       const res = await getIdentityAuditLogs(did)
 
       if (res.length > 0) {
-        let records = res.reverse()
-        let items = []
-        for (let idx in records) {
-          let record, icon, style
-          record = records[idx]
+        const records = res.reverse()
+        const items = []
+        for (const idx in records) {
+          let icon, style
           icon = ['fas', 'square-minus']
           style = { color: '#cccccc' }
           if (idx == 0) {
             icon = ['fas', 'circle-check']
             style = { color: '#18b404' }
           } else if (
-            record.operation.type === 'create' ||
-            record.operation.prev === null
+            records[idx].operation.type === 'create' ||
+            records[idx].operation.prev === null
           ) {
             icon = ['fas', 'flag']
             style = { color: '#ea2a63' }
           }
           items.push({
-            id: record.cid,
+            id: records[idx].cid,
             icon: icon,
             iconStyle: style,
-            createdAt: DateTime.fromISO(record.createdAt).toString(),
-            handle: record.operation.handle
-              ? record.operation.handle
-              : record.operation.alsoKnownAs[0],
-            did: record.did,
-            _raw: record.operation,
+            createdAt: DateTime.fromISO(records[idx].createdAt).toString(),
+            handle: records[idx].operation.handle
+              ? records[idx].operation.handle
+              : records[idx].operation.alsoKnownAs[0],
+            did: records[idx].did,
+            _raw: records[idx].operation,
           })
         }
         results.value = items
@@ -168,3 +197,9 @@
     }
   }
 </script>
+
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>
