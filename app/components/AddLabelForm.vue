@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-  import { useState, ref } from '#imports'
+  import { useState, ref, isDev } from '#imports'
   import { defineProps } from 'vue'
 
   const inputLabel = ref('')
