@@ -58,7 +58,7 @@
               <div class="inline-flex items-center mr-3">
                 <!-- Avatar -->
                 <a
-                  v-if="!hasError && loadState.avatarURL"
+                  v-if="!hasError && noUnauthenticated && loadState.avatarURL"
                   :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
                   <fwb-avatar
                     rounded
@@ -93,7 +93,9 @@
                 </div>
               </div>
               <div>
-                <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
+                <h2
+                  class="text-3xl"
+                  :class="{ 'text-red-600': hasError && !noUnauthenticated }">
                   <!-- Disply name -->
                   {{
                     !loadState.profile
@@ -108,7 +110,7 @@
                   <!-- Handle -->
                   <span
                     v-if="loadState.details"
-                    :class="{ 'line-through': hasError }"
+                    :class="{ 'line-through': hasError && !noUnauthenticated }"
                     class="select-all at-handle">
                     {{ userinfo.details.handle || 'unknown.example' }}
                   </span>
@@ -293,7 +295,7 @@
               </div>
             </fwb-tab>
 
-            <fwb-tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
+            <fwb-tab v-if="easterMode" name="blocks" title="Blocks" id="blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
@@ -376,7 +378,7 @@
   const fetchCount = 20
 
   const hasError = ref(false)
-  const showBlocks = ref(false)
+  const easterMode = ref(false)
 
   const userinfoInitial = {
     details: {
@@ -453,7 +455,7 @@
       })
     }
 
-    showBlocks.value = localStorage.getItem('_easter') === 'true'
+    easterMode.value = localStorage.getItem('_easter') === 'true'
   })
 
   const focusout = () => {
@@ -541,7 +543,7 @@
           if (isDev()) console.warn(err)
         })
 
-      if (showBlocks.value) {
+      if (easterMode.value) {
         fetchBlocks(identifier, fetchCount)
           .then(resolve => {
             blocks = resolve
@@ -645,6 +647,7 @@
     if (profile) {
       // Prevent users who are not logged in from viewing
       if (
+        !easterMode.value &&
         !isLoggedIn() &&
         profile.labels &&
         profile.labels.values.filter(v => {
