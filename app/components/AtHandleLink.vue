@@ -9,7 +9,8 @@
 </template>
 
 <script setup>
-  import { defineProps, onMounted, ref } from 'vue'
+  import { onMounted, ref } from '#imports'
+  import { defineProps } from 'vue'
   import { parseAtUri, resolveDID } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
 

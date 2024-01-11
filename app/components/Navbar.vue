@@ -7,7 +7,7 @@
         <!-- Logo -->
         <NuxtLink to="/" class="flex items-center">
           <span
-            class="self-center text-2xl text-transparent bg-clip-text bg-gradient-to-b to-blue-700 from-green-300 dark:to-orange-500 dark:from-sky-300 font-semibold whitespace-nowrap dark:text-sky">
+            class="self-center text-2xl text-transparent bg-clip-text bg-gradient-to-b to-sky-400 to-80% from-green-300 from-20% via-60% via-sky-600 dark:from-30% dark:via-rose-400 dark:via-50% dark:to-yellow-400 dark:from-blue-500 font-semibold whitespace-nowrap dark:text-sky">
             {{ appName }}
           </span>
         </NuxtLink>
@@ -102,8 +102,7 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useRoute, useState } from 'nuxt/app'
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, useAppConfig, useRoute, useState } from '#imports'
   import { initDrawers } from 'flowbite'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useNavigation } from '@/composables/navigation'

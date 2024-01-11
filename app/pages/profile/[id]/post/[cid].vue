@@ -40,8 +40,9 @@
               </div>
 
               <div class="text-sm text-right text-gray-600 dark:text-slate-400">
+                <DropdownMenuButton icon="vertical" :id="`${record?.cid}`" />
                 <div class="pt-1">
-                  <time class="text-sm font-light">????/??/??</time>
+                  <time class="text-sm font-light">now</time>
                 </div>
               </div>
             </div>
@@ -58,9 +59,14 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
-  import { onMounted, ref, toRaw } from 'vue'
-  import { useRoute } from 'vue-router'
+  import {
+    useAppConfig,
+    useSeoMeta,
+    ref,
+    toRaw,
+    onMounted,
+    useRoute,
+  } from '#imports'
   import {
     buildBlobRefURL,
     getPost,

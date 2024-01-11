@@ -61,7 +61,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta } from '#imports'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
   const appName = config.title

@@ -70,8 +70,7 @@
 </template>
 
 <script setup>
-  import { onMounted, ref } from 'vue'
-  import { useAppConfig, useSeoMeta } from 'nuxt/app'
+  import { useAppConfig, useSeoMeta, onMounted, ref } from '#imports'
   import { resolveDID } from '~/utils/lexicons'
 
   const config = useAppConfig()

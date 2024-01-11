@@ -56,8 +56,8 @@
 </template>
 
 <script setup>
-  import { defineProps, onMounted } from 'vue'
-  import { useState } from 'nuxt/app'
+  import { useState, onMounted } from '#imports'
+  import { defineProps } from 'vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const props = defineProps({

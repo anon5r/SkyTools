@@ -49,8 +49,8 @@
 </template>
 
 <script setup>
-  import { useState } from 'nuxt/app'
-  import { defineProps, ref } from 'vue'
+  import { useState, ref } from '#imports'
+  import { defineProps } from 'vue'
 
   const inputLabel = ref('')
   const useLabels = () =>
