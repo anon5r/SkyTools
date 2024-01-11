@@ -91,6 +91,7 @@
     useRouter,
   } from '#imports'
   import axios from 'axios'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const route = useRoute()
   const router = useRouter()

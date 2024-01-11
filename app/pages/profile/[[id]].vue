@@ -58,7 +58,7 @@
               <div class="inline-flex items-center mr-3">
                 <!-- Avatar -->
                 <a
-                  v-if="!hasError && loadState.avatarURL"
+                  v-if="!hasError && noUnauthenticated && loadState.avatarURL"
                   :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
                   <fwb-avatar
                     rounded
@@ -93,7 +93,9 @@
                 </div>
               </div>
               <div>
-                <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
+                <h2
+                  class="text-3xl"
+                  :class="{ 'text-red-600': hasError && !noUnauthenticated }">
                   <!-- Disply name -->
                   {{
                     !loadState.profile
@@ -108,7 +110,7 @@
                   <!-- Handle -->
                   <span
                     v-if="loadState.details"
-                    :class="{ 'line-through': hasError }"
+                    :class="{ 'line-through': hasError && !noUnauthenticated }"
                     class="select-all at-handle">
                     {{ userinfo.details.handle || 'unknown.example' }}
                   </span>
@@ -293,7 +295,7 @@
               </div>
             </fwb-tab>
 
-            <fwb-tab v-if="showBlocks" name="blocks" title="Blocks" id="blocks">
+            <fwb-tab v-if="easterMode" name="blocks" title="Blocks" id="blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
@@ -363,6 +365,8 @@
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { UnauthorizedError } from '@/errors/UnauthorizedError'
+  import { isLoggedIn } from '~/composables/auth'
 
   const activeTab = ref('posts')
 
@@ -370,6 +374,7 @@
   const router = useRouter()
   const config = useAppConfig()
   const id = ref(route.params.id || '')
+  const noUnauthenticated = ref(true)
 
   watch(
     () => route.params.id,
@@ -380,7 +385,7 @@
   const fetchCount = 20
 
   const hasError = ref(false)
-  const showBlocks = ref(false)
+  const easterMode = ref(false)
 
   const userinfoInitial = {
     details: {
@@ -396,6 +401,11 @@
     blocks: [],
   }
 
+  /**
+   * Represents user information.
+   *
+   * @typedef {Ref<UnwrapRef<{followers: *[], avatarURL: string, like: *[], blocks: *[], profile: {}, following: *[], bannerURL: string, details: {did: string}, posts: *[]}>>} UserInfo
+   */
   const userinfo = ref(userinfoInitial)
 
   // Each loading state
@@ -452,11 +462,7 @@
       })
     }
 
-    showBlocks.value = localStorage.getItem('_easter') === 'true'
-
-    if (route.params.id) {
-      await showProfile(route.params.id)
-    }
+    easterMode.value = localStorage.getItem('_easter') === 'true'
   })
 
   const focusout = () => {
@@ -502,6 +508,12 @@
         }
         updateUserInfo('profile', profile)
         updateUserInfo('avatarURL', null)
+
+        console.error(err)
+        if (err.name === 'UnauthorizedError') {
+          noUnauthenticated.value = true
+          throw err
+        }
       }
 
       let posts,
@@ -538,7 +550,7 @@
           if (isDev()) console.warn(err)
         })
 
-      if (showBlocks.value) {
+      if (easterMode.value) {
         fetchBlocks(identifier, fetchCount)
           .then(resolve => {
             blocks = resolve
@@ -552,14 +564,16 @@
         updateUserInfo('blocks', [])
       }
 
-      if (isDev()) console.log('UserInfo = ', toRaw(userinfo))
-      if (isDev()) console.log('Cursors = ', toRaw(cursors))
+      if (isDev()) {
+        console.log('UserInfo = ', toRaw(userinfo))
+        console.log('Cursors = ', toRaw(cursors))
+      }
     } catch (err) {
       if (isDev()) console.error(err)
       hasError.value = true
       updateUserInfo('avatarURL', null)
       updateUserInfo('bannerURL', null)
-      updateUserInfo('details', {})
+      if (!noUnauthenticated.value) updateUserInfo('details', {})
       updateUserInfo('posts', [])
       updateUserInfo('following', [])
       updateUserInfo('like', [])
@@ -567,15 +581,20 @@
 
       updateUserInfo('profile', { value: { displayName: 'Error: Unknown' } })
 
-      if (id.value.startsWith('did:')) {
-        userinfo.value.details = {
-          handle: 'unknown',
-          did: id.value,
-        }
+      if (noUnauthenticated.value) {
+        updateUserInfo('profile', { value: { displayName: 'Hidden user' } })
+        userinfo.value.profile.description = 'You should sign-in with Bluesky'
       } else {
-        userinfo.value.details = {
-          handle: id.value,
-          did: 'error:unknown:unknown',
+        if (id.value.startsWith('did:')) {
+          userinfo.value.details = {
+            handle: 'unknown',
+            did: id.value,
+          }
+        } else {
+          userinfo.value.details = {
+            handle: id.value,
+            did: 'error:unknown:unknown',
+          }
         }
       }
       if (axios.isAxiosError(err)) {
@@ -621,10 +640,29 @@
     updateUserInfo('details', details)
   }
 
+  /**
+   * Loads a user's profile and updates user information.
+   *
+   * @param {number|string} id - The ID of the user profile to load.
+   * @returns {Promise<void>} - A promise that resolves when the profile is loaded and user information is updated.
+   * @throws {UnauthorizedError} - If the loaded profile has the '!no-unauthenticated' label.
+   * @throws {Error} - If the profile cannot be loaded or user information cannot be updated.
+   */
   const loadProfile = async id => {
     const profile = await lexicons.loadProfile(id, false)
 
     if (profile) {
+      // Prevent users who are not logged in from viewing
+      if (
+        !easterMode.value &&
+        !isLoggedIn() &&
+        profile.labels &&
+        profile.labels.values.filter(v => {
+          v.val.includes('!no-unauthenticated')
+        })
+      ) {
+        throw new UnauthorizedError('You should logged in bsky.social')
+      }
       updateUserInfo('profile', profile)
       const avatarURL = lexicons.buildBlobRefURL(
         config.cdnPrefix,

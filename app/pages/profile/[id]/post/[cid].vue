@@ -48,7 +48,7 @@
             </div>
             <div class="pl-3 pr-4 text-gray-500 dark:text-gray-400">
               <div class="break-words whitespace-pre-line">
-                <div class="text-sm">Loading...</div>
+                <div class="text-sm">{{ errorMessage || 'Loading...' }}</div>
               </div>
             </div>
           </article>
@@ -76,10 +76,13 @@
   } from '~/utils/lexicons'
   import { FwbAvatar } from 'flowbite-vue'
   import { showError } from '#app/composables/error'
+  import { isLoggedIn } from '~/composables/auth'
+  import { UnauthorizedError } from '~/errors/UnauthorizedError'
 
   const route = useRoute()
   const handleOrDid = ref(route.params.id)
   const postID = ref(route.params.cid)
+  const errorMessage = ref(null)
   if (handleOrDid.value && !postID.value) {
     throw new Error('Missing posts')
   }
@@ -96,6 +99,8 @@
 
   const profile = ref(null)
   const record = ref(null)
+  const easterMode = ref(false)
+  const noUnauthenticated = ref(false)
 
   onMounted(async () => {
     try {
@@ -114,6 +119,7 @@
         console.error(e)
       }
     }
+    easterMode.value = localStorage.getItem('_easter') === 'true'
 
     useSeoMeta({
       title: `Post | ${config.title} ${
@@ -127,6 +133,19 @@
     })
     try {
       profile.value = await loadProfile(did.value, false)
+
+      // Prevent users who are not logged in from viewing
+      if (
+        !easterMode.value &&
+        !isLoggedIn() &&
+        profile.value.labels &&
+        profile.value.labels.values.filter(v => {
+          v.val.includes('!no-unauthenticated')
+        })
+      ) {
+        throw new UnauthorizedError('You should logged in bsky.social')
+      }
+
       avatarURL.value = buildBlobRefURL(
         config.cdnPrefix,
         did.value,
@@ -136,7 +155,18 @@
       displayName.value = profile.value.displayName
     } catch (e) {
       console.error(e)
+      errorMessage.value = e.message
+
+      if (e.name === 'UnauthorizedError') {
+        noUnauthenticated.value = true
+        throw showError({
+          statusCode: 403,
+          statusMessage: 'You should log-in with Bluesky.',
+        })
+        // throw e
+      }
     }
+
     try {
       const result = await getPost(did.value, postID.value)
       record.value = result.success
@@ -157,10 +187,10 @@
       // to short text for title
       let descShort = description
       if (descShort.length > 32) {
-        descShort = descShort.substr(0, 32) + '...'
+        descShort = descShort.substr(0, 32).concat('...')
       }
       if (description.length > 128) {
-        description = description.substr(0, 128) + '...'
+        description = description.substr(0, 128).concat('...')
       }
 
       useSeoMeta({
@@ -171,6 +201,12 @@
       })
     } catch (e) {
       console.error(e)
+      if (e.name === 'UnauthorizedError') {
+        throw showError({
+          statusCode: 403,
+          statusMessage: 'You should log-in with Bluesky.',
+        })
+      }
 
       throw showError({
         statusCode: 404,
