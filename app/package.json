@@ -54,7 +54,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.5",
     "@gtm-support/vue-gtm": "^2.2.0",
-    "@vercel/analytics": "^1",
     "axios": "^1.6.2",
     "flowbite": "^2.2.1",
     "flowbite-vue": "^0.1.2",

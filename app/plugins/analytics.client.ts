@@ -1,10 +1,6 @@
 import { createGtm } from '@gtm-support/vue-gtm'
-import { inject } from '@vercel/analytics'
 
 export default defineNuxtPlugin(nuxtApp => {
-  // vercel analytics
-  inject()
-
   // Google Tag Manager
   const gtm = createGtm({
     id: nuxtApp.$config.public.GTM_ID,
