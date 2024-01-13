@@ -125,6 +125,17 @@
             <p class="m-4 min-w-stretch whitespace-pre-line">
               {{ loadState.profile ? userinfo.profile?.description : '' }}
             </p>
+
+            <div
+              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
+              <font-awesome-icon :icon="['fas', 'server']" class="mr-2" />
+              <!-- PDS -->
+              <span
+                v-if="loadState.details && userinfo.details.servers"
+                class="truncate">
+                {{ userinfo.details.servers.join(',') }}
+              </span>
+            </div>
             <!-- Labels -->
             <div v-if="userinfo.profile?.labels" class="m-4">
               <ul class="inline-block">
@@ -640,6 +651,11 @@
    */
   const loadDetails = async id => {
     const details = await lexicons.describeRepo(id)
+    details.servers = []
+    for (let serv of details.didDoc.service) {
+      const urlParser = new URL(serv.serviceEndpoint)
+      details.servers.push(urlParser.host)
+    }
     updateUserInfo('details', details)
   }
 
