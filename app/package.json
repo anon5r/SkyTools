@@ -10,7 +10,7 @@
     "analyze": "nuxt analyze",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
-    "pages:dev": "wrangler pages dev --compatibility-date=2023-11-21 --proxy 3000 -- npm run dev",
+    "pages:dev": "wrangler pages dev --compatibility-date=2023-12-01 --proxy 3000 -- yarn run dev",
     "pages:build": "NITRO_PRESET=cloudflare-pages nuxt build",
     "pages:deploy": "npm run build && wrangler pages deploy ./dist"
   },
@@ -43,7 +43,7 @@
     "vue": "^3.3.11",
     "vue-eslint-parser": "^9.3.2",
     "vue-router": "^4.2.5",
-    "wrangler": "^3.22.3"
+    "wrangler": "^3.22.4"
   },
   "dependencies": {
     "@atproto/api": "^0.7.4",
@@ -54,7 +54,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.5",
     "@gtm-support/vue-gtm": "^2.2.0",
-    "@vercel/analytics": "^1",
     "axios": "^1.6.2",
     "flowbite": "^2.2.1",
     "flowbite-vue": "^0.1.2",

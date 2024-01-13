@@ -3045,15 +3045,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vercel/analytics@npm:^1":
-  version: 1.1.1
-  resolution: "@vercel/analytics@npm:1.1.1"
-  dependencies:
-    server-only: ^0.0.1
-  checksum: 25f0259a5730a05b9df3bb40309ff75db53d4136e2db24d8287eccb346de08e55484c885679746d4cfbc8418241c4a357ad07b34751380ffa108aaf844f4203e
-  languageName: node
-  linkType: hard
-
 "@vercel/nft@npm:^0.24.3":
   version: 0.24.4
   resolution: "@vercel/nft@npm:0.24.4"
@@ -8478,7 +8469,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.12.0
     "@typescript-eslint/parser": ^6.9
     "@typescript-eslint/typescript-estree": ^6.12.0
-    "@vercel/analytics": ^1
     "@vue/eslint-config-prettier": ^8.0.0
     "@vue/eslint-config-typescript": ^12.0.0
     autoprefixer: ^10.4.16
@@ -8505,7 +8495,7 @@ __metadata:
     vue: ^3.3.11
     vue-eslint-parser: ^9.3.2
     vue-router: ^4.2.5
-    wrangler: ^3.22.3
+    wrangler: ^3.22.4
   languageName: unknown
   linkType: soft
 
@@ -10189,13 +10179,6 @@ __metadata:
     parseurl: ~1.3.3
     send: 0.18.0
   checksum: af57fc13be40d90a12562e98c0b7855cf6e8bd4c107fe9a45c212bf023058d54a1871b1c89511c3958f70626fff47faeb795f5d83f8cf88514dbaeb2b724464d
-  languageName: node
-  linkType: hard
-
-"server-only@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "server-only@npm:0.0.1"
-  checksum: c432348956641ea3f460af8dc3765f3a1bdbcf7a1e0205b0756d868e6e6fe8934cdee6bff68401a1dd49ba4a831c75916517a877446d54b334f7de36fa273e53
   languageName: node
   linkType: hard
 
@@ -12099,9 +12082,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:^3.22.3":
-  version: 3.22.3
-  resolution: "wrangler@npm:3.22.3"
+"wrangler@npm:^3.22.4":
+  version: 3.22.4
+  resolution: "wrangler@npm:3.22.4"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@cspotcode/source-map-support": 0.8.1
@@ -12124,7 +12107,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: d7ca9dd307020cedd3d7bf4983c8569b2d7711ba9653d71298f406e6bfd4703eaa8a9385d863eaeeb33a5c2f9062102e63cb9c8e20078b34ffb06e915bbb5dc5
+  checksum: a32ab9bf862b6cd22fb76f59858d4722da26a28ba806c7be1f66d29e4ed5f0b56dc4b48433aa4f1d0cc7870c6e151d7e8bde06395c54088fec6453ba2dd2f79d
   languageName: node
   linkType: hard
 
