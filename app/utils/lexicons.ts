@@ -283,12 +283,8 @@ export const getPost = async (
  */
 export const describeRepo = async (id: string): Promise<any> => {
   try {
-    const params = new URLSearchParams()
-    params.append('repo', id)
-    const response = await axios({
-      url: `${config.bskyService}/xrpc/com.atproto.repo.describeRepo`,
-      method: 'GET',
-      params: params,
+    const response = await createAtpAgent().api.com.atproto.repo.describeRepo({
+      repo: id,
     })
 
     if (response.data) {

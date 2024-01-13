@@ -77,7 +77,7 @@
   import { FwbAvatar } from 'flowbite-vue'
   import { showError } from '#app/composables/error'
   import { isLoggedIn } from '~/composables/auth'
-  import { UnauthorizedError } from '~/errors/UnauthorizedError'
+  import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
 
   const route = useRoute()
   const handleOrDid = ref(route.params.id)
@@ -100,7 +100,7 @@
   const profile = ref(null)
   const record = ref(null)
   const easterMode = ref(false)
-  const noUnauthenticated = ref(false)
+  const noUnauthenticated = ref(true)
 
   onMounted(async () => {
     try {
@@ -143,7 +143,7 @@
           v.val.includes('!no-unauthenticated')
         })
       ) {
-        throw new UnauthorizedError('You should logged in bsky.social')
+        throw new UnauthenticatedError('You should logged in bsky.social')
       }
 
       avatarURL.value = buildBlobRefURL(
@@ -158,7 +158,7 @@
       errorMessage.value = e.message
 
       if (e.name === 'UnauthorizedError') {
-        noUnauthenticated.value = true
+        noUnauthenticated.value = false
         throw showError({
           statusCode: 403,
           statusMessage: 'You should log-in with Bluesky.',
@@ -168,6 +168,12 @@
     }
 
     try {
+      if (!noUnauthenticated.value)
+        throw showError({
+          statusCode: 403,
+          statusMessage: 'You should log-in with Bluesky.',
+        })
+
       const result = await getPost(did.value, postID.value)
       record.value = result.success
         ? result.data
@@ -201,17 +207,17 @@
       })
     } catch (e) {
       console.error(e)
-      if (e.name === 'UnauthorizedError') {
+      if (e.name === 'UnauthenticatedError') {
         throw showError({
           statusCode: 403,
           statusMessage: 'You should log-in with Bluesky.',
         })
+      } else {
+        throw showError({
+          statusCode: 404,
+          statusMessage: 'This post has been removed, or incorrect URL.',
+        })
       }
-
-      throw showError({
-        statusCode: 404,
-        statusMessage: 'This post has been removed, or incorrect URL.',
-      })
     }
   })
 </script>

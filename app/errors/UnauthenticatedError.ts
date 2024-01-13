@@ -1,4 +1,4 @@
-export class UnauthorizedError extends Error {
+export class UnauthenticatedError extends Error {
   constructor(message: string) {
     super(message)
     this.name = this.constructor.name

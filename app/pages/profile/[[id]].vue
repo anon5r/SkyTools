@@ -58,7 +58,7 @@
               <div class="inline-flex items-center mr-3">
                 <!-- Avatar -->
                 <a
-                  v-if="!hasError && noUnauthenticated && loadState.avatarURL"
+                  v-if="!hasError && loadState.avatarURL"
                   :href="`${config.bskyAppURL}/profile/${userinfo.details.handle}`">
                   <fwb-avatar
                     rounded
@@ -93,9 +93,7 @@
                 </div>
               </div>
               <div>
-                <h2
-                  class="text-3xl"
-                  :class="{ 'text-red-600': hasError && !noUnauthenticated }">
+                <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
                     !loadState.profile
@@ -110,7 +108,7 @@
                   <!-- Handle -->
                   <span
                     v-if="loadState.details"
-                    :class="{ 'line-through': hasError && !noUnauthenticated }"
+                    :class="{ 'line-through': hasError }"
                     class="select-all at-handle">
                     {{ userinfo.details.handle || 'unknown.example' }}
                   </span>
@@ -127,6 +125,17 @@
             <p class="m-4 min-w-stretch whitespace-pre-line">
               {{ loadState.profile ? userinfo.profile?.description : '' }}
             </p>
+
+            <div
+              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
+              <font-awesome-icon :icon="['fas', 'server']" class="mr-2" />
+              <!-- PDS -->
+              <span
+                v-if="loadState.details && userinfo.details.servers"
+                class="truncate">
+                {{ userinfo.details.servers.join(',') }}
+              </span>
+            </div>
             <!-- Labels -->
             <div v-if="userinfo.profile?.labels" class="m-4">
               <ul class="inline-block">
@@ -365,7 +374,7 @@
   import { isDev } from '@/utils/helpers'
   import * as lexicons from '@/utils/lexicons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { UnauthorizedError } from '@/errors/UnauthorizedError'
+  import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
   import { isLoggedIn } from '~/composables/auth'
 
   const activeTab = ref('posts')
@@ -491,6 +500,7 @@
     try {
       await loadDetails(identifier)
       try {
+        noUnauthenticated.value = true
         await loadProfile(identifier)
       } catch (err) {
         // If the profile has never been updated,
@@ -510,9 +520,8 @@
         updateUserInfo('avatarURL', null)
 
         console.error(err)
-        if (err.name === 'UnauthorizedError') {
-          noUnauthenticated.value = true
-          throw err
+        if (err.name === 'UnauthenticatedError') {
+          throw new UnauthenticatedError('You should logged in bsky.social')
         }
       }
 
@@ -570,21 +579,25 @@
       }
     } catch (err) {
       if (isDev()) console.error(err)
-      hasError.value = true
       updateUserInfo('avatarURL', null)
       updateUserInfo('bannerURL', null)
-      if (!noUnauthenticated.value) updateUserInfo('details', {})
+
       updateUserInfo('posts', [])
       updateUserInfo('following', [])
       updateUserInfo('like', [])
       updateUserInfo('blocks', [])
 
-      updateUserInfo('profile', { value: { displayName: 'Error: Unknown' } })
-
-      if (noUnauthenticated.value) {
-        updateUserInfo('profile', { value: { displayName: 'Hidden user' } })
-        userinfo.value.profile.description = 'You should sign-in with Bluesky'
+      if (err.name === 'UnauthenticatedError') {
+        noUnauthenticated.value = false
+        updateUserInfo('profile', {
+          displayName: 'Hidden user',
+          description: 'You should sign-in with Bluesky',
+        })
       } else {
+        hasError.value = true
+        updateUserInfo('details', {})
+        updateUserInfo('profile', { displayName: 'Error: Unknown' })
+
         if (id.value.startsWith('did:')) {
           userinfo.value.details = {
             handle: 'unknown',
@@ -597,6 +610,7 @@
           }
         }
       }
+
       if (axios.isAxiosError(err)) {
         if (err.response.status === 400) {
           if (err.response.data.message) {
@@ -637,6 +651,11 @@
    */
   const loadDetails = async id => {
     const details = await lexicons.describeRepo(id)
+    details.servers = []
+    for (let serv of details.didDoc.service) {
+      const urlParser = new URL(serv.serviceEndpoint)
+      details.servers.push(urlParser.host)
+    }
     updateUserInfo('details', details)
   }
 
@@ -645,7 +664,7 @@
    *
    * @param {number|string} id - The ID of the user profile to load.
    * @returns {Promise<void>} - A promise that resolves when the profile is loaded and user information is updated.
-   * @throws {UnauthorizedError} - If the loaded profile has the '!no-unauthenticated' label.
+   * @throws {UnauthenticatedError} - If the loaded profile has the '!no-unauthenticated' label.
    * @throws {Error} - If the profile cannot be loaded or user information cannot be updated.
    */
   const loadProfile = async id => {
@@ -658,10 +677,10 @@
         !isLoggedIn() &&
         profile.labels &&
         profile.labels.values.filter(v => {
-          v.val.includes('!no-unauthenticated')
-        })
+          return v.val === '!no-unauthenticated'
+        }).length > 0
       ) {
-        throw new UnauthorizedError('You should logged in bsky.social')
+        throw new UnauthenticatedError('You should logged in bsky.social')
       }
       updateUserInfo('profile', profile)
       const avatarURL = lexicons.buildBlobRefURL(
