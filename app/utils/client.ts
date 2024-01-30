@@ -1,6 +1,7 @@
 import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
 import * as lexicons from '@/utils/lexicons'
 import { isDev } from '~/utils/helpers'
+import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
 
 const cdnURL = process.env.cdnPrefix || 'https://cdn-skytools.anon5r.com/proxy'
 
@@ -13,6 +14,7 @@ class ClientPost {
   private _removed: boolean = false
   private _avatarURL: string | null = null
   private _bannerURL: string | null = null
+  private _noUnauthenticated: boolean = false
 
   public get atUri(): { [key: string]: string } {
     return this._atUri
@@ -74,6 +76,7 @@ class ClientPost {
    * @param config
    * @param atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
    * @returns ClientPost
+   * @throws UnauthenticatedError
    */
   public static async load(
     config: any,
@@ -93,6 +96,14 @@ class ClientPost {
     try {
       // Load profile
       client._profile = await lexicons.loadProfile(did)
+
+      // No authenticated
+      const filtered = client._profile.labels?.filter(v => {
+        return v.val === '!no-unauthenticated'
+      })
+      client._noUnauthenticated = filtered.length > 0
+      if (!client._noUnauthenticated)
+        throw new UnauthenticatedError('You should be logged-in to Bluesky')
 
       // Avatar
       client._avatarURL = lexicons.buildBlobRefURL(
