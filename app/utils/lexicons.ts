@@ -18,7 +18,7 @@ let config = {
   defaultSuffix: 'bsky.social' as string,
   bskyService: 'https://bsky.social' as string,
   bskyAppURL: 'https://bsky.app' as string,
-  adminDID: 'did:bsky:admin' as string,
+  webmasterDid: 'did:bsky:webmaster' as string,
 }
 
 export const setConfig = (newConfig: typeof config) => {
@@ -31,7 +31,7 @@ export const getConfig = (): {
   defaultSuffix: string
   bskyService: string
   bskyAppURL: string
-  adminDID: string
+  webmasterDid: string
 } => {
   return config
 }

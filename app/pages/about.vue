@@ -77,8 +77,8 @@
   const currentLanguage = ref('en')
   const adminHandle = ref('admin')
   const adminURL = ref(
-    config.adminDID
-      ? `${config.bskyAppURL}/profile/${config.adminDID}`
+    config.webmasterDid
+      ? `${config.bskyAppURL}/profile/${config.webmasterDid}`
       : 'admin'
   )
 
@@ -93,7 +93,7 @@
       ogImage: `${config.prodURLPrefix}/images/ogp/default.png`,
       twitterCard: 'summary',
     })
-    const handle = await resolveDID(config.adminDID, true)
+    const handle = await resolveDID(config.webmasterDid, true)
     if (handle) {
       adminHandle.value = handle
       adminURL.value = `${config.bskyAppURL}/profile/${handle}`

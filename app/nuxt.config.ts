@@ -9,7 +9,7 @@ export default defineNuxtConfig({
       atprotoServiceSuffix: 'bsky.social',
       atprotoService: 'https://bsky.social',
       serviceAppUrl: ' https://bsky.app',
-      adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
+      webmasterDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
       prodURLPrefix: 'https://skytools.anon5r.com',
@@ -145,8 +145,9 @@ export default defineNuxtConfig({
     bskyService:
       process.env.ATPROTO_SERVICE || ('https://bsky.social' as string),
     bskyAppURL: process.env.SERVICE_APP_URL || ('https://bsky.app' as string),
-    adminDID:
-      process.env.ADMIN_DID || ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
+    webmasterDid:
+      process.env.WEBMASTER_DID ||
+      ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
     inviteCodeFreq:
       (process.env.INVITE_CODE_FREQ &&
         JSON.parse(process.env.INVITE_CODE_FREQ)) ||
