@@ -2,7 +2,7 @@
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
+# Setup
 
 Make sure to install the dependencies:
 
@@ -17,26 +17,52 @@ npm install
 pnpm install
 ```
 
+# Environment Variables
+
+| Variable               | Description                      | Default value                          |
+|------------------------|----------------------------------|----------------------------------------|
+| GTM_ID                 | Google Tag Manager               | GA-XXXXXX                              |
+| CLOUDFLARE_TOKEN       | Your Cloudflare API Token        |                                        |
+| FONTAWESOME_TOKEN      | Your FontAwesome API Token       |                                        |
+| PDS_DEFAULT            |                                  | `bsky.social`                          |
+| ATPROTO_SERVICE_SUFFIX | Auto append suffix               | `bsky.social`                          |
+| ATPROTO_SERVICE        | PDS API URL                      | https://bsky.social                    |
+| SERVICE_APP_URL        | Default application frontend URL | https://bsky.app                       |
+| WEBMASTER_DID          | Owner DID                        | `did:plc:c22jdrqhoajyj5ca7e56a3ke`     |
+| INVITE_CODE_FREQ       | Invite code frequency by JSON    | `'{"days": 10}'`                       |
+| CDN_PREFIX             | Blob image proxy URL             | http://cdn-skytools.anon5r.com/proxy   |
+
+
+
+# Run 
+
+
 ## Development Server
 
 Start the development server on `http://localhost:3000`
 
 ```bash
-npm run dev
+yarn dev
 ```
+Or run as cloudflare pages development
+```bash
+yarn pages:dev
+```
+
+```bash
 
 ## Production
 
 Build the application for production:
 
 ```bash
-npm run build
+yarn build
 ```
 
 Locally preview production build:
 
 ```bash
-npm run preview
+yarn preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
