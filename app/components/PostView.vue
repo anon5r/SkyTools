@@ -77,7 +77,6 @@
             <!-- Created datetime -->
             <time
               v-if="record"
-              pubdate="pubdate"
               :datetime="record.createdAt"
               :title="DateTime.fromISO(record.createdAt).toString()"
               class="text-sm font-light">
