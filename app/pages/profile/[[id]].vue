@@ -4,6 +4,11 @@
     <div class="w-full max-w-3xl">
       <ClientOnly>
         <div class="px-3 py-3 flex flex-row justify-between items-center">
+          <div class="mr-4 relative w-1.5">
+            <button class="bg-transparent text-gray-700 dark:text-slate-300">
+              <font-awesome-icon :icon="['fat', 'chart-network']" />
+            </button>
+          </div>
           <div class="mr-4 relative w-full">
             <input
               v-model="id"
@@ -128,7 +133,7 @@
 
             <div
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
-              <font-awesome-icon :icon="['fas', 'server']" class="mr-2" />
+              <font-awesome-icon :icon="['fas', 'database']" class="mr-1" />
               <!-- PDS -->
               <span
                 v-if="loadState.details && userinfo.details.servers"
@@ -161,19 +166,9 @@
               <div v-if="userinfo.posts.length > 0">
                 <div v-for="record of userinfo.posts" :key="record.cid">
                   <PostView
-                    :config="config"
                     :did="userinfo.details.did"
-                    :handle="userinfo.details.handle"
-                    :avatar_url="userinfo.avatarURL ?? 'about:blank'"
-                    :display_name="
-                      userinfo.profile?.displayName
-                        ? userinfo.profile.displayName
-                        : userinfo.details.handle
-                    "
-                    :post="toRaw(record)"
-                    @show-profile="
-                      showProfile(userinfo.details.handle)
-                    "></PostView>
+                    :uri="record.uri"
+                    :cid="record.cid"></PostView>
                 </div>
               </div>
               <div v-else class="mt-4 mx-2">There are no posts.</div>
@@ -258,18 +253,7 @@
               <div v-if="userinfo.like.length > 0">
                 <ul>
                   <li v-for="record of userinfo.like" :key="record.cid">
-                    <PostView
-                      :appURL="config.bskyAppURL"
-                      :did="record.did"
-                      :handle="record.handle"
-                      :avatar_url="record.avatarURL"
-                      :display_name="
-                        record.profile
-                          ? record.profile.displayName
-                          : record.handle
-                      "
-                      :post="record.post"
-                      @show-profile="showProfile(record.handle)" />
+                    <PostView :uri="record.uri" :cid="record.cid" />
                   </li>
                 </ul>
               </div>
@@ -308,9 +292,6 @@
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
-                  {{
-                    record
-                  }}
                   <li v-for="record of userinfo.blocks" :key="record.cid">
                     <UserField
                       :did="record.value.subject"
