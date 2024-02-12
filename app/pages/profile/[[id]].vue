@@ -133,7 +133,10 @@
 
             <div
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
-              <font-awesome-icon :icon="['fas', 'database']" class="mr-1" />
+              <font-awesome-icon
+                v-if="userinfo.details.servers"
+                :icon="['fas', 'database']"
+                class="mr-1" />
               <!-- PDS -->
               <span
                 v-if="loadState.details && userinfo.details.servers"
