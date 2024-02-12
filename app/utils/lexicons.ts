@@ -88,8 +88,8 @@ export const resolveDID = async (
   } catch (error: any) {
     if (isDev()) {
       console.error('[Lexicons] resolveDID::response.Error')
+      console.error(error)
     }
-    console.warn(error)
     throw error
   }
 }
@@ -112,8 +112,8 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   } catch (err: any) {
     if (isDev()) {
       console.error('[Lexicons] resolveHandle::response.Error = ')
+      console.error(err)
     }
-    console.warn(err)
     throw err
   }
 }
@@ -269,7 +269,7 @@ export const getPost = async (
 ): Promise<AppBskyFeedPost.Record> => {
   try {
     const res = await getRecord('app.bsky.feed.post', identity, recordKey)
-    if (res.success) return res
+    if (res.success) return res.data.value as AppBskyFeedPost.Record
     throw new Error('Failed to get post')
   } catch (err: any) {
     if (isDev()) console.warn(err)
