@@ -46,25 +46,22 @@
                 </div>
               </div>
               <div class="my-3 md:my-2 whitespace-pre-line breal-all truncate">
-                {{ post.record?.data?.value?.text }}
+                {{ post.record.text }}
               </div>
-              <div v-if="post.record?.data?.value?.embed">
+              <div v-if="post.record.embed">
                 <div
-                  v-if="
-                    post.record?.data.value.embed.$type ===
-                    'app.bsky.embed.images'
-                  "
+                  v-if="post.record.embed.$type === 'app.bsky.embed.images'"
                   class="flex flex-wrap">
                   <!-- Display image -->
                   <div
                     class="p-0 grid md:grid-cols-2 grid-flow-dense auto-cols-max gap-2 max-w-fit">
                     <div
-                      v-for="img of post.record?.data.value.embed.images"
+                      v-for="img of post.record.embed.images"
                       :key="img.image.ref.toString()"
                       class="flex max-w-fit">
                       <LazyNuxtImg
                         :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
-                          parseAtUri(post.record?.data.uri).did
+                          parseAtUri(post.atUri).did
                         }/${img.image.ref.toString()}`"
                         :alt="img.alt"
                         class="max-w-xxs rounded-lg object-cover" />
@@ -108,8 +105,8 @@
   </div>
 </template>
 
-<script setup>
-  import { defineProps } from 'vue'
+<script setup lang="ts">
+  import { defineProps, type Ref } from 'vue'
   import { useAppConfig, onMounted, ref } from '#imports'
   import { buildPostURL, parseAtUri } from '@/utils/lexicons'
   import { ClientPost } from '@/utils/client'
@@ -118,11 +115,15 @@
     AppBskyEmbedImages,
     AppBskyEmbedRecord,
     AppBskyEmbedRecordWithMedia,
+    AppBskyEmbedExternal,
   } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
+  import type { ValidationResult } from '@atproto/lexicon'
 
   const config = useAppConfig()
 
+  /** @type {AppBskyEmbedRecord|AppBskyEmbedImages|AppBskyEmbedRecordWithMedia|AppBskyEmbedExternal} props.embed */
+  /** @type {string} props.did */
   const props = defineProps({
     embed: {
       type: Object,
@@ -136,8 +137,8 @@
     },
   })
 
-  const postURL = ref('#')
-  const post = ref()
+  const postURL: Ref<string> = ref('#')
+  const post: Ref<ClientPost | null> = ref(null)
 
   onMounted(async () => {
     if (isDev()) {
@@ -149,6 +150,10 @@
         '[PostEmbed.vue:EmbedImages] ',
         AppBskyEmbedImages.isMain(props.embed)
       )
+      console.log(
+        '[PostEmbed.vue:EmbedExternal] ',
+        AppBskyEmbedExternal.isMain(props.embed)
+      )
     }
     if (AppBskyEmbedRecord.isMain(props.embed)) {
       // Quoted posts
@@ -156,14 +161,17 @@
       post.value = await loadPostData(props.embed.record.uri)
       if (isDev()) console.log('post(ClientPost) ', post.value)
       // Post URL
-      postURL.value = post.value.permaURL()
+      postURL.value = post.value?.permaURL()
     } else if (
       AppBskyEmbedImages.isMain(props.embed) ||
       AppBskyEmbedRecordWithMedia.isMain(props.embed)
     ) {
       // Images
-      /** @type {ValidationResult} img */
-      const validRes = AppBskyEmbedImages.validateMain(props.embed)
+      /** @type {ValidationResult} */
+      const validRes: ValidationResult = AppBskyEmbedImages.validateMain(
+        props.embed
+      )
+      console.log(validRes)
       if (validRes.success) {
         for (const img of validRes.value.images) {
           postURL.value = await buildPostURL(
@@ -191,11 +199,10 @@
    * @param {string} atURI - The ATURI to load the post-data from.
    * @returns {Promise<ClientPost>} - A promise that resolves to the loaded post-data as a ClientPost object.
    */
-  const loadPostData = async atURI => {
+  const loadPostData = async (atURI: string): Promise<ClientPost> => {
     const postURI = atURI ?? props.embed.value.record.uri
     if (isDev()) console.log('PostEmbed.loadPostData(atURI) ==> ', postURI)
-    const client = await ClientPost.load(config, postURI)
-    return client
+    return await ClientPost.load(config, postURI)
   }
 </script>
 
