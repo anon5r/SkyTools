@@ -128,18 +128,15 @@
         Loading...
       </div>
       <div v-if="record && record.embed">
-        <KeepAlive>
-          <Suspense>
-            <!-- Embedded (image, record...) -->
-            <PostEmbed :did="did" :embed="record.embed" />
-            <template #fallback>
-              <div class="flex justify-center">
-                <div
-                  class="w-8 h-8 border border-gray-300 rounded-full animate-spin"></div>
-              </div>
-            </template>
-          </Suspense>
-        </KeepAlive>
+        <!-- Embedded (image, record...) -->
+        <PostEmbed :did="did" :embed="record.embed">
+          <template #fallback>
+            <div class="flex justify-center">
+              <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
+              Loading...
+            </div>
+          </template>
+        </PostEmbed>
       </div>
     </div>
 
