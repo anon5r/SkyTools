@@ -76,11 +76,5 @@
           )
       }
     }
-    //
-    // postURL.value = await buildPostURL(
-    //   config.bskyAppURL,
-    //   /** @props.embed.images {AppBskyEmbedImages} */
-    //   props.embed.images[0].image.uri
-    // )
   }
 </script>
