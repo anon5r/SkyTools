@@ -18,7 +18,7 @@ let config = {
   defaultSuffix: 'bsky.social' as string,
   bskyService: 'https://bsky.social' as string,
   bskyAppURL: 'https://bsky.app' as string,
-  adminDID: 'did:bsky:admin' as string,
+  webmasterDid: 'did:bsky:webmaster' as string,
 }
 
 export const setConfig = (newConfig: typeof config) => {
@@ -31,7 +31,7 @@ export const getConfig = (): {
   defaultSuffix: string
   bskyService: string
   bskyAppURL: string
-  adminDID: string
+  webmasterDid: string
 } => {
   return config
 }
@@ -88,8 +88,8 @@ export const resolveDID = async (
   } catch (error: any) {
     if (isDev()) {
       console.error('[Lexicons] resolveDID::response.Error')
+      console.error(error)
     }
-    console.warn(error)
     throw error
   }
 }
@@ -112,8 +112,8 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   } catch (err: any) {
     if (isDev()) {
       console.error('[Lexicons] resolveHandle::response.Error = ')
+      console.error(err)
     }
-    console.warn(err)
     throw err
   }
 }
@@ -269,7 +269,7 @@ export const getPost = async (
 ): Promise<AppBskyFeedPost.Record> => {
   try {
     const res = await getRecord('app.bsky.feed.post', identity, recordKey)
-    if (res.success) return res
+    if (res.success) return res.data.value as AppBskyFeedPost.Record
     throw new Error('Failed to get post')
   } catch (err: any) {
     if (isDev()) console.warn(err)
@@ -309,11 +309,11 @@ export const describeRepo = async (id: string): Promise<any> => {
 export const loadProfile = async (
   id: string,
   withHeader?: boolean
-): Promise<AppBskyActorProfile.Record> => {
+): Promise<AppBskyActorProfile.Record | ComAtprotoRepoGetRecord.Response> => {
   if (withHeader === undefined) withHeader = false
   const profile = await getRecord('app.bsky.actor.profile', id, 'self')
   return withHeader
-    ? profile.data
+    ? (profile.data as ComAtprotoRepoGetRecord.Response)
     : (profile.data.value as AppBskyActorProfile.Record)
 }
 
