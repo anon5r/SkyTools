@@ -351,19 +351,23 @@ export const buildBlobRefURL = (
  */
 export const buildPostURL = async (
   urlPrefix: string,
-  uri: string,
+  uri: string | { [key: string]: string },
   handle?: string
 ): Promise<string> => {
-  const aturi = parseAtUri(uri)
+  let atUri
+  if (typeof uri === 'string' && uri.startsWith('at://'))
+    atUri = parseAtUri(uri)
+  else atUri = uri as { [key: string]: string }
+
   if (handle === undefined) {
     try {
-      if (isDev()) console.log(aturi)
-      handle = await resolveDID(aturi.did)
+      if (isDev()) console.log(atUri)
+      handle = await resolveDID(atUri.did)
     } catch (er) {
-      handle = aturi.did
+      handle = atUri.did
     }
   }
-  return `${urlPrefix}/profile/${handle}/post/${aturi.rkey}`
+  return `${urlPrefix}/profile/${handle}/post/${atUri.rkey}`
 }
 
 export default {
