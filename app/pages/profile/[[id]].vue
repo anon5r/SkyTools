@@ -6,7 +6,7 @@
         <div class="px-3 py-3 flex flex-row justify-between items-center">
           <div class="mr-4 relative w-1.5">
             <button class="bg-transparent text-gray-700 dark:text-slate-300">
-              <font-awesome-icon :icon="['fat', 'chart-network']" />
+              <font-awesome-icon :icon="['fas', 'chart-network']" />
             </button>
           </div>
           <div class="mr-4 relative w-full">
