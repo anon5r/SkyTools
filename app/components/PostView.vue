@@ -169,15 +169,21 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig, onMounted, ref } from '#imports'
+  import {
+    useAppConfig,
+    onMounted,
+    ref,
+    useAuth,
+    isDev,
+    ClientPost,
+  } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, type Ref } from 'vue'
   import { DateTime } from 'luxon'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { isDev } from '~/utils/helpers'
-  import { ClientPost } from '@/utils/client'
   import { AppBskyFeedPost } from '@atproto/api'
   import type { AppConfig } from '@nuxt/schema'
+  import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
 
   const props = defineProps({
     uri: {
@@ -199,6 +205,7 @@
     },
   })
   const config: AppConfig = useAppConfig()
+  const auth = useAuth()
 
   const postURL: Ref<string> = ref('#')
 
@@ -217,6 +224,11 @@
         client.atUri.rkey
       )
       isHidden.value = client.isHidden
+      if (auth.isLoggedIn()) {
+        isHidden.value = false
+        ClientPost.loadProfileBlobs(client)
+        await ClientPost.loadPost(client)
+      }
       handle.value = client.handle ?? 'Unknown'
       displayName.value =
         client.profile.displayName ?? client.handle ?? 'Unknown'
@@ -230,6 +242,9 @@
       isRemoved.value = client.isRemoved
     } catch (e) {
       console.error(e)
+      if (e instanceof UnauthenticatedError) {
+        isHidden.value = true && !auth.isLoggedIn()
+      }
       isRemoved.value = true
     }
   })

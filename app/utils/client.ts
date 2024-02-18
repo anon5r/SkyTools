@@ -1,4 +1,7 @@
-import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
+import {
+  AppBskyActorProfile,
+  AppBskyFeedPost,
+} from '@atproto/api'
 import * as lexicons from '@/utils/lexicons'
 import { isDev } from '~/utils/helpers'
 import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
@@ -15,7 +18,10 @@ class ClientPost {
   private _profile: AppBskyActorProfile.Record | null = null
   private _handle: string | undefined = undefined
   private _appUrl: string | null = null
-  private _record: AppBskyFeedPost.Record | null = null
+  private _record:
+    | AppBskyFeedPost.Record
+    | AppBskyActorProfile.Record
+    | null = null
   private _cid: string | null = null
   private _removed: boolean = false
   private _hidden: boolean = false
@@ -148,7 +154,11 @@ class ClientPost {
       }
       console.info('No profile: ' + did)
     }
-    await ClientPost.loadPost(client, atUriPost)
+
+    if (client._atUri.collection === 'app.bsky.feeds.post') {
+      // Load post
+      await ClientPost.loadPost(client, atUriPost)
+    }
 
     return client
   }
