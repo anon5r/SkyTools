@@ -61,11 +61,9 @@
 <style scoped></style>
 
 <script setup lang="ts">
-  import { parseAtUri } from '~/utils/lexicons'
   import { AppBskyEmbedRecord } from '@atproto/api'
-  import { isDev } from '~/utils/helpers'
   import { defineProps, type Ref } from 'vue'
-  import { ClientPost, ref, useAppConfig } from '#imports'
+  import { ClientPost, ref, useAppConfig, isDev } from '#imports'
 
   /** @type {AppBskyEmbedRecord} props.embed */
   /** @type {string} props.did */
@@ -84,7 +82,7 @@
 
   const config = useAppConfig()
   const postURL: Ref<string> = ref('#')
-  const post: Ref<ClientPost | null> = ref(null)
+  const post: Ref<ClientPost | undefined> = ref(undefined)
 
   /**
    * Loads post-data from a given at-URI.
@@ -99,11 +97,17 @@
   }
 
   if (AppBskyEmbedRecord.isMain(props.embed)) {
-    // Quoted posts
-    /** @type Promise<ClientPost> post */
-    post.value = await loadPostData(props.embed.record.uri)
-    if (isDev()) console.log('post(ClientPost) ', post.value)
-    // Post URL
-    postURL.value = post.value?.permaURL()
+    try {
+      // Quoted posts
+      /** @type Promise<ClientPost> post */
+      post.value = await loadPostData(props.embed.record.uri)
+      if (isDev()) console.log('post(ClientPost) ', post.value)
+    } catch (error) {
+      console.error('Error loading post data: ', error)
+    }
+    if (post.value !== undefined) {
+      // Post URL
+      postURL.value = post.value.permaURL()
+    }
   }
 </script>
