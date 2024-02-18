@@ -17,7 +17,7 @@
               props.did
             }/${img.image.ref.toString()}`"
             :alt="img.alt"
-            class="max-w-xxs rounded-lg object-cover" />
+            class="max-w-xs sm:max-w-md md:max-w-xs rounded-lg object-cover object-top" />
         </a>
       </div>
     </div>
@@ -27,11 +27,9 @@
 <style scoped></style>
 
 <script setup lang="ts">
-  import { useAppConfig } from '#imports'
+  import { useAppConfig, buildPostURL, isDev } from '#imports'
   import { AppBskyEmbedImages, AppBskyEmbedRecordWithMedia } from '@atproto/api'
   import type { ValidationResult } from '@atproto/lexicon'
-  import { buildPostURL } from '~/utils/lexicons'
-  import { isDev } from '~/utils/helpers'
   import { defineProps } from 'vue'
 
   /** @type {AppBskyEmbedImages|AppBskyEmbedRecordWithMedia} props.embed */

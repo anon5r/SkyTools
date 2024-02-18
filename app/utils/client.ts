@@ -1,4 +1,7 @@
-import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
+import {
+  AppBskyActorProfile,
+  AppBskyFeedPost,
+} from '@atproto/api'
 import * as lexicons from '@/utils/lexicons'
 import { isDev } from '~/utils/helpers'
 import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
@@ -10,11 +13,15 @@ interface AppConfig {
 }
 
 class ClientPost {
+  private _config: AppConfig = {}
   private _atUri: { [key: string]: string } = {}
   private _profile: AppBskyActorProfile.Record | null = null
   private _handle: string | undefined = undefined
   private _appUrl: string | null = null
-  private _record: AppBskyFeedPost.Record | null = null
+  private _record:
+    | AppBskyFeedPost.Record
+    | AppBskyActorProfile.Record
+    | null = null
   private _cid: string | null = null
   private _removed: boolean = false
   private _hidden: boolean = false
@@ -138,21 +145,7 @@ class ClientPost {
           throw new UnauthenticatedError('You should be logged-in to Bluesky')
       }
 
-      // Avatar
-      client._avatarURL = lexicons.buildBlobRefURL(
-        cdnURL,
-        client.atUri.did,
-        client.profile as AppBskyActorProfile.Record,
-        'avatar'
-      )
-
-      // Banner
-      client._bannerURL = lexicons.buildBlobRefURL(
-        cdnURL,
-        client.atUri.did,
-        client.profile as AppBskyActorProfile.Record,
-        'banner'
-      )
+      ClientPost.loadProfileBlobs(client)
     } catch (err) {
       if (isDev()) console.error(err)
       if (err instanceof UnauthenticatedError) {
@@ -162,7 +155,44 @@ class ClientPost {
       console.info('No profile: ' + did)
     }
 
+    if (client._atUri.collection === 'app.bsky.feeds.post') {
+      // Load post
+      await ClientPost.loadPost(client, atUriPost)
+    }
+
+    return client
+  }
+
+  public static loadProfileBlobs(client: ClientPost): void {
+    // Avatar
+    client._avatarURL = lexicons.buildBlobRefURL(
+      cdnURL,
+      client.atUri.did,
+      client.profile as AppBskyActorProfile.Record,
+      'avatar'
+    )
+
+    // Banner
+    client._bannerURL = lexicons.buildBlobRefURL(
+      cdnURL,
+      client.atUri.did,
+      client.profile as AppBskyActorProfile.Record,
+      'banner'
+    )
+  }
+
+  /**
+   * Load a post from a URI
+   * @param client
+   * @param atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   */
+  public static async loadPost(
+    client: ClientPost,
+    atUriPost?: string
+  ): Promise<void> {
     try {
+      if (atUriPost) client._atUri = lexicons.parseAtUri(atUriPost)
+
       const record = await lexicons.getRecord(
         client._atUri.collection,
         client._atUri.did,
@@ -176,15 +206,13 @@ class ClientPost {
 
     try {
       client._appUrl = await lexicons.buildPostURL(
-        config.bskyAppURL,
-        atUriPost,
+        client._config.bskyAppURL,
+        client._atUri,
         client.handle
       )
     } catch (err) {
       if (isDev()) console.error(err)
     }
-
-    return client
   }
 
   /**
