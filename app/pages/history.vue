@@ -63,8 +63,22 @@
                 {{ record.handle.replace('at://', '') }}
               </p>
               <div
-                class="mb-5 text-xs font-mono text-gray-300 dark:text-slate-500 select-all">
-                {{ record.did }}
+                class="mb-1 text-xs font-mono text-gray-300 dark:text-slate-500">
+                <font-awesome-icon
+                  v-if="record.pds"
+                  :icon="['fas', 'key']"
+                  class="mr-1" />
+                <span class="select-all">{{ record.did }}</span>
+              </div>
+              <div
+                class="mb-5 text-xs font-mono text-gray-300 dark:text-slate-500">
+                <font-awesome-icon
+                  v-if="record.pds"
+                  :icon="['far', 'database']"
+                  class="mr-1" />
+                <span v-if="record.pds" class="truncate">
+                  {{ record.pds }}
+                </span>
               </div>
             </li>
           </ul>
@@ -183,6 +197,7 @@
               ? records[idx].operation.handle
               : records[idx].operation.alsoKnownAs[0],
             did: records[idx].did,
+            pds: records[idx].operation.services.atproto_pds.endpoint,
             _raw: records[idx].operation,
           })
         }
