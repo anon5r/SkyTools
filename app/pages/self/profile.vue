@@ -74,6 +74,11 @@
                   <!-- DID -->
                   {{ loadState.profile ? profile.did : 'loading...' }}
                 </div>
+                <div
+                  class="text-xs sm:text-sm truncate text-ellipsis font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
+                  <!-- PDS -->
+                  {{ loadState.profile ? profile.pds : 'loading...' }}
+                </div>
               </div>
 
               <div v-if="!hasError" class="max-w-min min-w-fit p-2">
