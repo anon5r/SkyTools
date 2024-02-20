@@ -7,6 +7,7 @@ import {
   AtUri,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
+  ComAtprotoServerDescribeServer,
 } from '@atproto/api'
 import type { BlobRef } from '@atproto/lexicon'
 
@@ -36,11 +37,13 @@ export const getConfig = (): {
   return config
 }
 
-export const createAtpAgent = (): AtpAgent => {
-  if (!atp) {
+export const createAtpAgent = (service?: string): AtpAgent => {
+  service = service || config.bskyService
+  if (!service && !atp) {
     atp = new AtpAgent({ service: config.bskyService })
+    return atp
   }
-  return atp
+  return new AtpAgent({ service: service })
 }
 
 /**
@@ -370,6 +373,26 @@ export const buildPostURL = async (
   return `${urlPrefix}/profile/${handle}/post/${atUri.rkey}`
 }
 
+export const describeServer = async (
+  server: string
+): Promise<ComAtprotoServerDescribeServer.OutputSchema> => {
+  try {
+    const response =
+      await createAtpAgent(server).api.com.atproto.server.describeServer()
+    console.log(response)
+    if (response.success) {
+      return response.data
+    }
+    throw new Error('Failed to get details for ' + server)
+  } catch (err) {
+    if (isDev()) {
+      console.error('[Lexicons] describeServer::response.Error')
+    }
+    console.warn(err)
+    throw err
+  }
+}
+
 export default {
   isDev,
   getConfig,
@@ -386,5 +409,6 @@ export default {
   buildBlobRefURL,
   loadProfile,
   describeRepo,
+  describeServer,
   buildPostURL,
 }

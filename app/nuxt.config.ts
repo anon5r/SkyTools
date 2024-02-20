@@ -181,6 +181,8 @@ export default defineNuxtConfig({
     '/profile': { prerender: true },
     '/invite-code': { prerender: true },
     '/profile/:did': { swr: 3600 },
+    '/pds': { prerender: true },
+    '/pds/:hostname': { swr: 3600 },
     '/lookup': { redirect: '/profile' },
   },
 })

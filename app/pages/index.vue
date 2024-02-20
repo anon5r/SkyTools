@@ -56,6 +56,17 @@
           deletion. This feature will be merge Profile page in the future.
         </p>
       </NuxtLink>
+      <NuxtLink to="/pds" class="feature-card">
+        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+          PDS repository info
+          <span class="label-newavailable animate-bounce">New available</span>
+          <font-awesome-icon :icon="['fad', 'sparkles']" class="mr-1 text-xs" />
+        </h2>
+        <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
+          You can view handle history of identity creation, update, and
+          deletion. This feature will be merge Profile page in the future.
+        </p>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -82,5 +93,8 @@
   }
   .label-maintain {
     @apply bg-yellow-300 text-gray-900 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-md dark:bg-yellow-400 dark:text-gray-700 mb-2;
+  }
+  .label-newavailable {
+    @apply bg-yellow-400 text-red-500 text-sm font-bold inline-flex items-center px-2.5 py-0.5 rounded-md dark:bg-yellow-400 dark:text-red-600 mb-2;
   }
 </style>
