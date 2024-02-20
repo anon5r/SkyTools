@@ -408,7 +408,7 @@
         val: label,
       }))
       const update = {
-        repo: profile.value.handle,
+        repo: profile.value.did,
         did: profile.value.did,
         collection: 'app.bsky.actor.profile',
         record: {
