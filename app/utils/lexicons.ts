@@ -379,10 +379,11 @@ export const describeServer = async (
   try {
     const response =
       await createAtpAgent(server).api.com.atproto.server.describeServer()
-    if (response.data) {
+    console.log(response)
+    if (response.success) {
       return response.data
     }
-    throw new Error('Failed to get details')
+    throw new Error('Failed to get details for ' + server)
   } catch (err) {
     if (isDev()) {
       console.error('[Lexicons] describeServer::response.Error')
