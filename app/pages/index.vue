@@ -63,8 +63,7 @@
           <font-awesome-icon :icon="['fad', 'sparkles']" class="mr-1 text-xs" />
         </h2>
         <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
-          You can view handle history of identity creation, update, and
-          deletion. This feature will be merge Profile page in the future.
+          You can check the registration status, terms and policies of each PDS.
         </p>
       </NuxtLink>
     </div>
