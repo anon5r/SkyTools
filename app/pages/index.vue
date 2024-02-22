@@ -14,11 +14,11 @@
     <div class="grid md:grid-cols-2 gap-4 md:gap-8 mx-10 max-w-2xl">
       <NuxtLink to="/profile" class="feature-card">
         <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
-          View Profile
+          Profile viewer
         </h2>
         <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
           You can view posts, followings, and other information of users with
-          specified IDs. No login is required becauseas only AT Protocol is
+          specified IDs. No login is required because as only AT Protocol is
           used.
         </p>
       </NuxtLink>
@@ -58,9 +58,7 @@
       </NuxtLink>
       <NuxtLink to="/pds" class="feature-card">
         <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
-          PDS repository info
-          <span class="label-newavailable animate-bounce">New available</span>
-          <font-awesome-icon :icon="['fad', 'sparkles']" class="mr-1 text-xs" />
+          PDS status viewer
         </h2>
         <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
           You can check the registration status, terms and policies of each PDS.
