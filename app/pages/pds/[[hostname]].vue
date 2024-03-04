@@ -112,7 +112,7 @@
                     class="mr-1" />
                   Yes
                 </span>
-                <span v-else class="text-blue-400 dark:text-blue-700">
+                <span v-else class="text-blue-400 dark:text-blue-400">
                   <font-awesome-icon
                     :icon="['fas', 'shield-slash']"
                     class="mr-1" />
@@ -147,16 +147,16 @@
                 <div v-if="pdsInfo.links?.termsOfService">
                   <font-awesome-icon
                     :icon="['fal', 'file-check']"
-                    class="mr-1 text-md text-blue-800 dark:text-blue-400" />
-                  <a
-                    :href="pdsInfo.links.termsOfService"
-                    target="_blank"
-                    class="my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
-                    Terms of Service
-                    <font-awesome-icon
-                      :icon="['fas', 'external-link-alt']"
-                      class="ml-1 text-xs" />
-                  </a>
+                    class="mr-2 text-md text-blue-800 dark:text-blue-400" />
+                  <span
+                    class="ml-0 my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
+                    <a :href="pdsInfo.links.termsOfService" target="_blank">
+                      Terms of Service
+                      <font-awesome-icon
+                        :icon="['fas', 'external-link-alt']"
+                        class="ml-1 text-xs" />
+                    </a>
+                  </span>
                 </div>
               </dd>
             </div>
