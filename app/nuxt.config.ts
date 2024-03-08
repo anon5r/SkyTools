@@ -7,7 +7,7 @@ export default defineNuxtConfig({
 
       defaultPDS: 'bsky.social',
       defaultPDSSuffix: 'bsky.social',
-      defaultPDS: 'https://bsky.social',
+      defaultPDSEntrypoint: 'https://bsky.social',
       defaultAppUrl: ' https://bsky.app',
       webmasterDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
@@ -141,7 +141,7 @@ export default defineNuxtConfig({
     title: 'SkyTools' as string,
     defaultSuffix: process.env.DEFAULT_PDS_SUFFIX || ('.bsky.social' as string),
     defaultPDS: process.env.PDS_DEFAULT || ('bsky.social' as string),
-    bskyService:
+    defaultPDSEntrypoint:
       process.env.DEFAULT_PDS_ENDPOINT || ('https://bsky.social' as string),
     bskyAppURL: process.env.DEFAULT_APP_URL || ('https://bsky.app' as string),
     webmasterDid:

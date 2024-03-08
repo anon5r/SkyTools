@@ -252,7 +252,7 @@
   // Go sign-in page
   const loadSigninForm = async () => {
     const router = useRouter()
-    const serviceURL = new URL(config.bskyService)
+    const serviceURL = new URL(config.defaultPDSEntrypoint)
     // Back to current page
     navigate.setNext(route.name)
     await router.push({ path: `${serviceURL.hostname}/signin` })

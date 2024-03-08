@@ -17,20 +17,20 @@ let atp: AtpAgent | null = null
 let config = {
   defaultPDS: 'bsky.social' as string,
   defaultSuffix: 'bsky.social' as string,
-  bskyService: 'https://bsky.social' as string,
+  defaultPDSEntrypoint: 'https://bsky.social' as string,
   bskyAppURL: 'https://bsky.app' as string,
   webmasterDid: 'did:bsky:webmaster' as string,
 }
 
 export const setConfig = (newConfig: typeof config) => {
   config = { ...config, ...newConfig }
-  atp = new AtpAgent({ service: config.bskyService })
+  atp = new AtpAgent({ service: config.defaultPDSEntrypoint })
 }
 
 export const getConfig = (): {
   defaultPDS: string
   defaultSuffix: string
-  bskyService: string
+  defaultPDSEntrypoint: string
   bskyAppURL: string
   webmasterDid: string
 } => {
@@ -38,9 +38,9 @@ export const getConfig = (): {
 }
 
 export const createAtpAgent = (service?: string): AtpAgent => {
-  service = service || config.bskyService
+  service = service || config.defaultPDSEntrypoint
   if (!service && !atp) {
-    atp = new AtpAgent({ service: config.bskyService })
+    atp = new AtpAgent({ service: config.defaultPDSEntrypoint })
     return atp
   }
   return new AtpAgent({ service: service })
@@ -75,7 +75,7 @@ export const resolveDID = async (
     let requestUrl
     if (identifier.startsWith('did:')) requestUrl = `${plcURL}/${identifier}`
     else
-      requestUrl = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+      requestUrl = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
 
     const res = await axios.get(requestUrl)
 
@@ -104,7 +104,7 @@ export const resolveDID = async (
  * @throws {Error} Invalid handle
  */
 export const resolveHandle = async (identifier: string): Promise<string> => {
-  const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+  const url = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
   try {
     if (!identifier.startsWith('did:') && identifier.length > 253)
       throw new Error('Too long identifier')
