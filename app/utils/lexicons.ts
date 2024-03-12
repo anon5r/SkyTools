@@ -175,18 +175,22 @@ export const parseDID = (did: string): { [key: string]: string } => {
 /**
  * Fetch posts
  * @return ComAtprotoRepoGetRecord.Response
+ * @param {string} repoEndpoint
  * @param {string} collection
  * @param {string} repo
  * @param {string} recordKey
  * @return Promise<ComAtProtoRepoGetRecord.Response|any>
  */
 export const getRecord = async (
+  repoEndpoint: string,
   collection: string,
   repo: string,
   recordKey: string
 ): Promise<ComAtprotoRepoGetRecord.Response | any> => {
   try {
-    const response = await createAtpAgent().api.com.atproto.repo.getRecord({
+    const response = await createAtpAgent(
+      repoEndpoint
+    ).api.com.atproto.repo.getRecord({
       repo: repo,
       collection: collection,
       rkey: recordKey,
@@ -262,16 +266,23 @@ export const getBlob = async (did: string, cid: string): Promise<string> => {
 
 /**
  * Get individual post
+ * @param {string} endpoint
  * @param {string} identity
  * @param {string} recordKey
  * @return {Promise<AppBskyFeedPost.Record>}
  */
 export const getPost = async (
+  endpoint: string,
   identity: string,
   recordKey: string
 ): Promise<AppBskyFeedPost.Record> => {
   try {
-    const res = await getRecord('app.bsky.feed.post', identity, recordKey)
+    const res = await getRecord(
+      endpoint,
+      'app.bsky.feed.post',
+      identity,
+      recordKey
+    )
     if (res.success) return res.data.value as AppBskyFeedPost.Record
     throw new Error('Failed to get post')
   } catch (err: any) {
@@ -305,16 +316,23 @@ export const describeRepo = async (id: string): Promise<any> => {
 
 /**
  * Get account profile
+ * @param {string} endpoint
  * @param {string} id
  * @param {boolean | undefined} withHeader default: false
  * @return AppBskyActorProfile.Record
  */
 export const loadProfile = async (
+  endpoint: string,
   id: string,
   withHeader?: boolean
 ): Promise<AppBskyActorProfile.Record | ComAtprotoRepoGetRecord.Response> => {
   if (withHeader === undefined) withHeader = false
-  const profile = await getRecord('app.bsky.actor.profile', id, 'self')
+  const profile = await getRecord(
+    endpoint,
+    'app.bsky.actor.profile',
+    id,
+    'self'
+  )
   return withHeader
     ? (profile.data as ComAtprotoRepoGetRecord.Response)
     : (profile.data.value as AppBskyActorProfile.Record)
