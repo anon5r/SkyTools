@@ -120,6 +120,31 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
     throw err
   }
 }
+/**
+ * Get PDS by DID
+ * @param {string} identifier
+ */
+export const getPDSEndpointByDID = async (identifier: string): Promise<any> => {
+  const url = `${plcURL}/${identifier}`
+  try {
+    const res = await axios.get(url)
+
+    if (res.data) {
+      res.data.service.forEach((service: any) => {
+        if (service.type === 'AtprotoPersonalDataServer') {
+          return service.serviceEndpoint
+        }
+      })
+    }
+    throw new Error('Failed to get PDS endpoint')
+  } catch (err: any) {
+    if (isDev()) {
+      console.error(`[Lexicons] getPDSEndpointByDID::response.Error`)
+    }
+    console.warn(err)
+    throw err
+  }
+}
 
 /**
  *
