@@ -90,7 +90,7 @@ export const resolveDID = async (
     throw new Error(`Invalid DID: '${identifier}'`)
   } catch (error: any) {
     if (isDev()) {
-      console.error('[Lexicons] resolveDID::response.Error')
+      console.error('[BskyUtils] resolveDID::response.Error')
       console.error(error)
     }
     throw error
@@ -114,7 +114,7 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
-      console.error('[Lexicons] resolveHandle::response.Error = ')
+      console.error('[BskyUtils] resolveHandle::response.Error = ')
       console.error(err)
     }
     throw err
@@ -139,7 +139,7 @@ export const getPDSEndpointByDID = async (identifier: string): Promise<any> => {
     throw new Error('Failed to get PDS endpoint')
   } catch (err: any) {
     if (isDev()) {
-      console.error(`[Lexicons] getPDSEndpointByDID::response.Error`)
+      console.error(`[BskyUtils] getPDSEndpointByDID::response.Error`)
     }
     console.warn(err)
     throw err
@@ -163,7 +163,7 @@ export const getIdentityAuditLogs = async (
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
-      console.error('[Lexicons] getIdentityAuditLogs::response.Error')
+      console.error('[BskyUtils] getIdentityAuditLogs::response.Error')
     }
     console.warn(err)
     throw err
@@ -227,7 +227,7 @@ export const getRecord = async (
     throw new Error('Record not found')
   } catch (err: any) {
     if (isDev()) {
-      console.error('[Lexicons] getRecord::response.Error')
+      console.error('[BskyUtils] getRecord::response.Error')
     }
     console.warn(err)
     throw new Error(err.message, err)
@@ -332,7 +332,7 @@ export const describeRepo = async (id: string): Promise<any> => {
     throw new Error('Failed to get details')
   } catch (err) {
     if (isDev()) {
-      console.error('[Lexicons] describeRepo::response.Error')
+      console.error('[BskyUtils] describeRepo::response.Error')
     }
     console.warn(err)
     throw err
@@ -429,7 +429,7 @@ export const describeServer = async (
     throw new Error('Failed to get details for ' + server)
   } catch (err) {
     if (isDev()) {
-      console.error('[Lexicons] describeServer::response.Error')
+      console.error('[BskyUtils] describeServer::response.Error')
     }
     console.warn(err)
     throw err

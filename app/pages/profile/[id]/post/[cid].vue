@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
   import { useSeoMeta, ref, useRoute } from '#imports'
-  import * as lexicons from '~/utils/lexicons'
+  import * as bskyutils from '~/utils/bskyutils'
   import type { RouteLocationNormalizedLoaded } from 'vue-router'
   import type { Ref } from 'vue'
 
@@ -31,6 +31,6 @@
 
   did.value = handleOrDid.startsWith('did:')
     ? handleOrDid
-    : await lexicons.resolveHandle(handleOrDid)
+    : await bskyutils.resolveHandle(handleOrDid)
   atUri.value = `at://${did.value}/${collection}/${postID}`
 </script>

@@ -203,7 +203,7 @@
 <script setup lang="ts">
   import { ref, watch, onBeforeMount } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { describeServer } from '~/utils/lexicons'
+  import { describeServer } from '~/utils/bskyutils'
   import { ComAtprotoServerDescribeServer } from '@atproto/api'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '#imports'

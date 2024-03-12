@@ -356,7 +356,7 @@
   } from '#imports'
   import { FwbAvatar, FwbTab, FwbTabs } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
-  import * as lexicons from '@/utils/lexicons'
+  import * as bskyUtils from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
   import { isLoggedIn } from '~/composables/auth'
@@ -439,7 +439,7 @@
   }
 
   onMounted(async () => {
-    lexicons.setConfig(toRaw(config))
+    bskyUtils.setConfig(toRaw(config))
 
     useSeoMeta({
       title: `Profile | ${config.title} ${id.value ?? ' - ' + id.value}`,
@@ -459,7 +459,7 @@
   })
 
   const focusout = () => {
-    id.value = lexicons.formatIdentifier(id.value)
+    id.value = bskyUtils.formatIdentifier(id.value)
   }
 
   const profileEvent = async () => {
@@ -472,7 +472,7 @@
     updateAllValues(loadState.value, false)
 
     if (!identifier) {
-      identifier = lexicons.formatIdentifier(id.value)
+      identifier = bskyUtils.formatIdentifier(id.value)
     }
     if (identifier.length > 253) throw new Error('Identifier is too long')
     id.value = identifier
@@ -652,7 +652,7 @@
    * @throws {Error} - If the profile cannot be loaded or user information cannot be updated.
    */
   const loadProfile = async id => {
-    const profile = await lexicons.loadProfile(id, false)
+    const atp = bskyUtils.createAtpAgent()
 
     if (profile) {
       // Prevent users who are not logged in from viewing
@@ -667,14 +667,14 @@
         throw new UnauthenticatedError('You should logged in bsky.social')
       }
       updateUserInfo('profile', profile)
-      const avatarURL = lexicons.buildBlobRefURL(
+      const avatarURL = bskyUtils.buildBlobRefURL(
         config.cdnPrefix,
         userinfo.value.details.did,
         profile,
         'avatar'
       )
       updateUserInfo('avatarURL', avatarURL)
-      const bannerURL = lexicons.buildBlobRefURL(
+      const bannerURL = bskyUtils.buildBlobRefURL(
         config.cdnPrefix,
         userinfo.value.details.did,
         profile,
@@ -714,7 +714,7 @@
    */
   const fetchPosts = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
         'app.bsky.feed.post',
         id,
         limit,
@@ -745,7 +745,7 @@
    */
   const fetchLike = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
         'app.bsky.feed.like',
         id,
         limit,
@@ -755,12 +755,12 @@
       if (response.success) {
         if (isDev()) console.log('app.bsky.feed.like = ', response.data)
         const records = response.data.records.map(async record => {
-          const recordUri = lexicons.parseAtUri(record.value.subject.uri)
+          const recordUri = bskyUtils.parseAtUri(record.value.subject.uri)
           const did = recordUri.did
           let post = {},
             removed = false
           try {
-            post = await lexicons.getPost(did, recordUri.rkey)
+            post = await bskyUtils.getPost(did, recordUri.rkey)
           } catch (err) {
             removed = true
             if (isDev()) {
@@ -771,14 +771,14 @@
 
           let avatar, banner, profile, handle
           try {
-            profile = await lexicons.loadProfile(did, false)
-            avatar = lexicons.buildBlobRefURL(
+            profile = await bskyUtils.loadProfile(did, false)
+            avatar = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
               profile,
               'avatar'
             )
-            banner = lexicons.buildBlobRefURL(
+            banner = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
               profile,
@@ -789,7 +789,7 @@
           }
 
           try {
-            handle = await lexicons.resolveDID(did)
+            handle = await bskyUtils.resolveDID(did)
           } catch (err) {
             handle = record.value.subject
           }
@@ -838,7 +838,7 @@
    */
   const fetchFollow = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
         'app.bsky.graph.follow',
         id,
         limit,
@@ -849,7 +849,7 @@
           let handle = '',
             profile = {}
           try {
-            handle = await lexicons.resolveDID(record.value.subject)
+            handle = await bskyUtils.resolveDID(record.value.subject)
           } catch (err) {
             console.warn(
               'Could not resolve handle (deleted?): ',
@@ -858,7 +858,7 @@
           }
 
           try {
-            profile = await lexicons.loadProfile(record.value.subject, false)
+            profile = await bskyUtils.loadProfile(record.value.subject, false)
           } catch (err) {
             // following, but the account has been removed
             console.info('No profile exists: ', record.value.subject)
@@ -898,7 +898,7 @@
    */
   const fetchBlocks = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
         'app.bsky.graph.block',
         id,
         limit,
@@ -910,7 +910,7 @@
           let handle = '',
             profile
           try {
-            handle = await lexicons.resolveDID(record.value.subject)
+            handle = await bskyUtils.resolveDID(record.value.subject)
           } catch (err) {
             console.warn(
               'Could not resolve handle (deleted?): ',
@@ -918,7 +918,7 @@
             )
           }
           try {
-            profile = await lexicons.loadProfile(record.value.subject, false)
+            profile = await bskyUtils.loadProfile(record.value.subject, false)
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)

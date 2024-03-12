@@ -213,7 +213,7 @@
     FwbModal,
   } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
-  import { resolveDID } from '~/utils/lexicons'
+  import { resolveDID } from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()

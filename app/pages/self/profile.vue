@@ -226,7 +226,7 @@
     isLoggedIn,
     restoreSession,
   } from '@/composables/auth'
-  import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
+  import { loadProfile as loadProfileLexicon } from '~/utils/bskyutils'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
   import { FwbAvatar } from 'flowbite-vue'
