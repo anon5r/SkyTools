@@ -256,7 +256,9 @@
               <div v-if="userinfo.like.length > 0">
                 <ul>
                   <li v-for="record of userinfo.like" :key="record.cid">
-                    <PostView :uri="record.uri" :cid="record.cid" />
+                    <PostView
+                      :uri="record.value.subject.uri"
+                      :cid="record.cid" />
                   </li>
                 </ul>
               </div>
@@ -360,6 +362,7 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
   import { isLoggedIn } from '~/composables/auth'
+  import { AtpAgent } from '@atproto/api'
 
   const activeTab = ref('posts')
 
@@ -381,6 +384,7 @@
   const easterMode = ref(false)
 
   const userinfoInitial = {
+    endpoint: config.defaultPDSEntrypoint,
     details: {
       did: '',
     },
@@ -634,11 +638,33 @@
    * @param {string} id handle or DID
    */
   const loadDetails = async id => {
-    const details = await lexicons.describeRepo(id)
-    details.servers = []
-    for (let serv of details.didDoc.service) {
-      const urlParser = new URL(serv.serviceEndpoint)
-      details.servers.push(urlParser.host)
+    id = id.trim()
+    let did = '',
+      handle = undefined
+    if (id.startsWith('did:', 0)) {
+      handle = await bskyUtils.resolveDID(id)
+      did = id
+    } else {
+      handle = id
+      did = await bskyUtils.resolveHandle(id)
+    }
+
+    userinfo.value.endpoint = await bskyUtils.getPDSEndpointByDID(did)
+
+    const agent = new AtpAgent({
+      service: userinfo.value.endpoint,
+    })
+    const details = await agent.api.com.atproto.repo.describeRepo({
+      repo: did,
+    })
+    if (details.success) {
+      details.did = did
+      details.handle = handle ?? id
+      details.servers = []
+      for (let serv of details.data.didDoc.service) {
+        const urlParser = new URL(serv.serviceEndpoint)
+        details.servers.push(urlParser.host)
+      }
     }
     updateUserInfo('details', details)
   }
@@ -652,33 +678,47 @@
    * @throws {Error} - If the profile cannot be loaded or user information cannot be updated.
    */
   const loadProfile = async id => {
-    const atp = bskyUtils.createAtpAgent()
+    id = id.trim()
+    let did = ''
+    if (id.startsWith('did:', 0)) did = id
+    else did = await bskyUtils.resolveHandle(id)
 
-    if (profile) {
+    if (!userinfo.value.endpoint)
+      userinfo.value.endpoint = await bskyUtils.getPDSEndpointByDID(did)
+    const atp = bskyUtils.createAtpAgent(userinfo.value.endpoint)
+    const profile = await atp.com.atproto.repo.getRecord({
+      collection: 'app.bsky.actor.profile',
+      repo: did,
+      rkey: 'self',
+    })
+
+    if (profile.success) {
       // Prevent users who are not logged in from viewing
       if (
         !easterMode.value &&
         !isLoggedIn() &&
-        profile.labels &&
-        profile.labels.values.filter(v => {
+        profile.data.value.labels &&
+        profile.data.value.labels.values.filter(v => {
           return v.val === '!no-unauthenticated'
         }).length > 0
       ) {
         throw new UnauthenticatedError('You should logged in bsky.social')
       }
-      updateUserInfo('profile', profile)
+      updateUserInfo('profile', profile.data.value)
       const avatarURL = bskyUtils.buildBlobRefURL(
         config.cdnPrefix,
-        userinfo.value.details.did,
-        profile,
-        'avatar'
+        did,
+        profile.data.value,
+        'avatar',
+        userinfo.value.endpoint
       )
       updateUserInfo('avatarURL', avatarURL)
       const bannerURL = bskyUtils.buildBlobRefURL(
         config.cdnPrefix,
-        userinfo.value.details.did,
-        profile,
-        'banner'
+        did,
+        profile.data.value,
+        'banner',
+        userinfo.value.endpoint
       )
       updateUserInfo('bannerURL', bannerURL)
     }
@@ -715,6 +755,7 @@
   const fetchPosts = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.feed.post',
         id,
         limit,
@@ -746,6 +787,7 @@
   const fetchLike = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.feed.like',
         id,
         limit,
@@ -757,10 +799,11 @@
         const records = response.data.records.map(async record => {
           const recordUri = bskyUtils.parseAtUri(record.value.subject.uri)
           const did = recordUri.did
+          const repoEndpoint = await bskyUtils.getPDSEndpointByDID(did)
           let post = {},
             removed = false
           try {
-            post = await bskyUtils.getPost(did, recordUri.rkey)
+            post = await bskyUtils.getPost(repoEndpoint, did, recordUri.rkey)
           } catch (err) {
             removed = true
             if (isDev()) {
@@ -771,18 +814,20 @@
 
           let avatar, banner, profile, handle
           try {
-            profile = await bskyUtils.loadProfile(did, false)
+            profile = await bskyUtils.loadProfile(repoEndpoint, did, false)
             avatar = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
               profile,
-              'avatar'
+              'avatar',
+              repoEndpoint
             )
             banner = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
               profile,
-              'banner'
+              'banner',
+              repoEndpoint
             )
           } catch (err) {
             console.info('Not set profile: ', did)
@@ -839,6 +884,7 @@
   const fetchFollow = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.graph.follow',
         id,
         limit,
@@ -847,9 +893,13 @@
       if (response.success) {
         const records = response.data.records.map(async record => {
           let handle = '',
+            repoEndpoint = '',
             profile = {}
           try {
             handle = await bskyUtils.resolveDID(record.value.subject)
+            repoEndpoint = await bskyUtils.getPDSEndpointByDID(
+              record.value.subject
+            )
           } catch (err) {
             console.warn(
               'Could not resolve handle (deleted?): ',
@@ -858,7 +908,11 @@
           }
 
           try {
-            profile = await bskyUtils.loadProfile(record.value.subject, false)
+            profile = await bskyUtils.loadProfile(
+              repoEndpoint,
+              record.value.subject,
+              false
+            )
           } catch (err) {
             // following, but the account has been removed
             console.info('No profile exists: ', record.value.subject)
@@ -899,6 +953,7 @@
   const fetchBlocks = async (id, limit = 50, cursor = undefined) => {
     try {
       const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.graph.block',
         id,
         limit,
@@ -908,8 +963,10 @@
         //if (isDev()) console.log("fetchBlocks = ", response.data)
         const records = response.data.records.map(async record => {
           let handle = '',
+            repo,
             profile
           try {
+            repo = await bskyUtils.getPDSEndpointByDID(record.value.subject)
             handle = await bskyUtils.resolveDID(record.value.subject)
           } catch (err) {
             console.warn(
@@ -918,7 +975,11 @@
             )
           }
           try {
-            profile = await bskyUtils.loadProfile(record.value.subject, false)
+            profile = await bskyUtils.loadProfile(
+              repo,
+              record.value.subject,
+              false
+            )
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)

@@ -12,6 +12,7 @@ interface AppConfig {
 class ClientPost {
   private _config: AppConfig = {}
   private _atUri: { [key: string]: string } = {}
+  private _endpoint: string | undefined = undefined
   private _profile: AppBskyActorProfile.Record | null = null
   private _handle: string | undefined = undefined
   private _appUrl: string | null = null
@@ -114,6 +115,8 @@ class ClientPost {
     const did = client._atUri.did
 
     try {
+      if (client._endpoint === undefined)
+        client._endpoint = await bskyutils.getPDSEndpointByDID(did)
       client._handle = await bskyutils.resolveDID(did, true)
     } catch (err) {
       client._handle = did
@@ -122,6 +125,7 @@ class ClientPost {
     try {
       // Load profile
       client._profile = (await bskyutils.loadProfile(
+        client._endpoint ?? config.defaultPDSEntrypoint,
         did,
         false
       )) as AppBskyActorProfile.Record
@@ -164,7 +168,8 @@ class ClientPost {
       cdnURL,
       client.atUri.did,
       client.profile as AppBskyActorProfile.Record,
-      'avatar'
+      'avatar',
+      client._endpoint
     )
 
     // Banner
@@ -172,7 +177,8 @@ class ClientPost {
       cdnURL,
       client.atUri.did,
       client.profile as AppBskyActorProfile.Record,
-      'banner'
+      'banner',
+      client._endpoint
     )
   }
 
@@ -189,6 +195,7 @@ class ClientPost {
       if (atUriPost) client._atUri = bskyutils.parseAtUri(atUriPost)
 
       const record = await bskyutils.getRecord(
+        client._endpoint ?? client._config.defaultPDSEntrypoint,
         client._atUri.collection,
         client._atUri.did,
         client._atUri.rkey

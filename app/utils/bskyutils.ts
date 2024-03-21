@@ -130,11 +130,11 @@ export const getPDSEndpointByDID = async (identifier: string): Promise<any> => {
     const res = await axios.get(url)
 
     if (res.data) {
-      res.data.service.forEach((service: any) => {
+      for (const service of res.data.service) {
         if (service.type === 'AtprotoPersonalDataServer') {
           return service.serviceEndpoint
         }
-      })
+      }
     }
     throw new Error('Failed to get PDS endpoint')
   } catch (err: any) {
@@ -236,6 +236,7 @@ export const getRecord = async (
 
 /**
  * Get records as list
+ * @param {string} repoEndpoint
  * @param {string} collection
  * @param {string} identifier
  * @param {int} limit
@@ -243,13 +244,16 @@ export const getRecord = async (
  * @return {ComAtprotoRepoListRecords.Response} list of records
  */
 export const listRecords = async (
+  repoEndpoint: string,
   collection: string,
   identifier: string,
   limit: number = 50,
   cursor: string | undefined = undefined
 ): Promise<ComAtprotoRepoListRecords.Response> => {
   try {
-    const response = await createAtpAgent().api.com.atproto.repo.listRecords({
+    const response = await createAtpAgent(
+      repoEndpoint
+    ).api.com.atproto.repo.listRecords({
       collection: collection,
       repo: identifier,
       limit: limit,
@@ -369,6 +373,7 @@ export const loadProfile = async (
  * @param {string} did DID
  * @param {AppBskyActorProfile.Record} record ProfileRecord object
  * @param {string} itemName "avatar" | "banner"
+ * @param {string | undefined} PDS endpoint URL
  * @returns {string}
  * @throws {Error} Invalid profile record
  */
@@ -376,7 +381,8 @@ export const buildBlobRefURL = (
   cdnURL: string,
   did: string,
   record: AppBskyActorProfile.Record,
-  itemName: string
+  itemName: string,
+  endpoint?: string | undefined
 ): string => {
   if (!AppBskyActorProfile.isRecord(record))
     throw new Error(`Invalid profile record: ${did}`)
@@ -384,8 +390,11 @@ export const buildBlobRefURL = (
     console.warn(`Not found blob field "${itemName}" in profile : ${did}`)
     return ''
   }
+  if (endpoint !== undefined && endpoint.startsWith('http')) {
+    endpoint = endpoint.substring(endpoint.indexOf('://') + 3)
+  }
   const itemRef = (record[itemName] as BlobRef).ref
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${itemRef}`
+  return `${cdnURL}/${endpoint ?? config.defaultPDS}/image/${did}/${itemRef}`
 }
 
 /**
