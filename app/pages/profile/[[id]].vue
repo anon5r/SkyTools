@@ -171,7 +171,11 @@
                   <PostView
                     :did="userinfo.details.did"
                     :uri="record.uri"
-                    :cid="record.cid"></PostView>
+                    :cid="record.cid"
+                    :rkey="record.rkey"
+                    :pds="userinfo.endpoint"
+                    :postRecord="record.value"
+                    :profile="userinfo.profile" />
                 </div>
               </div>
               <div v-else class="mt-4 mx-2">There are no posts.</div>
@@ -214,7 +218,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
-                      :repo="record.repo"
+                      :pds="record.pds"
                       @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
@@ -260,7 +264,8 @@
                     <PostView
                       :uri="record.value.subject.uri"
                       :cid="record.cid"
-                      :did="record.did" />
+                      :did="record.did"
+                      :pds="record.pds" />
                   </li>
                 </ul>
               </div>
@@ -304,6 +309,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
+                      :pds="record.pds"
                       @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
@@ -895,11 +901,11 @@
       if (response.success) {
         const records = response.data.records.map(async record => {
           let handle = '',
-            repoEndpoint = '',
+            pdsEndpoint = '',
             profile = {}
           try {
             handle = await bskyUtils.resolveDID(record.value.subject)
-            repoEndpoint = await bskyUtils.getPDSEndpointByDID(
+            pdsEndpoint = await bskyUtils.getPDSEndpointByDID(
               record.value.subject
             )
           } catch (err) {
@@ -911,7 +917,7 @@
 
           try {
             profile = await bskyUtils.loadProfile(
-              repoEndpoint,
+              pdsEndpoint,
               record.value.subject,
               false
             )
@@ -922,13 +928,14 @@
               description: '',
               avatar: '',
               banner: null,
+              pds: null,
             })
           }
           return {
             ...record,
             handle: handle,
             profile: profile,
-            repo: repoEndpoint,
+            pds: pdsEndpoint,
           }
         })
         const resolvedFollowers = await Promise.all(records)
@@ -966,10 +973,12 @@
         //if (isDev()) console.log("fetchBlocks = ", response.data)
         const records = response.data.records.map(async record => {
           let handle = '',
-            repo,
+            pdsEndpoint,
             profile
           try {
-            repo = await bskyUtils.getPDSEndpointByDID(record.value.subject)
+            pdsEndpoint = await bskyUtils.getPDSEndpointByDID(
+              record.value.subject
+            )
             handle = await bskyUtils.resolveDID(record.value.subject)
           } catch (err) {
             console.warn(
@@ -979,7 +988,7 @@
           }
           try {
             profile = await bskyUtils.loadProfile(
-              repo,
+              pdsEndpoint,
               record.value.subject,
               false
             )
@@ -991,12 +1000,14 @@
               description: '',
               avatar: '',
               banner: null,
+              pds: null,
             }
           }
           return {
             ...record,
             handle: handle,
             profile: profile,
+            pds: pdsEndpoint,
           }
         })
         const resolvedBlocks = await Promise.all(records)

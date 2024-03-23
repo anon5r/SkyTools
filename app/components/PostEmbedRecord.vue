@@ -78,6 +78,11 @@
       required: true,
       default: null,
     },
+    pds: {
+      type: String,
+      required: false,
+      default: null,
+    },
   })
 
   const config = useAppConfig()

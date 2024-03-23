@@ -178,12 +178,13 @@
     ClientPost,
   } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, type Ref } from 'vue'
+  import { defineProps, type PropType, type Ref } from 'vue'
   import { DateTime } from 'luxon'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { AppBskyFeedPost } from '@atproto/api'
+  import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
   import type { AppConfig } from '@nuxt/schema'
   import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
+  import * as bskyutils from '~/utils/bskyutils'
 
   const props = defineProps({
     uri: {
@@ -203,6 +204,21 @@
       type: String,
       required: false,
     },
+    pds: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    postRecord: {
+      type: Object as PropType<AppBskyFeedPost.Record>,
+      required: false,
+      default: () => ({}),
+    },
+    profile: {
+      type: Object as PropType<AppBskyActorProfile.Record>,
+      required: false,
+      default: () => ({}),
+    },
   })
   const config: AppConfig = useAppConfig()
   const auth = useAuth()
@@ -212,38 +228,70 @@
   const handle: Ref<string> = ref('Unknown')
   const displayName: Ref<string> = ref('Unknown')
   const avatarURL: Ref<string | null> = ref(null)
-  const record: Ref<AppBskyFeedPost.Record | undefined> = ref(undefined)
+  const record: Ref<AppBskyFeedPost.Record | undefined> = ref(
+    props.postRecord ?? undefined
+  )
   const isRemoved: Ref<boolean> = ref(false)
   const isHidden: Ref<boolean> = ref(false)
+  const pdsEndpoint: Ref<string> = ref(config.defaultPDSEntrypoint)
 
   onMounted(async () => {
     try {
-      const client = await ClientPost.load(config, props.uri)
-      postURL.value = ClientPost.getPermanentLink(
-        client.handle ?? client.did,
-        client.atUri.rkey
-      )
-      isHidden.value = client.isHidden
-      if (auth.isLoggedIn()) {
-        isHidden.value = false
-        ClientPost.loadProfileBlobs(client)
-        await ClientPost.loadPost(client)
+      if (props.pds) {
+        pdsEndpoint.value = props.pds
       }
-      handle.value = client.handle ?? 'Unknown'
-      displayName.value =
-        client.profile.displayName ?? client.handle ?? 'Unknown'
-      avatarURL.value = client.avatarURL
-      if (isDev()) {
-        console.log('atUri = ', client.atUri)
-        console.log('props.uri = ', props.uri)
-        console.log('postURL = ', postURL.value)
+      if (props.profile) {
+        handle.value =
+          (props.profile.handle as string) ??
+          (await bskyutils.resolveDID(props.did, true)) ??
+          'Unknown'
+        displayName.value =
+          props.profile.displayName ??
+          (props.profile.handle as string) ??
+          'Unknown'
       }
-      record.value = client.record
-      isRemoved.value = client.isRemoved
+      if (props.postRecord) {
+        const atUri = bskyutils.parseAtUri(props.uri)
+        avatarURL.value = bskyutils.buildBlobRefURL(
+          config.cdnPrefix,
+          props.did,
+          props.profile,
+          'avatar',
+          props.pds
+        )
+        postURL.value = ClientPost.getPermanentLink(atUri.did, atUri.rkey)
+      } else {
+        const client = await ClientPost.load(
+          config,
+          props.uri,
+          pdsEndpoint.value
+        )
+        postURL.value = ClientPost.getPermanentLink(
+          client.handle ?? client.did,
+          client.atUri.rkey
+        )
+        isHidden.value = client.isHidden
+        if (auth.isLoggedIn()) {
+          isHidden.value = false
+          ClientPost.loadProfileBlobs(client)
+          await ClientPost.loadPost(client)
+        }
+        handle.value = client.handle ?? 'Unknown'
+        displayName.value =
+          client.profile.displayName ?? client.handle ?? 'Unknown'
+        avatarURL.value = client.avatarURL
+        if (isDev()) {
+          console.log('atUri = ', client.atUri)
+          console.log('props.uri = ', props.uri)
+          console.log('postURL = ', postURL.value)
+        }
+        record.value = client.record
+        isRemoved.value = client.isRemoved
+      }
     } catch (e) {
       console.error(e)
       if (e instanceof UnauthenticatedError) {
-        isHidden.value = true && !auth.isLoggedIn()
+        isHidden.value = !auth.isLoggedIn()
       }
       isRemoved.value = true
     }

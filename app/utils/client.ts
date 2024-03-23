@@ -73,6 +73,10 @@ class ClientPost {
     return this._record as AppBskyFeedPost.Record
   }
 
+  public get endpoint(): string | undefined {
+    return this._endpoint
+  }
+
   /**
    * Returns the removed value.
    */
@@ -101,15 +105,18 @@ class ClientPost {
   /**
    * Load a post from a URI
    * @param config
-   * @param atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   * @param {string} atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   * @param {string?} pdsEndpoint PDS endpoint https://bsky.social
    * @returns ClientPost
    * @throws UnauthenticatedError
    */
   public static async load(
     config: AppConfig,
-    atUriPost: string
+    atUriPost: string,
+    pdsEndpoint?: string
   ): Promise<ClientPost> {
     const client = new ClientPost(config)
+    if (pdsEndpoint) client._endpoint = pdsEndpoint
 
     client._atUri = bskyutils.parseAtUri(atUriPost)
     const did = client._atUri.did

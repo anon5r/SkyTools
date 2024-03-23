@@ -48,7 +48,7 @@
   import { FwbAvatar } from 'flowbite-vue'
   import { useAppConfig, onMounted, ref } from '#imports'
   import type { AppBskyActorProfile } from '@atproto/api'
-  import { buildBlobRefURL, getPDSEndpointByDID } from '~/utils/bskyutils'
+  import { buildBlobRefURL } from '~/utils/bskyutils'
   import type { PropType } from 'vue'
 
   const config = useAppConfig()
@@ -69,7 +69,7 @@
       },
     },
     handle: String,
-    repo: { type: String, required: false },
+    pds: { type: String, required: false },
   })
 
   const emits = defineEmits(['showProfile'])
@@ -79,7 +79,7 @@
   onMounted(() => {
     if (props.profile) {
       if (props.profile.avatar) {
-        let repoEndpoint = props.repo ?? config.defaultPDSEntrypoint
+        let repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
 
         const url = buildBlobRefURL(
           config.cdnPrefix,

@@ -53,6 +53,11 @@
       required: true,
       default: null,
     },
+    pds: {
+      type: String,
+      required: false,
+      default: null,
+    },
   })
   const recordEmbed = props.embed
   const config = useAppConfig()

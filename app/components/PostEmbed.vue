@@ -1,17 +1,20 @@
 <template>
   <div class="pt-2 m-0">
     <div v-if="props.embed.$type === 'app.bsky.embed.record'">
-      <PostEmbedRecord :embed="props.embed" :did="props.did" />
+      <PostEmbedRecord :embed="props.embed" :did="props.did" :pds="props.pds" />
     </div>
     <div
       v-if="
         props.embed.$type === 'app.bsky.embed.images' ||
         props.embed.$type === 'app.bsky.embed.recordWithMedia'
       ">
-      <PostEmbedImages :embed="props.embed" :did="props.did" />
+      <PostEmbedImages :embed="props.embed" :did="props.did" :pds="props.pds" />
     </div>
     <div v-if="props.embed.$type === 'app.bsky.embed.external'">
-      <PostEmbedExternal :embed="props.embed" :did="props.did" />
+      <PostEmbedExternal
+        :embed="props.embed"
+        :did="props.did"
+        :pds="props.pds" />
     </div>
   </div>
 </template>
@@ -32,6 +35,7 @@
 
   /** @type {AppBskyEmbedRecord|AppBskyEmbedImages|AppBskyEmbedRecordWithMedia|AppBskyEmbedExternal} props.embed */
   /** @type {string} props.did */
+  /** @type {string} props.repo */
   const props = defineProps({
     embed: {
       type: Object as PropType<
@@ -46,6 +50,11 @@
     did: {
       type: String,
       required: true,
+      default: null,
+    },
+    pds: {
+      type: String,
+      required: false,
       default: null,
     },
   })

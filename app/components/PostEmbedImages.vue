@@ -47,6 +47,11 @@
       required: true,
       default: null,
     },
+    pds: {
+      type: String,
+      required: false,
+      default: null,
+    },
   })
 
   const config = useAppConfig()
@@ -65,7 +70,8 @@
           img.value = await buildPostURL(
             config.bskyAppURL,
             img.image.original.ref,
-            props.did
+            props.did,
+            props.repo
           )
           // Post URL
           if (isDev()) {
