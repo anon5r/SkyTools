@@ -34,7 +34,7 @@
 
   if (facets) {
     if (isDev()) {
-      console.log('refText = ', refText)
+      console.log('refText = ', refText.value)
       console.log('facets = ', facets)
     }
 

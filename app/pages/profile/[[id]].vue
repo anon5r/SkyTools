@@ -214,6 +214,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
+                      :repo="record.repo"
                       @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
@@ -258,7 +259,8 @@
                   <li v-for="record of userinfo.like" :key="record.cid">
                     <PostView
                       :uri="record.value.subject.uri"
-                      :cid="record.cid" />
+                      :cid="record.cid"
+                      :did="record.did" />
                   </li>
                 </ul>
               </div>
@@ -926,6 +928,7 @@
             ...record,
             handle: handle,
             profile: profile,
+            repo: repoEndpoint,
           }
         })
         const resolvedFollowers = await Promise.all(records)

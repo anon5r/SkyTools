@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-  import { defineProps } from 'vue'
+  import { defineProps, type PropType } from 'vue'
   import { onMounted } from '#imports'
   import {
     AppBskyEmbedImages,
@@ -34,7 +34,12 @@
   /** @type {string} props.did */
   const props = defineProps({
     embed: {
-      type: Object,
+      type: Object as PropType<
+        | AppBskyEmbedImages.Main
+        | AppBskyEmbedRecord.Main
+        | AppBskyEmbedRecordWithMedia.Main
+        | AppBskyEmbedExternal.Main
+      >,
       require: false,
       default: () => ({}),
     },
