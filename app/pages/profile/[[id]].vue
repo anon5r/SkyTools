@@ -4,11 +4,6 @@
     <div class="w-full max-w-3xl">
       <ClientOnly>
         <div class="px-3 py-3 flex flex-row justify-between items-center">
-          <div class="mr-4 relative w-1.5">
-            <button class="bg-transparent text-gray-700 dark:text-slate-300">
-              <font-awesome-icon :icon="['fas', 'chart-network']" />
-            </button>
-          </div>
           <div class="mr-4 relative w-full">
             <input
               v-model="id"
@@ -265,7 +260,9 @@
                       :uri="record.value.subject.uri"
                       :cid="record.cid"
                       :did="record.did"
-                      :pds="record.pds" />
+                      :pds="record.pds"
+                      :profile="record.profile"
+                      :post-record="record.post" />
                   </li>
                 </ul>
               </div>
@@ -849,20 +846,18 @@
 
           return {
             ...record,
+            rkey: recordUri.rkey,
             removed: removed,
             profile: profile,
             did: did,
             handle: handle,
             avatarURL: avatar,
             bannerURL: banner,
-            post: post.success
-              ? post.data
-              : {
-                  value: {
-                    createdAt: '1970-01-01 09:00:00Z',
-                    text: 'The post may have been deleted.',
-                  },
-                },
+            post: post ?? {
+              createdAt: '1970-01-01 09:00:00Z',
+              text: 'The post may have been deleted.',
+            },
+            pds: repoEndpoint,
           }
         })
 
