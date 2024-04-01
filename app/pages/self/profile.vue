@@ -74,6 +74,11 @@
                   <!-- DID -->
                   {{ loadState.profile ? profile.did : 'loading...' }}
                 </div>
+                <div
+                  class="text-xs sm:text-sm truncate text-ellipsis font-mono sm:font-thin text-gray-400 dark:text-slate-500 select-all">
+                  <!-- PDS -->
+                  {{ loadState.profile ? profile.pds : 'loading...' }}
+                </div>
               </div>
 
               <div v-if="!hasError" class="max-w-min min-w-fit p-2">
@@ -221,7 +226,7 @@
     isLoggedIn,
     restoreSession,
   } from '@/composables/auth'
-  import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
+  import { loadProfile as loadProfileLexicon } from '~/utils/bskyutils'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
   import { FwbAvatar } from 'flowbite-vue'
@@ -403,7 +408,7 @@
         val: label,
       }))
       const update = {
-        repo: profile.value.handle,
+        repo: profile.value.did,
         did: profile.value.did,
         collection: 'app.bsky.actor.profile',
         record: {

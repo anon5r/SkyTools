@@ -6,10 +6,10 @@ export default defineNuxtConfig({
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
 
       defaultPDS: 'bsky.social',
-      atprotoServiceSuffix: 'bsky.social',
-      atprotoService: 'https://bsky.social',
-      serviceAppUrl: ' https://bsky.app',
-      adminDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
+      defaultPDSSuffix: 'bsky.social',
+      defaultPDSEntrypoint: 'https://bsky.social',
+      defaultAppUrl: ' https://bsky.app',
+      webmasterDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
       prodURLPrefix: 'https://skytools.anon5r.com',
@@ -139,14 +139,14 @@ export default defineNuxtConfig({
     pages: true,
     productionTip: false,
     title: 'SkyTools' as string,
-    defaultSuffix:
-      process.env.ATPROTO_SERVICE_SUFFIX || ('.bsky.social' as string),
+    defaultSuffix: process.env.DEFAULT_PDS_SUFFIX || ('.bsky.social' as string),
     defaultPDS: process.env.PDS_DEFAULT || ('bsky.social' as string),
-    bskyService:
-      process.env.ATPROTO_SERVICE || ('https://bsky.social' as string),
-    bskyAppURL: process.env.SERVICE_APP_URL || ('https://bsky.app' as string),
-    adminDID:
-      process.env.ADMIN_DID || ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
+    defaultPDSEntrypoint:
+      process.env.DEFAULT_PDS_ENDPOINT || ('https://bsky.social' as string),
+    bskyAppURL: process.env.DEFAULT_APP_URL || ('https://bsky.app' as string),
+    webmasterDid:
+      process.env.WEBMASTER_DID ||
+      ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
     inviteCodeFreq:
       (process.env.INVITE_CODE_FREQ &&
         JSON.parse(process.env.INVITE_CODE_FREQ)) ||
@@ -180,6 +180,8 @@ export default defineNuxtConfig({
     '/profile': { prerender: true },
     '/invite-code': { prerender: true },
     '/profile/:did': { swr: 3600 },
+    '/pds': { prerender: true },
+    '/pds/:hostname': { swr: 3600 },
     '/lookup': { redirect: '/profile' },
   },
 })

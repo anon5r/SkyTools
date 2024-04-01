@@ -5,32 +5,36 @@
 </template>
 
 <script setup lang="ts">
-  import type { Ref } from '#imports'
-  import { ref } from '#imports'
+  import { ref, type Ref } from '#imports'
   import { defineProps } from 'vue'
   import { AppBskyRichtextFacet, RichText, UnicodeString } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
 
   const props = defineProps({
-    post: {
-      type: Object,
+    text: {
+      type: String,
       required: true,
     },
+    facets: {
+      type: Array<AppBskyRichtextFacet.Main>,
+      required: false,
+    },
   })
-
   const refText: Ref<RichText> = ref(
     new RichText(
-      { text: props.post.value.text.trim() },
+      { text: props.text ?? '', facets: props.facets },
       {
         cleanNewlines: true,
       }
     )
   )
-  const facets: AppBskyRichtextFacet.Main[] = props.post?.value.facets
+  const facets: AppBskyRichtextFacet.Main[] | undefined = props.facets
 
   if (facets) {
-    console.log('refText = ', refText)
-    console.log('facets = ', facets)
+    if (isDev()) {
+      console.log('refText = ', refText.value)
+      console.log('facets = ', facets)
+    }
 
     // Process from last to first
     facets.reverse()?.filter((facet: AppBskyRichtextFacet.Main) => {
@@ -65,7 +69,7 @@
       // Link URL
       if (linkURL) {
         const { byteStart, byteEnd } = facet.index
-        console.log('facet.index = ', facet.index)
+        if (isDev()) console.log('facet.index = ', facet.index)
         const textURL = refText.value.unicodeText.slice(byteStart, byteEnd)
         if (isDev()) {
           console.log('linkURL = ', linkURL)

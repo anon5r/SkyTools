@@ -1,24 +1,38 @@
 import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
-import * as lexicons from '@/utils/lexicons'
+import * as bskyutils from '~/utils/bskyutils'
 import { isDev } from '~/utils/helpers'
+import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
 
 const cdnURL = process.env.cdnPrefix || 'https://cdn-skytools.anon5r.com/proxy'
 
+interface AppConfig {
+  [key: string]: any
+}
+
 class ClientPost {
+  private _config: AppConfig = {}
   private _atUri: { [key: string]: string } = {}
+  private _endpoint: string | undefined = undefined
   private _profile: AppBskyActorProfile.Record | null = null
   private _handle: string | undefined = undefined
   private _appUrl: string | null = null
-  private _record: AppBskyFeedPost.Record | null = null
+  private _record: AppBskyFeedPost.Record | AppBskyActorProfile.Record | null =
+    null
+  private _cid: string | null = null
   private _removed: boolean = false
+  private _hidden: boolean = false
   private _avatarURL: string | null = null
   private _bannerURL: string | null = null
+  private _noUnauthenticated: boolean = false
 
   public get atUri(): { [key: string]: string } {
     return this._atUri
   }
   public get did(): string | undefined {
     return this._atUri.did
+  }
+  public get cid(): string | null {
+    return this._cid
   }
   public get profile(): AppBskyActorProfile.Record {
     return this._profile as AppBskyActorProfile.Record
@@ -58,83 +72,156 @@ class ClientPost {
   public get record(): AppBskyFeedPost.Record {
     return this._record as AppBskyFeedPost.Record
   }
+
+  public get endpoint(): string | undefined {
+    return this._endpoint
+  }
+
+  /**
+   * Returns the removed value.
+   */
   public get isRemoved(): boolean {
     return this._removed
   }
+
+  /**
+   * Returns the hidden value.
+   */
+  public get isHidden(): boolean {
+    return this._hidden
+  }
+
+  /**
+   * Returns the permanent URL value.
+   */
   public permaURL(): string {
     return ClientPost.getPermanentLink(this.handle, this.atUri.rkey)
   }
 
   private constructor(config: any) {
-    lexicons.setConfig(config)
+    bskyutils.setConfig(config)
   }
 
   /**
    * Load a post from a URI
    * @param config
-   * @param atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   * @param {string} atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   * @param {string?} pdsEndpoint PDS endpoint https://bsky.social
    * @returns ClientPost
+   * @throws UnauthenticatedError
    */
   public static async load(
-    config: any,
-    atUriPost: string
+    config: AppConfig,
+    atUriPost: string,
+    pdsEndpoint?: string
   ): Promise<ClientPost> {
     const client = new ClientPost(config)
+    if (pdsEndpoint) client._endpoint = pdsEndpoint
 
-    client._atUri = lexicons.parseAtUri(atUriPost)
+    client._atUri = bskyutils.parseAtUri(atUriPost)
     const did = client._atUri.did
 
     try {
-      client._handle = await lexicons.resolveDID(did, true)
+      if (client._endpoint === undefined)
+        client._endpoint = await bskyutils.getPDSEndpointByDID(did)
+      client._handle = await bskyutils.resolveDID(did, true)
     } catch (err) {
       client._handle = did
     }
-
+    let filtered: { val: string }[] = []
     try {
       // Load profile
-      client._profile = await lexicons.loadProfile(did)
+      client._profile = (await bskyutils.loadProfile(
+        client._endpoint ?? config.defaultPDSEntrypoint,
+        did,
+        false
+      )) as AppBskyActorProfile.Record
+      if (
+        client._profile.labels &&
+        client._profile.labels.$type === 'com.atproto.label.defs#selfLabels'
+      ) {
+        filtered = (client._profile.labels.values as [{ val: string }]).filter(
+          v => {
+            return v.val === '!no-unauthenticated'
+          }
+        )
+        // No authenticated
+        client._noUnauthenticated = filtered.length > 0
+        if (client._noUnauthenticated)
+          throw new UnauthenticatedError('You should be logged-in to Bluesky')
+      }
 
-      // Avatar
-      client._avatarURL = lexicons.buildBlobRefURL(
-        cdnURL,
-        client.atUri.did,
-        client.profile as AppBskyActorProfile.Record,
-        'avatar'
-      )
-
-      // Banner
-      client._bannerURL = lexicons.buildBlobRefURL(
-        cdnURL,
-        client.atUri.did,
-        client.profile as AppBskyActorProfile.Record,
-        'banner'
-      )
+      ClientPost.loadProfileBlobs(client)
     } catch (err) {
       if (isDev()) console.error(err)
+      if (err instanceof UnauthenticatedError) {
+        client._hidden = true
+        return client
+      }
       console.info('No profile: ' + did)
     }
 
+    if (client._atUri.collection === 'app.bsky.feeds.post') {
+      // Load post
+      await ClientPost.loadPost(client, atUriPost)
+    }
+
+    return client
+  }
+
+  public static loadProfileBlobs(client: ClientPost): void {
+    // Avatar
+    client._avatarURL = bskyutils.buildBlobRefURL(
+      cdnURL,
+      client.atUri.did,
+      client.profile as AppBskyActorProfile.Record,
+      'avatar',
+      client._endpoint
+    )
+
+    // Banner
+    client._bannerURL = bskyutils.buildBlobRefURL(
+      cdnURL,
+      client.atUri.did,
+      client.profile as AppBskyActorProfile.Record,
+      'banner',
+      client._endpoint
+    )
+  }
+
+  /**
+   * Load a post from a URI
+   * @param client
+   * @param atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   */
+  public static async loadPost(
+    client: ClientPost,
+    atUriPost?: string
+  ): Promise<void> {
     try {
-      client._record = await lexicons.getRecord(
+      if (atUriPost) client._atUri = bskyutils.parseAtUri(atUriPost)
+
+      const record = await bskyutils.getRecord(
+        client._endpoint ?? client._config.defaultPDSEntrypoint,
         client._atUri.collection,
         client._atUri.did,
         client._atUri.rkey
       )
+      client._cid = record.data.cid as string
+      client._record = record.data.value as AppBskyFeedPost.Record
     } catch (err) {
       client._removed = true
     }
 
     try {
-      client._appUrl = await lexicons.buildPostURL(
-        config.bskyAppURL,
-        atUriPost,
+      client._appUrl = await bskyutils.buildPostURL(
+        client._config.bskyAppURL,
+        client._atUri,
         client.handle
       )
     } catch (err) {
       if (isDev()) console.error(err)
     }
-
-    return client
   }
 
   /**
@@ -145,7 +232,7 @@ class ClientPost {
    */
   public static getPermanentLink = (
     handleOrDid: string | undefined,
-    postID: string
+    postID?: string
   ): string => {
     if (postID) return `/profile/${handleOrDid}/post/${postID}`
     return `/profile/${handleOrDid}`

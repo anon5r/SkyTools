@@ -213,7 +213,7 @@
     FwbModal,
   } from 'flowbite-vue'
   import { isDev } from '~/utils/helpers'
-  import { resolveDID } from '~/utils/lexicons'
+  import { resolveDID } from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
@@ -252,7 +252,7 @@
   // Go sign-in page
   const loadSigninForm = async () => {
     const router = useRouter()
-    const serviceURL = new URL(config.bskyService)
+    const serviceURL = new URL(config.defaultPDSEntrypoint)
     // Back to current page
     navigate.setNext(route.name)
     await router.push({ path: `${serviceURL.hostname}/signin` })

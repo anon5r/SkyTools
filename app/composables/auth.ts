@@ -29,7 +29,7 @@ const initLoginState = (): LoginState => {
 const getAgent = async (service?: string): Promise<BskyAgent> => {
   if (!_agent.value) {
     const config = useAppConfig()
-    if (!service) service = config.bskyService
+    if (!service) service = config.defaultPDSEntrypoint
     else if (service.length > 0 && !service.startsWith('https://'))
       service = `https://${service}`
 

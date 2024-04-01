@@ -128,8 +128,11 @@
 
             <div
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
-              <font-awesome-icon :icon="['fas', 'server']" class="mr-2" />
               <!-- PDS -->
+              <font-awesome-icon
+                v-if="userinfo.details.servers"
+                :icon="['fas', 'database']"
+                class="mr-1" />
               <span
                 v-if="loadState.details && userinfo.details.servers"
                 class="truncate">
@@ -161,19 +164,13 @@
               <div v-if="userinfo.posts.length > 0">
                 <div v-for="record of userinfo.posts" :key="record.cid">
                   <PostView
-                    :config="config"
                     :did="userinfo.details.did"
-                    :handle="userinfo.details.handle"
-                    :avatar_url="userinfo.avatarURL ?? 'about:blank'"
-                    :display_name="
-                      userinfo.profile?.displayName
-                        ? userinfo.profile.displayName
-                        : userinfo.details.handle
-                    "
-                    :post="toRaw(record)"
-                    @show-profile="
-                      showProfile(userinfo.details.handle)
-                    "></PostView>
+                    :uri="record.uri"
+                    :cid="record.cid"
+                    :rkey="record.rkey"
+                    :pds="userinfo.endpoint"
+                    :postRecord="record.value"
+                    :profile="userinfo.profile" />
                 </div>
               </div>
               <div v-else class="mt-4 mx-2">There are no posts.</div>
@@ -216,6 +213,7 @@
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
+                      :pds="record.pds"
                       @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
@@ -259,17 +257,12 @@
                 <ul>
                   <li v-for="record of userinfo.like" :key="record.cid">
                     <PostView
-                      :appURL="config.bskyAppURL"
+                      :uri="record.value.subject.uri"
+                      :cid="record.cid"
                       :did="record.did"
-                      :handle="record.handle"
-                      :avatar_url="record.avatarURL"
-                      :display_name="
-                        record.profile
-                          ? record.profile.displayName
-                          : record.handle
-                      "
-                      :post="record.post"
-                      @show-profile="showProfile(record.handle)" />
+                      :pds="record.pds"
+                      :profile="record.profile"
+                      :post-record="record.post" />
                   </li>
                 </ul>
               </div>
@@ -308,14 +301,12 @@
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
-                  {{
-                    record
-                  }}
                   <li v-for="record of userinfo.blocks" :key="record.cid">
                     <UserField
                       :did="record.value.subject"
                       :handle="record.handle"
                       :profile="record.profile"
+                      :pds="record.pds"
                       @show-profile="showProfile(record.handle)" />
                   </li>
                 </ul>
@@ -372,10 +363,11 @@
   } from '#imports'
   import { FwbAvatar, FwbTab, FwbTabs } from 'flowbite-vue'
   import { isDev } from '@/utils/helpers'
-  import * as lexicons from '@/utils/lexicons'
+  import * as bskyUtils from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
   import { isLoggedIn } from '~/composables/auth'
+  import { AtpAgent } from '@atproto/api'
 
   const activeTab = ref('posts')
 
@@ -397,6 +389,7 @@
   const easterMode = ref(false)
 
   const userinfoInitial = {
+    endpoint: config.defaultPDSEntrypoint,
     details: {
       did: '',
     },
@@ -455,7 +448,7 @@
   }
 
   onMounted(async () => {
-    lexicons.setConfig(toRaw(config))
+    bskyUtils.setConfig(toRaw(config))
 
     useSeoMeta({
       title: `Profile | ${config.title} ${id.value ?? ' - ' + id.value}`,
@@ -475,7 +468,7 @@
   })
 
   const focusout = () => {
-    id.value = lexicons.formatIdentifier(id.value)
+    id.value = bskyUtils.formatIdentifier(id.value)
   }
 
   const profileEvent = async () => {
@@ -488,7 +481,7 @@
     updateAllValues(loadState.value, false)
 
     if (!identifier) {
-      identifier = lexicons.formatIdentifier(id.value)
+      identifier = bskyUtils.formatIdentifier(id.value)
     }
     if (identifier.length > 253) throw new Error('Identifier is too long')
     id.value = identifier
@@ -650,11 +643,33 @@
    * @param {string} id handle or DID
    */
   const loadDetails = async id => {
-    const details = await lexicons.describeRepo(id)
-    details.servers = []
-    for (let serv of details.didDoc.service) {
-      const urlParser = new URL(serv.serviceEndpoint)
-      details.servers.push(urlParser.host)
+    id = id.trim()
+    let did = '',
+      handle = undefined
+    if (id.startsWith('did:', 0)) {
+      handle = await bskyUtils.resolveDID(id)
+      did = id
+    } else {
+      handle = id
+      did = await bskyUtils.resolveHandle(id)
+    }
+
+    userinfo.value.endpoint = await bskyUtils.getPDSEndpointByDID(did)
+
+    const agent = new AtpAgent({
+      service: userinfo.value.endpoint,
+    })
+    const details = await agent.api.com.atproto.repo.describeRepo({
+      repo: did,
+    })
+    if (details.success) {
+      details.did = did
+      details.handle = handle ?? id
+      details.servers = []
+      for (let serv of details.data.didDoc.service) {
+        const urlParser = new URL(serv.serviceEndpoint)
+        details.servers.push(urlParser.host)
+      }
     }
     updateUserInfo('details', details)
   }
@@ -668,33 +683,47 @@
    * @throws {Error} - If the profile cannot be loaded or user information cannot be updated.
    */
   const loadProfile = async id => {
-    const profile = await lexicons.loadProfile(id, false)
+    id = id.trim()
+    let did = ''
+    if (id.startsWith('did:', 0)) did = id
+    else did = await bskyUtils.resolveHandle(id)
 
-    if (profile) {
+    if (!userinfo.value.endpoint)
+      userinfo.value.endpoint = await bskyUtils.getPDSEndpointByDID(did)
+    const atp = bskyUtils.createAtpAgent(userinfo.value.endpoint)
+    const profile = await atp.com.atproto.repo.getRecord({
+      collection: 'app.bsky.actor.profile',
+      repo: did,
+      rkey: 'self',
+    })
+
+    if (profile.success) {
       // Prevent users who are not logged in from viewing
       if (
         !easterMode.value &&
         !isLoggedIn() &&
-        profile.labels &&
-        profile.labels.values.filter(v => {
+        profile.data.value.labels &&
+        profile.data.value.labels.values.filter(v => {
           return v.val === '!no-unauthenticated'
         }).length > 0
       ) {
         throw new UnauthenticatedError('You should logged in bsky.social')
       }
-      updateUserInfo('profile', profile)
-      const avatarURL = lexicons.buildBlobRefURL(
+      updateUserInfo('profile', profile.data.value)
+      const avatarURL = bskyUtils.buildBlobRefURL(
         config.cdnPrefix,
-        userinfo.value.details.did,
-        profile,
-        'avatar'
+        did,
+        profile.data.value,
+        'avatar',
+        userinfo.value.endpoint
       )
       updateUserInfo('avatarURL', avatarURL)
-      const bannerURL = lexicons.buildBlobRefURL(
+      const bannerURL = bskyUtils.buildBlobRefURL(
         config.cdnPrefix,
-        userinfo.value.details.did,
-        profile,
-        'banner'
+        did,
+        profile.data.value,
+        'banner',
+        userinfo.value.endpoint
       )
       updateUserInfo('bannerURL', bannerURL)
     }
@@ -730,7 +759,8 @@
    */
   const fetchPosts = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.feed.post',
         id,
         limit,
@@ -761,7 +791,8 @@
    */
   const fetchLike = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.feed.like',
         id,
         limit,
@@ -771,12 +802,13 @@
       if (response.success) {
         if (isDev()) console.log('app.bsky.feed.like = ', response.data)
         const records = response.data.records.map(async record => {
-          const recordUri = lexicons.parseAtUri(record.value.subject.uri)
+          const recordUri = bskyUtils.parseAtUri(record.value.subject.uri)
           const did = recordUri.did
+          const repoEndpoint = await bskyUtils.getPDSEndpointByDID(did)
           let post = {},
             removed = false
           try {
-            post = await lexicons.getPost(did, recordUri.rkey)
+            post = await bskyUtils.getPost(repoEndpoint, did, recordUri.rkey)
           } catch (err) {
             removed = true
             if (isDev()) {
@@ -787,45 +819,45 @@
 
           let avatar, banner, profile, handle
           try {
-            profile = await lexicons.loadProfile(did, false)
-            avatar = lexicons.buildBlobRefURL(
+            profile = await bskyUtils.loadProfile(repoEndpoint, did, false)
+            avatar = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
               profile,
-              'avatar'
+              'avatar',
+              repoEndpoint
             )
-            banner = lexicons.buildBlobRefURL(
+            banner = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
               profile,
-              'banner'
+              'banner',
+              repoEndpoint
             )
           } catch (err) {
             console.info('Not set profile: ', did)
           }
 
           try {
-            handle = await lexicons.resolveDID(did)
+            handle = await bskyUtils.resolveDID(did)
           } catch (err) {
             handle = record.value.subject
           }
 
           return {
             ...record,
+            rkey: recordUri.rkey,
             removed: removed,
             profile: profile,
             did: did,
             handle: handle,
             avatarURL: avatar,
             bannerURL: banner,
-            post: post.success
-              ? post.data
-              : {
-                  value: {
-                    createdAt: '1970-01-01 09:00:00Z',
-                    text: 'The post may have been deleted.',
-                  },
-                },
+            post: post ?? {
+              createdAt: '1970-01-01 09:00:00Z',
+              text: 'The post may have been deleted.',
+            },
+            pds: repoEndpoint,
           }
         })
 
@@ -854,7 +886,8 @@
    */
   const fetchFollow = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.graph.follow',
         id,
         limit,
@@ -863,9 +896,13 @@
       if (response.success) {
         const records = response.data.records.map(async record => {
           let handle = '',
+            pdsEndpoint = '',
             profile = {}
           try {
-            handle = await lexicons.resolveDID(record.value.subject)
+            handle = await bskyUtils.resolveDID(record.value.subject)
+            pdsEndpoint = await bskyUtils.getPDSEndpointByDID(
+              record.value.subject
+            )
           } catch (err) {
             console.warn(
               'Could not resolve handle (deleted?): ',
@@ -874,7 +911,11 @@
           }
 
           try {
-            profile = await lexicons.loadProfile(record.value.subject, false)
+            profile = await bskyUtils.loadProfile(
+              pdsEndpoint,
+              record.value.subject,
+              false
+            )
           } catch (err) {
             // following, but the account has been removed
             console.info('No profile exists: ', record.value.subject)
@@ -882,12 +923,14 @@
               description: '',
               avatar: '',
               banner: null,
+              pds: null,
             })
           }
           return {
             ...record,
             handle: handle,
             profile: profile,
+            pds: pdsEndpoint,
           }
         })
         const resolvedFollowers = await Promise.all(records)
@@ -914,7 +957,8 @@
    */
   const fetchBlocks = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await lexicons.listRecords(
+      const response = await bskyUtils.listRecords(
+        userinfo.value.endpoint,
         'app.bsky.graph.block',
         id,
         limit,
@@ -924,9 +968,13 @@
         //if (isDev()) console.log("fetchBlocks = ", response.data)
         const records = response.data.records.map(async record => {
           let handle = '',
+            pdsEndpoint,
             profile
           try {
-            handle = await lexicons.resolveDID(record.value.subject)
+            pdsEndpoint = await bskyUtils.getPDSEndpointByDID(
+              record.value.subject
+            )
+            handle = await bskyUtils.resolveDID(record.value.subject)
           } catch (err) {
             console.warn(
               'Could not resolve handle (deleted?): ',
@@ -934,7 +982,11 @@
             )
           }
           try {
-            profile = await lexicons.loadProfile(record.value.subject, false)
+            profile = await bskyUtils.loadProfile(
+              pdsEndpoint,
+              record.value.subject,
+              false
+            )
           } catch (err) {
             // blocked, but the account has been removed
             console.info('No exit record: ', record.value.subject)
@@ -943,12 +995,14 @@
               description: '',
               avatar: '',
               banner: null,
+              pds: null,
             }
           }
           return {
             ...record,
             handle: handle,
             profile: profile,
+            pds: pdsEndpoint,
           }
         })
         const resolvedBlocks = await Promise.all(records)
