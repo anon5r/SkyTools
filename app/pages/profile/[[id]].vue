@@ -106,6 +106,12 @@
                 <div
                   class="text-sm font-semibold text-gray-600 dark:text-slate-400">
                   <!-- Handle -->
+                  <font-awesome-icon
+                    v-if="
+                      loadState.details && userinfo.details.labelers.length > 0
+                    "
+                    icon="fa-solid fa-tower-observation"
+                    class="text-indigo-800 dark:text-indigo-300" />
                   <span
                     v-if="loadState.details"
                     :class="{ 'line-through': hasError }"
@@ -131,12 +137,26 @@
               <!-- PDS -->
               <font-awesome-icon
                 v-if="userinfo.details.servers"
-                :icon="['fas', 'database']"
+                icon="fa-solid fa-database"
                 class="mr-1" />
               <span
                 v-if="loadState.details && userinfo.details.servers"
                 class="truncate">
                 {{ userinfo.details.servers.join(',') }}
+              </span>
+            </div>
+            <div
+              v-if="userinfo.details.labelers.length > 0"
+              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
+              <!-- Labeler -->
+              <font-awesome-icon
+                v-if="userinfo.details.labelers.length > 0"
+                icon="fa-solid fa-tower-observation"
+                class="mr-1" />
+              <span
+                v-if="loadState.details && userinfo.details.labelers"
+                class="truncate">
+                {{ userinfo.details.labelers.join(',') }}
               </span>
             </div>
             <!-- Labels -->
@@ -147,7 +167,7 @@
                   :key="index"
                   class="inline-block items-center px-2 py-1 mr-2 text-xs font-medium rounded text-blue-800 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
                   <font-awesome-icon
-                    :icon="['fas', 'tag']"
+                    icon="fa-solid fa-tag"
                     class="mr-1"
                     size="sm" />
                   {{ label.val }}
@@ -392,6 +412,8 @@
     endpoint: config.defaultPDSEntrypoint,
     details: {
       did: '',
+      servers: [],
+      labelers: [],
     },
     profile: {},
     avatarURL: '',
@@ -666,9 +688,21 @@
       details.did = did
       details.handle = handle ?? id
       details.servers = []
+      details.labelers = []
       for (let serv of details.data.didDoc.service) {
         const urlParser = new URL(serv.serviceEndpoint)
-        details.servers.push(urlParser.host)
+        switch (serv.type) {
+          case 'AtprotoPersonalDataServer':
+            {
+              details.servers.push(urlParser.host)
+            }
+            break
+          case 'AtprotoLabeler':
+            {
+              details.labelers.push(urlParser.host)
+            }
+            break
+        }
       }
     }
     updateUserInfo('details', details)
