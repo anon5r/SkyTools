@@ -1326,10 +1326,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.1"
-  checksum: c597062de8903aae591b652aa03b9b7aaa66e8c71e5950dc34a8b2812851a7f4ad743fba7396bab87d787c5359bb121496769a165bd3399d039dc214434f6f0c
+"@fortawesome/fontawesome-common-types@npm:6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-common-types%2F-%2F6.5.2%2Ffontawesome-common-types-6.5.2.tgz"
+  checksum: 8164f3e16683db5125634a4fbf3db83a5a7366bb830111ffe8538e1b8f98f8fe6dc35609cf2c595a7d6840e27d3fb45b57faf7340e40e98f0d76207fe8f94e79
   languageName: node
   linkType: hard
 
@@ -1340,64 +1340,64 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-free@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-free@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-free%2F-%2F6.5.1%2Ffontawesome-free-6.5.1.tgz"
-  checksum: 8905de0ad0cab9b6c4a3503267d96c9b34df703d3e1331e18f37f775722eaef9e93a55ead53cca6f5a68559c7cbc77dfd871e75a7932b2a54dfa99352b5dc7d3
+"@fortawesome/fontawesome-free@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/fontawesome-free@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-free%2F-%2F6.5.2%2Ffontawesome-free-6.5.2.tgz"
+  checksum: b77c1751721f355edc3bbc5c305d3ae87130156846511dfd3f66d5e218e246a7b3b5c57839f7b57729864b9d8b166e76aba2a11472a3e2f2ff597c24d39999df
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-svg-core@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-svg-core%2F-%2F6.5.1%2Ffontawesome-svg-core-6.5.1.tgz"
+"@fortawesome/fontawesome-svg-core@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-svg-core%2F-%2F6.5.2%2Ffontawesome-svg-core-6.5.2.tgz"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: e17f995abe215d288163b2cd009f935c7f96bc896ab4ea7a75de72789d52a1275bd112eeb60cadd63bb20017a05ed765232157079bfb7efda7347a5614e04ce1
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: f0c2a0800074c5bbc143631b9f3f818b94bd14b8590153058eecc9f548ae0ac78cfca61196880f9b3b79b5d5b5afdb140d05da75542da2087701614c9c043905
   languageName: node
   linkType: hard
 
-"@fortawesome/free-brands-svg-icons@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/free-brands-svg-icons@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffree-brands-svg-icons%2F-%2F6.5.1%2Ffree-brands-svg-icons-6.5.1.tgz"
+"@fortawesome/free-brands-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/free-brands-svg-icons@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffree-brands-svg-icons%2F-%2F6.5.2%2Ffree-brands-svg-icons-6.5.2.tgz"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: c29f8a9ad9886c0733d3616b5ea05b08b4943c1b5231c73f31a07e7df36c337e5a51cfe7cc610e623cb2b4a0607e3f82a8a3f46107c4347aa653784489672314
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: f037c15978da40942e7962f3ddbddf767bc1a5a126952422c786408e4942f7da4daaefe028ba039b56761636903a5916b845547755a8e04e079c6f92e724fd37
   languageName: node
   linkType: hard
 
-"@fortawesome/pro-light-svg-icons@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/pro-light-svg-icons@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-light-svg-icons%2F-%2F6.5.1%2Fpro-light-svg-icons-6.5.1.tgz"
+"@fortawesome/pro-light-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/pro-light-svg-icons@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-light-svg-icons%2F-%2F6.5.2%2Fpro-light-svg-icons-6.5.2.tgz"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: 4de0e09c443434a4041fcde52dcbe64d661c5e74e660488d0ef1f55070f9f0f0012ccd50e6b0bffb73775d01133b3b18f96dafdea8b39f6d661f213e76126c91
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: 67c0f8e3b65b1f418a9e745b3d9ce0844fddbbf1d4970eb06b013c7c0bc7c41b1926e1e1d4e7d8dd774f8eb25e5d932e797d73d60aafe16b9ea87266b4c3e4ca
   languageName: node
   linkType: hard
 
-"@fortawesome/pro-regular-svg-icons@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/pro-regular-svg-icons@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-regular-svg-icons%2F-%2F6.5.1%2Fpro-regular-svg-icons-6.5.1.tgz"
+"@fortawesome/pro-regular-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/pro-regular-svg-icons@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-regular-svg-icons%2F-%2F6.5.2%2Fpro-regular-svg-icons-6.5.2.tgz"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: 79c068123ee4e4205e68f0faaada049b2e108320e941651724305bc524657446ef96a9a33785c1342d054701acefd9476b94908d3c163f2031b5da190ec30c43
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: 409ec29cd37ebe9e9927180036cf3a30b31e68715576aa390b9ba85b24c10d01b7092459ad1761fb4fbdb9f086630738a0a7085c6e58dc72b04ec82523665386
   languageName: node
   linkType: hard
 
-"@fortawesome/pro-solid-svg-icons@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/pro-solid-svg-icons@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-solid-svg-icons%2F-%2F6.5.1%2Fpro-solid-svg-icons-6.5.1.tgz"
+"@fortawesome/pro-solid-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/pro-solid-svg-icons@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-solid-svg-icons%2F-%2F6.5.2%2Fpro-solid-svg-icons-6.5.2.tgz"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: 0eb0cee7e4d69677bd4c1a118f20acacb44eb4ce243f678f16a4b2ef69909e63345bd717d7f17949c69a3ff9cc0999c2c517c56b382d37742af8518c8de9547c
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: 7212c0a77d61f4890da618f9e2a3552468eb832807cc2214eb07a7cf5e3bdcc26566d85859a3198caaa2c385d7ca0c49c8868c0c874ce9d8d3e3396aeba954e5
   languageName: node
   linkType: hard
 
-"@fortawesome/pro-thin-svg-icons@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/pro-thin-svg-icons@npm:6.5.1::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-thin-svg-icons%2F-%2F6.5.1%2Fpro-thin-svg-icons-6.5.1.tgz"
+"@fortawesome/pro-thin-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/pro-thin-svg-icons@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-thin-svg-icons%2F-%2F6.5.2%2Fpro-thin-svg-icons-6.5.2.tgz"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: f6b450c1a3b1c71934945c51716f9d0eb7e844af3aa9f67d04f79f0b3dbef58603e7e415e9cd76c8d8802c44a99981b33bddb0a2c15da07b1c42f59d31d792cd
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: 89a0ff26f172af60d72a0068bb6d38448cbda3cbc97bdd5030eab6e00e6cf912829f4bbe94e25bea03d54e66aa254c5ca64aacf21e84f970ac6e1de18d18f5a6
   languageName: node
   linkType: hard
 
@@ -1812,29 +1812,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/image@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@nuxt/image@npm:1.4.0"
+"@nuxt/image@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@nuxt/image@npm:1.5.0"
   dependencies:
-    "@nuxt/kit": ^3.10.3
+    "@nuxt/kit": ^3.11.1
     consola: ^3.2.3
     defu: ^6.1.4
     h3: ^1.11.1
     image-meta: ^0.2.0
     ipx: ^2.1.0
-    node-fetch-native: ^1.6.2
+    node-fetch-native: ^1.6.4
     ohash: ^1.1.3
     pathe: ^1.1.2
     std-env: ^3.7.0
-    ufo: ^1.4.0
+    ufo: ^1.5.3
   dependenciesMeta:
     ipx:
       optional: true
-  checksum: e1d0a7065f03fb2886b9a1d7297ee948bca4644a53990baf784a67844c94d40cb3495ee992438b906860e80252f4d54ca16752ea337cebdfccbe3a55b44589e1
+  checksum: 042b6086764518ee86e1e4a45d120e61ecebc14c65b92bb3530b1f0f52f7fd6df96ed69119e34e10292d00b6b997561afbee058cc12fa3fa338b3ced94080df3
   languageName: node
   linkType: hard
 
-"@nuxt/kit@npm:3.11.1, @nuxt/kit@npm:^3.10.3":
+"@nuxt/kit@npm:3.11.1, @nuxt/kit@npm:^3.11.1":
   version: 3.11.1
   resolution: "@nuxt/kit@npm:3.11.1"
   dependencies:
@@ -3050,12 +3050,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.12.2":
-  version: 20.12.2
-  resolution: "@types/node@npm:20.12.2"
+"@types/node@npm:^20.12.3":
+  version: 20.12.3
+  resolution: "@types/node@npm:20.12.3"
   dependencies:
     undici-types: ~5.26.4
-  checksum: 3242ab04fe69ae32a2da29a7a2fce41fccb370bc1189de43d2dfbb491bd3253d3ee2070cbb5613061148e4862fdaa9cf62722c43128ce5c7d33fe83750956613
+  checksum: 982544a014391f214d36e5d65d8879f4d3ca9ed2258a5db76b1475a58858b5468ca1c65973e1a3e578f7665ed881af1ff9387d2d3e99e7a4d315994570fc50ff
   languageName: node
   linkType: hard
 
@@ -3240,15 +3240,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:7.4.0"
+"@typescript-eslint/eslint-plugin@npm:^7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/eslint-plugin@npm:7.5.0"
   dependencies:
     "@eslint-community/regexpp": ^4.5.1
-    "@typescript-eslint/scope-manager": 7.4.0
-    "@typescript-eslint/type-utils": 7.4.0
-    "@typescript-eslint/utils": 7.4.0
-    "@typescript-eslint/visitor-keys": 7.4.0
+    "@typescript-eslint/scope-manager": 7.5.0
+    "@typescript-eslint/type-utils": 7.5.0
+    "@typescript-eslint/utils": 7.5.0
+    "@typescript-eslint/visitor-keys": 7.5.0
     debug: ^4.3.4
     graphemer: ^1.4.0
     ignore: ^5.2.4
@@ -3261,7 +3261,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 01932c762939c120e95c81937b8f39f6500336919e87166b8ce35e753fc8fff64b3f3f5b79e86b0e8f4204c883467e4b66ed5af22e34fd6e3d30bc49f8ada7e4
+  checksum: 02ca180a4e46df840b84221219800cc5f6371254a37be7932a2586768925d8c8897b9eebe92d32093be254a98f10eae8b291638515edd79571826d6840044332
   languageName: node
   linkType: hard
 
@@ -3283,21 +3283,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/parser@npm:7.4.0"
+"@typescript-eslint/parser@npm:^7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/parser@npm:7.5.0"
   dependencies:
-    "@typescript-eslint/scope-manager": 7.4.0
-    "@typescript-eslint/types": 7.4.0
-    "@typescript-eslint/typescript-estree": 7.4.0
-    "@typescript-eslint/visitor-keys": 7.4.0
+    "@typescript-eslint/scope-manager": 7.5.0
+    "@typescript-eslint/types": 7.5.0
+    "@typescript-eslint/typescript-estree": 7.5.0
+    "@typescript-eslint/visitor-keys": 7.5.0
     debug: ^4.3.4
   peerDependencies:
     eslint: ^8.56.0
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: ee8dac1a5bbe8a0ccac3b95116ab5dba8e3cd8541ff2a70aca08949232f75cef1a56151852a06b1a2417e4bdb898c38fed7e4d1731ded1cfb9c58da693abe140
+  checksum: c9f85ae638e27fb249e565fc299cfee456b15f6a67156f373c10fa6e310a470b5298e174ca75309789c4cf1acd1a9fd3391d5fe128208b05bac0b701d5ddf512
   languageName: node
   linkType: hard
 
@@ -3311,13 +3311,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/scope-manager@npm:7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/scope-manager@npm:7.4.0"
+"@typescript-eslint/scope-manager@npm:7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/scope-manager@npm:7.5.0"
   dependencies:
-    "@typescript-eslint/types": 7.4.0
-    "@typescript-eslint/visitor-keys": 7.4.0
-  checksum: 6d8677ffed151b6d7b5881a105586d29e2c56c757435f625ca3ba22e494e48328794de8b9df1f06023b1fac60da7ed49f2bfab8854b07fdcceab0f413d28725a
+    "@typescript-eslint/types": 7.5.0
+    "@typescript-eslint/visitor-keys": 7.5.0
+  checksum: 13d858ca9f77922578b154b8568ca172dc8bd3a557ec60b4d027174675e243e34f189127ae073b052c78a96aca2cbad098318388db8723bce25d0a63dd0ba8e3
   languageName: node
   linkType: hard
 
@@ -3338,12 +3338,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/type-utils@npm:7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/type-utils@npm:7.4.0"
+"@typescript-eslint/type-utils@npm:7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/type-utils@npm:7.5.0"
   dependencies:
-    "@typescript-eslint/typescript-estree": 7.4.0
-    "@typescript-eslint/utils": 7.4.0
+    "@typescript-eslint/typescript-estree": 7.5.0
+    "@typescript-eslint/utils": 7.5.0
     debug: ^4.3.4
     ts-api-utils: ^1.0.1
   peerDependencies:
@@ -3351,7 +3351,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 5906909843095686b6cdfd14935033dd6ddbabd1f695fbc1b9ab475472cdc7a14010900189cdd2feae468c0df2f4981c5adcebd115c317a79fd6c665ff40d085
+  checksum: 9dce5f7f9981febd5967c3c45266787ddf5805fcef40fd2cb644503a32aee4d06de77d64dc3903e61caff3a1a76817c0b3be35703401ddf1bec84c76757f0f69
   languageName: node
   linkType: hard
 
@@ -3362,10 +3362,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/types@npm:7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/types@npm:7.4.0"
-  checksum: 0be366b4da417b076af456db2b3ceb136c77ee1da293463b98d1897c804db5b81849337eb566bbddadc5171d3bfb48e687fd8db8a63c2eac0f4c52c3f9593b12
+"@typescript-eslint/types@npm:7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/types@npm:7.5.0"
+  checksum: 038e5b10680fd32da8455d0590437888f57511ed8c2b984511890d6bfc0b230b269bc3de6970cc76660e8fd65657e201316bc4abd9758a2d6efb49d659dd4199
   languageName: node
   linkType: hard
 
@@ -3388,12 +3388,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/typescript-estree@npm:7.4.0, @typescript-eslint/typescript-estree@npm:^7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/typescript-estree@npm:7.4.0"
+"@typescript-eslint/typescript-estree@npm:7.5.0, @typescript-eslint/typescript-estree@npm:^7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/typescript-estree@npm:7.5.0"
   dependencies:
-    "@typescript-eslint/types": 7.4.0
-    "@typescript-eslint/visitor-keys": 7.4.0
+    "@typescript-eslint/types": 7.5.0
+    "@typescript-eslint/visitor-keys": 7.5.0
     debug: ^4.3.4
     globby: ^11.1.0
     is-glob: ^4.0.3
@@ -3403,7 +3403,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: af8e487004b0a22ac2b494a2ab0c84ba68c188883722ca5d297ac0dcc3719b2d7d12e05cf0038547244f285c6a63a2a6cd5a6f5879109e8e86f8ea1dca0abe9d
+  checksum: ebc6838af9cf25be3c07ba4ea91bbbc2450d835eeb775139a0ed6344baf193824b0fd5319c0fe94d55c822a54670344655937894f6d0dc77bfbfcdc0493e567d
   languageName: node
   linkType: hard
 
@@ -3424,20 +3424,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/utils@npm:7.4.0"
+"@typescript-eslint/utils@npm:7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/utils@npm:7.5.0"
   dependencies:
     "@eslint-community/eslint-utils": ^4.4.0
     "@types/json-schema": ^7.0.12
     "@types/semver": ^7.5.0
-    "@typescript-eslint/scope-manager": 7.4.0
-    "@typescript-eslint/types": 7.4.0
-    "@typescript-eslint/typescript-estree": 7.4.0
+    "@typescript-eslint/scope-manager": 7.5.0
+    "@typescript-eslint/types": 7.5.0
+    "@typescript-eslint/typescript-estree": 7.5.0
     semver: ^7.5.4
   peerDependencies:
     eslint: ^8.56.0
-  checksum: 9f2c83f113fe49b7179a72c36f585ae6654a3a8c7596809b2c867b8febf2dbfea66de771f820a1dc43c0aab0acb8c7330bd6ed48ece1a4d478cf8b5b3bb62d77
+  checksum: 03d5563f50da5f35c84c7ea9dd1c671afa668d614eacb3dff38a94b9f399bd4e371348f6a2feb1cbf0fcb3e3e6d0f662cef8d93a9f3a29ea9a4176aa3abc4902
   languageName: node
   linkType: hard
 
@@ -3451,13 +3451,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/visitor-keys@npm:7.4.0":
-  version: 7.4.0
-  resolution: "@typescript-eslint/visitor-keys@npm:7.4.0"
+"@typescript-eslint/visitor-keys@npm:7.5.0":
+  version: 7.5.0
+  resolution: "@typescript-eslint/visitor-keys@npm:7.5.0"
   dependencies:
-    "@typescript-eslint/types": 7.4.0
+    "@typescript-eslint/types": 7.5.0
     eslint-visitor-keys: ^3.4.1
-  checksum: 9baa497eefbe40a4f7415be26092c318415fd8ccc1910a0cd79234561107b625b63f3ca250eda9f0060e1181fd8155337ec0caee811b301e774e468f5279d0ad
+  checksum: 8de0d3fb470f60b3aca7073ff62c7f9fe078d77c48d43033622ff059f201223fe35eaf834a6b63d95ee5d4c0e2e13669de3f20e4f4de597596dcf63537a60693
   languageName: node
   linkType: hard
 
@@ -6280,11 +6280,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^9.23.0":
-  version: 9.23.0
-  resolution: "eslint-plugin-vue@npm:9.23.0"
+"eslint-plugin-vue@npm:^9.24.0":
+  version: 9.24.0
+  resolution: "eslint-plugin-vue@npm:9.24.0"
   dependencies:
     "@eslint-community/eslint-utils": ^4.4.0
+    globals: ^13.24.0
     natural-compare: ^1.4.0
     nth-check: ^2.1.1
     postcss-selector-parser: ^6.0.15
@@ -6293,7 +6294,7 @@ __metadata:
     xml-name-validator: ^4.0.0
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
-  checksum: acb3a4dd27a815be37b63fc735c88bf9bfd12a5147639635eb6e473c7fdf47f69a78693ffeb67581ffd11e0016c134bb56a667193b958a189cbfc2df3e93160b
+  checksum: 2309b919d8fced6210c11e09107f443990063c0392843909cf50fad682e820c48bf5cc28b82a1239c03fd7ceeb4239e1baa653370c4c76689ec5fb8a970cd303
   languageName: node
   linkType: hard
 
@@ -7147,6 +7148,15 @@ __metadata:
   dependencies:
     type-fest: ^0.20.2
   checksum: 194c97cf8d1ef6ba59417234c2386549c4103b6e5f24b1ff1952de61a4753e5d2069435ba629de711a6480b1b1d114a98e2ab27f85e966d5a10c319c3bbd3dc3
+  languageName: node
+  linkType: hard
+
+"globals@npm:^13.24.0":
+  version: 13.24.0
+  resolution: "globals@npm:13.24.0"
+  dependencies:
+    type-fest: ^0.20.2
+  checksum: 56066ef058f6867c04ff203b8a44c15b038346a62efbc3060052a1016be9f56f4cf0b2cd45b74b22b81e521a889fc7786c73691b0549c2f3a6e825b3d394f43c
   languageName: node
   linkType: hard
 
@@ -9188,7 +9198,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch-native@npm:^1.6.2":
+"node-fetch-native@npm:^1.6.2, node-fetch-native@npm:^1.6.4":
   version: 1.6.4
   resolution: "node-fetch-native@npm:1.6.4"
   checksum: 7b159f610e037e8813750096a6616ec6771e9abf868aa6e75e5b790bfc2ba2d92cf2abcce33c18fd01f2e5e5cc72de09c78bd4381e7f8c0887f7de21bd96f045
@@ -9437,23 +9447,23 @@ __metadata:
   dependencies:
     "@atproto/api": ^0.12.2
     "@awesome.me/kit-e7e521035c": latest
-    "@fortawesome/fontawesome-free": ^6.5.1
-    "@fortawesome/fontawesome-svg-core": ^6.5.1
-    "@fortawesome/free-brands-svg-icons": ^6.5.1
-    "@fortawesome/pro-light-svg-icons": ^6.5.1
-    "@fortawesome/pro-regular-svg-icons": ^6.5.1
-    "@fortawesome/pro-solid-svg-icons": ^6.5.1
-    "@fortawesome/pro-thin-svg-icons": ^6.5.1
+    "@fortawesome/fontawesome-free": ^6.5.2
+    "@fortawesome/fontawesome-svg-core": ^6.5.2
+    "@fortawesome/free-brands-svg-icons": ^6.5.2
+    "@fortawesome/pro-light-svg-icons": ^6.5.2
+    "@fortawesome/pro-regular-svg-icons": ^6.5.2
+    "@fortawesome/pro-solid-svg-icons": ^6.5.2
+    "@fortawesome/pro-thin-svg-icons": ^6.5.2
     "@fortawesome/vue-fontawesome": ^3.0.6
     "@gtm-support/vue-gtm": ^2.2.0
-    "@nuxt/image": ^1.4.0
+    "@nuxt/image": ^1.5.0
     "@nuxt/types": ^2.17.3
     "@nuxtjs/tailwindcss": ^6.11.4
     "@types/luxon": ^3.4.2
-    "@types/node": ^20.12.2
-    "@typescript-eslint/eslint-plugin": ^7.4.0
-    "@typescript-eslint/parser": ^7.4.0
-    "@typescript-eslint/typescript-estree": ^7.4.0
+    "@types/node": ^20.12.3
+    "@typescript-eslint/eslint-plugin": ^7.5.0
+    "@typescript-eslint/parser": ^7.5.0
+    "@typescript-eslint/typescript-estree": ^7.5.0
     "@vue/eslint-config-prettier": ^9.0.0
     "@vue/eslint-config-typescript": ^13.0.0
     autoprefixer: ^10.4.19
@@ -9464,7 +9474,7 @@ __metadata:
     eslint-plugin-nuxt: ^4.0.0
     eslint-plugin-prettier: ^5.1.3
     eslint-plugin-unused-imports: ^3.1.0
-    eslint-plugin-vue: ^9.23.0
+    eslint-plugin-vue: ^9.24.0
     flowbite: ^2.3.0
     flowbite-vue: ^0.1.3
     luxon: ^3.4.4
@@ -9476,11 +9486,11 @@ __metadata:
     tailwindcss: ^3.4.3
     typescript: ^5.4.3
     ufo: ^1.5.3
-    vite: ^5.2.7
+    vite: ^5.2.8
     vue: ^3.4.21
     vue-eslint-parser: ^9.4.2
     vue-router: ^4.3.0
-    wrangler: ^3.42.0
+    wrangler: ^3.44.0
   languageName: unknown
   linkType: soft
 
@@ -13115,9 +13125,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.2.7":
-  version: 5.2.7
-  resolution: "vite@npm:5.2.7"
+"vite@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "vite@npm:5.2.8"
   dependencies:
     esbuild: ^0.20.1
     fsevents: ~2.3.3
@@ -13151,7 +13161,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 66b4243f0ce147a1871e9bea772e5bd4842410ec9f3aa71d21e9427836f79a15b00f5cb7f023003f169249bc6ead20f68ee31ce6a326e091670ffd3b5441d131
+  checksum: c0a77271b548fce443af59a383939924ffcba8e6d0ba6ecb2e481d0ec2318465d2116ce9317599c448e6d6d8af11a67b8efc5b52cb1deab37d2e83311ac4f1b5
   languageName: node
   linkType: hard
 
@@ -13455,9 +13465,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:^3.42.0":
-  version: 3.42.0
-  resolution: "wrangler@npm:3.42.0"
+"wrangler@npm:^3.44.0":
+  version: 3.44.0
+  resolution: "wrangler@npm:3.44.0"
   dependencies:
     "@cloudflare/kv-asset-handler": 0.3.1
     "@esbuild-plugins/node-globals-polyfill": ^0.2.3
@@ -13485,7 +13495,7 @@ __metadata:
   bin:
     wrangler: bin/wrangler.js
     wrangler2: bin/wrangler.js
-  checksum: 8bbecb908c8cf6285bb90c8f363eead1b816125af84949622e51337e713a74feedf681494ee03e660359ba1954e18abbe821de6690d44c57eb7c1a9e06efea53
+  checksum: b8c22c1f7fae89507cfdf4eb4013118d398a6d0dfec9f88a56c1c9bccf7ca9a45708c47b4670f9b8faeabc5a7ca04ee340934472721cca98906f682f5d8e536e
   languageName: node
   linkType: hard
 
