@@ -27,7 +27,7 @@
 <style scoped></style>
 
 <script setup lang="ts">
-  import { useAppConfig, buildPostURL, isDev } from '#imports'
+  import { useAppConfig, buildPostURL, isDev, bskyutils } from '#imports'
   import { AppBskyEmbedImages, AppBskyEmbedRecordWithMedia } from '@atproto/api'
   import type { ValidationResult } from '@atproto/lexicon'
   import { defineProps, type PropType } from 'vue'
@@ -66,12 +66,12 @@
     )
     if (validRes.success) {
       if (props.embed.images) {
+        const handle = await bskyutils.resolveDID(props.did, true)
         for (const img of props.embed.images) {
           img.value = await buildPostURL(
             config.bskyAppURL,
             img.image.original.ref,
-            props.did,
-            props.repo
+            handle
           )
           // Post URL
           if (isDev()) {
