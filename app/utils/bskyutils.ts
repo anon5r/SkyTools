@@ -104,13 +104,30 @@ export const resolveDID = async (
  * @throws {Error} Invalid handle
  */
 export const resolveHandle = async (identifier: string): Promise<string> => {
-  const url = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
-  try {
-    if (!identifier.startsWith('did:') && identifier.length > 253)
-      throw new Error('Too long identifier')
-    const res = await axios.get(url)
+  if (identifier.startsWith('did:'))
+    throw new Error('Invalid handle. Should be a handle, not a DID')
+  if (identifier.length > 253) throw new Error('Too long identifier')
 
-    if (res.data?.did) return res.data.did as string
+  try {
+    const url = `https://${identifier}/.well-known/atproto-did`
+    let res = await axios.get(url)
+    if (res.status === 200) return res.data as string
+  } catch (err) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error = ')
+      console.error(err)
+    }
+  }
+  try {
+    // DNS resolve
+    const url = `https://networkcalc.com/api/dns/lookup/_atproto.${identifier}`
+    const res = await axios.get(url)
+    if (res.status === 200) {
+      if (res.data.status === 'OK' && res.data.records.TXT.length > 0)
+        for (const txt of res.data.records.TXT)
+          if (txt.startsWith('did=')) return txt.substring(4)
+    }
+
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
