@@ -22,9 +22,8 @@
   import type { Ref } from 'vue'
 
   const route: RouteLocationNormalizedLoaded = useRoute()
-  console.log('route.params = ', route.params)
   const handleOrDid: string = route.params.id as string
-  const postID: string = route.params.cid as string
+  const postID: string = route.params.rkey as string
 
   if (!postID) throw new Error('Missing posts')
 
