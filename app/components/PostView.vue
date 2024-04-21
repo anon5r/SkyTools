@@ -221,7 +221,7 @@
     postRecord: {
       type: Object as PropType<AppBskyFeedPost.Record>,
       required: false,
-      default: () => ({}),
+      default: null,
     },
     profile: {
       type: Object as PropType<AppBskyActorProfile.Record>,
@@ -268,9 +268,13 @@
         profile.value = profileRecord
       }
 
+      postURL.value = ClientPost.getPermanentLink(
+        handle.value ?? props.did,
+        props.rkey
+      )
+
       if (props.postRecord) {
-        const atUri = bskyutils.parseAtUri(props.uri)
-        // console.log(toRaw(profile.value))
+        // postRecord is passed from parent
         avatarURL.value = bskyutils.buildBlobRefURL(
           config.cdnPrefix,
           props.did,
@@ -278,8 +282,8 @@
           'avatar',
           pdsEndpoint.value
         )
-        postURL.value = ClientPost.getPermanentLink(atUri.did, atUri.rkey)
       } else {
+        // Post record is not passed from parent
         // Initialize client
         const client = await ClientPost.load(
           config,
@@ -287,10 +291,6 @@
           pdsEndpoint.value
         )
 
-        postURL.value = ClientPost.getPermanentLink(
-          client.handle ?? client.did,
-          client.atUri.rkey
-        )
         isHidden.value = client.isHidden
         if (auth.isLoggedIn()) {
           isHidden.value = false

@@ -200,12 +200,12 @@
             <fwb-tab name="posts" title="Posts" id="posts">
               <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
-                <div v-for="record of userinfo.posts" :key="record.rkey">
+                <div v-for="record of userinfo.posts" :key="record.cid">
                   <PostView
                     :did="userinfo.details.did"
                     :uri="record.uri"
                     :cid="record.cid"
-                    :rkey="record.rkey"
+                    :rkey="bskyutils.parseAtUri(record.uri).rkey"
                     :pds="userinfo.endpoint"
                     :postRecord="record.value"
                     :profile="userinfo.profile" />
@@ -407,6 +407,7 @@
   import { isLoggedIn } from '~/composables/auth'
   import { AtpAgent } from '@atproto/api'
   import { DateTime } from 'luxon'
+  import bskyutils from '~/utils/bskyutils'
 
   const activeTab = ref('posts')
 

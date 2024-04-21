@@ -72,7 +72,6 @@ export const resolveDID = async (
   identifier: string,
   onlyHandle: boolean = true
 ): Promise<string> => {
-  console.log('identifier = ', identifier)
   try {
     let requestUrl
     if (identifier.startsWith('did:')) requestUrl = `${plcURL}/${identifier}`
