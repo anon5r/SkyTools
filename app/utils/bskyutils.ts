@@ -369,19 +369,15 @@ export const describeRepo = async (id: string): Promise<any> => {
  */
 export const loadProfile = async (
   endpoint: string,
-  id: string,
-  withHeader?: boolean
+  id: string
 ): Promise<AppBskyActorProfile.Record | ComAtprotoRepoGetRecord.Response> => {
-  if (withHeader === undefined) withHeader = false
   const profile = await getRecord(
     endpoint,
     'app.bsky.actor.profile',
     id,
     'self'
   )
-  return withHeader
-    ? (profile.data as ComAtprotoRepoGetRecord.Response)
-    : (profile.data.value as AppBskyActorProfile.Record)
+  return profile.data.value as AppBskyActorProfile.Record
 }
 
 /**

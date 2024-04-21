@@ -853,7 +853,7 @@
 
           let avatar, banner, profile, handle
           try {
-            profile = await bskyUtils.loadProfile(repoEndpoint, did, false)
+            profile = await bskyUtils.loadProfile(repoEndpoint, did)
             avatar = bskyUtils.buildBlobRefURL(
               config.cdnPrefix,
               did,
@@ -947,8 +947,7 @@
           try {
             profile = await bskyUtils.loadProfile(
               pdsEndpoint,
-              record.value.subject,
-              false
+              record.value.subject
             )
           } catch (err) {
             // following, but the account has been removed
@@ -1018,8 +1017,7 @@
           try {
             profile = await bskyUtils.loadProfile(
               pdsEndpoint,
-              record.value.subject,
-              false
+              record.value.subject
             )
           } catch (err) {
             // blocked, but the account has been removed

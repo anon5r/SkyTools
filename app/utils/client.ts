@@ -133,8 +133,7 @@ class ClientPost {
       // Load profile
       client._profile = (await bskyutils.loadProfile(
         client._endpoint ?? config.defaultPDSEntrypoint,
-        did,
-        false
+        did
       )) as AppBskyActorProfile.Record
       if (
         client._profile.labels &&
