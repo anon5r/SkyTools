@@ -71,7 +71,7 @@
 
 <script setup>
   import { useAppConfig, useSeoMeta, onMounted, ref } from '#imports'
-  import { resolveDID } from '~/utils/lexicons'
+  import { resolveDID } from '~/utils/bskyutils'
 
   const config = useAppConfig()
   const currentLanguage = ref('en')

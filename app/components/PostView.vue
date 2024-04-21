@@ -1,7 +1,7 @@
 <template>
   <article
     class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
-    :id="`post-${props.cid}`">
+    :id="`post-${props.rkey}`">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -10,7 +10,7 @@
           <NuxtLink :to="ClientPost.getPermanentLink(handle)">
             <fwb-avatar
               rounded
-              :img="avatarURL ?? null"
+              :img="avatarURL ?? undefined"
               :alt="handle"
               class="p-1 min-w-max avatar-object-cover" />
           </NuxtLink>
@@ -32,16 +32,25 @@
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <ClientOnly>
-          <DropdownMenuButton icon="vertical" :id="`${props.cid}`">
+          <DropdownMenuButton icon="vertical" :id="`${props.rkey}`">
             <!-- dropdown menu -->
             <ul
               class="py-2 text-sm text-gray-600 dark:text-slate-400"
-              :aria-labelledby="`dropdown-${props.cid}-button`">
+              :aria-labelledby="`dropdown-${props.rkey}-button`">
               <li>
                 <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                   Open in Bluesky
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']" />
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink
+                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Open as JSON
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
                 </NuxtLink>
@@ -105,6 +114,7 @@
         </AtHandleLink>
       </div>
       <!-- Post message -->
+
       <div
         v-if="record && !isHidden && !isRemoved"
         class="break-words whitespace-pre-line">
@@ -176,14 +186,16 @@
     useAuth,
     isDev,
     ClientPost,
+    toRaw,
   } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, type Ref } from 'vue'
+  import { defineProps, type PropType, type Ref } from 'vue'
   import { DateTime } from 'luxon'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { AppBskyFeedPost } from '@atproto/api'
+  import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
   import type { AppConfig } from '@nuxt/schema'
   import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
+  import * as bskyutils from '~/utils/bskyutils'
 
   const props = defineProps({
     uri: {
@@ -193,7 +205,6 @@
     did: {
       type: String,
       required: true,
-      default: 'did:unknown:unknown',
     },
     cid: {
       type: String,
@@ -201,7 +212,20 @@
     },
     rkey: {
       type: String,
+      required: true,
+    },
+    pds: {
+      type: String,
+      required: true,
+    },
+    postRecord: {
+      type: Object as PropType<AppBskyFeedPost.Record>,
       required: false,
+      default: null,
+    },
+    profile: {
+      type: Object as PropType<AppBskyActorProfile.Record>,
+      required: true,
     },
   })
   const config: AppConfig = useAppConfig()
@@ -209,43 +233,87 @@
 
   const postURL: Ref<string> = ref('#')
 
+  const profile: Ref<AppBskyActorProfile.Record> = ref(props.profile)
   const handle: Ref<string> = ref('Unknown')
   const displayName: Ref<string> = ref('Unknown')
   const avatarURL: Ref<string | null> = ref(null)
-  const record: Ref<AppBskyFeedPost.Record | undefined> = ref(undefined)
+  const record: Ref<AppBskyFeedPost.Record> = ref(props.postRecord)
   const isRemoved: Ref<boolean> = ref(false)
   const isHidden: Ref<boolean> = ref(false)
+  const pdsEndpoint: Ref<string> = ref(config.defaultPDSEntrypoint)
 
   onMounted(async () => {
     try {
-      const client = await ClientPost.load(config, props.uri)
+      if (props.pds) {
+        pdsEndpoint.value = props.pds
+      } else {
+        pdsEndpoint.value = await bskyutils.getPDSEndpointByDID(props.did)
+      }
+      if (props.profile) {
+        profile.value = props.profile
+        handle.value =
+          (props.profile.handle as string) ??
+          (await bskyutils.resolveDID(props.did, true)) ??
+          'Unknown'
+        displayName.value =
+          props.profile.displayName ??
+          (props.profile.handle as string) ??
+          'Unknown'
+      } else {
+        handle.value = await bskyutils.resolveDID(props.did, true)
+        const profileRecord = (await bskyutils.loadProfile(
+          props.did,
+          pdsEndpoint.value
+        )) as AppBskyActorProfile.Record
+        profile.value = profileRecord
+      }
+
       postURL.value = ClientPost.getPermanentLink(
-        client.handle ?? client.did,
-        client.atUri.rkey
+        handle.value ?? props.did,
+        props.rkey
       )
-      isHidden.value = client.isHidden
-      if (auth.isLoggedIn()) {
-        isHidden.value = false
-        ClientPost.loadProfileBlobs(client)
-        await ClientPost.loadPost(client)
+
+      if (props.postRecord) {
+        // postRecord is passed from parent
+        avatarURL.value = bskyutils.buildBlobRefURL(
+          config.cdnPrefix,
+          props.did,
+          profile.value,
+          'avatar',
+          pdsEndpoint.value
+        )
+      } else {
+        // Post record is not passed from parent
+        // Initialize client
+        const client = await ClientPost.load(
+          config,
+          props.uri,
+          pdsEndpoint.value
+        )
+
+        isHidden.value = client.isHidden
+        if (auth.isLoggedIn()) {
+          isHidden.value = false
+          ClientPost.loadProfileBlobs(client)
+          await ClientPost.loadPost(client)
+        }
+        handle.value = client.handle ?? 'Unknown'
+        displayName.value =
+          client.profile.displayName ?? client.handle ?? 'Unknown'
+        avatarURL.value = client.avatarURL
+        if (isDev()) {
+          console.log('atUri = ', client.atUri)
+          console.log('props.uri = ', props.uri)
+          console.log('postURL = ', postURL.value)
+        }
+        record.value = client.record
+        isRemoved.value = client.isRemoved
       }
-      handle.value = client.handle ?? 'Unknown'
-      displayName.value =
-        client.profile.displayName ?? client.handle ?? 'Unknown'
-      avatarURL.value = client.avatarURL
-      if (isDev()) {
-        console.log('atUri = ', client.atUri)
-        console.log('props.uri = ', props.uri)
-        console.log('postURL = ', postURL.value)
-      }
-      record.value = client.record
-      isRemoved.value = client.isRemoved
     } catch (e) {
       console.error(e)
       if (e instanceof UnauthenticatedError) {
-        isHidden.value = true && !auth.isLoggedIn()
-      }
-      isRemoved.value = true
+        isHidden.value = !auth.isLoggedIn()
+      } else isRemoved.value = true
     }
   })
 </script>

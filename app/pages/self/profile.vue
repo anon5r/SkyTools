@@ -109,7 +109,7 @@
                     </span>
                     <span v-else-if="!inEdit">
                       <font-awesome-icon
-                        :icon="['fas', 'pen-to-square']"
+                        icon="fa-solid fa-pen-to-square"
                         size="sm" />
                       Edit
                     </span>
@@ -123,13 +123,13 @@
                         ) || description != profile.description
                       ">
                       <font-awesome-icon
-                        :icon="['fas', 'circle-xmark']"
+                        icon="fa-solid fa-circle-xmark"
                         size="sm" />
                       Close
                     </span>
                     <span v-else>
                       <font-awesome-icon
-                        :icon="['fas', 'floppy-disk']"
+                        icon="fa-solid fa-floppy-disk"
                         size="sm" />
                       Save
                     </span>
@@ -226,7 +226,7 @@
     isLoggedIn,
     restoreSession,
   } from '@/composables/auth'
-  import { loadProfile as loadProfileLexicon } from '@/utils/lexicons'
+  import { loadProfile as loadProfileLexicon } from '~/utils/bskyutils'
   import { useNavigation } from '@/composables/navigation'
   import { initPopovers } from 'flowbite'
   import { FwbAvatar } from 'flowbite-vue'

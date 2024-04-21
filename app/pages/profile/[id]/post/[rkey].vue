@@ -4,7 +4,12 @@
     <div class="w-full max-w-3xl">
       <div class="pt-4">
         <!-- Posts -->
-        <PostView :did="did" :uri="atUri" :cid="postID"></PostView>
+        <PostView
+          :did="did"
+          :uri="atUri"
+          :rkey="postID"
+          :profile="profile"
+          :pds="pds" />
       </div>
     </div>
   </div>
@@ -12,25 +17,24 @@
 
 <script setup lang="ts">
   import { useSeoMeta, ref, useRoute } from '#imports'
-  import * as lexicons from '~/utils/lexicons'
+  import * as bskyutils from '~/utils/bskyutils'
   import type { RouteLocationNormalizedLoaded } from 'vue-router'
   import type { Ref } from 'vue'
 
   const route: RouteLocationNormalizedLoaded = useRoute()
-  console.log('route.params = ', route.params)
   const handleOrDid: string = route.params.id as string
-  const postID: string = route.params.cid as string
+  const postID: string = route.params.rkey as string
 
-  if (handleOrDid && !postID) throw new Error('Missing posts')
+  if (!postID) throw new Error('Missing posts')
 
-  if (!handleOrDid && !postID) throw new Error('Missing posts')
-
-  const did: Ref<string | undefined> = ref(undefined)
-  const atUri: Ref<string | undefined> = ref(undefined)
   const collection = 'app.bsky.feed.post'
+  const did: Ref<string> = ref(
+    handleOrDid.startsWith('did:')
+      ? handleOrDid
+      : await bskyutils.resolveHandle(handleOrDid)
+  )
+  const atUri: Ref<string> = ref(`at://${did.value}/${collection}/${postID}`)
 
-  did.value = handleOrDid.startsWith('did:')
-    ? handleOrDid
-    : await lexicons.resolveHandle(handleOrDid)
-  atUri.value = `at://${did.value}/${collection}/${postID}`
+  const pds = await bskyutils.getPDSEndpointByDID(did.value)
+  const profile = await bskyutils.loadProfile(pds, handleOrDid)
 </script>

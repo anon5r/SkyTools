@@ -5,8 +5,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Ref } from '#imports'
-  import { ref } from '#imports'
+  import { ref, type Ref } from '#imports'
   import { defineProps } from 'vue'
   import { AppBskyRichtextFacet, RichText, UnicodeString } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
@@ -21,10 +20,9 @@
       required: false,
     },
   })
-
   const refText: Ref<RichText> = ref(
     new RichText(
-      { text: props.text, facets: props.facets },
+      { text: props.text ?? '', facets: props.facets },
       {
         cleanNewlines: true,
       }
@@ -34,7 +32,7 @@
 
   if (facets) {
     if (isDev()) {
-      console.log('refText = ', refText)
+      console.log('refText = ', refText.value)
       console.log('facets = ', facets)
     }
 

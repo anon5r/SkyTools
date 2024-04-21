@@ -95,7 +95,7 @@
     formatIdentifier,
     getIdentityAuditLogs,
     resolveHandle,
-  } from '@/utils/lexicons'
+  } from '~/utils/bskyutils'
   import {
     useAppConfig,
     useSeoMeta,

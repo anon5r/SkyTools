@@ -43,10 +43,10 @@
               </div>
             </div>
           </div>
-          <div class="my-3 md:my-2 whitespace-pre-line breal-all truncate">
-            {{ post.record.text }}
+          <div class="my-3 md:my-2 whitespace-pre-line break-all truncate">
+            {{ post.record?.text ?? '' }}
           </div>
-          <div v-if="post.record.embed">
+          <div v-if="post.record?.embed">
             <PostEmbedImages :embed="post.record.embed" :did="props.did" />
           </div>
         </div>
@@ -76,6 +76,11 @@
     did: {
       type: String,
       required: true,
+      default: null,
+    },
+    pds: {
+      type: String,
+      required: false,
       default: null,
     },
   })

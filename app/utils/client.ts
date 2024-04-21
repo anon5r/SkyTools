@@ -1,8 +1,5 @@
-import {
-  AppBskyActorProfile,
-  AppBskyFeedPost,
-} from '@atproto/api'
-import * as lexicons from '@/utils/lexicons'
+import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
+import * as bskyutils from '~/utils/bskyutils'
 import { isDev } from '~/utils/helpers'
 import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
 
@@ -15,13 +12,12 @@ interface AppConfig {
 class ClientPost {
   private _config: AppConfig = {}
   private _atUri: { [key: string]: string } = {}
+  private _endpoint: string | undefined = undefined
   private _profile: AppBskyActorProfile.Record | null = null
   private _handle: string | undefined = undefined
   private _appUrl: string | null = null
-  private _record:
-    | AppBskyFeedPost.Record
-    | AppBskyActorProfile.Record
-    | null = null
+  private _record: AppBskyFeedPost.Record | AppBskyActorProfile.Record | null =
+    null
   private _cid: string | null = null
   private _removed: boolean = false
   private _hidden: boolean = false
@@ -77,6 +73,10 @@ class ClientPost {
     return this._record as AppBskyFeedPost.Record
   }
 
+  public get endpoint(): string | undefined {
+    return this._endpoint
+  }
+
   /**
    * Returns the removed value.
    */
@@ -99,36 +99,41 @@ class ClientPost {
   }
 
   private constructor(config: any) {
-    lexicons.setConfig(config)
+    bskyutils.setConfig(config)
   }
 
   /**
    * Load a post from a URI
    * @param config
-   * @param atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   * @param {string} atUriPost at://did:plc:0x1234567890abcdef/post/0x1234567890abcdef
+   * @param {string?} pdsEndpoint PDS endpoint https://bsky.social
    * @returns ClientPost
    * @throws UnauthenticatedError
    */
   public static async load(
     config: AppConfig,
-    atUriPost: string
+    atUriPost: string,
+    pdsEndpoint?: string
   ): Promise<ClientPost> {
     const client = new ClientPost(config)
+    if (pdsEndpoint) client._endpoint = pdsEndpoint
 
-    client._atUri = lexicons.parseAtUri(atUriPost)
+    client._atUri = bskyutils.parseAtUri(atUriPost)
     const did = client._atUri.did
 
     try {
-      client._handle = await lexicons.resolveDID(did, true)
+      if (client._endpoint === undefined)
+        client._endpoint = await bskyutils.getPDSEndpointByDID(did)
+      client._handle = await bskyutils.resolveDID(did, true)
     } catch (err) {
       client._handle = did
     }
     let filtered: { val: string }[] = []
     try {
       // Load profile
-      client._profile = (await lexicons.loadProfile(
-        did,
-        false
+      client._profile = (await bskyutils.loadProfile(
+        client._endpoint ?? config.defaultPDSEntrypoint,
+        did
       )) as AppBskyActorProfile.Record
       if (
         client._profile.labels &&
@@ -165,19 +170,21 @@ class ClientPost {
 
   public static loadProfileBlobs(client: ClientPost): void {
     // Avatar
-    client._avatarURL = lexicons.buildBlobRefURL(
+    client._avatarURL = bskyutils.buildBlobRefURL(
       cdnURL,
       client.atUri.did,
       client.profile as AppBskyActorProfile.Record,
-      'avatar'
+      'avatar',
+      client._endpoint
     )
 
     // Banner
-    client._bannerURL = lexicons.buildBlobRefURL(
+    client._bannerURL = bskyutils.buildBlobRefURL(
       cdnURL,
       client.atUri.did,
       client.profile as AppBskyActorProfile.Record,
-      'banner'
+      'banner',
+      client._endpoint
     )
   }
 
@@ -191,9 +198,10 @@ class ClientPost {
     atUriPost?: string
   ): Promise<void> {
     try {
-      if (atUriPost) client._atUri = lexicons.parseAtUri(atUriPost)
+      if (atUriPost) client._atUri = bskyutils.parseAtUri(atUriPost)
 
-      const record = await lexicons.getRecord(
+      const record = await bskyutils.getRecord(
+        client._endpoint ?? client._config.defaultPDSEntrypoint,
         client._atUri.collection,
         client._atUri.did,
         client._atUri.rkey
@@ -205,7 +213,7 @@ class ClientPost {
     }
 
     try {
-      client._appUrl = await lexicons.buildPostURL(
+      client._appUrl = await bskyutils.buildPostURL(
         client._config.bskyAppURL,
         client._atUri,
         client.handle

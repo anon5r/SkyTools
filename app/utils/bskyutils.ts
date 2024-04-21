@@ -1,10 +1,11 @@
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
   type AppBskyFeedPost,
   AtpAgent,
   AtUri,
+  ComAtprotoIdentityResolveHandle,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
   ComAtprotoServerDescribeServer,
@@ -17,20 +18,20 @@ let atp: AtpAgent | null = null
 let config = {
   defaultPDS: 'bsky.social' as string,
   defaultSuffix: 'bsky.social' as string,
-  bskyService: 'https://bsky.social' as string,
+  defaultPDSEntrypoint: 'https://bsky.social' as string,
   bskyAppURL: 'https://bsky.app' as string,
   webmasterDid: 'did:bsky:webmaster' as string,
 }
 
 export const setConfig = (newConfig: typeof config) => {
   config = { ...config, ...newConfig }
-  atp = new AtpAgent({ service: config.bskyService })
+  atp = new AtpAgent({ service: config.defaultPDSEntrypoint })
 }
 
 export const getConfig = (): {
   defaultPDS: string
   defaultSuffix: string
-  bskyService: string
+  defaultPDSEntrypoint: string
   bskyAppURL: string
   webmasterDid: string
 } => {
@@ -38,9 +39,9 @@ export const getConfig = (): {
 }
 
 export const createAtpAgent = (service?: string): AtpAgent => {
-  service = service || config.bskyService
+  service = service || config.defaultPDSEntrypoint
   if (!service && !atp) {
-    atp = new AtpAgent({ service: config.bskyService })
+    atp = new AtpAgent({ service: config.defaultPDSEntrypoint })
     return atp
   }
   return new AtpAgent({ service: service })
@@ -75,7 +76,7 @@ export const resolveDID = async (
     let requestUrl
     if (identifier.startsWith('did:')) requestUrl = `${plcURL}/${identifier}`
     else
-      requestUrl = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+      requestUrl = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
 
     const res = await axios.get(requestUrl)
 
@@ -90,7 +91,7 @@ export const resolveDID = async (
     throw new Error(`Invalid DID: '${identifier}'`)
   } catch (error: any) {
     if (isDev()) {
-      console.error('[Lexicons] resolveDID::response.Error')
+      console.error('[BskyUtils] resolveDID::response.Error')
       console.error(error)
     }
     throw error
@@ -104,19 +105,72 @@ export const resolveDID = async (
  * @throws {Error} Invalid handle
  */
 export const resolveHandle = async (identifier: string): Promise<string> => {
-  const url = `${config.bskyService}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
-  try {
-    if (!identifier.startsWith('did:') && identifier.length > 253)
-      throw new Error('Too long identifier')
-    const res = await axios.get(url)
+  if (identifier.startsWith('did:'))
+    throw new Error('Invalid handle. Should be a handle, not a DID')
+  if (identifier.length > 253) throw new Error('Too long identifier')
 
-    if (res.data?.did) return res.data.did as string
+  try {
+    const url = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+    let res = await axios.get(url)
+    if (res.status === 200 && res.data?.did) return res.data.did as string
+  } catch (error: any) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error')
+      console.error(error)
+    }
+  }
+
+  try {
+    const url = `https://${identifier}/.well-known/atproto-did`
+    let res = await axios.get(url)
+    if (res.status === 200) return res.data as string
+  } catch (err) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error = ')
+      console.error(err)
+    }
+  }
+  try {
+    // DNS resolve
+    const url = `https://networkcalc.com/api/dns/lookup/_atproto.${identifier}`
+    const res = await axios.get(url)
+    if (res.status === 200) {
+      if (res.data.status === 'OK' && res.data.records.TXT.length > 0)
+        for (const txt of res.data.records.TXT)
+          if (txt.startsWith('did=')) return txt.substring(4)
+    }
+
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
-      console.error('[Lexicons] resolveHandle::response.Error = ')
+      console.error('[BskyUtils] resolveHandle::response.Error = ')
       console.error(err)
     }
+    throw err
+  }
+}
+/**
+ * Get PDS by DID
+ * @param {string} identifier
+ */
+export const getPDSEndpointByDID = async (identifier: string): Promise<any> => {
+  const url = `${plcURL}/${identifier}`
+  try {
+    const res = await axios.get(url)
+
+    if (res.data) {
+      for (const service of res.data.service) {
+        if (service.type === 'AtprotoPersonalDataServer') {
+          return service.serviceEndpoint
+        }
+      }
+    }
+    throw new Error('Failed to get PDS endpoint')
+  } catch (err: any) {
+    if (isDev()) {
+      console.error(`[BskyUtils] getPDSEndpointByDID::response.Error`)
+    }
+    console.warn(err)
     throw err
   }
 }
@@ -124,7 +178,7 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
 /**
  *
  * @param {string} identifier
- * @returns
+ * @returns {Object} Audit logs
  * @throws {Error} Invalid handle
  */
 export const getIdentityAuditLogs = async (
@@ -132,13 +186,13 @@ export const getIdentityAuditLogs = async (
 ): Promise<any> => {
   const url = `${plcURL}/${identifier}/log/audit`
   try {
-    const res = await axios.get(url)
+    const res: AxiosResponse<Object, any> = await axios.get(url)
 
-    if (res.data) return res.data as any
+    if (res.data) return res.data as Object
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
-      console.error('[Lexicons] getIdentityAuditLogs::response.Error')
+      console.error('[BskyUtils] getIdentityAuditLogs::response.Error')
     }
     console.warn(err)
     throw err
@@ -175,18 +229,22 @@ export const parseDID = (did: string): { [key: string]: string } => {
 /**
  * Fetch posts
  * @return ComAtprotoRepoGetRecord.Response
+ * @param {string} repoEndpoint
  * @param {string} collection
  * @param {string} repo
  * @param {string} recordKey
  * @return Promise<ComAtProtoRepoGetRecord.Response|any>
  */
 export const getRecord = async (
+  repoEndpoint: string,
   collection: string,
   repo: string,
   recordKey: string
 ): Promise<ComAtprotoRepoGetRecord.Response | any> => {
   try {
-    const response = await createAtpAgent().api.com.atproto.repo.getRecord({
+    const response: ComAtprotoRepoGetRecord.Response = await createAtpAgent(
+      repoEndpoint
+    ).api.com.atproto.repo.getRecord({
       repo: repo,
       collection: collection,
       rkey: recordKey,
@@ -198,7 +256,7 @@ export const getRecord = async (
     throw new Error('Record not found')
   } catch (err: any) {
     if (isDev()) {
-      console.error('[Lexicons] getRecord::response.Error')
+      console.error('[BskyUtils] getRecord::response.Error')
     }
     console.warn(err)
     throw new Error(err.message, err)
@@ -207,6 +265,7 @@ export const getRecord = async (
 
 /**
  * Get records as list
+ * @param {string} repoEndpoint
  * @param {string} collection
  * @param {string} identifier
  * @param {int} limit
@@ -214,13 +273,16 @@ export const getRecord = async (
  * @return {ComAtprotoRepoListRecords.Response} list of records
  */
 export const listRecords = async (
+  repoEndpoint: string,
   collection: string,
   identifier: string,
   limit: number = 50,
   cursor: string | undefined = undefined
 ): Promise<ComAtprotoRepoListRecords.Response> => {
   try {
-    const response = await createAtpAgent().api.com.atproto.repo.listRecords({
+    const response = await createAtpAgent(
+      repoEndpoint
+    ).api.com.atproto.repo.listRecords({
       collection: collection,
       repo: identifier,
       limit: limit,
@@ -262,16 +324,23 @@ export const getBlob = async (did: string, cid: string): Promise<string> => {
 
 /**
  * Get individual post
+ * @param {string} endpoint
  * @param {string} identity
  * @param {string} recordKey
  * @return {Promise<AppBskyFeedPost.Record>}
  */
 export const getPost = async (
+  endpoint: string,
   identity: string,
   recordKey: string
 ): Promise<AppBskyFeedPost.Record> => {
   try {
-    const res = await getRecord('app.bsky.feed.post', identity, recordKey)
+    const res = await getRecord(
+      endpoint,
+      'app.bsky.feed.post',
+      identity,
+      recordKey
+    )
     if (res.success) return res.data.value as AppBskyFeedPost.Record
     throw new Error('Failed to get post')
   } catch (err: any) {
@@ -296,7 +365,7 @@ export const describeRepo = async (id: string): Promise<any> => {
     throw new Error('Failed to get details')
   } catch (err) {
     if (isDev()) {
-      console.error('[Lexicons] describeRepo::response.Error')
+      console.error('[BskyUtils] describeRepo::response.Error')
     }
     console.warn(err)
     throw err
@@ -305,19 +374,21 @@ export const describeRepo = async (id: string): Promise<any> => {
 
 /**
  * Get account profile
+ * @param {string} endpoint
  * @param {string} id
- * @param {boolean | undefined} withHeader default: false
  * @return AppBskyActorProfile.Record
  */
 export const loadProfile = async (
-  id: string,
-  withHeader?: boolean
-): Promise<AppBskyActorProfile.Record | ComAtprotoRepoGetRecord.Response> => {
-  if (withHeader === undefined) withHeader = false
-  const profile = await getRecord('app.bsky.actor.profile', id, 'self')
-  return withHeader
-    ? (profile.data as ComAtprotoRepoGetRecord.Response)
-    : (profile.data.value as AppBskyActorProfile.Record)
+  endpoint: string,
+  id: string
+): Promise<AppBskyActorProfile.Record> => {
+  const profile = await getRecord(
+    endpoint,
+    'app.bsky.actor.profile',
+    id,
+    'self'
+  )
+  return profile.data.value as AppBskyActorProfile.Record
 }
 
 /**
@@ -326,6 +397,7 @@ export const loadProfile = async (
  * @param {string} did DID
  * @param {AppBskyActorProfile.Record} record ProfileRecord object
  * @param {string} itemName "avatar" | "banner"
+ * @param {string | undefined} PDS endpoint URL
  * @returns {string}
  * @throws {Error} Invalid profile record
  */
@@ -333,16 +405,23 @@ export const buildBlobRefURL = (
   cdnURL: string,
   did: string,
   record: AppBskyActorProfile.Record,
-  itemName: string
+  itemName: string,
+  endpoint?: string | undefined
 ): string => {
-  if (!AppBskyActorProfile.isRecord(record))
+  if (!AppBskyActorProfile.isRecord(record)) {
+    console.info(did, itemName, endpoint)
+    console.dir(record)
     throw new Error(`Invalid profile record: ${did}`)
+  }
   if (record[itemName] === undefined) {
     console.warn(`Not found blob field "${itemName}" in profile : ${did}`)
     return ''
   }
+  if (endpoint !== undefined && endpoint.startsWith('http')) {
+    endpoint = endpoint.substring(endpoint.indexOf('://') + 3)
+  }
   const itemRef = (record[itemName] as BlobRef).ref
-  return `${cdnURL}/${config.defaultPDS}/image/${did}/${itemRef}`
+  return `${cdnURL}/${endpoint ?? config.defaultPDS}/image/${did}/${itemRef}`
 }
 
 /**
@@ -361,11 +440,13 @@ export const buildPostURL = async (
   if (typeof uri === 'string' && uri.startsWith('at://'))
     atUri = parseAtUri(uri)
   else atUri = uri as { [key: string]: string }
+  console.log('uri = ', uri)
+  console.log('atUri = ', atUri)
 
   if (handle === undefined) {
     try {
       if (isDev()) console.log(atUri)
-      handle = await resolveDID(atUri.did)
+      handle = await resolveDID(atUri.did, false)
     } catch (er) {
       handle = atUri.did
     }
@@ -377,7 +458,7 @@ export const describeServer = async (
   server: string
 ): Promise<ComAtprotoServerDescribeServer.OutputSchema> => {
   try {
-    const response =
+    const response: ComAtprotoServerDescribeServer.Response =
       await createAtpAgent(server).api.com.atproto.server.describeServer()
     console.log(response)
     if (response.success) {
@@ -386,7 +467,7 @@ export const describeServer = async (
     throw new Error('Failed to get details for ' + server)
   } catch (err) {
     if (isDev()) {
-      console.error('[Lexicons] describeServer::response.Error')
+      console.error('[BskyUtils] describeServer::response.Error')
     }
     console.warn(err)
     throw err
