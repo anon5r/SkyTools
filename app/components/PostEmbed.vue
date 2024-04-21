@@ -43,6 +43,7 @@
         | AppBskyEmbedRecord.Main
         | AppBskyEmbedRecordWithMedia.Main
         | AppBskyEmbedExternal.Main
+        | { $type: string; [k: string]: unknown }
       >,
       require: false,
       default: () => ({}),

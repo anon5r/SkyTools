@@ -27,9 +27,8 @@
 <style scoped></style>
 
 <script setup lang="ts">
-  import { useAppConfig, buildPostURL, isDev, bskyutils } from '#imports'
+  import { useAppConfig } from '#imports'
   import { AppBskyEmbedImages, AppBskyEmbedRecordWithMedia } from '@atproto/api'
-  import type { ValidationResult } from '@atproto/lexicon'
   import { defineProps, type PropType } from 'vue'
 
   /** @type {AppBskyEmbedImages|AppBskyEmbedRecordWithMedia} props.embed */
@@ -37,7 +36,10 @@
   const props = defineProps({
     embed: {
       type: Object as PropType<
-        AppBskyEmbedImages.Main | AppBskyEmbedRecordWithMedia.Main
+        | AppBskyEmbedImages.Main
+        | AppBskyEmbedRecordWithMedia.Main
+        | { $type: string; [k: string]: unknown }
+        | unknown
       >,
       required: false,
       default: () => ({}),
@@ -53,35 +55,5 @@
       default: null,
     },
   })
-
   const config = useAppConfig()
-  if (
-    AppBskyEmbedImages.isMain(props.embed) ||
-    AppBskyEmbedRecordWithMedia.isMain(props.embed)
-  ) {
-    // Images
-    /** @type {ValidationResult} */
-    const validRes: ValidationResult = AppBskyEmbedImages.validateMain(
-      props.embed
-    )
-    if (validRes.success) {
-      if (props.embed.images) {
-        const handle = await bskyutils.resolveDID(props.did, true)
-        for (const img of props.embed.images) {
-          img.value = await buildPostURL(
-            config.bskyAppURL,
-            img.image.original.ref,
-            handle
-          )
-          // Post URL
-          if (isDev()) {
-            console.log('props.embed.images postURL.value ==== ', props.embed)
-            console.log(
-              buildPostURL(config.bskyAppURL, props.embed.images).value
-            )
-          }
-        }
-      }
-    }
-  }
 </script>

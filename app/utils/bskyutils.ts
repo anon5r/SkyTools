@@ -1,10 +1,11 @@
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
   type AppBskyFeedPost,
   AtpAgent,
   AtUri,
+  ComAtprotoIdentityResolveHandle,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
   ComAtprotoServerDescribeServer,
@@ -71,6 +72,7 @@ export const resolveDID = async (
   identifier: string,
   onlyHandle: boolean = true
 ): Promise<string> => {
+  console.log('identifier = ', identifier)
   try {
     let requestUrl
     if (identifier.startsWith('did:')) requestUrl = `${plcURL}/${identifier}`
@@ -107,6 +109,17 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   if (identifier.startsWith('did:'))
     throw new Error('Invalid handle. Should be a handle, not a DID')
   if (identifier.length > 253) throw new Error('Too long identifier')
+
+  try {
+    const url = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+    let res = await axios.get(url)
+    if (res.status === 200 && res.data?.did) return res.data.did as string
+  } catch (error: any) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error')
+      console.error(error)
+    }
+  }
 
   try {
     const url = `https://${identifier}/.well-known/atproto-did`
@@ -166,7 +179,7 @@ export const getPDSEndpointByDID = async (identifier: string): Promise<any> => {
 /**
  *
  * @param {string} identifier
- * @returns
+ * @returns {Object} Audit logs
  * @throws {Error} Invalid handle
  */
 export const getIdentityAuditLogs = async (
@@ -174,9 +187,9 @@ export const getIdentityAuditLogs = async (
 ): Promise<any> => {
   const url = `${plcURL}/${identifier}/log/audit`
   try {
-    const res = await axios.get(url)
+    const res: AxiosResponse<Object, any> = await axios.get(url)
 
-    if (res.data) return res.data as any
+    if (res.data) return res.data as Object
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
@@ -230,7 +243,7 @@ export const getRecord = async (
   recordKey: string
 ): Promise<ComAtprotoRepoGetRecord.Response | any> => {
   try {
-    const response = await createAtpAgent(
+    const response: ComAtprotoRepoGetRecord.Response = await createAtpAgent(
       repoEndpoint
     ).api.com.atproto.repo.getRecord({
       repo: repo,
@@ -364,13 +377,12 @@ export const describeRepo = async (id: string): Promise<any> => {
  * Get account profile
  * @param {string} endpoint
  * @param {string} id
- * @param {boolean | undefined} withHeader default: false
  * @return AppBskyActorProfile.Record
  */
 export const loadProfile = async (
   endpoint: string,
   id: string
-): Promise<AppBskyActorProfile.Record | ComAtprotoRepoGetRecord.Response> => {
+): Promise<AppBskyActorProfile.Record> => {
   const profile = await getRecord(
     endpoint,
     'app.bsky.actor.profile',
@@ -397,8 +409,11 @@ export const buildBlobRefURL = (
   itemName: string,
   endpoint?: string | undefined
 ): string => {
-  if (!AppBskyActorProfile.isRecord(record))
+  if (!AppBskyActorProfile.isRecord(record)) {
+    console.info(did, itemName, endpoint)
+    console.dir(record)
     throw new Error(`Invalid profile record: ${did}`)
+  }
   if (record[itemName] === undefined) {
     console.warn(`Not found blob field "${itemName}" in profile : ${did}`)
     return ''
@@ -426,11 +441,13 @@ export const buildPostURL = async (
   if (typeof uri === 'string' && uri.startsWith('at://'))
     atUri = parseAtUri(uri)
   else atUri = uri as { [key: string]: string }
+  console.log('uri = ', uri)
+  console.log('atUri = ', atUri)
 
   if (handle === undefined) {
     try {
       if (isDev()) console.log(atUri)
-      handle = await resolveDID(atUri.did)
+      handle = await resolveDID(atUri.did, false)
     } catch (er) {
       handle = atUri.did
     }
@@ -442,7 +459,7 @@ export const describeServer = async (
   server: string
 ): Promise<ComAtprotoServerDescribeServer.OutputSchema> => {
   try {
-    const response =
+    const response: ComAtprotoServerDescribeServer.Response =
       await createAtpAgent(server).api.com.atproto.server.describeServer()
     console.log(response)
     if (response.success) {

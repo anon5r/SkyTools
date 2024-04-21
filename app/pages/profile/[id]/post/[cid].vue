@@ -4,7 +4,12 @@
     <div class="w-full max-w-3xl">
       <div class="pt-4">
         <!-- Posts -->
-        <PostView :did="did" :uri="atUri" :cid="postID"></PostView>
+        <PostView
+          :did="did"
+          :uri="atUri"
+          :rkey="postID"
+          :profile="profile"
+          :pds="pds" />
       </div>
     </div>
   </div>
@@ -21,16 +26,16 @@
   const handleOrDid: string = route.params.id as string
   const postID: string = route.params.cid as string
 
-  if (handleOrDid && !postID) throw new Error('Missing posts')
+  if (!postID) throw new Error('Missing posts')
 
-  if (!handleOrDid && !postID) throw new Error('Missing posts')
-
-  const did: Ref<string | undefined> = ref(undefined)
-  const atUri: Ref<string | undefined> = ref(undefined)
   const collection = 'app.bsky.feed.post'
+  const did: Ref<string> = ref(
+    handleOrDid.startsWith('did:')
+      ? handleOrDid
+      : await bskyutils.resolveHandle(handleOrDid)
+  )
+  const atUri: Ref<string> = ref(`at://${did.value}/${collection}/${postID}`)
 
-  did.value = handleOrDid.startsWith('did:')
-    ? handleOrDid
-    : await bskyutils.resolveHandle(handleOrDid)
-  atUri.value = `at://${did.value}/${collection}/${postID}`
+  const pds = await bskyutils.getPDSEndpointByDID(did.value)
+  const profile = await bskyutils.loadProfile(pds, handleOrDid)
 </script>

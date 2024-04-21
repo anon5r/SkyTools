@@ -108,7 +108,7 @@
                   <!-- Handle -->
                   <font-awesome-icon
                     v-if="
-                      loadState.details && userinfo.details.labelers.length > 0
+                      loadState.details && userinfo.details.labelers?.length > 0
                     "
                     icon="fa-solid fa-tower-observation"
                     class="text-indigo-800 dark:text-indigo-300" />
@@ -136,7 +136,7 @@
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
               <!-- PDS -->
               <font-awesome-icon
-                v-if="userinfo.details.servers"
+                v-if="loadState.details && userinfo.details.servers"
                 icon="fa-solid fa-database"
                 class="mr-1" />
               <span
@@ -146,17 +146,35 @@
               </span>
             </div>
             <div
-              v-if="userinfo.details.labelers.length > 0"
+              v-if="userinfo.details.labelers?.length > 0"
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
               <!-- Labeler -->
               <font-awesome-icon
-                v-if="userinfo.details.labelers.length > 0"
                 icon="fa-solid fa-tower-observation"
                 class="mr-1" />
               <span
                 v-if="loadState.details && userinfo.details.labelers"
                 class="truncate">
                 {{ userinfo.details.labelers.join(',') }}
+              </span>
+            </div>
+            <div
+              v-if="loadState.details && userinfo.details.createdAt > 0"
+              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
+              <!-- Created at -->
+              <font-awesome-icon
+                v-if="loadState.details"
+                icon="fa-solid fa-cake-candles"
+                class="mr-1" />
+              <span
+                v-if="loadState.details && userinfo.details.createdAt"
+                :datetime="userinfo.details.createdAt"
+                :title="DateTime.fromISO(userinfo.details.createdAt).toString()"
+                class="truncate">
+                {{
+                  DateTime.fromISO(userinfo.details.createdAt).toLocaleString()
+                }}
+                {{ userinfo.details.createdAt }}
               </span>
             </div>
             <!-- Labels -->
@@ -182,7 +200,7 @@
             <fwb-tab name="posts" title="Posts" id="posts">
               <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
-                <div v-for="record of userinfo.posts" :key="record.cid">
+                <div v-for="record of userinfo.posts" :key="record.rkey">
                   <PostView
                     :did="userinfo.details.did"
                     :uri="record.uri"
@@ -388,6 +406,7 @@
   import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
   import { isLoggedIn } from '~/composables/auth'
   import { AtpAgent } from '@atproto/api'
+  import { DateTime } from 'luxon'
 
   const activeTab = ref('posts')
 
@@ -414,6 +433,7 @@
       did: '',
       servers: [],
       labelers: [],
+      createdAt: null,
     },
     profile: {},
     avatarURL: '',
@@ -689,6 +709,9 @@
       details.handle = handle ?? id
       details.servers = []
       details.labelers = []
+      details.createdAt = (
+        await bskyUtils.getIdentityAuditLogs(did)
+      )[0].createdAt
       for (let serv of details.data.didDoc.service) {
         const urlParser = new URL(serv.serviceEndpoint)
         switch (serv.type) {
