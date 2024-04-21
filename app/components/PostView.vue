@@ -186,7 +186,6 @@
     useAuth,
     isDev,
     ClientPost,
-    toRaw,
   } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, type PropType, type Ref } from 'vue'
@@ -236,7 +235,7 @@
   const profile: Ref<AppBskyActorProfile.Record> = ref(props.profile)
   const handle: Ref<string> = ref('Unknown')
   const displayName: Ref<string> = ref('Unknown')
-  const avatarURL: Ref<string | null> = ref(null)
+  const avatarURL: Ref<string | undefined> = ref(undefined)
   const record: Ref<AppBskyFeedPost.Record> = ref(props.postRecord)
   const isRemoved: Ref<boolean> = ref(false)
   const isHidden: Ref<boolean> = ref(false)

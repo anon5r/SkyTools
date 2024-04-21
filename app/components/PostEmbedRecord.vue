@@ -16,7 +16,7 @@
         </a>
       </template>
       <NuxtLink
-        v-if="post && !post.isRemoved"
+        v-if="client && !client.isRemoved"
         :to="postURL"
         class="block max-w m-0 p-4"
         :title="props.embed.record.uri">
@@ -27,31 +27,36 @@
             <fwb-avatar
               rounded
               size="xs"
-              :img="post.avatarURL ?? null"
-              :alt="post.handle"
+              :img="client.avatarURL"
+              :alt="client.handle"
               class="inline-flex mr-1 min-w-max avatar-object-cover" />
 
             <div class="inline-flex items-center">
               <!-- DisplayName -->
-              <div v-if="post?.profile?.displayName" class="ml-1 mr-2">
-                {{ post.profile ? post.profile.displayName : '' }}
+              <div v-if="client?.profile?.displayName" class="ml-1 mr-2">
+                {{ client.profile ? client.profile.displayName : '' }}
               </div>
               <div
                 class="text-xs font-mono truncate text-gray-500 dark:text-slate-500">
                 <!-- Handle -->
-                <span class="at-handle">{{ post.handle }}</span>
+                <span class="at-handle">{{ client.handle }}</span>
               </div>
             </div>
           </div>
-          <div class="my-3 md:my-2 whitespace-pre-line break-all truncate">
-            {{ post.record?.text ?? '' }}
+          <div
+            v-if="client?.record"
+            class="my-3 md:my-2 whitespace-pre-line break-all truncate">
+            {{ client.record.text ?? '' }}
           </div>
-          <div v-if="post.record?.embed">
-            <PostEmbedImages :embed="post.record.embed" :did="props.did" />
+          <div v-if="client?.record && client.record.embed">
+            <PostEmbedImages
+              :embed="client.record.embed"
+              :did="client.did"
+              :pds="client.endpoint" />
           </div>
         </div>
       </NuxtLink>
-      <div v-else-if="post && post.isRemoved" class="p-4">
+      <div v-else-if="client && client.isRemoved" class="p-4">
         This post has been removed
       </div>
     </ClientOnly>
@@ -64,6 +69,7 @@
   import { AppBskyEmbedRecord } from '@atproto/api'
   import { defineProps, type Ref } from 'vue'
   import { ClientPost, ref, useAppConfig, isDev } from '#imports'
+  import { FwbAvatar } from 'flowbite-vue'
 
   /** @type {AppBskyEmbedRecord} props.embed */
   /** @type {string} props.did */
@@ -87,7 +93,7 @@
 
   const config = useAppConfig()
   const postURL: Ref<string> = ref('#')
-  const post: Ref<ClientPost | undefined> = ref(undefined)
+  const client: Ref<ClientPost | undefined> = ref(undefined)
 
   /**
    * Loads post-data from a given at-URI.
@@ -105,14 +111,13 @@
     try {
       // Quoted posts
       /** @type Promise<ClientPost> post */
-      post.value = await loadPostData(props.embed.record.uri)
-      if (isDev()) console.log('post(ClientPost) ', post.value)
+      client.value = await loadPostData(props.embed.record.uri)
     } catch (error) {
       console.error('Error loading post data: ', error)
     }
-    if (post.value !== undefined) {
+    if (client.value !== undefined) {
       // Post URL
-      postURL.value = post.value.permaURL()
+      postURL.value = client.value.permaURL()
     }
   }
 </script>

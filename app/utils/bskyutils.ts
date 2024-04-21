@@ -5,7 +5,7 @@ import {
   type AppBskyFeedPost,
   AtpAgent,
   AtUri,
-  ComAtprotoIdentityResolveHandle,
+  ComAtprotoRepoDescribeRepo,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
   ComAtprotoServerDescribeServer,
@@ -152,8 +152,12 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
 /**
  * Get PDS by DID
  * @param {string} identifier
+ * @returns {Promise<string>} PDS endpoint
+ * @throws {Error} Failed to get PDS endpoint
  */
-export const getPDSEndpointByDID = async (identifier: string): Promise<any> => {
+export const getPDSEndpointByDID = async (
+  identifier: string
+): Promise<string> => {
   const url = `${plcURL}/${identifier}`
   try {
     const res = await axios.get(url)
@@ -352,15 +356,17 @@ export const getPost = async (
 /**
  * Get identifier details
  * @param {string} id handle or DID
+ * @return {Promise<ComAtprotoRepoDescribeRepo.OutputSchema>}
  */
 export const describeRepo = async (id: string): Promise<any> => {
   try {
-    const response = await createAtpAgent().api.com.atproto.repo.describeRepo({
-      repo: id,
-    })
+    const response: ComAtprotoRepoDescribeRepo.Response =
+      await createAtpAgent().api.com.atproto.repo.describeRepo({
+        repo: id,
+      })
 
     if (response.data) {
-      return response.data
+      return response.data as ComAtprotoRepoDescribeRepo.OutputSchema
     }
     throw new Error('Failed to get details')
   } catch (err) {
@@ -492,4 +498,5 @@ export default {
   describeRepo,
   describeServer,
   buildPostURL,
+  getPDSEndpointByDID,
 }
