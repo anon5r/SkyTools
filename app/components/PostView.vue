@@ -48,7 +48,7 @@
               </li>
               <li>
                 <NuxtLink
-                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${did}&collection=com.atproto.feed.post&rkey=${props.rkey}`"
+                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                   Open as JSON
                   <font-awesome-icon
@@ -114,6 +114,7 @@
         </AtHandleLink>
       </div>
       <!-- Post message -->
+
       <div
         v-if="record && !isHidden && !isRemoved"
         class="break-words whitespace-pre-line">
@@ -204,7 +205,6 @@
     did: {
       type: String,
       required: true,
-      default: 'did:unknown:unknown',
     },
     cid: {
       type: String,
@@ -216,8 +216,7 @@
     },
     pds: {
       type: String,
-      required: false,
-      default: null,
+      required: true,
     },
     postRecord: {
       type: Object as PropType<AppBskyFeedPost.Record>,
@@ -266,7 +265,6 @@
           props.did,
           pdsEndpoint.value
         )) as AppBskyActorProfile.Record
-        console.log(toRaw(profileRecord))
         profile.value = profileRecord
       }
 
