@@ -21,8 +21,8 @@ class ClientPost {
   private _cid: string | null = null
   private _removed: boolean = false
   private _hidden: boolean = false
-  private _avatarURL: string | null = null
-  private _bannerURL: string | null = null
+  private _avatarURL: string | undefined = undefined
+  private _bannerURL: string | undefined
   private _noUnauthenticated: boolean = false
 
   public get atUri(): { [key: string]: string } {
@@ -50,7 +50,7 @@ class ClientPost {
    *
    * @returns The URL of the avatar.
    */
-  public get avatarURL(): string | null {
+  public get avatarURL(): string | undefined {
     return this._avatarURL
   }
   /**
@@ -58,7 +58,7 @@ class ClientPost {
    *
    * @returns {string} The URL of the banner.
    */
-  public get bannerURL(): string | null {
+  public get bannerURL(): string | undefined {
     return this._bannerURL
   }
 
@@ -160,7 +160,7 @@ class ClientPost {
       console.info('No profile: ' + did)
     }
 
-    if (client._atUri.collection === 'app.bsky.feeds.post') {
+    if (client._atUri.collection === 'app.bsky.feed.post') {
       // Load post
       await ClientPost.loadPost(client, atUriPost)
     }
