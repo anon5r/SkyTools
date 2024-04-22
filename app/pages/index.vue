@@ -7,7 +7,7 @@
         {{ appName }}
       </div>
       <div class="text-xl text-gray-700 dark:text-slate-500">
-        Toybox for Bluesky
+        Toolbox for Bluesky
       </div>
     </div>
 
@@ -20,6 +20,23 @@
           You can view posts, followings, and other information of users with
           specified IDs. No login is required because as only AT Protocol is
           used.
+        </p>
+      </NuxtLink>
+      <NuxtLink to="/history" class="feature-card">
+        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+          Identity history
+        </h2>
+        <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
+          You can view handle history of identity creation, update, and
+          deletion. This feature will be merge Profile page in the future.
+        </p>
+      </NuxtLink>
+      <NuxtLink to="/pds" class="feature-card">
+        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+          PDS status viewer
+        </h2>
+        <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
+          You can check the registration status, terms and policies of each PDS.
         </p>
       </NuxtLink>
       <NuxtLink to="/invite-code" class="feature-card">
@@ -45,23 +62,6 @@
           class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4 line-through">
           View history of invite code grants, usage (and whom used). To use this
           feature, you must be logged into Bluesky using AppPassword.
-        </p>
-      </NuxtLink>
-      <NuxtLink to="/history" class="feature-card">
-        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
-          Identity history
-        </h2>
-        <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
-          You can view handle history of identity creation, update, and
-          deletion. This feature will be merge Profile page in the future.
-        </p>
-      </NuxtLink>
-      <NuxtLink to="/pds" class="feature-card">
-        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
-          PDS status viewer
-        </h2>
-        <p class="text-md font-normal text-gray-500 dark:text-gray-400 mb-4">
-          You can check the registration status, terms and policies of each PDS.
         </p>
       </NuxtLink>
     </div>
