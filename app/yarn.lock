@@ -2100,6 +2100,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxtjs/color-mode@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@nuxtjs/color-mode@npm:3.4.0"
+  dependencies:
+    "@nuxt/kit": ^3.11.2
+    pathe: ^1.1.2
+    pkg-types: ^1.0.3
+    semver: ^7.6.0
+  checksum: ecb055e7a9a59b1d8819665d9f8eb0333d544c2f88d1767cf98ef64ba258b84290f01d4aa9172c18ec8432cbb6390c06df65c0ac9c36322c15a7d13a8915534e
+  languageName: node
+  linkType: hard
+
 "@nuxtjs/tailwindcss@npm:^6.12.0":
   version: 6.12.0
   resolution: "@nuxtjs/tailwindcss@npm:6.12.0"
@@ -9917,6 +9929,7 @@ __metadata:
     "@gtm-support/vue-gtm": ^2.2.0
     "@nuxt/image": ^1.5.0
     "@nuxt/types": ^2.17.3
+    "@nuxtjs/color-mode": ^3.4.0
     "@nuxtjs/tailwindcss": ^6.12.0
     "@types/luxon": ^3.4.2
     "@types/node": ^20.12.7
