@@ -136,11 +136,11 @@
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
               <!-- PDS -->
               <font-awesome-icon
-                v-if="loadState.details && userinfo.details.servers.length > 0"
+                v-if="loadState.details && userinfo.details.servers"
                 icon="fa-solid fa-database"
                 class="mr-1" />
               <span
-                v-if="loadState.details && userinfo.details.servers.length > 0"
+                v-if="loadState.details && userinfo.details.servers"
                 class="truncate">
                 {{ userinfo.details.servers.join(',') }}
               </span>
@@ -174,7 +174,7 @@
                 {{
                   DateTime.fromISO(userinfo.details.createdAt).toLocaleString(
                     DateTime.DATETIME_MED_WITH_WEEKDAY)
-                }}
+                }} ({{ DateTime.fromISO(userinfo.details.createdAt).toRelative() }})
               </span>
             </div>
             <!-- Labels -->
