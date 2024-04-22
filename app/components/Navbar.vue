@@ -141,6 +141,12 @@
         requireSignin: false,
       },
       {
+        src: '/pds',
+        title: 'PDS status view',
+        icon: ['fas', 'database'],
+        requireSignin: false,
+      },
+      {
         src: '/invite-code',
         title: 'Invite code',
         icon: ['fas', 'ticket'],

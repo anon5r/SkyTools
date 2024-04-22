@@ -137,12 +137,11 @@
                   <a
                     :href="pdsInfo.links.privacyPolicy"
                     target="_blank"
-                    class="my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
-                    Privacy Policy
+                    class="my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline"
+                    >Privacy Policy
                     <font-awesome-icon
                       :icon="['fas', 'external-link-alt']"
-                      class="ml-1 text-xs" />
-                  </a>
+                      class="ml-1 text-xs" /></a>
                 </div>
                 <div v-if="pdsInfo.links?.termsOfService">
                   <font-awesome-icon
@@ -150,12 +149,11 @@
                     class="mr-2 text-md text-blue-800 dark:text-blue-400" />
                   <span
                     class="ml-0 my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
-                    <a :href="pdsInfo.links.termsOfService" target="_blank">
-                      Terms of Service
+                    <a :href="pdsInfo.links.termsOfService" target="_blank"
+                      >Terms of Service
                       <font-awesome-icon
                         :icon="['fas', 'external-link-alt']"
-                        class="ml-1 text-xs" />
-                    </a>
+                        class="ml-1 text-xs" /></a>
                   </span>
                 </div>
               </dd>
