@@ -38,14 +38,15 @@
   import { defineComponent, onMounted, ref } from '#imports'
 
   defineComponent({ name: 'ToggleDarkmode' })
-
+  // Define the key for color theme
+  const savedColorKey = 'color-theme'
   const isDarkTheme = ref<boolean>(false)
 
   const toggleCount: Ref<number> = ref<number>(0)
   const clickTimestamp: Ref<number> = ref<number>(0)
 
   const loadTheme = () => {
-    const savedTheme = localStorage.getItem('color-theme')
+    const savedTheme = localStorage.getItem(savedColorKey)
     const prefersDark = window.matchMedia(
       '(prefers-color-scheme: dark)'
     ).matches
@@ -58,13 +59,15 @@
 
   const toggleTheme = () => {
     isDarkTheme.value = !isDarkTheme.value
+    let theme = 'dark'
     if (isDarkTheme.value) {
       document.documentElement.classList.add('dark')
-      localStorage.setItem('color-theme', 'dark')
+      theme = 'dark'
     } else {
       document.documentElement.classList.remove('dark')
-      localStorage.setItem('color-theme', 'light')
+      theme = 'light'
     }
+    localStorage.setItem(savedColorKey, theme)
   }
 
   const toggleMode = () => {

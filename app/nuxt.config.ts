@@ -156,6 +156,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode',
     'nuxt-cloudflare-analytics',
     '@nuxt/devtools',
     '@nuxt/image',
@@ -183,5 +184,8 @@ export default defineNuxtConfig({
     '/pds': { prerender: true },
     '/pds/:hostname': { swr: 3600 },
     '/lookup': { redirect: '/profile' },
+  },
+  colorMode: {
+    classSuffix: '',
   },
 })
