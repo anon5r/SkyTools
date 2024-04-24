@@ -15,7 +15,7 @@ export default defineNuxtConfig({
       prodURLPrefix: 'https://skytools.anon5r.com',
     },
   },
-  ssr: false,
+  ssr: true,
   devtools: {
     enabled: process.env.NODE_ENV === 'development',
     timeline: { enabled: process.env.NODE_ENV === 'development' },
