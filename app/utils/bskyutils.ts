@@ -136,9 +136,8 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
     const url = `/api/resolve-handle?${query}`
     const res = await axios.get(url)
     if (res.status === 200) {
-      if (res.data.status === 'OK' && res.data.records.TXT.length > 0)
-        for (const txt of res.data.records.TXT)
-          if (txt.startsWith('did=')) return txt.substring(4)
+      if (res.data.error === undefined && res.data.did.length > 0)
+        return res.data.did[0]
     }
 
     throw new Error('Failed to resolve handle')

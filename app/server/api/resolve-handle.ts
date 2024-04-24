@@ -11,8 +11,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     const records = await dns.promises.resolveTxt(`_atproto.${handle}`)
-    const recordValue = records[0][0]
-    return { did: recordValue.startsWith('did=') ? recordValue.substring(4) : recordValue }
+    let recordValue: string[] = []
+    for (const i in records)
+      for (const ii in records[i])
+        if (records[i][ii].startsWith('did='))
+          recordValue.push(records[i][ii].startsWith('did=') ? records[i][ii].substring(4) : records[i][ii])
+    return { did: recordValue }
   } catch (e: any) {
     return { error: 'No record found', details: { code: e.code, hostname: e.hostname } }
   }
