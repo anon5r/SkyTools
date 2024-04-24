@@ -132,7 +132,8 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   }
   try {
     // DNS resolve
-    const url = `https://networkcalc.com/api/dns/lookup/_atproto.${identifier}`
+    const query = (new URLSearchParams({ handle: identifier })).toString()
+    const url = `/api/resolve-handle?${query}`
     const res = await axios.get(url)
     if (res.status === 200) {
       if (res.data.status === 'OK' && res.data.records.TXT.length > 0)
