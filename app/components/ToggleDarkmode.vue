@@ -39,7 +39,7 @@
 
   defineComponent({ name: 'ToggleDarkmode' })
   // Define the key for color theme
-  const savedColorKey = 'color-theme'
+  const savedColorKey = 'nuxt-color-mode'
   const isDarkTheme = ref<boolean>(false)
 
   const toggleCount: Ref<number> = ref<number>(0)
