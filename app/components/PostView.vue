@@ -40,7 +40,8 @@
               <li>
                 <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  target="_blank">
                   Open in Bluesky
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
@@ -49,8 +50,19 @@
               <li>
                 <NuxtLink
                   :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  target="_blank">
                   Open as JSON
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']" />
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink
+                  :to="`https://web.plc.directory/did/${props.did}`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  target="_blank">
+                  View DID
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
                 </NuxtLink>
@@ -139,7 +151,7 @@
       </div>
       <div v-if="record && record.embed">
         <!-- Embedded (image, record...) -->
-        <PostEmbed :did="did" :embed="record.embed">
+        <PostEmbed :did="did" :embed="record.embed" :pds="props.pds">
           <template #fallback>
             <div class="flex justify-center">
               <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />

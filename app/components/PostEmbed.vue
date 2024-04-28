@@ -55,8 +55,7 @@
     },
     pds: {
       type: String,
-      required: false,
-      default: null,
+      required: true,
     },
   })
 

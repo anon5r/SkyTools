@@ -10,7 +10,7 @@
         <figure
           class="relative max-w-full transition-all duration-300 bg-transparent cursor-pointer">
           <LazyNuxtImg
-            :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
+            :src="`${config.cdnPrefix}/${props.pds}/image/${
               props.did
             }/${recordEmbed.external.thumb.ref.toString()}`"
             :alt="recordEmbed.external.title"
@@ -55,8 +55,7 @@
     },
     pds: {
       type: String,
-      required: false,
-      default: null,
+      required: true,
     },
   })
   const recordEmbed = props.embed
