@@ -10,7 +10,7 @@
         <figure
           class="relative max-w-full transition-all duration-300 bg-transparent cursor-pointer">
           <LazyNuxtImg
-            :src="`${config.cdnPrefix}/${props.pds}/image/${
+            :src="`${config.cdnPrefix}/${props.pds.substring(8)}/image/${
               props.did
             }/${recordEmbed.external.thumb.ref.toString()}`"
             :alt="recordEmbed.external.title"

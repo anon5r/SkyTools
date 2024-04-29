@@ -32,9 +32,7 @@
         セッション情報はタイムアウト、またはサインアウトすると消去されます。
       </p>
 
-      <h2 class="text-2xl font-semibold mb-4">
-        ユーザー情報の取得について
-      </h2>
+      <h2 class="text-2xl font-semibold mb-4">ユーザー情報の取得について</h2>
       <p class="mb-6">
         ユーザーの利用統計を図るため、あるいは問題の原因究明のため利用者の情報を収集します。
         この情報はサードパーティーによって収集、匿名化され、個人を特定しない形でされた状態で保存されます。
@@ -71,9 +69,11 @@
       <h2 class="text-2xl font-semibold mb-4">
         About collecting user information
       </h2>
-      <p class='mb-6'>
-        We collect user information to compile user usage statistics or to investigate the cause of a problem.
-        This information is collected by a third party, anonymized, and stored in a form that does not identify you personally.
+      <p class="mb-6">
+        We collect user information to compile user usage statistics or to
+        investigate the cause of a problem. This information is collected by a
+        third party, anonymized, and stored in a form that does not identify you
+        personally.
       </p>
 
       <h2 class="text-2xl font-semibold mb-4">Contact</h2>
