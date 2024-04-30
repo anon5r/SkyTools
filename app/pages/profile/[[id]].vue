@@ -403,7 +403,7 @@
   import { isDev } from '@/utils/helpers'
   import * as bskyUtils from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
+  import { UnauthenticatedError } from '~/errors/BskyErrors'
   import { isLoggedIn } from '~/composables/auth'
   import { AtpAgent } from '@atproto/api'
   import { DateTime } from 'luxon'

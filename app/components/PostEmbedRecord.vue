@@ -44,7 +44,12 @@
             </div>
           </div>
           <div
-            v-if="client?.record"
+            v-if="client?.isHidden"
+            class="my-3 md:my-2 whitespace-pre-line break-all truncate">
+            <span class="italic">You must be logged in to view posts.</span>
+          </div>
+          <div
+            v-else-if="client?.record"
             class="my-3 md:my-2 whitespace-pre-line break-all truncate">
             {{ client.record.text ?? '' }}
           </div>

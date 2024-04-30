@@ -205,7 +205,7 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
   import type { AppConfig } from '@nuxt/schema'
-  import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
+  import { UnauthenticatedError } from '~/errors/BskyErrors'
   import * as bskyutils from '~/utils/bskyutils'
 
   const props = defineProps({
