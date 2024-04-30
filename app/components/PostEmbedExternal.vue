@@ -14,26 +14,17 @@
             :src="`${config.cdnPrefix}/${props.pds.substring(8)}/image/${
               props.did
             }/${recordEmbed.external.thumb.ref.toString()}`"
-            :alt="
-              recordEmbed.external.title ??
-              recordEmbed.external.uri.split('/')[2]
-            "
+            :alt="recordEmbed.external.title"
             class="mx-auto max-h-44 md:max-h-56 max-w-full rounded-t-lg object-cover object-center" />
-          <h1
-            v-else-if="recordEmbed.external.title || recordEmbed.external.uri"
-            class="text-md md:text-xl max-w-min font-bold tracking-tight text-gray-900 dark:text-white text-ellipsis overflow-hidden">
-            {{
-              recordEmbed.external.title.length > 0
-                ? recordEmbed.external.title
-                : recordEmbed.external.uri
-            }}
-          </h1>
           <figcaption class="px-4 pt-1.5 pb-0.5">
             <h5
               class="mb-1 text-md md:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
               {{
-                recordEmbed.external.title ??
-                recordEmbed.external.uri.split('/')[2]
+                recordEmbed.external.title.length > 0
+                  ? recordEmbed.external.title.length > 60
+                    ? recordEmbed.external.title.substring(0, 60) + '…'
+                    : recordEmbed.external.title
+                  : recordEmbed.external.uri.split('/')[2]
               }}
             </h5>
           </figcaption>
