@@ -28,16 +28,15 @@
 
 <script setup lang="ts">
   import { useAppConfig } from '#imports'
-  import { AppBskyEmbedImages, AppBskyEmbedRecordWithMedia } from '@atproto/api'
+  import { AppBskyEmbedImages } from '@atproto/api'
   import { defineProps, type PropType } from 'vue'
 
-  /** @type {AppBskyEmbedImages|AppBskyEmbedRecordWithMedia} props.embed */
+  /** @type {AppBskyEmbedImages} props.embed */
   /** @type {string} props.did */
   const props = defineProps({
     embed: {
       type: Object as PropType<
         | AppBskyEmbedImages.Main
-        | AppBskyEmbedRecordWithMedia.Main
         | { $type: string; [k: string]: unknown }
         | unknown
       >,
