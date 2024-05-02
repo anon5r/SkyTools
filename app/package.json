@@ -11,9 +11,9 @@
     "analyze": "nuxt analyze",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
-    "pages:dev": "wrangler pages dev --compatibility-date=2024-04-05 --port 3000 -- yarn run dev",
+    "pages:dev": "wrangler pages dev dist --live-reload",
     "pages:build": "nuxt build",
-    "pages:deploy": "npm run build && wrangler pages deploy ./dist",
+    "pages:deploy": "nuxt build && wrangler pages deploy ./dist",
     "pages:preview": "wrangler pages dev ./dist --port 3000"
   },
   "devDependencies": {
