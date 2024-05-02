@@ -503,6 +503,7 @@
 
   onMounted(async () => {
     bskyUtils.setConfig(toRaw(config))
+    easterMode.value = localStorage.getItem('_easter') === 'true'
 
     useSeoMeta({
       title: `Profile | ${config.title} ${id.value ?? ' - ' + id.value}`,
@@ -517,8 +518,6 @@
         title: `Profile | ${config.title} - ${userinfo.value.profile.displayName} (${userinfo.value.details.handle})`,
       })
     }
-
-    easterMode.value = localStorage.getItem('_easter') === 'true'
   })
 
   const focusout = () => {
@@ -572,15 +571,10 @@
         }
       }
 
-      let posts,
-        follow,
-        like,
-        blocks = []
       // Fetch posts
       fetchPosts(identifier, fetchCount)
         .then(resolve => {
-          posts = resolve
-          updateUserInfo('posts', posts)
+          updateUserInfo('posts', resolve)
         })
         .catch(err => {
           if (isDev()) console.warn(err)
@@ -590,8 +584,7 @@
       // Fetch follow
       fetchFollow(identifier, fetchCount)
         .then(resolve => {
-          follow = resolve
-          updateUserInfo('following', follow)
+          updateUserInfo('following', resolve)
         })
         .catch(err => {
           if (isDev()) console.warn(err)
@@ -601,8 +594,7 @@
       // Fetch like
       fetchLike(identifier, fetchCount)
         .then(resolve => {
-          like = resolve
-          updateUserInfo('like', like)
+          updateUserInfo('like', resolve)
         })
         .catch(err => {
           if (isDev()) console.warn(err)
@@ -612,8 +604,7 @@
       if (easterMode.value) {
         fetchBlocks(identifier, fetchCount)
           .then(resolve => {
-            blocks = resolve
-            updateUserInfo('blocks', blocks)
+            updateUserInfo('blocks', resolve)
           })
           .catch(err => {
             if (isDev()) console.warn(err)
