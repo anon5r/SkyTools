@@ -29,7 +29,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atproto/api@npm:^0.12.5":
+"@atproto/api@npm:^0.12.7":
   version: 0.12.7
   resolution: "@atproto/api@npm:0.12.7"
   dependencies:
@@ -1690,7 +1690,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/color-mode@npm:^3.4.0":
+"@nuxtjs/color-mode@npm:^3.4.1":
   version: 3.4.1
   resolution: "@nuxtjs/color-mode@npm:3.4.1"
   dependencies:
@@ -2448,7 +2448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.12.7":
+"@types/node@npm:*":
   version: 20.12.7
   resolution: "@types/node@npm:20.12.7"
   dependencies:
@@ -2461,6 +2461,15 @@ __metadata:
   version: 16.18.96
   resolution: "@types/node@npm:16.18.96"
   checksum: c5b4c20868e1ecb2e3b975b37aeeb5790b3a4f1472b496fae779ac4f14ba4fb4c0e9ed8e9b6eb389e5a074371056130c9d6506705b144b4f6985ffa844556242
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.12.8":
+  version: 20.12.8
+  resolution: "@types/node@npm:20.12.8"
+  dependencies:
+    undici-types: ~5.26.4
+  checksum: 84d4876d95792a9567d2cc5a2c48db7028c397820e842cd65e2f848c23dd4b868b7131bda8eb66a1729d4944289070153d6180048de5bd155b35de421283c433
   languageName: node
   linkType: hard
 
@@ -2638,7 +2647,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^7.1.1, @typescript-eslint/eslint-plugin@npm:^7.7.0":
+"@typescript-eslint/eslint-plugin@npm:^7.1.1, @typescript-eslint/eslint-plugin@npm:^7.8.0":
   version: 7.8.0
   resolution: "@typescript-eslint/eslint-plugin@npm:7.8.0"
   dependencies:
@@ -2663,7 +2672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^7.1.1, @typescript-eslint/parser@npm:^7.7.0":
+"@typescript-eslint/parser@npm:^7.1.1, @typescript-eslint/parser@npm:^7.8.0":
   version: 7.8.0
   resolution: "@typescript-eslint/parser@npm:7.8.0"
   dependencies:
@@ -2715,7 +2724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/typescript-estree@npm:7.8.0, @typescript-eslint/typescript-estree@npm:^7.7.0":
+"@typescript-eslint/typescript-estree@npm:7.8.0, @typescript-eslint/typescript-estree@npm:^7.8.0":
   version: 7.8.0
   resolution: "@typescript-eslint/typescript-estree@npm:7.8.0"
   dependencies:
@@ -5447,7 +5456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-unused-imports@npm:^3.1.0":
+"eslint-plugin-unused-imports@npm:^3.2.0":
   version: 3.2.0
   resolution: "eslint-plugin-unused-imports@npm:3.2.0"
   dependencies:
@@ -5832,7 +5841,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flowbite-vue@npm:^0.1.3":
+"flowbite-vue@npm:^0.1.4":
   version: 0.1.4
   resolution: "flowbite-vue@npm:0.1.4"
   dependencies:
@@ -8407,7 +8416,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-app@workspace:."
   dependencies:
-    "@atproto/api": ^0.12.5
+    "@atproto/api": ^0.12.7
     "@awesome.me/kit-e7e521035c": ^1.0.14
     "@fortawesome/fontawesome-free": ^6.5.2
     "@fortawesome/fontawesome-svg-core": ^6.5.2
@@ -8420,13 +8429,13 @@ __metadata:
     "@gtm-support/vue-gtm": ^2.2.0
     "@nuxt/image": ^1.6.0
     "@nuxt/types": ^2.17.3
-    "@nuxtjs/color-mode": ^3.4.0
+    "@nuxtjs/color-mode": ^3.4.1
     "@nuxtjs/tailwindcss": ^6.12.0
     "@types/luxon": ^3.4.2
-    "@types/node": ^20.12.7
-    "@typescript-eslint/eslint-plugin": ^7.7.0
-    "@typescript-eslint/parser": ^7.7.0
-    "@typescript-eslint/typescript-estree": ^7.7.0
+    "@types/node": ^20.12.8
+    "@typescript-eslint/eslint-plugin": ^7.8.0
+    "@typescript-eslint/parser": ^7.8.0
+    "@typescript-eslint/typescript-estree": ^7.8.0
     "@vue/eslint-config-prettier": ^9.0.0
     "@vue/eslint-config-typescript": ^13.0.0
     autoprefixer: ^10.4.19
@@ -8436,10 +8445,10 @@ __metadata:
     eslint-plugin-import: ^2.29.1
     eslint-plugin-nuxt: ^4.0.0
     eslint-plugin-prettier: ^5.1.3
-    eslint-plugin-unused-imports: ^3.1.0
+    eslint-plugin-unused-imports: ^3.2.0
     eslint-plugin-vue: ^9.25.0
     flowbite: ^2.3.0
-    flowbite-vue: ^0.1.3
+    flowbite-vue: ^0.1.4
     luxon: ^3.4.4
     nitro-cloudflare-dev: ^0.1.4
     nuxt: ^3.11.2
@@ -8451,10 +8460,10 @@ __metadata:
     typescript: ^5.4.5
     ufo: ^1.5.3
     vite: ^5.2.10
-    vue: ^3.4.24
+    vue: ^3.4.26
     vue-eslint-parser: ^9.4.2
     vue-router: ^4.3.2
-    wrangler: 3.53.0
+    wrangler: ^3.53.0
   languageName: unknown
   linkType: soft
 
@@ -11800,7 +11809,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.4.21, vue@npm:^3.4.24":
+"vue@npm:^3.4.21, vue@npm:^3.4.26":
   version: 3.4.26
   resolution: "vue@npm:3.4.26"
   dependencies:
@@ -11950,7 +11959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrangler@npm:3.53.0":
+"wrangler@npm:^3.53.0":
   version: 3.53.0
   resolution: "wrangler@npm:3.53.0"
   dependencies:
