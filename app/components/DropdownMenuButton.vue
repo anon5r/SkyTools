@@ -51,7 +51,7 @@
       require: false,
       default: 'none',
     },
-    props: {
+    placement: {
       type: String,
       require: false,
       default: 'bottom',

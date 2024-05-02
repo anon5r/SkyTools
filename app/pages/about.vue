@@ -29,7 +29,13 @@
       </h2>
       <p class="mb-6">
         ログイン情報は直接Blueskyサーバーに送信され、ブラウザ内のみで完結します。
-        セッション情報はブラウザが閉じられるか、タイムアウト、またはサインアウトすると消去されます。
+        セッション情報はタイムアウト、またはサインアウトすると消去されます。
+      </p>
+
+      <h2 class="text-2xl font-semibold mb-4">ユーザー情報の取得について</h2>
+      <p class="mb-6">
+        ユーザーの利用統計を図るため、あるいは問題の原因究明のため利用者の情報を収集します。
+        この情報はサードパーティーによって収集、匿名化され、個人を特定しない形でされた状態で保存されます。
       </p>
 
       <h2 class="text-2xl font-semibold mb-4">問い合わせ先</h2>
@@ -58,6 +64,16 @@
         Sign-in request is sent directly to the Bluesky server and is handled
         entirely within the browser. Session will be deleted when your browser
         is closed, timeout, or when you will sign out.
+      </p>
+
+      <h2 class="text-2xl font-semibold mb-4">
+        About collecting user information
+      </h2>
+      <p class="mb-6">
+        We collect user information to compile user usage statistics or to
+        investigate the cause of a problem. This information is collected by a
+        third party, anonymized, and stored in a form that does not identify you
+        personally.
       </p>
 
       <h2 class="text-2xl font-semibold mb-4">Contact</h2>

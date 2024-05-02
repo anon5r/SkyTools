@@ -1,7 +1,7 @@
 import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
 import * as bskyutils from '~/utils/bskyutils'
 import { isDev } from '~/utils/helpers'
-import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
+import { UnauthenticatedError, BlockedError } from '~/errors/BskyErrors'
 
 const cdnURL = process.env.cdnPrefix || 'https://cdn-skytools.anon5r.com/proxy'
 
@@ -24,6 +24,22 @@ class ClientPost {
   private _avatarURL: string | undefined = undefined
   private _bannerURL: string | undefined
   private _noUnauthenticated: boolean = false
+  /** Static authenticated variables */
+  private static _viewer_loggedIn: boolean = false
+  private static _viewer_blockList: string[] = []
+
+  public static setViewerLoggedIn(value: boolean): void {
+    ClientPost._viewer_loggedIn = value
+  }
+  public static setViewerBlockedList(list: string[]): void {
+    ClientPost._viewer_blockList = list
+  }
+  public static getViewerLoggedIn(): boolean {
+    return ClientPost._viewer_loggedIn
+  }
+  public static getViewerBlockedList(): string[] {
+    return ClientPost._viewer_blockList
+  }
 
   public get atUri(): { [key: string]: string } {
     return this._atUri
@@ -146,8 +162,10 @@ class ClientPost {
         )
         // No authenticated
         client._noUnauthenticated = filtered.length > 0
-        if (client._noUnauthenticated)
+        if (client._noUnauthenticated && !ClientPost._viewer_loggedIn)
           throw new UnauthenticatedError('You should be logged-in to Bluesky')
+        if (ClientPost._viewer_blockList.includes(did))
+          throw new BlockedError('Blocked user')
       }
 
       ClientPost.loadProfileBlobs(client)

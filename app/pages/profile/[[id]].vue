@@ -136,12 +136,12 @@
               class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
               <!-- PDS -->
               <font-awesome-icon
-                v-if="loadState.details && userinfo.details.servers"
+                v-if="loadState.details && userinfo.details.servers?.length > 0"
                 icon="fa-solid fa-database"
                 class="mr-1" />
               <span
-                v-if="loadState.details && userinfo.details.servers"
-                class="truncate">
+                v-if="loadState.details && userinfo.details.servers?.length > 0"
+                class="truncate select-all">
                 {{ userinfo.details.servers.join(',') }}
               </span>
             </div>
@@ -173,8 +173,12 @@
                 class="truncate">
                 {{
                   DateTime.fromISO(userinfo.details.createdAt).toLocaleString(
-                    DateTime.DATETIME_MED_WITH_WEEKDAY)
-                }} ({{ DateTime.fromISO(userinfo.details.createdAt).toRelative() }})
+                    DateTime.DATETIME_MED_WITH_WEEKDAY
+                  )
+                }}
+                ({{
+                  DateTime.fromISO(userinfo.details.createdAt).toRelative()
+                }})
               </span>
             </div>
             <!-- Labels -->
@@ -403,7 +407,7 @@
   import { isDev } from '@/utils/helpers'
   import * as bskyUtils from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { UnauthenticatedError } from '~/errors/UnauthenticatedError'
+  import { UnauthenticatedError } from '~/errors/BskyErrors'
   import { isLoggedIn } from '~/composables/auth'
   import { AtpAgent } from '@atproto/api'
   import { DateTime } from 'luxon'
@@ -482,8 +486,8 @@
       obj[key] = val
       if (val === false) {
         // Set timeout while loading after 5 sec
-        setTimeout((key) => {
-          if (!loadState.value[key])
+        setTimeout(key => {
+          if (loadState.value[key] && loadState.value[key] === false)
             loadState.value[key] = true
         }, 8000)
       }
@@ -580,8 +584,7 @@
         })
         .catch(err => {
           if (isDev()) console.warn(err)
-          if (!loadState.value['posts'])
-            loadState.value['posts'] = true
+          if (!loadState.value['posts']) loadState.value['posts'] = true
         })
 
       // Fetch follow
@@ -592,8 +595,7 @@
         })
         .catch(err => {
           if (isDev()) console.warn(err)
-          if (!loadState.value['following'])
-            loadState.value['following'] = true
+          if (!loadState.value['following']) loadState.value['following'] = true
         })
 
       // Fetch like
@@ -604,8 +606,7 @@
         })
         .catch(err => {
           if (isDev()) console.warn(err)
-          if (!loadState.value['like'])
-            loadState.value['like'] = true
+          if (!loadState.value['like']) loadState.value['like'] = true
         })
 
       if (easterMode.value) {
@@ -617,8 +618,7 @@
           .catch(err => {
             if (isDev()) console.warn(err)
             updateUserInfo('blocks', [])
-            if (!loadState.value['blocks'])
-              loadState.value['blocks'] = true
+            if (!loadState.value['blocks']) loadState.value['blocks'] = true
           })
       } else {
         updateUserInfo('blocks', [])

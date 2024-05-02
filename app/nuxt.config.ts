@@ -6,9 +6,7 @@ export default defineNuxtConfig({
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
 
       defaultPDS: 'bsky.social',
-      defaultPDSSuffix: 'bsky.social',
       defaultPDSEntrypoint: 'https://bsky.social',
-      defaultAppUrl: ' https://bsky.app',
       webmasterDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
@@ -29,7 +27,7 @@ export default defineNuxtConfig({
         {
           name: 'viewport',
           content:
-            'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover',
+            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
         },
         {
           name: 'description',
@@ -158,8 +156,9 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     'nuxt-cloudflare-analytics',
-    '@nuxt/devtools',
     '@nuxt/image',
+    process.env.NODE_ENV !== 'production' ? '@nuxt/devtools' : null,
+    process.env.NODE_ENV !== 'production' ? 'nitro-cloudflare-dev' : null,
   ],
   css: [
     'flowbite/dist/flowbite.css',
@@ -174,6 +173,22 @@ export default defineNuxtConfig({
     transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
     analyze: process.env.NODE_ENV !== 'production',
   },
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'atproto/api': ['@atproto/api'],
+          },
+        },
+      },
+    },
+  },
+  nitro: {
+    prerender: {
+      autoSubfolderIndex: false,
+    },
+  },
   routeRules: {
     // Generated at build time for SEO purpose
     '/': { prerender: true },
@@ -183,7 +198,6 @@ export default defineNuxtConfig({
     '/profile/:did': { swr: 3600 },
     '/pds': { prerender: true },
     '/pds/:hostname': { swr: 3600 },
-    '/lookup': { redirect: '/profile' },
   },
   colorMode: {
     classSuffix: '',

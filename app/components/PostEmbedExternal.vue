@@ -6,11 +6,12 @@
       :title="recordEmbed.external.title"
       class="block items-center">
       <div
-        class="m-4 max-w-fit bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        class="m-4 min-w-full max-w-fit bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <figure
-          class="relative max-w-full transition-all duration-300 bg-transparent cursor-pointer">
+          class="relative p-2 max-w-full transition-all duration-300 bg-transparent cursor-pointer">
           <LazyNuxtImg
-            :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
+            v-if="recordEmbed.external.thumb"
+            :src="`${config.cdnPrefix}/${props.pds.substring(8)}/image/${
               props.did
             }/${recordEmbed.external.thumb.ref.toString()}`"
             :alt="recordEmbed.external.title"
@@ -18,11 +19,19 @@
           <figcaption class="px-4 pt-1.5 pb-0.5">
             <h5
               class="mb-1 text-md md:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {{ recordEmbed.external.title }}
+              {{
+                recordEmbed.external.title.length > 0
+                  ? recordEmbed.external.title.length > 60
+                    ? recordEmbed.external.title.substring(0, 60) + '…'
+                    : recordEmbed.external.title
+                  : recordEmbed.external.uri.split('/')[2]
+              }}
             </h5>
           </figcaption>
         </figure>
-        <div class="px-5 text-ellipsis overflow-clip">
+        <div
+          v-if="recordEmbed.external.description"
+          class="px-5 text-ellipsis overflow-clip">
           <p
             class="mb-1 min-h-min max-h-16 font-thin text-sm text-gray-700 dark:text-gray-400 overflow-ellipsis">
             {{ recordEmbed.external.description }}
@@ -55,8 +64,7 @@
     },
     pds: {
       type: String,
-      required: false,
-      default: null,
+      required: true,
     },
   })
   const recordEmbed = props.embed

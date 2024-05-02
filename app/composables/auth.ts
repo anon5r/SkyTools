@@ -1,8 +1,7 @@
 import type { AtpSessionData, AtpSessionEvent } from '@atproto/api'
 import { BskyAgent } from '@atproto/api'
 import type { Ref } from '#imports'
-import { useAppConfig, useState, ref } from '#imports'
-import { isDev } from '~/utils/helpers'
+import { useAppConfig, useState, ref, ClientPost, isDev } from '#imports'
 
 declare interface LoginState {
   isLoggedIn: boolean
@@ -39,9 +38,19 @@ const getAgent = async (service?: string): Promise<BskyAgent> => {
         if (process.client && sess != null) {
           localStorage.setItem(keyCredentials, JSON.stringify(sess))
           localStorage.setItem(keyService, service as string)
+          ClientPost.setViewerLoggedIn(true)
         }
       },
     })
+    if (_agent.value) {
+      const blockedResponse = await _agent.value.api.app.bsky.graph.getBlocks({
+        limit: 1000,
+      })
+      const blocks = blockedResponse.success
+        ? blockedResponse.data.blocks.map(prof => prof.did)
+        : []
+      ClientPost.setViewerBlockedList(blocks)
+    }
   }
   return _agent.value
 }
@@ -86,6 +95,8 @@ export const logout = async (): Promise<void> => {
     if (agent.hasSession) {
       await agent.api.com.atproto.server.deleteSession()
       agent.session = undefined
+      ClientPost.setViewerLoggedIn(false)
+      ClientPost.setViewerBlockedList([])
     }
   } catch (error) {
     console.error(error)

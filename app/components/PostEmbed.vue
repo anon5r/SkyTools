@@ -3,12 +3,14 @@
     <div v-if="props.embed.$type === 'app.bsky.embed.record'">
       <PostEmbedRecord :embed="props.embed" :did="props.did" :pds="props.pds" />
     </div>
-    <div
-      v-if="
-        props.embed.$type === 'app.bsky.embed.images' ||
-        props.embed.$type === 'app.bsky.embed.recordWithMedia'
-      ">
+    <div v-if="props.embed.$type === 'app.bsky.embed.images'">
       <PostEmbedImages :embed="props.embed" :did="props.did" :pds="props.pds" />
+    </div>
+    <div v-if="props.embed.$type === 'app.bsky.embed.recordWithMedia'">
+      <PostEmbedRecordWithMedia
+        :embed="props.embed"
+        :did="props.did"
+        :pds="props.pds" />
     </div>
     <div v-if="props.embed.$type === 'app.bsky.embed.external'">
       <PostEmbedExternal
@@ -32,6 +34,7 @@
   import PostEmbedRecord from '~/components/PostEmbedRecord.vue'
   import PostEmbedImages from '~/components/PostEmbedImages.vue'
   import PostEmbedExternal from '~/components/PostEmbedExternal.vue'
+  import PostEmbedRecordWithMedia from '~/components/PostEmbedRecordWithMedia.vue'
 
   /** @type {AppBskyEmbedRecord|AppBskyEmbedImages|AppBskyEmbedRecordWithMedia|AppBskyEmbedExternal} props.embed */
   /** @type {string} props.did */
@@ -55,8 +58,7 @@
     },
     pds: {
       type: String,
-      required: false,
-      default: null,
+      required: true,
     },
   })
 
