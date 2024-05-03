@@ -26,8 +26,6 @@ const initLoginState = (): LoginState => {
 }
 
 const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
-  console.log(_agent.value?.service.href)
-  console.log('pdsEntrypoint = ', pdsEntrypoint)
   if (
     !_agent.value ||
     (pdsEntrypoint && _agent.value?.service.href !== pdsEntrypoint)
@@ -37,7 +35,6 @@ const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
     else if (pdsEntrypoint.length > 0 && !pdsEntrypoint.startsWith('https://'))
       pdsEntrypoint = `https://${pdsEntrypoint}`
 
-    console.log('pdsEntrypoint = ', pdsEntrypoint)
     _agent.value = new BskyAgent({
       service: pdsEntrypoint,
       persistSession: (event: AtpSessionEvent, sess?: AtpSessionData) => {
@@ -69,7 +66,6 @@ export const login = async (credentials: {
   password: string
   pds?: string
 }) => {
-  console.log('credentials = ', credentials)
   const agent: BskyAgent = await getAgent(credentials.pds)
   if (!agent) throw new Error('Could not get agent')
   try {
@@ -82,7 +78,6 @@ export const login = async (credentials: {
       if (process.client) {
         localStorage.setItem(keyCredentials, JSON.stringify(agent.session))
         const useLoginState = useState('loginState', initLoginState)
-        console.log(useLoginState.value)
         useLoginState.value = {
           isLoggedIn: true,
           userHandle: agent.session?.handle ?? undefined,
