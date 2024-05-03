@@ -25,24 +25,30 @@ const initLoginState = (): LoginState => {
   }
 }
 
-const getAgent = async (service?: string): Promise<BskyAgent> => {
-  if (!_agent.value) {
+const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
+  console.log(_agent.value?.service.href)
+  console.log('pdsEntrypoint = ', pdsEntrypoint)
+  if (
+    !_agent.value ||
+    (pdsEntrypoint && _agent.value?.service.href !== pdsEntrypoint)
+  ) {
     const config = useAppConfig()
-    if (!service) service = config.defaultPDSEntrypoint
-    else if (service.length > 0 && !service.startsWith('https://'))
-      service = `https://${service}`
+    if (!pdsEntrypoint) pdsEntrypoint = config.defaultPDSEntrypoint
+    else if (pdsEntrypoint.length > 0 && !pdsEntrypoint.startsWith('https://'))
+      pdsEntrypoint = `https://${pdsEntrypoint}`
 
+    console.log('pdsEntrypoint = ', pdsEntrypoint)
     _agent.value = new BskyAgent({
-      service: service,
+      service: pdsEntrypoint,
       persistSession: (event: AtpSessionEvent, sess?: AtpSessionData) => {
         if (process.client && sess != null) {
           localStorage.setItem(keyCredentials, JSON.stringify(sess))
-          localStorage.setItem(keyService, service as string)
+          localStorage.setItem(keyService, pdsEntrypoint as string)
           ClientPost.setViewerLoggedIn(true)
         }
       },
     })
-    if (_agent.value) {
+    if (_agent.value && _agent.value.hasSession) {
       const blockedResponse = await _agent.value.api.app.bsky.graph.getBlocks({
         limit: 1000,
       })
@@ -52,6 +58,7 @@ const getAgent = async (service?: string): Promise<BskyAgent> => {
       ClientPost.setViewerBlockedList(blocks)
     }
   }
+  if (!_agent.value) throw new Error('Could not get agent')
   return _agent.value
 }
 
@@ -60,8 +67,11 @@ export { getAgent, initLoginState }
 export const login = async (credentials: {
   identifier: string
   password: string
+  pds?: string
 }) => {
-  const agent: BskyAgent = await getAgent()
+  console.log('credentials = ', credentials)
+  const agent: BskyAgent = await getAgent(credentials.pds)
+  if (!agent) throw new Error('Could not get agent')
   try {
     const response = await agent.login({
       identifier: credentials.identifier,

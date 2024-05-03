@@ -8,6 +8,25 @@
           class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
           for="handle">
           <ClientOnly>
+            <font-awesome-icon icon="fa-database" class="pr-2" />
+          </ClientOnly>
+          PDS
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 bg-transparent text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
+          id="pds"
+          v-model="pds"
+          type="text"
+          autocomplete="PDS"
+          placeholder="https://bsky.social"
+          @focusout="validatePDS"
+          tabindex="1" />
+      </div>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2 pt-1"
+          for="handle">
+          <ClientOnly>
             <font-awesome-icon :icon="['fas', 'user']" class="pr-2" />
           </ClientOnly>
           Your handle
@@ -18,7 +37,7 @@
           v-model="handle"
           type="text"
           autocomplete="username"
-          placeholder="ex. example.bsky.social"
+          :placeholder="`ex. example${handleSuffix}`"
           @focusout="validateHandle"
           tabindex="1" />
       </div>
@@ -94,17 +113,33 @@
   const errorMessage = ref('')
   const validateError = ref('')
   const isProcessing = ref(false)
-  const pds = route.params.service
+  const handleSuffix = route.params.service
     ? `.${route.params.service}`
-    : `.${props.service}` ?? `.${config.defaultSuffix}`
+    : `.${props.service ?? config.defaultSuffix}`
+  const pds = ref(
+    route.params.service
+      ? `https://${route.params.service}`
+      : `https://${props.service ?? config.defaultSuffix}`
+  )
 
+  const validatePDS = async () => {
+    pds.value = pds.value.trim()
+    if (pds.value && pds.value.length > 0) {
+      if (!pds.value.includes('://')) {
+        pds.value = `https://${pds.value}`
+      }
+      if (!pds.value !== route.params.service) {
+        route.params.service = pds.value.replace('https://', '')
+      }
+    }
+  }
   const validateHandle = () => {
     if (
       handle.value &&
       handle.value.length > 0 &&
       !handle.value.includes('.')
     ) {
-      handle.value = handle.value + pds
+      handle.value = handle.value + handleSuffix
     }
   }
 
