@@ -74,8 +74,12 @@ export const resolveDID = async (
 ): Promise<string> => {
   try {
     let requestUrl
-    if (identifier.startsWith('did:')) requestUrl = `${plcURL}/${identifier}`
-    else
+    if (identifier.startsWith('did:plc:'))
+      requestUrl = `${plcURL}/${identifier}`
+    else if (identifier.startsWith('did:web:')) {
+      const hostname = identifier.substring(8)
+      requestUrl = `https://${hostname}/.well-known/did.json`
+    } else
       requestUrl = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
 
     const res = await axios.get(requestUrl)
@@ -132,7 +136,7 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
   }
   try {
     // DNS resolve
-    const query = (new URLSearchParams({ handle: identifier })).toString()
+    const query = new URLSearchParams({ handle: identifier }).toString()
     const url = `/api/resolve-handle?${query}`
     const res = await axios.get(url)
     if (res.status === 200) {
@@ -158,7 +162,13 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
 export const getPDSEndpointByDID = async (
   identifier: string
 ): Promise<string> => {
-  const url = `${plcURL}/${identifier}`
+  let url: string = ''
+  if (identifier.startsWith('did:plc:')) {
+    url = `${plcURL}/${identifier}`
+  } else if (identifier.startsWith('did:web:')) {
+    const hostname = identifier.substring(8)
+    url = `https://${hostname}/.well-known/did.json`
+  }
   try {
     const res = await axios.get(url)
 
@@ -446,8 +456,6 @@ export const buildPostURL = async (
   if (typeof uri === 'string' && uri.startsWith('at://'))
     atUri = parseAtUri(uri)
   else atUri = uri as { [key: string]: string }
-  console.log('uri = ', uri)
-  console.log('atUri = ', atUri)
 
   if (handle === undefined) {
     try {
@@ -466,7 +474,6 @@ export const describeServer = async (
   try {
     const response: ComAtprotoServerDescribeServer.Response =
       await createAtpAgent(server).api.com.atproto.server.describeServer()
-    console.log(response)
     if (response.success) {
       return response.data
     }

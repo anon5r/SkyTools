@@ -303,6 +303,7 @@
                       :cid="record.cid"
                       :did="record.did"
                       :pds="record.pds"
+                      :rkey="record.rkey"
                       :profile="record.profile"
                       :post-record="record.post" />
                   </li>
@@ -1028,7 +1029,6 @@
         cursor
       )
       if (response.success) {
-        //if (isDev()) console.log("fetchBlocks = ", response.data)
         const records = response.data.records.map(async record => {
           let handle = '',
             pdsEndpoint,

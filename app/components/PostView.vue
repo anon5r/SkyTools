@@ -1,7 +1,7 @@
 <template>
   <article
     class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
-    :id="`post-${props.rkey}`">
+    :id="`post-${props.rkey ?? props.cid}`">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -32,11 +32,20 @@
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <ClientOnly>
-          <DropdownMenuButton icon="vertical" :id="`${props.rkey}`">
+          <DropdownMenuButton
+            icon="vertical"
+            :id="`${props.rkey ?? props.cid}`">
             <!-- dropdown menu -->
             <ul
               class="py-2 text-sm text-gray-600 dark:text-slate-400"
-              :aria-labelledby="`dropdown-${props.rkey}-button`">
+              :aria-labelledby="`dropdown-${props.rkey ?? props.cid}-button`">
+              <li>
+                <NuxtLink
+                  :to="`/history?id=${props.did}`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Handle history
+                </NuxtLink>
+              </li>
               <li>
                 <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
@@ -49,20 +58,30 @@
               </li>
               <li>
                 <NuxtLink
-                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
+                  :to="`https://web.plc.directory/did/${props.did}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   target="_blank">
-                  Open as JSON
+                  View DID
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
                 </NuxtLink>
               </li>
               <li>
                 <NuxtLink
-                  :to="`https://web.plc.directory/did/${props.did}`"
+                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   target="_blank">
-                  View DID
+                  API (AT Protocol)
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']" />
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink
+                  :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.feed.getPostThread?uri=${props.uri}&maxLength=100`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  target="_blank">
+                  API (Bluesky)
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
                 </NuxtLink>
