@@ -1,7 +1,7 @@
 <template>
   <article
     class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
-    :id="`post-${props.rkey}`">
+    :id="`post-${props.rkey ?? props.cid}`">
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -32,11 +32,13 @@
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
         <ClientOnly>
-          <DropdownMenuButton icon="vertical" :id="`${props.rkey}`">
+          <DropdownMenuButton
+            icon="vertical"
+            :id="`${props.rkey ?? props.cid}`">
             <!-- dropdown menu -->
             <ul
               class="py-2 text-sm text-gray-600 dark:text-slate-400"
-              :aria-labelledby="`dropdown-${props.rkey}-button`">
+              :aria-labelledby="`dropdown-${props.rkey ?? props.cid}-button`">
               <li>
                 <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
