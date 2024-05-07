@@ -41,6 +41,13 @@
               :aria-labelledby="`dropdown-${props.rkey ?? props.cid}-button`">
               <li>
                 <NuxtLink
+                  :to="`/history?id=${props.did}`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  Handle history
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink
                   :to="`${config.bskyAppURL}${postURL}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   target="_blank">
@@ -51,20 +58,30 @@
               </li>
               <li>
                 <NuxtLink
-                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
+                  :to="`https://web.plc.directory/did/${props.did}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   target="_blank">
-                  Open as JSON
+                  View DID
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
                 </NuxtLink>
               </li>
               <li>
                 <NuxtLink
-                  :to="`https://web.plc.directory/did/${props.did}`"
+                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
                   class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   target="_blank">
-                  View DID
+                  API (AT Protocol)
+                  <font-awesome-icon
+                    :icon="['fas', 'arrow-up-right-from-square']" />
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink
+                  :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.feed.getPostThread?uri=${props.uri}&maxLength=100`"
+                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  target="_blank">
+                  API (Bluesky)
                   <font-awesome-icon
                     :icon="['fas', 'arrow-up-right-from-square']" />
                 </NuxtLink>
