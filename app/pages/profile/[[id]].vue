@@ -92,7 +92,7 @@
                     class="m-2 min-w-max" />
                 </div>
               </div>
-              <div>
+              <div class="w-full">
                 <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
@@ -126,6 +126,77 @@
                   {{ loadState.details ? userinfo.details.did : 'loading...' }}
                 </div>
               </div>
+
+              <ClientOnly>
+                <DropdownMenuButton
+                  icon="vertical"
+                  id="profile-menu"
+                  buttonStlye="bg-transparent">
+                  <!-- dropdown menu -->
+                  <ul
+                    class="py-2 text-sm text-gray-600 dark:text-slate-400"
+                    :aria-labelledby="`dropdown-profile-menu-button`">
+                    <li>
+                      <NuxtLink
+                        :to="`/history?id=${userinfo.details.handle}`"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Handle history
+                      </NuxtLink>
+                    </li>
+                    <li>
+                      <NuxtLink
+                        :to="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        target="_blank">
+                        Open in Bluesky
+                        <font-awesome-icon
+                          :icon="['fas', 'arrow-up-right-from-square']" />
+                      </NuxtLink>
+                    </li>
+                    <li>
+                      <NuxtLink
+                        :to="`https://web.plc.directory/did/${userinfo.details.did}`"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        target="_blank">
+                        View DID
+                        <font-awesome-icon
+                          :icon="['fas', 'arrow-up-right-from-square']" />
+                      </NuxtLink>
+                    </li>
+                    <li>
+                      <NuxtLink
+                        :to="`https://${userinfo.details.servers[0]}/xrpc/com.atproto.repo.getRecord?repo=${userinfo.details.did}&collection=app.bsky.actor.profile&rkey=self`"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        target="_blank">
+                        API (AT Protocol)
+                        <font-awesome-icon
+                          :icon="['fas', 'arrow-up-right-from-square']" />
+                      </NuxtLink>
+                    </li>
+                    <li>
+                      <NuxtLink
+                        :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.actor.getProfile?actor=${userinfo.details.handle}`"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        target="_blank">
+                        API (Bluesky)
+                        <font-awesome-icon
+                          :icon="['fas', 'arrow-up-right-from-square']" />
+                      </NuxtLink>
+                    </li>
+                    <li>
+                      <CopyToClipboard
+                        :copy-text="userinfo.details.did"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-sm w-[calc(100%)]"
+                        success-message="Copied!"
+                        error-message="Failed to copy"
+                        :display-duration="3500">
+                        Copy DID
+                        <font-awesome-icon :icon="['far', 'clipboard']" />
+                      </CopyToClipboard>
+                    </li>
+                  </ul>
+                </DropdownMenuButton>
+              </ClientOnly>
             </div>
 
             <p class="m-4 min-w-stretch whitespace-pre-line">
