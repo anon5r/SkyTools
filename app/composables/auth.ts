@@ -130,7 +130,7 @@ export const restoreSession = async (): Promise<void> => {
         }
       } catch (err: any) {
         if (isDev()) console.error(err)
-        if (err.response.status == 400) {
+        if (err.response?.status == 400) {
           if (err.response.data.error == 'ExpiredToken') await logout()
         }
         throw err
