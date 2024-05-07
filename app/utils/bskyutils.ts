@@ -456,8 +456,6 @@ export const buildPostURL = async (
   if (typeof uri === 'string' && uri.startsWith('at://'))
     atUri = parseAtUri(uri)
   else atUri = uri as { [key: string]: string }
-  console.log('uri = ', uri)
-  console.log('atUri = ', atUri)
 
   if (handle === undefined) {
     try {
@@ -476,7 +474,6 @@ export const describeServer = async (
   try {
     const response: ComAtprotoServerDescribeServer.Response =
       await createAtpAgent(server).api.com.atproto.server.describeServer()
-    console.log(response)
     if (response.success) {
       return response.data
     }
