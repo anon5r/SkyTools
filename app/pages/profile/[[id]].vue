@@ -129,6 +129,7 @@
 
               <ClientOnly>
                 <DropdownMenuButton
+                  v-if="loadState.details && userinfo.details.createdAt"
                   icon="vertical"
                   id="profile-menu"
                   buttonStlye="bg-transparent">
