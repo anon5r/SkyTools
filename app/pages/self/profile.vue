@@ -215,6 +215,7 @@
     ref,
     useRoute,
     useRouter,
+    bskyutils,
   } from '#imports'
   import { DateTime } from 'luxon'
   import { isDev, isEqualArray } from '@/utils/helpers'
@@ -391,7 +392,10 @@
     }
 
     if (confirm('Do you want to save changes?')) {
-      const prof = await loadProfileLexicon(profile.value.did)
+      const prof = await loadProfileLexicon(
+        await bskyutils.getPDSEndpointByDID(profile.value.did),
+        profile.value.did
+      )
       if (isDev()) console.log(prof)
 
       if (labels.value.length > 0) {
