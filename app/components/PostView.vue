@@ -31,87 +31,15 @@
         </div>
       </div>
       <div class="text-sm text-right text-gray-600 dark:text-slate-400">
-        <ClientOnly>
-          <DropdownMenuButton
-            icon="vertical"
-            :id="`${props.rkey ?? props.cid}`">
-            <!-- dropdown menu -->
-            <ul
-              class="py-2 text-sm text-gray-600 dark:text-slate-400"
-              :aria-labelledby="`dropdown-${props.rkey ?? props.cid}-button`">
-              <li>
-                <NuxtLink
-                  :to="`/history?id=${props.did}`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                  Handle history
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink
-                  :to="`${config.bskyAppURL}${postURL}`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  target="_blank">
-                  Open in Bluesky
-                  <font-awesome-icon
-                    :icon="['fas', 'arrow-up-right-from-square']" />
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink
-                  :to="`https://web.plc.directory/did/${props.did}`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  target="_blank">
-                  View DID
-                  <font-awesome-icon
-                    :icon="['fas', 'arrow-up-right-from-square']" />
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink
-                  :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  target="_blank">
-                  API (AT Protocol)
-                  <font-awesome-icon
-                    :icon="['fas', 'arrow-up-right-from-square']" />
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink
-                  :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.feed.getPostThread?uri=${props.uri}&maxLength=100`"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  target="_blank">
-                  API (Bluesky)
-                  <font-awesome-icon
-                    :icon="['fas', 'arrow-up-right-from-square']" />
-                </NuxtLink>
-              </li>
-              <li>
-                <CopyToClipboard
-                  :copy-text="props.uri"
-                  class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-sm w-[calc(100%)]"
-                  success-message="Copied!"
-                  error-message="Failed to copy"
-                  :display-duration="3500">
-                  Copy at-uri
-                  <font-awesome-icon :icon="['far', 'clipboard']" />
-                </CopyToClipboard>
-              </li>
-            </ul>
-            <div class="py-2">
-              <div
-                v-if="record && record.langs"
-                class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
-                Lang: {{ record.langs.join(',') }}
-              </div>
-              <div
-                v-if="record && record.via"
-                class="px-4 justify-start items-baseline text-xs text-right text-gray-600 dark:text-gray-400">
-                Via: {{ record.via ?? 'none' }}
-              </div>
-            </div>
-          </DropdownMenuButton>
-        </ClientOnly>
+        <ButtonDebugMenu
+          :id="props.rkey ?? props.cid"
+          :did="props.did"
+          :handle="handle"
+          :pds="props.pds"
+          :rkey="props.rkey"
+          :cid="props.cid"
+          :at-uri="props.uri"
+          :options="record" />
         <div class="pt-1">
           <NuxtLink v-if="!isRemoved" :to="postURL">
             <!-- Created datetime -->
