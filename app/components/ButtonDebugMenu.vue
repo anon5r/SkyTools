@@ -53,7 +53,7 @@
         </li>
         <li v-else>
           <NuxtLink
-            :to="`https://${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.actor.profile&rkey=self`"
+            :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.actor.profile&rkey=self`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
             API (Lexicon)
