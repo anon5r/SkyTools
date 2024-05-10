@@ -92,7 +92,7 @@
                     class="m-2 min-w-max" />
                 </div>
               </div>
-              <div class="w-full">
+              <div class="grow max-w-prose">
                 <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
@@ -121,83 +121,17 @@
                   <span v-else class="mt-4">loading...</span>
                 </div>
                 <div
-                  class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-600 dark:text-slate-400 select-all">
+                  class="md:text-sm text-xs truncate md:font-mono text-gray-600 dark:text-slate-400 select-all">
                   <!-- DID -->
                   {{ loadState.details ? userinfo.details.did : 'loading...' }}
                 </div>
               </div>
-
-              <ClientOnly>
-                <DropdownMenuButton
-                  v-if="loadState.details && userinfo.details.createdAt"
-                  icon="vertical"
-                  id="profile-menu"
-                  buttonStlye="bg-transparent">
-                  <!-- dropdown menu -->
-                  <ul
-                    class="py-2 text-sm text-gray-600 dark:text-slate-400"
-                    :aria-labelledby="`dropdown-profile-menu-button`">
-                    <li>
-                      <NuxtLink
-                        :to="`/history?id=${userinfo.details.handle}`"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                        Handle history
-                      </NuxtLink>
-                    </li>
-                    <li>
-                      <NuxtLink
-                        :to="`${config.bskyAppURL}/profile/${userinfo.details.handle}`"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        target="_blank">
-                        Open in Bluesky
-                        <font-awesome-icon
-                          :icon="['fas', 'arrow-up-right-from-square']" />
-                      </NuxtLink>
-                    </li>
-                    <li>
-                      <NuxtLink
-                        :to="`https://web.plc.directory/did/${userinfo.details.did}`"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        target="_blank">
-                        View DID
-                        <font-awesome-icon
-                          :icon="['fas', 'arrow-up-right-from-square']" />
-                      </NuxtLink>
-                    </li>
-                    <li>
-                      <NuxtLink
-                        :to="`https://${userinfo.details.servers[0]}/xrpc/com.atproto.repo.getRecord?repo=${userinfo.details.did}&collection=app.bsky.actor.profile&rkey=self`"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        target="_blank">
-                        API (AT Protocol)
-                        <font-awesome-icon
-                          :icon="['fas', 'arrow-up-right-from-square']" />
-                      </NuxtLink>
-                    </li>
-                    <li>
-                      <NuxtLink
-                        :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.actor.getProfile?actor=${userinfo.details.handle}`"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        target="_blank">
-                        API (Bluesky)
-                        <font-awesome-icon
-                          :icon="['fas', 'arrow-up-right-from-square']" />
-                      </NuxtLink>
-                    </li>
-                    <li>
-                      <CopyToClipboard
-                        :copy-text="userinfo.details.did"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-sm w-[calc(100%)]"
-                        success-message="Copied!"
-                        error-message="Failed to copy"
-                        :display-duration="3500">
-                        Copy DID
-                        <font-awesome-icon :icon="['far', 'clipboard']" />
-                      </CopyToClipboard>
-                    </li>
-                  </ul>
-                </DropdownMenuButton>
-              </ClientOnly>
+              <ButtonDebugMenu
+                id="profile-menu"
+                button-style="bg-transparent"
+                :handle="userinfo.details.handle"
+                :did="userinfo.details.did"
+                :pds="`https://${userinfo.details.servers[0]}`" />
             </div>
 
             <p class="m-4 min-w-stretch whitespace-pre-line">
@@ -232,7 +166,7 @@
             </div>
             <div
               v-if="loadState.details && userinfo.details.createdAt"
-              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
+              class="mx-4 text-xs font-mono text-gray-600 dark:text-slate-400">
               <!-- Created at -->
               <font-awesome-icon
                 v-if="loadState.details"
@@ -485,6 +419,7 @@
   import { AtpAgent } from '@atproto/api'
   import { DateTime } from 'luxon'
   import bskyutils from '~/utils/bskyutils'
+  import ButtonDebugMenu from '~/components/ButtonDebugMenu.vue'
 
   const activeTab = ref('posts')
 

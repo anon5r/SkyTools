@@ -13,7 +13,7 @@
               class="min-w-max avatar-object-cover" />
           </a>
         </div>
-        <div class="max-w-xs truncate">
+        <div class="xl:max-w-xl lg:max-w-lg md:max-w-md max-w-64 truncate">
           <!-- DisplayName -->
           <a
             :href="`/profile/${props.handle}`"
@@ -25,7 +25,8 @@
                 : props.handle
             }}
           </a>
-          <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
+          <p
+            class="md:text-sm text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <a
               :href="`/profile/${props.handle}`"
@@ -37,73 +38,11 @@
         </div>
       </div>
 
-      <ClientOnly>
-        <DropdownMenuButton icon="vertical" :id="`${props.did}`">
-          <!-- dropdown menu -->
-          <ul
-            class="py-2 text-sm text-gray-600 dark:text-slate-400"
-            :aria-labelledby="`dropdown-${props.did}-button`">
-            <li>
-              <NuxtLink
-                :to="`/history?id=${props.handle}`"
-                class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                Handle history
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                :to="`${config.bskyAppURL}/profile/${props.handle}`"
-                class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                target="_blank">
-                Open in Bluesky
-                <font-awesome-icon
-                  :icon="['fas', 'arrow-up-right-from-square']" />
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                :to="`https://web.plc.directory/did/${props.did}`"
-                class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                target="_blank">
-                View DID
-                <font-awesome-icon
-                  :icon="['fas', 'arrow-up-right-from-square']" />
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.actor.profile&rkey=self`"
-                class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                target="_blank">
-                API (AT Protocol)
-                <font-awesome-icon
-                  :icon="['fas', 'arrow-up-right-from-square']" />
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.actor.getProfile?actor=${props.did}`"
-                class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                target="_blank">
-                API (Bluesky)
-                <font-awesome-icon
-                  :icon="['fas', 'arrow-up-right-from-square']" />
-              </NuxtLink>
-            </li>
-            <li>
-              <CopyToClipboard
-                :copy-text="props.did"
-                class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-sm w-[calc(100%)]"
-                success-message="Copied!"
-                error-message="Failed to copy"
-                :display-duration="3500">
-                Copy DID
-                <font-awesome-icon :icon="['far', 'clipboard']" />
-              </CopyToClipboard>
-            </li>
-          </ul>
-        </DropdownMenuButton>
-      </ClientOnly>
+      <ButtonDebugMenu
+        :id="props.did"
+        :did="props.did"
+        :handle="props.handle"
+        :pds="props.pds" />
     </div>
     <div class="text-sm pl-14 pr-16 max-w-fit truncate">
       <!-- Description -->
