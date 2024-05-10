@@ -92,7 +92,7 @@
                     class="m-2 min-w-max" />
                 </div>
               </div>
-              <div class="w-full">
+              <div class="grow max-w-prose">
                 <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
@@ -121,7 +121,7 @@
                   <span v-else class="mt-4">loading...</span>
                 </div>
                 <div
-                  class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-600 dark:text-slate-400 select-all">
+                  class="md:text-sm text-xs truncate md:font-mono text-gray-600 dark:text-slate-400 select-all">
                   <!-- DID -->
                   {{ loadState.details ? userinfo.details.did : 'loading...' }}
                 </div>
@@ -131,7 +131,8 @@
                 <DropdownMenuButton
                   icon="vertical"
                   id="profile-menu"
-                  buttonStlye="bg-transparent">
+                  buttonStlye="bg-transparent"
+                  class="flex items-end">
                   <!-- dropdown menu -->
                   <ul
                     class="py-2 text-sm text-gray-600 dark:text-slate-400"
@@ -231,7 +232,7 @@
             </div>
             <div
               v-if="loadState.details && userinfo.details.createdAt"
-              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
+              class="mx-4 text-xs font-mono text-gray-600 dark:text-slate-400">
               <!-- Created at -->
               <font-awesome-icon
                 v-if="loadState.details"

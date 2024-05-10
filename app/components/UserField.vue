@@ -13,7 +13,7 @@
               class="min-w-max avatar-object-cover" />
           </a>
         </div>
-        <div class="max-w-xs truncate">
+        <div class="xl:max-w-xl lg:max-w-lg md:max-w-md max-w-64 truncate">
           <!-- DisplayName -->
           <a
             :href="`/profile/${props.handle}`"
@@ -25,7 +25,8 @@
                 : props.handle
             }}
           </a>
-          <p class="text-xs font-mono text-gray-500 dark:text-slate-500">
+          <p
+            class="md:text-sm text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
             <a
               :href="`/profile/${props.handle}`"
