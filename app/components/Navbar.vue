@@ -152,6 +152,12 @@
         icon: ['fas', 'ticket'],
         requireSignin: true,
       },
+      {
+        src: '/bsky/mushrooms',
+        title: 'Mushrooms',
+        icon: ['fas', 'mushroom'],
+        requireSignin: false,
+      },
     ],
   }
 

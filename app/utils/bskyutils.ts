@@ -9,6 +9,7 @@ import {
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
   ComAtprotoServerDescribeServer,
+  ComAtprotoSyncListRepos,
 } from '@atproto/api'
 import type { BlobRef } from '@atproto/lexicon'
 
@@ -105,16 +106,24 @@ export const resolveDID = async (
 /**
  *
  * @param {string} identifier Handle
+ * @param {string} pdsUri PDS endpoint
  * @returns {string} DID
  * @throws {Error} Invalid handle
  */
-export const resolveHandle = async (identifier: string): Promise<string> => {
+export const resolveHandle = async (
+  identifier: string,
+  pdsUri?: string
+): Promise<string> => {
   if (identifier.startsWith('did:'))
-    throw new Error('Invalid handle. Should be a handle, not a DID')
+    throw new Error(
+      '[BskyUtils] resolveHandle: Invalid handle. Should be a handle, not a DID'
+    )
   if (identifier.length > 253) throw new Error('Too long identifier')
 
+  if (!pdsUri) pdsUri = await getPDSEndpointByDID(identifier)
+
   try {
-    const url = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+    const url = `${pdsUri ?? config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
     let res = await axios.get(url)
     if (res.status === 200 && res.data?.did) return res.data.did as string
   } catch (error: any) {
@@ -487,6 +496,23 @@ export const describeServer = async (
   }
 }
 
+export const listRepos = async (
+  pdsUri: string,
+  limit?: number,
+  cursor?: string
+): Promise<ComAtprotoSyncListRepos.Repo[]> => {
+  const response: ComAtprotoSyncListRepos.Response = await createAtpAgent(
+    pdsUri
+  ).api.com.atproto.sync.listRepos({
+    limit: limit ?? undefined,
+    cursor: cursor ?? undefined,
+  })
+  if (response.success) {
+    return response.data.repos
+  }
+  throw new Error('Failed to get repos from ' + pdsUri)
+}
+
 export default {
   isDev,
   getConfig,
@@ -503,6 +529,7 @@ export default {
   buildBlobRefURL,
   loadProfile,
   describeRepo,
+  listRepos,
   describeServer,
   buildPostURL,
   getPDSEndpointByDID,
