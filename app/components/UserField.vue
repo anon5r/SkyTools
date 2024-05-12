@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
   import { FwbAvatar } from 'flowbite-vue'
-  import { useAppConfig, onMounted, ref } from '#imports'
+  import { onMounted, ref, useAppConfig } from '#imports'
   import type { AppBskyActorProfile } from '@atproto/api'
   import { buildBlobRefURL } from '~/utils/bskyutils'
   import type { PropType } from 'vue'
@@ -90,14 +90,13 @@
       if (props.profile.avatar) {
         let repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
 
-        const url = buildBlobRefURL(
+        avatarURL.value = buildBlobRefURL(
           config.cdnPrefix,
           props.did,
           props.profile,
           'avatar',
           repoEndpoint
         )
-        avatarURL.value = url
       }
     }
   })

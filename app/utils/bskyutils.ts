@@ -422,7 +422,7 @@ export const loadProfile = async (
  * @param {string} did DID
  * @param {AppBskyActorProfile.Record} record ProfileRecord object
  * @param {string} itemName "avatar" | "banner"
- * @param {string | undefined} PDS endpoint URL
+ * @param {string | undefined} endpoint endpoint URL
  * @returns {string}
  * @throws {Error} Invalid profile record
  */
