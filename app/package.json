@@ -1,7 +1,7 @@
 {
-  "name": "nuxt-app",
+  "name": "skytools-app",
   "private": true,
-  "version": "1.3.2",
+  "version": "1.3.3",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -11,7 +11,7 @@
     "analyze": "nuxt analyze",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
-    "pages:dev": "wrangler pages dev --live-reload ./dist",
+    "pages:dev": "wrangler pages dev --port 3000 ./dist",
     "pages:build": "nuxt build",
     "pages:deploy": "nuxt build && wrangler pages deploy ./dist",
     "pages:preview": "wrangler pages dev ./dist --port 3000"
