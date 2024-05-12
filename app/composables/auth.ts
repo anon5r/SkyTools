@@ -11,7 +11,8 @@ declare interface LoginState {
   session?: AtpSessionData | undefined
 }
 
-let _agent: Ref<BskyAgent | null> = ref(null)
+// let _agent: Ref<{ [key: string]: BskyAgent }> = ref({})
+let _agent: Ref<Record<string, BskyAgent>> = ref({})
 
 const keyCredentials = 'credentials'
 const keyService = 'service'
@@ -27,15 +28,18 @@ const initLoginState = (): LoginState => {
 
 const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
   if (
-    !_agent.value ||
-    (pdsEntrypoint && _agent.value?.service.href !== pdsEntrypoint)
-  ) {
+    pdsEntrypoint &&
+    pdsEntrypoint.length > 0 &&
+    !pdsEntrypoint.startsWith('https://')
+  )
+    pdsEntrypoint = `https://${pdsEntrypoint}`
+  if (!pdsEntrypoint) {
     const config = useAppConfig()
-    if (!pdsEntrypoint) pdsEntrypoint = config.defaultPDSEntrypoint
-    else if (pdsEntrypoint.length > 0 && !pdsEntrypoint.startsWith('https://'))
-      pdsEntrypoint = `https://${pdsEntrypoint}`
-
-    _agent.value = new BskyAgent({
+    pdsEntrypoint = config.defaultPDSEntrypoint
+  }
+  console.log(_agent.value, pdsEntrypoint)
+  if (!_agent.value[pdsEntrypoint]) {
+    const agent = new BskyAgent({
       service: pdsEntrypoint,
       persistSession: (event: AtpSessionEvent, sess?: AtpSessionData) => {
         if (process.client && sess != null) {
@@ -45,8 +49,8 @@ const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
         }
       },
     })
-    if (_agent.value && _agent.value.hasSession) {
-      const blockedResponse = await _agent.value.api.app.bsky.graph.getBlocks({
+    if (agent && agent.hasSession) {
+      const blockedResponse = await agent.api.app.bsky.graph.getBlocks({
         limit: 1000,
       })
       const blocks = blockedResponse.success
@@ -54,9 +58,10 @@ const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
         : []
       ClientPost.setViewerBlockedList(blocks)
     }
+    _agent.value[pdsEntrypoint] = agent
   }
-  if (!_agent.value) throw new Error('Could not get agent')
-  return _agent.value
+  if (!_agent.value[pdsEntrypoint]) throw new Error('Could not get agent')
+  return _agent.value[pdsEntrypoint]
 }
 
 export { getAgent, initLoginState }
@@ -94,9 +99,9 @@ export const login = async (credentials: {
   }
 }
 
-export const logout = async (): Promise<void> => {
+export const logout = async (pdsEntrypoint?: string): Promise<void> => {
   try {
-    const agent = await getAgent()
+    const agent = await getAgent(pdsEntrypoint)
     if (agent.hasSession) {
       await agent.api.com.atproto.server.deleteSession()
       agent.session = undefined
@@ -113,13 +118,13 @@ export const logout = async (): Promise<void> => {
   }
 }
 
-export const restoreSession = async (): Promise<void> => {
+export const restoreSession = async (pdsEntrypoint?: string): Promise<void> => {
   if (process.client) {
     const credentials: string | null = localStorage.getItem(keyCredentials)
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
-        const agent: BskyAgent = await getAgent()
+        const agent: BskyAgent = await getAgent(pdsEntrypoint)
         const res = await agent.resumeSession(session)
         const useLoginState = useState('loginState', initLoginState)
         useLoginState.value = {
@@ -166,8 +171,8 @@ export const getEmail = (): string => {
   return useLoginState.value.session?.email ?? ''
 }
 
-export const getProfile = async () => {
-  const agent: BskyAgent = await getAgent()
+export const getProfile = async (pdsUri?: string) => {
+  const agent: BskyAgent = await getAgent(pdsUri)
   if (!agent) throw new Error('Require authentication')
 
   const result = await agent.api.app.bsky.actor.getProfile({

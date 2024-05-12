@@ -127,11 +127,12 @@
                 </div>
               </div>
               <ButtonDebugMenu
+                v-if="userinfo.details?.servers?.length > 0"
                 id="profile-menu"
                 button-style="bg-transparent"
                 :handle="userinfo.details.handle"
                 :did="userinfo.details.did"
-                :pds="`https://${userinfo.details.servers[0]}`" />
+                :pds="`https://${userinfo.details?.servers[0]}`" />
             </div>
 
             <p class="m-4 min-w-stretch whitespace-pre-line">
@@ -508,6 +509,12 @@
   const isLoadingState = obj => {
     return Object.values(obj).every(value => value === true)
   }
+  /**
+   * Stop all loading state
+   */
+  const stopAllLoadingState = () => {
+    Object.values(loadState.value).map(key => (loadState.value[key] = true))
+  }
 
   onMounted(async () => {
     bskyUtils.setConfig(toRaw(config))
@@ -660,7 +667,7 @@
           }
         }
       }
-
+      stopAllLoadingState()
       if (axios.isAxiosError(err)) {
         if (err.response.status === 400) {
           if (err.response.data.message) {

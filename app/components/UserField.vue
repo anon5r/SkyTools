@@ -5,18 +5,20 @@
         <div
           class="inline-flex items-center mr-3 text-md font-bold text-gray-900 dark:text-white">
           <!-- Avatar -->
-          <a :href="`/profile/${props.handle}`" @click.prevent="clickProfile">
+          <NuxtLink
+            :to="`/profile/${props.handle}`"
+            @click.prevent="clickProfile">
             <fwb-avatar
               rounded
               :img="avatarURL"
               :alt="props.handle"
               class="min-w-max avatar-object-cover" />
-          </a>
+          </NuxtLink>
         </div>
         <div class="xl:max-w-xl lg:max-w-lg md:max-w-md max-w-64 truncate">
           <!-- DisplayName -->
-          <a
-            :href="`/profile/${props.handle}`"
+          <NuxtLink
+            :to="`/profile/${props.handle}`"
             class=""
             @click.prevent="clickProfile">
             {{
@@ -24,16 +26,16 @@
                 ? props.profile.displayName
                 : props.handle
             }}
-          </a>
+          </NuxtLink>
           <p
             class="md:text-sm text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
-            <a
-              :href="`/profile/${props.handle}`"
+            <NuxtLink
+              :to="`/profile/${props.handle}`"
               class="truncate"
               @click.prevent="clickProfile">
               @{{ props.handle }}
-            </a>
+            </NuxtLink>
           </p>
         </div>
       </div>
@@ -53,11 +55,10 @@
 
 <script setup lang="ts">
   import { FwbAvatar } from 'flowbite-vue'
-  import { useAppConfig, onMounted, ref } from '#imports'
+  import { onMounted, ref, useAppConfig } from '#imports'
   import type { AppBskyActorProfile } from '@atproto/api'
   import { buildBlobRefURL } from '~/utils/bskyutils'
   import type { PropType } from 'vue'
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
 
@@ -89,14 +90,13 @@
       if (props.profile.avatar) {
         let repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
 
-        const url = buildBlobRefURL(
+        avatarURL.value = buildBlobRefURL(
           config.cdnPrefix,
           props.did,
           props.profile,
           'avatar',
           repoEndpoint
         )
-        avatarURL.value = url
       }
     }
   })
