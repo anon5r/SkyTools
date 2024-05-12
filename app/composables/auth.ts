@@ -11,7 +11,8 @@ declare interface LoginState {
   session?: AtpSessionData | undefined
 }
 
-let _agent: Ref<{ [key: string]: BskyAgent }> = ref({})
+// let _agent: Ref<{ [key: string]: BskyAgent }> = ref({})
+let _agent: Ref<Record<string, BskyAgent>> = ref({})
 
 const keyCredentials = 'credentials'
 const keyService = 'service'
@@ -36,6 +37,7 @@ const getAgent = async (pdsEntrypoint?: string): Promise<BskyAgent> => {
     const config = useAppConfig()
     pdsEntrypoint = config.defaultPDSEntrypoint
   }
+  console.log(_agent.value, pdsEntrypoint)
   if (!_agent.value[pdsEntrypoint]) {
     const agent = new BskyAgent({
       service: pdsEntrypoint,
@@ -97,9 +99,9 @@ export const login = async (credentials: {
   }
 }
 
-export const logout = async (): Promise<void> => {
+export const logout = async (pdsEntrypoint?: string): Promise<void> => {
   try {
-    const agent = await getAgent()
+    const agent = await getAgent(pdsEntrypoint)
     if (agent.hasSession) {
       await agent.api.com.atproto.server.deleteSession()
       agent.session = undefined
@@ -116,13 +118,13 @@ export const logout = async (): Promise<void> => {
   }
 }
 
-export const restoreSession = async (): Promise<void> => {
+export const restoreSession = async (pdsEntrypoint?: string): Promise<void> => {
   if (process.client) {
     const credentials: string | null = localStorage.getItem(keyCredentials)
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
-        const agent: BskyAgent = await getAgent()
+        const agent: BskyAgent = await getAgent(pdsEntrypoint)
         const res = await agent.resumeSession(session)
         const useLoginState = useState('loginState', initLoginState)
         useLoginState.value = {

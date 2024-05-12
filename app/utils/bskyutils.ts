@@ -120,7 +120,7 @@ export const resolveHandle = async (
     )
   if (identifier.length > 253) throw new Error('Too long identifier')
 
-  if (!pdsUri) pdsUri = await getPDSEndpointByDID(identifier)
+  if (!pdsUri) pdsUri = 'https://public.api.bsky.app'
 
   try {
     const url = `${pdsUri ?? config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
@@ -164,7 +164,7 @@ export const resolveHandle = async (
 }
 /**
  * Get PDS by DID
- * @param {string} identifier
+ * @param {string} identifier DID
  * @returns {Promise<string>} PDS endpoint
  * @throws {Error} Failed to get PDS endpoint
  */
@@ -178,6 +178,10 @@ export const getPDSEndpointByDID = async (
     const hostname = identifier.substring(8)
     url = `https://${hostname}/.well-known/did.json`
   }
+  if (url.length < 1)
+    throw new Error(
+      `[BskyUtils] getPDSEndpointByDID: Invalid DID format: "${identifier}"`
+    )
   try {
     const res = await axios.get(url)
 
