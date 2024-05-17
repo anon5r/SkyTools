@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@atproto/api": "^0.12.9",
+    "@atproto/identity": "^0.4.0",
     "@awesome.me/kit-e7e521035c": "^1.0.14",
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
