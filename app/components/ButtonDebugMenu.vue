@@ -114,12 +114,12 @@
           </CopyToClipboard>
         </li>
         <li v-if="easterMode && !props.atUri">
-          <NuxtLink
-            :to="`/api/repocar?repo=${encodeURIComponent(props.did)}`"
+          <a
+            :href="`/api/repocar?repo=${encodeURIComponent(props.did)}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
             <font-awesome-icon class="pr-1" icon="fa-solid fa-download" />
             Download CAR
-          </NuxtLink>
+          </a>
         </li>
       </ul>
       <div v-if="props.options" class="py-2">
