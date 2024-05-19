@@ -11,8 +11,8 @@ export default defineEventHandler(async event => {
   if (!actor) return { error: 'No DID provided' }
   if (!actor.startsWith('did:')) return { error: 'Invalid DID' }
 
-  const didResolv = new DidResolver({})
-  const didDoc = await didResolv.resolve(actor)
+  const didResolve = new DidResolver({})
+  const didDoc = await didResolve.resolve(actor)
   if (!didDoc) return { error: 'No DID document found' }
 
   const handle = getHandle(didDoc)
@@ -22,14 +22,13 @@ export default defineEventHandler(async event => {
   const url = `${pdsEndpoint}/xrpc/com.atproto.sync.getRepo?did=${actor}`
 
   try {
-    const response = await axios.get(url, { responseType: 'stream' })
+    const response = await axios.get(url)
     const date = DateTime.now().toFormat('yyyyMMdd_HHmm')
     const filename = `${handle}_${date}.car`
 
     const headers = {
       'Content-Type': 'application/vnd.ipld.car',
       'Content-Disposition': `attachment; filename=${filename}`,
-      'Content-Length': response.headers['content-length'],
       'Cache-Control': 'no-cache',
     }
     return new Response(response.data, { status: 200, headers: headers })
