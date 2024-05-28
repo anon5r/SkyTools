@@ -6,16 +6,21 @@ import { getHandle } from '@atproto/common-web'
 export default defineEventHandler(async event => {
   const query: QueryObject = getQuery(event)
   const actor: string = query.actor as string
-  if (!actor) return { error: 'No `actor` provided' }
+  let result: { error: string } | { did: string; handle: string | undefined } =
+    {
+      error: 'No `actor` provided',
+    }
+  if (!actor) return result
   if (actor.startsWith('did:')) {
     const resolver = new DidResolver({})
     const handle = await resolver.resolve(actor)
-    if (handle) return { did: actor, handle: getHandle(handle) }
+    if (handle) result = { did: actor, handle: getHandle(handle) }
   } else {
     const resolver = new HandleResolver({})
     const did = await resolver.resolve(actor)
     if (did) return { did: did, handle: actor }
   }
 
-  return { error: 'No DID or handle found' }
+  result = { error: 'No DID or handle found' }
+  return result
 })
