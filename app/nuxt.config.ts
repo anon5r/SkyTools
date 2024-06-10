@@ -170,7 +170,7 @@ export default defineNuxtConfig({
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
   build: {
-    transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
+    transpile: ['@atproto/api'],
     analyze: process.env.NODE_ENV !== 'production',
   },
   vite: {
@@ -178,7 +178,7 @@ export default defineNuxtConfig({
       rollupOptions: {
         output: {
           manualChunks: {
-            'atproto/api': ['@atproto/api'],
+            '@atproto/api': ['@atproto/api'],
           },
         },
       },
