@@ -4,7 +4,7 @@ import { DidResolver, HandleResolver } from '@atproto/identity'
 import { getHandle } from '@atproto/common-web'
 import { type DidDocument } from '@atproto/identity/src/types'
 
-const timeoutMS: number = 1000
+const timeoutMS: number = 3000
 export default defineEventHandler(async event => {
   const query: QueryObject = getQuery(event)
   const actor: string = query.actor as string
