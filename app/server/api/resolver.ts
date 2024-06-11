@@ -1,11 +1,10 @@
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
 import type { QueryObject } from 'ufo'
 import { DidResolver, HandleResolver } from '@atproto/identity'
 import { getHandle } from '@atproto/common-web'
-import Protocol from 'wrangler'
-import integer = Protocol.integer
-import { DidDocument } from '@atproto/identity/src/types'
+import { type DidDocument } from '@atproto/identity/src/types'
 
+const timeoutMS: number = 1000
 export default defineEventHandler(async event => {
   const query: QueryObject = getQuery(event)
   const actor: string = query.actor as string
@@ -14,10 +13,8 @@ export default defineEventHandler(async event => {
 
   if (!actor) {
     console.log('No actor provided')
-    return {
-      status: 400,
-      body: { error: 'No `actor` provided' },
-    }
+    setResponseStatus(event, 400)
+    return { error: 'No `actor` provided' }
   }
 
   try {
@@ -50,7 +47,7 @@ export default defineEventHandler(async event => {
       const resolver = new DidResolver({})
       const handle = (await timeout(
         resolver.resolve(actor),
-        5000
+        timeoutMS
       )) as DidDocument
       if (handle) {
         result = { did: actor, handle: getHandle(handle) }
@@ -59,7 +56,7 @@ export default defineEventHandler(async event => {
     } else {
       console.log('Resolving handle:', actor)
       const resolver = new HandleResolver({})
-      const did = (await timeout(resolver.resolve(actor), 5000)) as string
+      const did = (await timeout(resolver.resolve(actor), timeoutMS)) as string
       if (did) {
         result = { did: did, handle: actor }
         console.log('Resolved DID:', result.did)
@@ -68,22 +65,16 @@ export default defineEventHandler(async event => {
 
     if (result.did) {
       console.log('Returning success response:', result)
-      return {
-        status: 200,
-        body: result,
-      }
+      setResponseStatus(event, 200)
+      return result
     } else {
       console.log('Returning not found response:', result)
-      return {
-        status: 404,
-        body: result,
-      }
+      setResponseStatus(event, 404)
+      return result
     }
   } catch (error: Error | any) {
     console.error('Error occurred:', error)
-    return {
-      status: 500,
-      body: { error: error.message },
-    }
+    setResponseStatus(event, 500)
+    return { error: error.message }
   }
 })
