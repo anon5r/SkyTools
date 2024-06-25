@@ -1,4 +1,10 @@
-import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
+import {
+  createError,
+  defineEventHandler,
+  getQuery,
+  sendError,
+  setResponseStatus,
+} from 'h3'
 import type { QueryObject } from 'ufo'
 import { DidResolver, HandleResolver } from '@atproto/identity'
 import { getHandle } from '@atproto/common-web'
@@ -7,14 +13,16 @@ import { type DidDocument } from '@atproto/identity/src/types'
 const timeoutMS: number = 3000
 export default defineEventHandler(async event => {
   const query: QueryObject = getQuery(event)
-  const actor: string = query.actor as string
+  const param: string = query.query as string
 
-  console.log('Received request with actor:', actor)
+  console.log('Received request with query:', param)
 
-  if (!actor) {
-    console.log('No actor provided')
-    setResponseStatus(event, 400)
-    return { error: 'No `actor` provided' }
+  if (!param) {
+    console.log('No query provided')
+    sendError(
+      event,
+      createError({ status: 500, statusText: 'No `query` provided' })
+    )
   }
 
   try {
@@ -42,23 +50,28 @@ export default defineEventHandler(async event => {
       })
     }
 
-    if (actor.startsWith('did:')) {
-      console.log('Resolving DID:', actor)
-      const resolver = new DidResolver({})
+    if (param.startsWith('did:')) {
+      console.log('Resolving DID:', param)
+      const resolver = new DidResolver({
+        timeout: timeoutMS,
+      })
       const handle = (await timeout(
-        resolver.resolve(actor),
+        resolver.resolve(param),
         timeoutMS
       )) as DidDocument
       if (handle) {
-        result = { did: actor, handle: getHandle(handle) }
+        result = { did: param, handle: getHandle(handle) }
         console.log('Resolved handle:', result.handle)
       }
     } else {
-      console.log('Resolving handle:', actor)
-      const resolver = new HandleResolver({})
-      const did = (await timeout(resolver.resolve(actor), timeoutMS)) as string
+      console.log('Resolving handle:', param)
+      const resolver = new HandleResolver({
+        timeout: timeoutMS,
+        backupNameservers: ['1.1.1.1', '1.0.0.1', '8.8.8.8', '8.8.4.4'],
+      })
+      const did = (await timeout(resolver.resolve(param), timeoutMS)) as string
       if (did) {
-        result = { did: did, handle: actor }
+        result = { did: did, handle: param }
         console.log('Resolved DID:', result.did)
       }
     }
@@ -69,12 +82,14 @@ export default defineEventHandler(async event => {
       return result
     } else {
       console.log('Returning not found response:', result)
-      setResponseStatus(event, 404)
-      return result
+      sendError(
+        event,
+        createError({ status: 404, statusText: 'Not found' }),
+        false
+      )
     }
   } catch (error: Error | any) {
     console.error('Error occurred:', error)
-    setResponseStatus(event, 500)
-    return { error: error.message }
+    sendError(event, error, false)
   }
 })
