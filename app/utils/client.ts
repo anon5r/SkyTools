@@ -135,7 +135,7 @@ class ClientPost {
     if (pdsEndpoint) client._endpoint = pdsEndpoint
 
     client._atUri = bskyutils.parseAtUri(atUriPost)
-    const did = client._atUri.did
+    const did = client._atUri.actor
 
     try {
       if (client._endpoint === undefined)
@@ -221,7 +221,7 @@ class ClientPost {
       const record = await bskyutils.getRecord(
         client._endpoint ?? client._config.defaultPDSEntrypoint,
         client._atUri.collection,
-        client._atUri.did,
+        client._atUri.actor,
         client._atUri.rkey
       )
       client._cid = record.data.cid as string

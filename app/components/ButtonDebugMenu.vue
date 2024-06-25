@@ -12,6 +12,9 @@
           <NuxtLink
             :to="`/history?id=${props.handle}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            <font-awesome-icon
+              class="pr-1"
+              icon="fa-solid fa-clock-rotate-left" />
             Handle history
           </NuxtLink>
         </li>
@@ -20,8 +23,8 @@
             :to="`${config.bskyAppURL}/profile/${props.handle}/post/${props.rkey}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon class="pr-1" icon="fa-brands fa-bluesky" />
             Open in Bluesky
-            <font-awesome-icon :icon="['fas', 'arrow-up-right-from-square']" />
           </NuxtLink>
         </li>
         <li v-else-if="props.handle">
@@ -29,8 +32,8 @@
             :to="`${config.bskyAppURL}/profile/${props.handle}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon class="pr-1" icon="fa-brands fa-bluesky" />
             Open in Bluesky
-            <font-awesome-icon icon="fa-solid fa-arrow-up-right-from-square" />
           </NuxtLink>
         </li>
         <li v-if="props.did">
@@ -38,8 +41,10 @@
             :to="`https://web.plc.directory/did/${props.did}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon
+              class="pr-1"
+              icon="fa-solid fa-arrow-up-right-from-square" />
             View DID Doc
-            <font-awesome-icon icon="fa-solid fa-arrow-up-right-from-square" />
           </NuxtLink>
         </li>
         <li v-if="props.rkey">
@@ -47,8 +52,10 @@
             :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.feed.post&rkey=${props.rkey}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon
+              class="pr-1"
+              icon="fa-solid fa-arrow-up-right-from-square" />
             API (Lexicon)
-            <font-awesome-icon :icon="['fas', 'arrow-up-right-from-square']" />
           </NuxtLink>
         </li>
         <li v-else>
@@ -56,8 +63,10 @@
             :to="`${props.pds}/xrpc/com.atproto.repo.getRecord?repo=${props.did}&collection=app.bsky.actor.profile&rkey=self`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon
+              class="pr-1"
+              icon="fa-solid fa-arrow-up-right-from-square" />
             API (Lexicon)
-            <font-awesome-icon icon="fa-solid fa-arrow-up-right-from-square" />
           </NuxtLink>
         </li>
         <li v-if="props.atUri">
@@ -65,8 +74,10 @@
             :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.feed.getPostThread?uri=${props.atUri}&maxLength=100`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon
+              class="pr-1"
+              icon="fa-solid fa-arrow-up-right-from-square" />
             API (Bluesky)
-            <font-awesome-icon :icon="['fas', 'arrow-up-right-from-square']" />
           </NuxtLink>
         </li>
         <li v-else-if="props.handle">
@@ -74,8 +85,10 @@
             :to="`${config.bskyAppURL.replace('https://', 'https://public.api.')}/xrpc/app.bsky.actor.getProfile?actor=${props.handle}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             target="_blank">
+            <font-awesome-icon
+              class="pr-1"
+              icon="fa-arrow-up-right-from-square" />
             API (Bluesky)
-            <font-awesome-icon icon="fa-arrow-up-right-from-square" />
           </NuxtLink>
         </li>
         <li v-if="props.did">
@@ -85,8 +98,8 @@
             success-message="DID copied!"
             error-message="Failed to copy"
             :display-duration="3500">
+            <font-awesome-icon class="pr-1" icon="fa-regular fa-clipboard" />
             Copy DID
-            <font-awesome-icon icon="fa-regular fa-clipboard" />
           </CopyToClipboard>
         </li>
         <li v-if="props.atUri">
@@ -96,17 +109,17 @@
             success-message="Copied!"
             error-message="Failed to copy"
             :display-duration="3500">
+            <font-awesome-icon class="pr-1" icon="fa-regular fa-clipboard" />
             Copy AT URI
-            <font-awesome-icon :icon="['far', 'clipboard']" />
           </CopyToClipboard>
         </li>
         <li v-if="easterMode && !props.atUri">
-          <NuxtLink
-            :to="`${props.pds}/xrpc/com.atproto.sync.getRepo?did=${encodeURIComponent(props.did)}`"
+          <a
+            :href="`/api/repocar?repo=${encodeURIComponent(props.did)}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            <font-awesome-icon class="pr-1" icon="fa-solid fa-download" />
             Download CAR
-            <font-awesome-icon icon="fa-solid fa-download" />
-          </NuxtLink>
+          </a>
         </li>
       </ul>
       <div v-if="props.options" class="py-2">

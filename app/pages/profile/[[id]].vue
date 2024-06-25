@@ -882,7 +882,7 @@
         if (isDev()) console.log('app.bsky.feed.like = ', response.data)
         const records = response.data.records.map(async record => {
           const recordUri = bskyUtils.parseAtUri(record.value.subject.uri)
-          const did = recordUri.did
+          const did = recordUri.actor
           const repoEndpoint = await bskyUtils.getPDSEndpointByDID(did)
           let post = {},
             removed = false
