@@ -12,8 +12,6 @@ import {
   ComAtprotoSyncListRepos,
 } from '@atproto/api'
 import type { BlobRef } from '@atproto/lexicon'
-import { DidResolver, getHandle } from '@atproto/identity'
-import { getPdsEndpoint } from '@atproto/common-web'
 
 const plcURL = 'https://plc.directory'
 let atp: AtpAgent | null = null
@@ -75,32 +73,94 @@ export const resolveDID = async (
   identifier: string,
   onlyHandle: boolean = true
 ): Promise<string> => {
-  const resolver = new DidResolver({ timeout: 2000 })
-  const didDoc = await resolver.resolve(identifier)
-  if (!didDoc) throw new Error(`Invalid DID: '${identifier}'`)
-  return onlyHandle
-    ? (getHandle(didDoc) as string)
-    : (didDoc.alsoKnownAs?.at(0) as string)
+  try {
+    let requestUrl
+    if (identifier.startsWith('did:plc:'))
+      requestUrl = `${plcURL}/${identifier}`
+    else if (identifier.startsWith('did:web:')) {
+      const hostname = identifier.substring(8)
+      requestUrl = `https://${hostname}/.well-known/did.json`
+    } else
+      requestUrl = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+
+    const res = await axios.get(requestUrl)
+
+    if (res.data?.did) {
+      return res.data.did.trim() as string
+    } else if (res.data?.alsoKnownAs) {
+      const handle = res.data.alsoKnownAs[0]
+      return onlyHandle
+        ? formatIdentifier(handle).trim()
+        : (handle.trim() as string)
+    }
+    throw new Error(`Invalid DID: '${identifier}'`)
+  } catch (error: any) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveDID::response.Error')
+      console.error(error)
+    }
+    throw error
+  }
 }
 
 /**
  *
  * @param {string} identifier Handle
+ * @param {string} pdsUri PDS endpoint
  * @returns {string} DID
  * @throws {Error} Invalid handle
  */
-export const resolveHandle = async (identifier: string): Promise<string> => {
+export const resolveHandle = async (
+  identifier: string,
+  pdsUri?: string
+): Promise<string> => {
   if (identifier.startsWith('did:'))
     throw new Error(
       '[BskyUtils] resolveHandle: Invalid handle. Should be a handle, not a DID'
     )
   if (identifier.length > 253) throw new Error('Too long identifier')
-  let res = await fetch(`/api/resolver?actor=${identifier}`)
-  if (res.ok) {
-    const json = await res.json()
-    if (!json.error) return json.did
+
+  if (!pdsUri) pdsUri = 'https://public.api.bsky.app'
+
+  try {
+    const url = `${pdsUri ?? config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
+    let res = await axios.get(url)
+    if (res.status === 200 && res.data?.did) return res.data.did as string
+  } catch (error: any) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error')
+      console.error(error)
+    }
   }
-  throw new Error(`Failed to resolve handle: ${identifier}`)
+
+  try {
+    const url = `https://${identifier}/.well-known/atproto-did`
+    let res = await axios.get(url)
+    if (res.status === 200) return res.data as string
+  } catch (err) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error = ')
+      console.error(err)
+    }
+  }
+  try {
+    // DNS resolve
+    const query = new URLSearchParams({ handle: identifier }).toString()
+    const url = `/api/resolve-handle?${query}`
+    const res = await axios.get(url)
+    if (res.status === 200) {
+      if (res.data.error === undefined && res.data.did.length > 0)
+        return res.data.did[0]
+    }
+
+    throw new Error('Failed to resolve handle')
+  } catch (err: any) {
+    if (isDev()) {
+      console.error('[BskyUtils] resolveHandle::response.Error = ')
+      console.error(err)
+    }
+    throw err
+  }
 }
 /**
  * Get PDS by DID
@@ -110,11 +170,36 @@ export const resolveHandle = async (identifier: string): Promise<string> => {
  */
 export const getPDSEndpointByDID = async (
   identifier: string
-): Promise<string | undefined> => {
-  const resolver = new DidResolver({})
-  const didDoc = await resolver.resolve(identifier)
-  if (!didDoc) throw new Error(`Invalid DID: '${identifier}'`)
-  return getPdsEndpoint(didDoc)
+): Promise<string> => {
+  let url: string = ''
+  if (identifier.startsWith('did:plc:')) {
+    url = `${plcURL}/${identifier}`
+  } else if (identifier.startsWith('did:web:')) {
+    const hostname = identifier.substring(8)
+    url = `https://${hostname}/.well-known/did.json`
+  }
+  if (url.length < 1)
+    throw new Error(
+      `[BskyUtils] getPDSEndpointByDID: Invalid DID format: "${identifier}"`
+    )
+  try {
+    const res = await axios.get(url)
+
+    if (res.data) {
+      for (const service of res.data.service) {
+        if (service.type === 'AtprotoPersonalDataServer') {
+          return service.serviceEndpoint
+        }
+      }
+    }
+    throw new Error('Failed to get PDS endpoint')
+  } catch (err: any) {
+    if (isDev()) {
+      console.error(`[BskyUtils] getPDSEndpointByDID::response.Error`)
+    }
+    console.warn(err)
+    throw err
+  }
 }
 
 /**
@@ -143,14 +228,14 @@ export const getIdentityAuditLogs = async (
 
 /**
  * Parsing at-proto-uri
- * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abbcde12345
+ * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abcde12345
  * @return {object<string, string>} {did: did:plc:xxxxxxxxxxxxx, collection: app.bsky.feed.post, key: abbcde12345}
  * @throws {Error} Invalid URI format
  */
 export const parseAtUri = (uri: string): { [key: string]: string } => {
   const aturi = new AtUri(uri)
   return {
-    actor: aturi.hostname,
+    did: aturi.host,
     collection: aturi.collection,
     rkey: aturi.rkey,
   }
@@ -388,9 +473,9 @@ export const buildPostURL = async (
   if (handle === undefined) {
     try {
       if (isDev()) console.log(atUri)
-      handle = await resolveDID(atUri.actor, false)
+      handle = await resolveDID(atUri.did, false)
     } catch (er) {
-      handle = atUri.actor
+      handle = atUri.did
     }
   }
   return `${urlPrefix}/profile/${handle}/post/${atUri.rkey}`
