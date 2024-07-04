@@ -235,7 +235,7 @@ export const getIdentityAuditLogs = async (
 export const parseAtUri = (uri: string): { [key: string]: string } => {
   const aturi = new AtUri(uri)
   return {
-    did: aturi.host,
+    actor: aturi.host,
     collection: aturi.collection,
     rkey: aturi.rkey,
   }
