@@ -558,7 +558,12 @@
    * @param {object} obj
    */
   const isLoadingState = obj => {
-    return Object.values(obj).every(value => value === true)
+    // Object.keys(obj).forEach(key => {
+    //   console.log(`loadingState[${key}]: `, obj[key])
+    // })
+    return Object.values(obj).every(value => {
+      return value === true
+    })
   }
   /**
    * Stop all loading state
@@ -702,6 +707,7 @@
       updateUserInfo('posts', [])
       updateUserInfo('following', [])
       updateUserInfo('like', [])
+      updateUserInfo('list', [])
       updateUserInfo('blocks', [])
 
       if (err.name === 'UnauthenticatedError') {
@@ -712,7 +718,7 @@
         })
       } else {
         hasError.value = true
-        updateUserInfo('details', {})
+        if (userinfo.value.details.length < 1) updateUserInfo('details', {})
         updateUserInfo('profile', { displayName: 'Error: Unknown' })
 
         if (id.value.startsWith('did:')) {
@@ -723,7 +729,7 @@
         } else {
           userinfo.value.details = {
             handle: id.value,
-            did: 'error:unknown:unknown',
+            did: userinfo.value.details.did ?? 'error:unknown:unknown',
           }
         }
       }
@@ -739,7 +745,7 @@
   }
 
   /**
-   * update user datum
+   * update user data
    * @param {string} item
    * @param {any} value
    */
@@ -750,7 +756,7 @@
   }
 
   /**
-   * add items to user datum
+   * add items to user data
    * @param {string} item
    * @param {array} records
    */
@@ -783,6 +789,8 @@
     const agent = new AtpAgent({
       service: userinfo.value.endpoint,
     })
+
+    updateUserInfo('details', { did: did })
     const details = await agent.api.com.atproto.repo.describeRepo({
       repo: did,
     })
@@ -1169,7 +1177,20 @@
         cursor
       )
       if (response.success) {
-        const records = response.data.records.map(async record => {
+        let data = response.data.records
+        if (!easterMode.value) {
+          data = data.filter(async record => {
+            console.log(
+              'purpose =',
+              record.value.purpose,
+              record.value.purpose.lastIndexOf('#modlist')
+            )
+
+            return record.value.purpose.lastIndexOf('#modlist') < 0
+          })
+          console.log(data)
+        }
+        const records = data.map(async record => {
           return {
             ...record,
             purpose: record.value.purpose.substring(
