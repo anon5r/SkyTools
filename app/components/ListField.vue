@@ -31,15 +31,15 @@
           <!-- DisplayName -->
           <font-awesome-icon
             v-if="props.list.purpose === 'app.bsky.graph.defs#curatelist'"
-            class="mr-2"
+            class="mr-2 text-slate-400 dark:text-slate-500"
             icon="people-group" />
           <font-awesome-icon
             v-if="props.list.purpose === 'app.bsky.graph.defs#modlist'"
-            class="mr-2"
+            class="mr-2 text-slate-400 dark:text-slate-500"
             icon="comment-slash" />
           <font-awesome-icon
             v-if="props.list?.purpose === 'app.bsky.graph.defs#referencelist'"
-            class="mr-2"
+            class="mr-2 text-slate-400 dark:text-slate-500"
             icon="thumbs-up" />
           <NuxtLink :to="`/profile/${props.handle}/list/${rkey}`" class="">
             {{ props.list.name }}
