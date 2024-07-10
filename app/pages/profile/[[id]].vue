@@ -1179,13 +1179,7 @@
       if (response.success) {
         let data = response.data.records
         if (!easterMode.value) {
-          data = data.filter(async record => {
-            console.log(
-              'purpose =',
-              record.value.purpose,
-              record.value.purpose.lastIndexOf('#modlist')
-            )
-
+          data = data.filter(record => {
             return record.value.purpose.lastIndexOf('#modlist') < 0
           })
           console.log(data)

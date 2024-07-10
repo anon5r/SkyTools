@@ -41,17 +41,20 @@
             v-if="props.list?.purpose === 'app.bsky.graph.defs#referencelist'"
             class="mr-2 text-slate-400 dark:text-slate-500"
             icon="thumbs-up" />
-          <NuxtLink :to="`/profile/${props.handle}/list/${rkey}`" class="">
+          <NuxtLink
+            :to="`https://bsky.app/profile/${props.handle}/lists/${rkey}`"
+            class="">
             {{ props.list.name }}
           </NuxtLink>
           <p
             class="md:text-sm text-xs font-mono text-gray-500 dark:text-slate-500">
             <!-- Handle -->
+            by
             <NuxtLink
               :to="`/profile/${props.handle}`"
               class="truncate"
               @click.prevent="clickProfile">
-              by @{{ props.handle }}
+              @{{ props.handle }}
             </NuxtLink>
           </p>
         </div>
