@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
   import type { Ref } from '#imports'
-  import { defineComponent, onMounted, ref } from '#imports'
+  import { defineComponent, onMounted, ref, reloadNuxtApp } from '#imports'
 
   defineComponent({ name: 'ToggleDarkmode' })
   // Define the key for color theme
@@ -80,13 +80,14 @@
           !localStorage.getItem('_easter') ||
           localStorage.getItem('_easter') === 'false'
         ) {
-          alert('Found the Easter egg!')
+          alert('Found the Easter egg! 🥚')
           localStorage.setItem('_easter', 'true')
         } else {
-          alert('Lost an egg...')
+          alert('Lost an egg... 🐣')
           localStorage.setItem('_easter', 'false')
           localStorage.removeItem('_easter')
         }
+        reloadNuxtApp()
       }
     } else {
       toggleCount.value = 0

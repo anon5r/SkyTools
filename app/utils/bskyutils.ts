@@ -2,7 +2,9 @@ import axios, { type AxiosResponse } from 'axios'
 import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
+  AppBskyFeedGenerator,
   type AppBskyFeedPost,
+  AppBskyGraphList,
   AtpAgent,
   AtUri,
   ComAtprotoRepoDescribeRepo,
@@ -433,17 +435,26 @@ export const loadProfile = async (
 export const buildBlobRefURL = (
   cdnURL: string,
   did: string,
-  record: AppBskyActorProfile.Record,
+  record:
+    | AppBskyActorProfile.Record
+    | AppBskyGraphList.Record
+    | AppBskyFeedGenerator.Record,
   itemName: string,
   endpoint?: string | undefined
 ): string => {
-  if (!AppBskyActorProfile.isRecord(record)) {
+  if (
+    !(
+      AppBskyActorProfile.isRecord(record) ||
+      AppBskyGraphList.isRecord(record) ||
+      AppBskyFeedGenerator.isRecord(record)
+    )
+  ) {
     console.info(did, itemName, endpoint)
     console.dir(record)
-    throw new Error(`Invalid profile record: ${did}`)
+    throw new Error(`Invalid record type: ${did}`)
   }
   if (record[itemName] === undefined) {
-    console.warn(`Not found blob field "${itemName}" in profile : ${did}`)
+    console.warn(`Not found blob field "${itemName}" in record : ${did}`)
     return ''
   }
   if (endpoint !== undefined && endpoint.startsWith('http')) {
