@@ -115,7 +115,7 @@
         </li>
         <li v-if="easterMode && !props.atUri">
           <NuxtLink
-            :href="`/api/repocar?repo=${encodeURIComponent(props.did)}`"
+            :to="`${props.pds}/xrpc/com.atproto.sync.getRepo?did=${encodeURIComponent(props.did)}`"
             class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
             <font-awesome-icon class="pr-1" icon="fa-solid fa-download" />
             Download CAR
