@@ -180,6 +180,9 @@ export default defineNuxtConfig({
           manualChunks: {
             '@atproto/api': ['@atproto/api'],
           },
+          assetFileNames: '[name]-[hash].[ext]',
+          chunkFileNames: '[name]-[hash].js',
+          entryFileNames: '[name]-[hash].js',
         },
       },
     },
