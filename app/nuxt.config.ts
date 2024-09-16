@@ -169,6 +169,9 @@ export default defineNuxtConfig({
   cloudflareAnalytics: {
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
+  nitro: {
+    preset: 'cloudflare-pages',
+  },
   build: {
     transpile: ['@atproto/api'],
     analyze: process.env.NODE_ENV !== 'production',
