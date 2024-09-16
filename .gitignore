@@ -132,3 +132,4 @@ dist
 
 # JetBrains IDEs
 .idea
+/app/wrangler.toml
