@@ -187,11 +187,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  nitro: {
-    prerender: {
-      autoSubfolderIndex: false,
-    },
-  },
   routeRules: {
     // Generated at build time for SEO purpose
     '/': { prerender: true },
