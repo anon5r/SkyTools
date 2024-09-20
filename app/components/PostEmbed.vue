@@ -85,13 +85,7 @@
 </script>
 
 <style scoped>
-  .at-handle::before {
-    content: '@';
-  }
   .avatar-object-cover :deep(img) {
     @apply object-cover;
-  }
-  .max-w-xxs {
-    max-width: 15rem;
   }
 </style>

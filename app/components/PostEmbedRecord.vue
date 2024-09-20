@@ -126,3 +126,8 @@
     }
   }
 </script>
+<style scoped>
+  .at-handle::before {
+    content: '@';
+  }
+</style>
