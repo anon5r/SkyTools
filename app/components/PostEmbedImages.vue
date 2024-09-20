@@ -29,7 +29,7 @@
 <script setup lang="ts">
   import { useAppConfig } from '#imports'
   import { AppBskyEmbedImages } from '@atproto/api'
-  import { defineProps, type PropType } from 'vue'
+  import { type PropType } from 'vue'
 
   /** @type {AppBskyEmbedImages} props.embed */
   /** @type {string} props.did */

@@ -145,7 +145,7 @@
 <script setup lang="ts">
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { useAppConfig } from '#imports'
-  import { defineProps } from 'vue'
+
   const config = useAppConfig()
   const easterMode = localStorage.getItem('_easter') === 'true'
 

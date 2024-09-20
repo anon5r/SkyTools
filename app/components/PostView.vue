@@ -139,15 +139,15 @@
 
 <script setup lang="ts">
   import {
-    useAppConfig,
+    ClientPost,
+    isDev,
     onMounted,
     ref,
+    useAppConfig,
     useAuth,
-    isDev,
-    ClientPost,
   } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, type PropType, type Ref } from 'vue'
+  import { type PropType, type Ref } from 'vue'
   import { DateTime } from 'luxon'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'

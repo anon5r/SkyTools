@@ -22,13 +22,13 @@
 </template>
 
 <script setup lang="ts">
-  import { defineProps, type PropType } from 'vue'
+  import { type PropType } from 'vue'
   import { onMounted } from '#imports'
   import {
+    AppBskyEmbedExternal,
     AppBskyEmbedImages,
     AppBskyEmbedRecord,
     AppBskyEmbedRecordWithMedia,
-    AppBskyEmbedExternal,
   } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
   import PostEmbedRecord from '~/components/PostEmbedRecord.vue'

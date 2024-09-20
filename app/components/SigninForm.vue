@@ -88,8 +88,7 @@
 </template>
 
 <script setup>
-  import { useAppConfig, ref, useRoute, useState } from '#imports'
-  import { defineProps } from 'vue'
+  import { ref, useAppConfig, useRoute, useState } from '#imports'
   import { isDev } from '~/utils/helpers'
   import { initLoginState, login as AuthLogin } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'

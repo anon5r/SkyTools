@@ -72,8 +72,8 @@
 
 <script setup lang="ts">
   import { AppBskyEmbedRecord } from '@atproto/api'
-  import { defineProps, type Ref } from 'vue'
-  import { ClientPost, ref, useAppConfig, isDev } from '#imports'
+  import { type Ref } from 'vue'
+  import { ClientPost, isDev, ref, useAppConfig } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
 
   /** @type {AppBskyEmbedRecord} props.embed */

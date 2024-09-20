@@ -10,7 +10,6 @@
 
 <script setup>
   import { onMounted, ref } from '#imports'
-  import { defineProps } from 'vue'
   import { parseAtUri, resolveDID } from '~/utils/bskyutils'
   import { ClientPost } from '@/utils/client'
 
