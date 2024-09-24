@@ -186,7 +186,7 @@ export const getRecord = async (
   try {
     const response: ComAtprotoRepoGetRecord.Response = await createAtpAgent(
       repoEndpoint
-    ).api.com.atproto.repo.getRecord({
+    ).com.atproto.repo.getRecord({
       repo: repo,
       collection: collection,
       rkey: recordKey,
@@ -224,7 +224,7 @@ export const listRecords = async (
   try {
     const response = await createAtpAgent(
       repoEndpoint
-    ).api.com.atproto.repo.listRecords({
+    ).com.atproto.repo.listRecords({
       collection: collection,
       repo: identifier,
       limit: limit,
@@ -299,7 +299,7 @@ export const getPost = async (
 export const describeRepo = async (id: string): Promise<any> => {
   try {
     const response: ComAtprotoRepoDescribeRepo.Response =
-      await createAtpAgent().api.com.atproto.repo.describeRepo({
+      await createAtpAgent().com.atproto.repo.describeRepo({
         repo: id,
       })
 
@@ -401,7 +401,7 @@ export const describeServer = async (
 ): Promise<ComAtprotoServerDescribeServer.OutputSchema> => {
   try {
     const response: ComAtprotoServerDescribeServer.Response =
-      await createAtpAgent(server).api.com.atproto.server.describeServer()
+      await createAtpAgent(server).com.atproto.server.describeServer()
     if (response.success) {
       return response.data
     }
@@ -422,7 +422,7 @@ export const listRepos = async (
 ): Promise<ComAtprotoSyncListRepos.Repo[]> => {
   const response: ComAtprotoSyncListRepos.Response = await createAtpAgent(
     pdsUri
-  ).api.com.atproto.sync.listRepos({
+  ).com.atproto.sync.listRepos({
     limit: limit ?? undefined,
     cursor: cursor ?? undefined,
   })
