@@ -5,13 +5,13 @@ import {
   type AppBskyFeedPost,
   AtpAgent,
   AtUri,
-  ComAtprotoRepoDescribeRepo,
+  type BlobRef,
+  type ComAtprotoRepoDescribeRepo,
   type ComAtprotoRepoGetRecord,
   type ComAtprotoRepoListRecords,
   ComAtprotoServerDescribeServer,
   ComAtprotoSyncListRepos,
 } from '@atproto/api'
-import type { BlobRef } from '@atproto/lexicon'
 import { DidResolver, getHandle } from '@atproto/identity'
 import { getPdsEndpoint } from '@atproto/common-web'
 
