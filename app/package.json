@@ -52,7 +52,7 @@
     "wrangler": "^3.62.0"
   },
   "dependencies": {
-    "@atproto/api": "^0.12.22",
+    "@atproto/api": "^0.13.7",
     "@awesome.me/kit-e7e521035c": "^1.0.14",
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
