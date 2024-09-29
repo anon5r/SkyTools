@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span v-html="refText.unicodeText"></span>
+    <span v-html="formattedText"></span>
   </div>
 </template>
 
@@ -27,81 +27,60 @@
       }
     )
   )
-  const facets: AppBskyRichtextFacet.Main[] | undefined = props.facets
 
-  if (facets) {
-    if (isDev()) {
-      console.log('refText = ', refText.value)
-      console.log('facets = ', facets)
+  const escapeHTML = (text: string) => {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+  }
+
+  // Generate links and escaped text
+  const generateFormattedText = (
+    text: UnicodeString,
+    facets: AppBskyRichtextFacet.Main[] | undefined
+  ) => {
+    if (!facets) {
+      // there are no facets, the whole string is escaped and displayed.
+      return escapeHTML(text.toString())
     }
 
-    // Process from last to first
-    facets.reverse()?.filter((facet: AppBskyRichtextFacet.Main) => {
-      const mention = facet.features.find(feature =>
-        AppBskyRichtextFacet.isMention(feature)
-      )
-      const linkURL = facet.features.find(feature =>
-        AppBskyRichtextFacet.isLink(feature)
-      )
-      const hashTags = facet.features.find(feature =>
-        AppBskyRichtextFacet.isTag(feature)
+    let formattedText = ''
+    let lastIndex = 0
+
+    facets.forEach(facet => {
+      const { byteStart, byteEnd } = facet.index
+      const linkFeature = facet.features.find(
+        feature => feature.$type === 'app.bsky.richtext.facet#link'
       )
 
-      // Mention
-      if (mention) {
-        const { byteStart, byteEnd } = facet.index
-        const mentionText = refText.value.unicodeText.slice(byteStart, byteEnd)
+      if (linkFeature && 'uri' in linkFeature) {
+        // Create link from byteStart until byteEnd
+        const plainTextBeforeLink = text.slice(lastIndex, byteStart)
+        const linkText = text.slice(byteStart, byteEnd)
+        const escapedBeforeLink = escapeHTML(plainTextBeforeLink)
         if (isDev()) {
-          console.log('mention = ', mention)
-          console.log('mentionText = ', mentionText)
+          console.log('linkURL = ', linkFeature.uri)
+          console.log('textURL = ', linkText)
         }
-        const linkedText = new UnicodeString(
-          `<a class="text-blue-500" href="/profile/${mention?.did}">${mentionText}</a>`
-        )
-        refText.value.unicodeText = new UnicodeString(
-          refText.value.unicodeText.slice(0, byteStart) +
-            linkedText +
-            refText.value.unicodeText.slice(byteEnd)
-        )
-        facet.index.byteEnd = byteStart + linkedText.utf16.length
-      }
-      // Link URL
-      if (linkURL) {
-        const { byteStart, byteEnd } = facet.index
-        if (isDev()) console.log('facet.index = ', facet.index)
-        const textURL = refText.value.unicodeText.slice(byteStart, byteEnd)
-        if (isDev()) {
-          console.log('linkURL = ', linkURL)
-          console.log('textURL = ', textURL)
-        }
-        const linkedText = new UnicodeString(
-          `<a class="text-blue-500" href="${linkURL.uri}">${textURL}</a>`
-        )
-        refText.value.unicodeText = new UnicodeString(
-          refText.value.unicodeText.slice(0, byteStart) +
-            linkedText +
-            refText.value.unicodeText.slice(byteEnd)
-        )
-        facet.index.byteEnd = byteStart + linkedText.utf16.length
-      }
-      // HashTags
-      if (hashTags) {
-        const { byteStart, byteEnd } = facet.index
-        const textTag = refText.value.unicodeText.slice(byteStart, byteEnd)
-        if (isDev()) {
-          console.log('hashTags = ', hashTags)
-          console.log('textTag = ', textTag)
-        }
-        const linkedText = new UnicodeString(
-          `<a class="text-blue-500" href="https://bsky.app/search?q=%23${hashTags.tag}">${textTag}</a>`
-        )
-        refText.value.unicodeText = new UnicodeString(
-          refText.value.unicodeText.slice(0, byteStart) +
-            linkedText +
-            refText.value.unicodeText.slice(byteEnd)
-        )
-        facet.index.byteEnd = byteStart + linkedText.utf16.length
+
+        formattedText += escapedBeforeLink
+        formattedText += `<a href="${linkFeature.uri}" class="text-blue-500">${escapeHTML(linkText)}</a>`
+
+        lastIndex = byteEnd
       }
     })
+
+    // Add escaped text after the last link
+    formattedText += escapeHTML(text.slice(lastIndex))
+
+    return formattedText
   }
+
+  // Generates text to display
+  const formattedText = ref(
+    generateFormattedText(refText.value.unicodeText, props.facets)
+  )
 </script>

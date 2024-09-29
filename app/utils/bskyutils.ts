@@ -2,7 +2,9 @@ import axios, { type AxiosResponse } from 'axios'
 import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
+  AppBskyFeedGenerator,
   type AppBskyFeedPost,
+  AppBskyGraphList,
   AtpAgent,
   AtUri,
   type BlobRef,
@@ -143,14 +145,14 @@ export const getIdentityAuditLogs = async (
 
 /**
  * Parsing at-proto-uri
- * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abbcde12345
+ * @param {string} uri at://did:plc:xxxxxxxxxxxxx/app.bsky.feed.post/abcde12345
  * @return {object<string, string>} {did: did:plc:xxxxxxxxxxxxx, collection: app.bsky.feed.post, key: abbcde12345}
  * @throws {Error} Invalid URI format
  */
 export const parseAtUri = (uri: string): { [key: string]: string } => {
   const aturi = new AtUri(uri)
   return {
-    actor: aturi.hostname,
+    actor: aturi.host,
     collection: aturi.collection,
     rkey: aturi.rkey,
   }
@@ -348,17 +350,26 @@ export const loadProfile = async (
 export const buildBlobRefURL = (
   cdnURL: string,
   did: string,
-  record: AppBskyActorProfile.Record,
+  record:
+    | AppBskyActorProfile.Record
+    | AppBskyGraphList.Record
+    | AppBskyFeedGenerator.Record,
   itemName: string,
   endpoint?: string | undefined
 ): string => {
-  if (!AppBskyActorProfile.isRecord(record)) {
+  if (
+    !(
+      AppBskyActorProfile.isRecord(record) ||
+      AppBskyGraphList.isRecord(record) ||
+      AppBskyFeedGenerator.isRecord(record)
+    )
+  ) {
     console.info(did, itemName, endpoint)
     console.dir(record)
-    throw new Error(`Invalid profile record: ${did}`)
+    throw new Error(`Invalid record type: ${did}`)
   }
   if (record[itemName] === undefined) {
-    console.warn(`Not found blob field "${itemName}" in profile : ${did}`)
+    console.warn(`Not found blob field "${itemName}" in record : ${did}`)
     return ''
   }
   if (endpoint !== undefined && endpoint.startsWith('http')) {
@@ -388,9 +399,9 @@ export const buildPostURL = async (
   if (handle === undefined) {
     try {
       if (isDev()) console.log(atUri)
-      handle = await resolveDID(atUri.actor, false)
+      handle = await resolveDID(atUri.did, false)
     } catch (er) {
-      handle = atUri.actor
+      handle = atUri.did
     }
   }
   return `${urlPrefix}/profile/${handle}/post/${atUri.rkey}`

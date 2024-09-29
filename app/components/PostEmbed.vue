@@ -29,20 +29,22 @@
     AppBskyEmbedImages,
     AppBskyEmbedRecord,
     AppBskyEmbedRecordWithMedia,
+    AppBskyEmbedVideo,
   } from '@atproto/api'
   import { isDev } from '@/utils/helpers'
   import PostEmbedRecord from '~/components/PostEmbedRecord.vue'
   import PostEmbedImages from '~/components/PostEmbedImages.vue'
+  import PostEmbedVideo from '~/components/PostEmbedVideo.vue'
   import PostEmbedExternal from '~/components/PostEmbedExternal.vue'
   import PostEmbedRecordWithMedia from '~/components/PostEmbedRecordWithMedia.vue'
 
-  /** @type {AppBskyEmbedRecord|AppBskyEmbedImages|AppBskyEmbedRecordWithMedia|AppBskyEmbedExternal} props.embed */
+  /** @type {AppBskyEmbedRecord|AppBskyEmbedImages|AppBskyEmbedVideo|AppBskyEmbedRecordWithMedia|AppBskyEmbedExternal} props.embed */
   /** @type {string} props.did */
   /** @type {string} props.repo */
   const props = defineProps({
     embed: {
       type: Object as PropType<
-        | AppBskyEmbedImages.Main
+        AppBskyEmbedImages.Main | AppBskyEmbedVideo.Main,
         | AppBskyEmbedRecord.Main
         | AppBskyEmbedRecordWithMedia.Main
         | AppBskyEmbedExternal.Main
@@ -75,6 +77,10 @@
       console.log(
         AppBskyEmbedImages.isMain(props.embed) ? '✅️' : '❌️',
         '[PostEmbed.vue:EmbedImages] '
+      )
+      console.log(
+        AppBskyEmbedVideo.isMain(props.embed) ? '✅️' : '❌️',
+        '[PostEmbed.vue:EmbedVideo] '
       )
       console.log(
         AppBskyEmbedExternal.isMain(props.embed) ? '✅️' : '❌️',
