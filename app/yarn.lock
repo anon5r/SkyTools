@@ -29,17 +29,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atproto/api@npm:^0.12.22":
-  version: 0.12.22
-  resolution: "@atproto/api@npm:0.12.22"
+"@atproto/api@npm:^0.13.7":
+  version: 0.13.7
+  resolution: "@atproto/api@npm:0.13.7"
   dependencies:
     "@atproto/common-web": ^0.3.0
-    "@atproto/lexicon": ^0.4.0
+    "@atproto/lexicon": ^0.4.1
     "@atproto/syntax": ^0.3.0
-    "@atproto/xrpc": ^0.5.0
+    "@atproto/xrpc": ^0.6.2
+    await-lock: ^2.2.2
     multiformats: ^9.9.0
     tlds: ^1.234.0
-  checksum: e8fd00254e1e2bfdbf66325a94ecee5dd4d4f34c7b0daac5f45c41f24c727beddad425c48378746140d208186438635cd696f0edfbef02371b74698aa057ee36
+    zod: ^3.23.8
+  checksum: d3839374123e129abeb6cf2027a531d99ce719a50819a2d010cb78cfb6d121d3d085b7a262ae46f5f9cee731d41ed050a0da6df4d23ce99847e7ea42982046f7
   languageName: node
   linkType: hard
 
@@ -77,16 +79,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atproto/lexicon@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@atproto/lexicon@npm:0.4.0"
+"@atproto/lexicon@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@atproto/lexicon@npm:0.4.1"
   dependencies:
     "@atproto/common-web": ^0.3.0
     "@atproto/syntax": ^0.3.0
     iso-datestring-validator: ^2.2.2
     multiformats: ^9.9.0
-    zod: ^3.21.4
-  checksum: 5996ca4fc44c1a4c610d7f17a2929199929f464ca6f3e3f61249ef3621ab472ba4f0010a1d9f531d9a41c90bb91d7c7c2c69978230b129a6e588933947528639
+    zod: ^3.23.8
+  checksum: b954fbc9c22d508c1990e917352ee172114fe0a227bcfe69a0c5c64f19f2a0995c291f11dbc0a4126283e15f53fbd8bf2c46f7e6e72be017618d03bb23026679
   languageName: node
   linkType: hard
 
@@ -97,13 +99,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atproto/xrpc@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@atproto/xrpc@npm:0.5.0"
+"@atproto/xrpc@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "@atproto/xrpc@npm:0.6.2"
   dependencies:
-    "@atproto/lexicon": ^0.4.0
-    zod: ^3.21.4
-  checksum: 6cee38ede6a88c2d3df7ab3d347fa2dcb46a74b03b706f6f963c0003833e3af41925c535ce7da1df392417c888485ac15dc45a9a67fb7b653fc81498a45e8705
+    "@atproto/lexicon": ^0.4.1
+    zod: ^3.23.8
+  checksum: 82324b1bb6fd7528f0d3c05a7833e5e89a6aa9f4a66e587886cfa2c9c04589968f528eb28217fd0d3d3080c11281625d23217cd3bfb3b397f419553978b2b2d5
   languageName: node
   linkType: hard
 
@@ -4103,6 +4105,13 @@ __metadata:
   dependencies:
     possible-typed-array-names: ^1.0.0
   checksum: 1aa3ffbfe6578276996de660848b6e95669d9a95ad149e3dd0c0cda77db6ee1dbd9d1dd723b65b6d277b882dd0c4b91a654ae9d3cf9e1254b7e93e4908d78fd3
+  languageName: node
+  linkType: hard
+
+"await-lock@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "await-lock@npm:2.2.2"
+  checksum: feb11f36768a8545879ed2d214b46aae484e6564ffa466af9212d5782897203770795cae01f813de04a46f66c0b8ee6bc690a0c435b04e00cad5a18ef0842e25
   languageName: node
   linkType: hard
 
@@ -10768,7 +10777,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "skytools-app@workspace:."
   dependencies:
-    "@atproto/api": ^0.12.22
+    "@atproto/api": ^0.13.7
     "@atproto/identity": ^0.4.0
     "@awesome.me/kit-e7e521035c": ^1.0.14
     "@fortawesome/fontawesome-free": ^6.5.2
@@ -12703,7 +12712,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.21.4, zod@npm:^3.22.3":
+"zod@npm:^3.21.4, zod@npm:^3.22.3, zod@npm:^3.23.8":
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 15949ff82118f59c893dacd9d3c766d02b6fa2e71cf474d5aa888570c469dbf5446ac5ad562bb035bf7ac9650da94f290655c194f4a6de3e766f43febd432c5c
