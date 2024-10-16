@@ -173,11 +173,17 @@ export default defineNuxtConfig({
     preset: 'cloudflare-pages',
   },
   build: {
-    transpile: ['@atproto/api'],
+    transpile: ['@atproto/api', '@atproto/common-web', '@atproto/identity'],
     analyze: process.env.NODE_ENV !== 'production',
   },
   vite: {
+    optimizeDeps: {
+      include: ['@atproto/api'],
+    },
     build: {
+      commonjsOptions: {
+        transformMixedEsModules: true,
+      },
       rollupOptions: {
         output: {
           manualChunks: {

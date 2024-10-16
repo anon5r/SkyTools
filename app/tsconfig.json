@@ -3,4 +3,8 @@
   "buildOptions": {
     "target": "next"
   },
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  }
 }
