@@ -3,7 +3,7 @@ import { isDev } from '@/utils/helpers'
 import {
   AppBskyActorProfile,
   AppBskyFeedGenerator,
-  type AppBskyFeedPost,
+  AppBskyFeedPost,
   AppBskyGraphList,
   AtpAgent,
   AtUri,
@@ -400,7 +400,7 @@ export const buildPostURL = async (
     try {
       if (isDev()) console.log(atUri)
       handle = await resolveDID(atUri.did, false)
-    } catch (er) {
+    } catch {
       handle = atUri.did
     }
   }
