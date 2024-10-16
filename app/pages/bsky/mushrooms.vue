@@ -6,9 +6,11 @@
   const bskyPDS: Record<string, string[]> = {
     'us-east': [
       'amanita',
+      'coral',
       'enoki',
       'inkcap',
       'lionsmane',
+      'lobster',
       'morel',
       'oyster',
       'porcini',
@@ -25,9 +27,11 @@
       'hedgehog',
       'hydnum',
       'lepista',
+      'magic',
       'maitake',
       'russula',
       'verpa',
+      'woodear',
     ],
   }
   const accounts: Ref<
