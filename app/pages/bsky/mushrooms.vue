@@ -5,18 +5,14 @@
 
   const bskyPDS: Record<string, string[]> = {
     'us-east': [
-      'amanita',
       'coral',
       'enoki',
       'inkcap',
-      'lionsmane',
       'lobster',
       'morel',
       'oyster',
       'porcini',
       'puffball',
-      'shiitake',
-      'shimeji',
     ],
     'us-west': [
       'agaric',
@@ -29,10 +25,9 @@
       'conocybe',
       'cordyceps',
       'cremini',
-      'hedgehog',
-      'hydnum',
       'ganoderma',
       'gomphus',
+      'hydnum',
       'lepista',
       'magic',
       'maitake',
