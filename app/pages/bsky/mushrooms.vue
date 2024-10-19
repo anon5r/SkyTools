@@ -47,7 +47,7 @@
       {
         did: string
         handle: string
-        profile: AppBskyActorProfile.Record
+        profile: AppBskyActorProfile.Record | null
         pds: string
       }[]
     >
@@ -78,15 +78,17 @@
   const addAccounts = async (did: string, pds: string) => {
     const pdsUri = `https://${pds}`
     const handle: string = await bskyutils.resolveDID(did)
-    const record: AppBskyActorProfile.Record = await bskyutils.loadProfile(
-      pdsUri,
-      handle
-    )
+    let profile: AppBskyActorProfile.Record | null = null
+    try {
+      profile = await bskyutils.loadProfile(pdsUri, handle)
+    } catch (err) {
+      console.error(err)
+    }
     if (!accounts.value[pds as string]) accounts.value[pds as string] = []
     accounts.value[pds as string].push({
       did: did,
       handle: handle,
-      profile: record,
+      profile: profile,
       pds: pdsUri,
     })
   }
