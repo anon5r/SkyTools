@@ -1,16 +1,8 @@
-import type { EventContext } from '@cloudflare/workers-types'
 import { DidResolver } from '@atproto/identity'
 import { DateTime } from 'luxon'
+import { getHandle, getPdsEndpoint } from '@atproto/common-web'
 
-interface Env {
-  MY_SECRET: string
-}
-
-interface Params {
-  id: string
-}
-
-export async function onRequest(context: EventContext<Env, Params, unknown>) {
+export async function onRequest(context: any) {
   const url = new URL(context.request.url)
   const actor = url.searchParams.get('repo')
 
