@@ -2,6 +2,11 @@
   <article
     class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
     :id="`post-${props.rkey ?? props.cid}`">
+    <font-awesome-icon
+      :icon="['fas', 'thumbtack']"
+      v-if="props.isPinned"
+      class="ml-2"
+      style="color: #ffd43b" />
     <div class="flex justify-between items-center mb-2">
       <div class="flex items-center">
         <div
@@ -139,12 +144,12 @@
 
 <script setup lang="ts">
   import {
-    useAppConfig,
+    ClientPost,
+    isDev,
     onMounted,
     ref,
+    useAppConfig,
     useAuth,
-    isDev,
-    ClientPost,
   } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
   import { defineProps, type PropType, type Ref } from 'vue'
@@ -184,6 +189,11 @@
     profile: {
       type: Object as PropType<AppBskyActorProfile.Record>,
       required: true,
+    },
+    isPinned: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   })
   const config: AppConfig = useAppConfig()
@@ -248,6 +258,7 @@
           props.uri,
           pdsEndpoint.value
         )
+        // ClientPost.loadProfileBlobs(client)
 
         isHidden.value = client.isHidden
         if (auth.isLoggedIn()) {

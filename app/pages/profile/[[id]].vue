@@ -209,8 +209,22 @@
         <div class="pt-2">
           <fwb-tabs v-model="activeTab" class="pt-1 px-1">
             <fwb-tab name="posts" title="Posts" id="posts">
-              <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
+                <!-- Pinned post -->
+                <div v-if="userinfo.profile.pinnedPost">
+                  <PostView
+                    :did="userinfo.details.did"
+                    :uri="userinfo.profile.pinnedPost.uri"
+                    :cid="userinfo.profile.pinnedPost.cid"
+                    :rkey="
+                      bskyutils.parseAtUri(userinfo.profile.pinnedPost.uri).rkey
+                    "
+                    :pds="userinfo.endpoint"
+                    :profile="userinfo.profile"
+                    :isPinned="true" />
+                </div>
+
+                <!-- Posts -->
                 <div v-for="record of userinfo.posts" :key="record.cid">
                   <PostView
                     :did="userinfo.details.did"
