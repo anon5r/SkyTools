@@ -1,7 +1,7 @@
 import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
 import * as bskyutils from '~/utils/bskyutils'
 import { isDev } from '~/utils/helpers'
-import { UnauthenticatedError, BlockedError } from '~/errors/BskyErrors'
+import { BlockedError, UnauthenticatedError } from '~/errors/BskyErrors'
 
 const cdnURL = process.env.cdnPrefix || 'https://cdn-skytools.anon5r.com/proxy'
 
@@ -190,7 +190,7 @@ class ClientPost {
     // Avatar
     client._avatarURL = bskyutils.buildBlobRefURL(
       cdnURL,
-      client.atUri.did,
+      client.atUri.actor,
       client.profile as AppBskyActorProfile.Record,
       'avatar',
       client._endpoint
