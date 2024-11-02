@@ -963,6 +963,8 @@
     loadState.value[name] = false
     if (name === 'posts') {
       records = await fetchPosts(id.value, fetchCount, cursor)
+    } else if (name === 'reposts') {
+      records = await fetchReposts(id.value, fetchCount, cursor)
     } else if (name === 'following') {
       records = await fetchFollow(id.value, fetchCount, cursor)
     } else if (name === 'like') {
