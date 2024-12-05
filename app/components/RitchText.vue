@@ -54,21 +54,31 @@
     facets.forEach(facet => {
       const { byteStart, byteEnd } = facet.index
       const linkFeature = facet.features.find(
-        feature => feature.$type === 'app.bsky.richtext.facet#link'
+        feature =>
+          feature.$type === 'app.bsky.richtext.facet#link' ||
+          feature.$type === 'app.bsky.richtext.facet#mention' ||
+          feature.$type === 'app.bsky.richtext.facet#tag'
       )
 
-      if (linkFeature && 'uri' in linkFeature) {
+      if (linkFeature) {
         // Create link from byteStart until byteEnd
         const plainTextBeforeLink = text.slice(lastIndex, byteStart)
         const linkText = text.slice(byteStart, byteEnd)
         const escapedBeforeLink = escapeHTML(plainTextBeforeLink)
         if (isDev()) {
-          console.log('linkURL = ', linkFeature.uri)
-          console.log('textURL = ', linkText)
+          if (linkFeature.uri) console.log('linkURL = ', linkFeature.uri)
+          if (linkFeature.did) console.log('linkDID = ', linkFeature.did)
+          if (linkFeature.tag) console.log('linkTag = ', linkFeature.tag)
+          console.log('linkText = ', linkText)
         }
-
+        console.log(linkFeature)
         formattedText += escapedBeforeLink
-        formattedText += `<a href="${linkFeature.uri}" class="text-blue-500">${escapeHTML(linkText)}</a>`
+        if (linkFeature.uri)
+          formattedText += `<a href='${linkFeature.uri}' class='text-blue-500'>${escapeHTML(linkText)}</a>`
+        if (linkFeature.did)
+          formattedText += `<a href='/profile/${linkFeature.did}' class='text-blue-500'>${escapeHTML(linkText)}</a>`
+        if (linkFeature.tag)
+          formattedText += `<a href='//bsky.app/search?q=${encodeURIComponent('#' + linkFeature.tag)}' class='text-blue-500' target='_blank'>${escapeHTML(linkText)}</a>`
 
         lastIndex = byteEnd
       }
