@@ -59,9 +59,11 @@
                 class="mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                 {{ record.createdAt }}
               </time>
-              <p class="mb-1 text-base font-sans at-handle select-all">
-                {{ record.handle.replace('at://', '') }}
-              </p>
+              <div v-for="handle in record.handle" :key="handle">
+                <p class="mb-1 text-base font-sans at-handle select-all">
+                  {{ handle.replace('at://', '') }}
+                </p>
+              </div>
               <div
                 class="mb-1 text-xs font-mono text-gray-300 dark:text-slate-500">
                 <font-awesome-icon
@@ -97,12 +99,12 @@
     resolveHandle,
   } from '~/utils/bskyutils'
   import {
-    useAppConfig,
-    useSeoMeta,
     onMounted,
     ref,
+    useAppConfig,
     useRoute,
     useRouter,
+    useSeoMeta,
   } from '#imports'
   import axios from 'axios'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -193,9 +195,7 @@
             icon: icon,
             iconStyle: style,
             createdAt: DateTime.fromISO(records[idx].createdAt).toString(),
-            handle: records[idx].operation.handle
-              ? records[idx].operation.handle
-              : records[idx].operation.alsoKnownAs[0],
+            handle: records[idx].operation.alsoKnownAs,
             did: records[idx].did,
             pds: records[idx].operation.services.atproto_pds.endpoint,
             _raw: records[idx].operation,

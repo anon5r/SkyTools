@@ -17,6 +17,7 @@
     "pages:preview": "wrangler pages dev ./dist --port 3000"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241018.0",
     "@atproto/identity": "^0.4.2",
     "@nuxt/image": "^1.8.1",
     "@nuxt/types": "^2.18.1",
