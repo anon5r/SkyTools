@@ -6,28 +6,63 @@
   const bskyPDS: Record<string, string[]> = {
     'us-east': [
       'amanita',
+      'coral',
+      'earthstar',
+      'elfcup',
       'enoki',
+      'helvella',
       'inkcap',
       'lionsmane',
+      'lobster',
+      'meadow',
       'morel',
       'oyster',
+      'panthercap',
       'porcini',
       'puffball',
+      'reishi',
+      'scarletina',
       'shiitake',
       'shimeji',
+      'splitgill',
+      'truffle',
     ],
     'us-west': [
       'agaric',
       'blewit',
       'boletus',
+      'bracket',
+      'button',
       'chaga',
+      'chanterelle',
       'conocybe',
+      'cordyceps',
+      'cremini',
+      'dapperling',
+      'ganoderma',
+      'goldenear',
+      'gomphus',
+      'grisette',
       'hedgehog',
       'hydnum',
       'lepista',
+      'magic',
       'maitake',
+      'matsutake',
+      'milkcap',
+      'mottlegill',
+      'mycena',
+      'pioppino',
+      'polypore',
+      'rooter',
       'russula',
+      'shaggymane',
+      'stinkhorn',
+      'suillus',
       'verpa',
+      'waxcap',
+      'witchesbutter',
+      'woodear',
     ],
   }
   const accounts: Ref<
@@ -36,7 +71,7 @@
       {
         did: string
         handle: string
-        profile: AppBskyActorProfile.Record
+        profile: AppBskyActorProfile.Record | null
         pds: string
       }[]
     >
@@ -67,15 +102,17 @@
   const addAccounts = async (did: string, pds: string) => {
     const pdsUri = `https://${pds}`
     const handle: string = await bskyutils.resolveDID(did)
-    const record: AppBskyActorProfile.Record = await bskyutils.loadProfile(
-      pdsUri,
-      handle
-    )
+    let profile: AppBskyActorProfile.Record | null = null
+    try {
+      profile = await bskyutils.loadProfile(pdsUri, handle)
+    } catch (err) {
+      console.error(err)
+    }
     if (!accounts.value[pds as string]) accounts.value[pds as string] = []
     accounts.value[pds as string].push({
       did: did,
       handle: handle,
-      profile: record,
+      profile: profile,
       pds: pdsUri,
     })
   }

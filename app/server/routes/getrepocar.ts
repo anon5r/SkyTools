@@ -1,6 +1,5 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { getPdsEndpoint, getHandle } from '@atproto/common-web'
-import axios from 'axios'
+import { getHandle, getPdsEndpoint } from '@atproto/common-web'
 import type { QueryObject } from 'ufo'
 import { DidResolver } from '@atproto/identity'
 import { DateTime } from 'luxon'
@@ -22,7 +21,10 @@ export default defineEventHandler(async event => {
   const url = `${pdsEndpoint}/xrpc/com.atproto.sync.getRepo?did=${actor}`
 
   try {
-    const response = await axios.get(url)
+    const response = await fetch(url)
+    if (response.status !== 200 || response.body === null) {
+      throw new Error('[BskyUtils] resolveHandle::response.Error')
+    }
     const date = DateTime.now().toFormat('yyyyMMdd_HHmm')
     const filename = `${handle}_${date}.car`
 
@@ -31,7 +33,8 @@ export default defineEventHandler(async event => {
       'Content-Disposition': `attachment; filename=${filename}`,
       'Cache-Control': 'no-cache',
     }
-    return new Response(response.data, { status: 200, headers: headers })
+
+    return new Response(response.body, { status: 200, headers: headers })
   } catch (error) {
     console.error(error)
     return { error: 'Error occurred while downloading file' }
