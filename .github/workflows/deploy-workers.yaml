@@ -1,0 +1,37 @@
+name: Deploy Workers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/server/**'
+      - 'app/wrangler.toml'
+      - '.github/workflows/deploy-workers.yaml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: 'app/yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Deploy to Cloudflare Workers
+        run: yarn workers:deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
