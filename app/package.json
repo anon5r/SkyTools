@@ -19,7 +19,6 @@
     "workers:deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241018.0",
     "@atproto/identity": "^0.4.2",
     "@nuxt/image": "^1.8.1",
     "@nuxt/types": "^2.18.1",
@@ -59,6 +58,7 @@
     "@atproto/identity": "^0.4.2",
     "@atproto/syntax": "^0.3.0",
     "@awesome.me/kit-e7e521035c": "^1.0.14",
+    "@cloudflare/workers-types": "^4.20241018.0",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
