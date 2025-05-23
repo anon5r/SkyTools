@@ -1,0 +1,43 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - '!app/server/**'
+      - '.github/workflows/deploy-pages.yaml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: 'app/yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build for Cloudflare Pages
+        run: yarn pages:build
+        env:
+          NITRO_PRESET: "cloudflare-pages"
+          NODE_ENV: "production"
+
+      - name: Deploy to Cloudflare Pages
+        run: yarn pages:deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

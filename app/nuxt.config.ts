@@ -170,7 +170,11 @@ export default defineNuxtConfig({
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
   nitro: {
-    preset: 'cloudflare-pages',
+    preset: process.env.NITRO_PRESET || 'cloudflare-pages',
+    // Exclude server API routes from the Pages build
+    externals: {
+      inline: ['@atproto/api', '@atproto/common-web', '@atproto/identity'],
+    },
   },
   build: {
     transpile: ['@atproto/api', '@atproto/common-web', '@atproto/identity'],
