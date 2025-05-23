@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'app/server/**'
-      - 'app/wrangler.toml'
+      - 'wrangler.toml'
       - '.github/workflows/deploy-workers.yaml'
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
     defaults:
       run:
         working-directory: ./app
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,10 +28,16 @@ jobs:
           cache-dependency-path: 'app/yarn.lock'
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          yarn install
+          yarn workspaces focus --production server
+
+      - name: Build server
+        run: yarn workers:build
 
       - name: Deploy to Cloudflare Workers
         run: yarn workers:deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NODE_ENV: "production"
