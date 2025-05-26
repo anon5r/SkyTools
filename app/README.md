@@ -7,8 +7,8 @@ This directory contains the UI part of SkyTools, which is deployed to Cloudflare
 Make sure to install the dependencies:
 
 ```bash
-# yarn
-yarn install
+# pnpm
+pnpm install
 ```
 
 ## Environment Variables
@@ -36,10 +36,10 @@ Start the development server on `http://localhost:3000`:
 
 ```bash
 # Standard Nuxt.js development server
-yarn dev
+pnpm dev
 
 # Or run as Cloudflare Pages development server
-yarn pages:dev
+pnpm pages:dev
 ```
 
 ### Debugging
@@ -65,7 +65,7 @@ changes affect files in the `app` directory (excluding the `app/server` director
 
 1. The workflow checks out the code.
 2. It sets up Node.js with the specified version.
-3. It installs the dependencies using Yarn.
+3. It installs the dependencies using pnpm.
 4. It builds the UI using the `pages:build` script, which uses the Cloudflare Pages preset for Nuxt.js.
 5. It deploys the UI to Cloudflare Pages using the `pages:deploy` script, which uses Wrangler to deploy the UI.
 
@@ -75,13 +75,13 @@ To manually deploy the UI part to Cloudflare Pages, run the following commands f
 
 ```bash
 # Install dependencies
-yarn install
+pnpm install
 
 # Build for Cloudflare Pages
-yarn pages:build
+pnpm pages:build
 
 # Deploy to Cloudflare Pages
-yarn pages:deploy
+pnpm pages:deploy
 ```
 
 ### Preview Deployment
@@ -90,7 +90,7 @@ To preview the production build locally, run the following command from the `app
 
 ```bash
 # Preview the production build
-yarn pages:preview
+pnpm pages:preview
 ```
 
 ## Project Structure

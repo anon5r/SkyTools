@@ -24,20 +24,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
-          cache-dependency-path: 'app/yarn.lock'
+          cache: 'pnpm'
+          cache-dependency-path: 'app/pnpm-lock.yaml'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.10.0
 
       - name: Install dependencies
         run: |
-          yarn install
-          yarn workspaces focus --production server
+          pnpm install
+          pnpm --filter skytools-api install --prod
 
       - name: Build server
-        run: yarn workers:build
+        run: pnpm workers:build
 
       - name: Deploy to Cloudflare Workers
-        run: yarn workers:deploy
+        run: pnpm workers:deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           NODE_ENV: "production"
+        working-directory: ./app

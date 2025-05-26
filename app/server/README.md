@@ -12,7 +12,7 @@ changes affect files in the `app/server` directory, the `wrangler.toml` file, or
 
 1. The workflow checks out the code.
 2. It sets up Node.js with the specified version.
-3. It installs the dependencies using Yarn, focusing only on the server workspace to minimize the deployment size.
+3. It installs the dependencies using pnpm, focusing only on the server workspace to minimize the deployment size.
 4. It builds the server using the `workers:build` script, which uses esbuild to bundle and minify the server code.
 5. It deploys the server to Cloudflare Workers using the `workers:deploy` script, which uses Wrangler to deploy the
    server.
@@ -23,16 +23,16 @@ To manually deploy the server API to Cloudflare Workers, run the following comma
 
 ```bash
 # Install dependencies
-yarn install
+pnpm install
 
 # Focus on server workspace to minimize deployment size
-yarn workspaces focus --production server
+pnpm --filter skytools-api install --prod
 
 # Build the server
-yarn workers:build
+pnpm workers:build
 
 # Deploy to Cloudflare Workers
-yarn workers:deploy
+pnpm workers:deploy
 ```
 
 ## Development
@@ -41,7 +41,7 @@ To develop the server API locally, run the following command from the `app` dire
 
 ```bash
 # Start the development server
-yarn workers:dev
+pnpm workers:dev
 ```
 
 This will start a local development server using Wrangler, which will simulate the Cloudflare Workers environment.
@@ -82,7 +82,7 @@ The following environment variables are used by the server API:
 
 To minimize the deployment size of the server API, the following techniques are used:
 
-1. **Workspace Focus**: The `yarn workspaces focus --production server` command is used to install only the dependencies
+1. **Workspace Focus**: The `pnpm --filter skytools-api install --prod` command is used to install only the dependencies
    required by the server API, excluding development dependencies.
 
 2. **esbuild**: The server code is bundled and minified using esbuild, which produces smaller output compared to other

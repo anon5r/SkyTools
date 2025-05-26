@@ -17,8 +17,8 @@
     "pages:preview": "wrangler pages dev ./dist --port 3000",
     "build:server": "mkdir -p dist/server && esbuild server/**/*.ts --bundle --minify --platform=node --target=node16 --outdir=dist/server --format=esm",
     "workers:dev": "wrangler dev --config ../wrangler.toml",
-    "workers:build": "yarn build:server",
-    "workers:deploy": "yarn workers:build && wrangler deploy --config ../wrangler.toml"
+    "workers:build": "pnpm build:server",
+    "workers:deploy": "pnpm workers:build && cd .. && wrangler deploy"
   },
   "workspaces": [
     "server"
@@ -84,5 +84,5 @@
     "vue": "^3.5.12",
     "eslint": "^9.12.0"
   },
-  "packageManager": "yarn@3.6.3+sha256.08ead1821a257416e6f217e89365425bf4b6d2430c3279318bedcec1a245fff5"
+  "packageManager": "pnpm@10.10.0"
 }

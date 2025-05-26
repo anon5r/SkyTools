@@ -12,7 +12,7 @@ SkyTools is a web service that:
 - Displays and edits data from Bluesky and AT Protocol
 - Is deployed to Cloudflare Pages (UI) and Cloudflare Workers (API)
 - Uses TypeScript for development
-- Uses Yarn as the package manager
+- Uses pnpm as the package manager
 - Uses Flowbite for UI components
 - Uses FontAwesome for icons
 
@@ -26,7 +26,7 @@ The project consists of two main parts:
 ### Prerequisites
 
 - Node.js 20.x
-- Yarn 3.6.3+
+- pnpm 8.15.5+
 - Cloudflare account (for deployment)
 - Bluesky account (for testing)
 
@@ -41,7 +41,7 @@ The project consists of two main parts:
 2. Install dependencies:
    ```bash
    cd app
-   yarn install
+   pnpm install
    ```
 
 3. Set up environment variables:
@@ -51,12 +51,12 @@ The project consists of two main parts:
 4. Start the development server:
    ```bash
    # For UI development
-   yarn dev
+   pnpm dev
    # OR
-   yarn pages:dev
-   
+   pnpm pages:dev
+
    # For server API development
-   yarn workers:dev
+   pnpm workers:dev
    ```
 
 ## Project Structure
@@ -121,8 +121,8 @@ When making changes to the codebase:
     - Follow the existing patterns for error handling and response formatting
 
 3. **Testing Changes**:
-    - Test UI changes locally using `yarn dev` or `yarn pages:dev`
-    - Test server API changes locally using `yarn workers:dev`
+   - Test UI changes locally using `pnpm dev` or `pnpm pages:dev`
+   - Test server API changes locally using `pnpm workers:dev`
     - Use the browser's developer tools to debug UI issues
     - Use console logging to debug server API issues
 
@@ -151,25 +151,25 @@ branch:
 
 1. **UI Deployment**:
     - Changes to files in the `app` directory (excluding `app/server`) trigger the `deploy-pages.yaml` workflow
-    - The workflow builds the UI using `yarn pages:build` and deploys it to Cloudflare Pages using `yarn pages:deploy`
+   - The workflow builds the UI using `pnpm pages:build` and deploys it to Cloudflare Pages using `pnpm pages:deploy`
 
 2. **Server API Deployment**:
     - Changes to files in the `app/server` directory or the `wrangler.toml` file trigger the `deploy-workers.yaml`
       workflow
-    - The workflow builds the server API using `yarn workers:build` and deploys it to Cloudflare Workers using
-      `yarn workers:deploy`
+   - The workflow builds the server API using `pnpm workers:build` and deploys it to Cloudflare Workers using
+     `pnpm workers:deploy`
 
 ### Common Workflows
 
 1. **Adding a New UI Feature**:
     - Create or modify components in the `components/` directory
     - Update pages in the `pages/` directory
-    - Test locally using `yarn dev` or `yarn pages:dev`
+   - Test locally using `pnpm dev` or `pnpm pages:dev`
     - Commit and push to the `main` branch to trigger deployment
 
 2. **Adding a New API Endpoint**:
     - Modify the server code in the `app/server` directory
-    - Test locally using `yarn workers:dev`
+   - Test locally using `pnpm workers:dev`
     - Commit and push to the `main` branch to trigger deployment
 
 3. **Fixing a Bug**:
@@ -180,7 +180,7 @@ branch:
 
 4. **Updating Dependencies**:
     - Update dependencies in the `package.json` file
-    - Run `yarn install` to update the `yarn.lock` file
+   - Run `pnpm install` to update the `pnpm-lock.yaml` file
     - Test locally to ensure everything still works
     - Commit and push to the `main` branch to trigger deployment
 
