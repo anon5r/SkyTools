@@ -5,7 +5,12 @@
   "description": "Server API for SkyTools",
   "main": "worker.ts",
   "scripts": {
-    "build": "mkdir -p ../dist/server && esbuild ./**/*.ts --bundle --minify --platform=node --target=node16 --outdir=../dist/server --format=esm"
+    "dev": "wrangler dev --config ../wrangler.toml",
+    "build": "tsc"
+  },
+  "output": {
+    "dir": "../dist",
+    "format": "esm"
   },
   "dependencies": {
     "@atproto/api": "^0.13.12",
@@ -18,6 +23,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241011.0",
     "esbuild": "^0.20.1",
+    "tsc": "^2.0.4",
     "typescript": "^5.6.3"
   }
 }

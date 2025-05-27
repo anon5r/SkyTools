@@ -13,7 +13,8 @@ changes affect files in the `app/server` directory, the `wrangler.toml` file, or
 1. The workflow checks out the code.
 2. It sets up Node.js with the specified version.
 3. It installs the dependencies using pnpm, focusing only on the server workspace to minimize the deployment size.
-4. It builds the server using the `workers:build` script, which uses esbuild to bundle and minify the server code.
+4. It builds the server using the `workers:build` script, which calls the server workspace's `build` script to use
+   esbuild to bundle and minify the server code.
 5. It deploys the server to Cloudflare Workers using the `workers:deploy` script, which uses Wrangler to deploy the
    server.
 

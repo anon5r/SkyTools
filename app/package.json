@@ -15,14 +15,11 @@
     "pages:build": "NITRO_PRESET=cloudflare-pages nuxt build",
     "pages:deploy": "NITRO_PRESET=cloudflare-pages nuxt build && wrangler pages deploy ./dist",
     "pages:preview": "wrangler pages dev ./dist --port 3000",
-    "build:server": "mkdir -p dist/server && esbuild server/**/*.ts --bundle --minify --platform=node --target=node16 --outdir=dist/server --format=esm",
-    "workers:dev": "wrangler dev --config ../wrangler.toml",
-    "workers:build": "pnpm build:server",
-    "workers:deploy": "pnpm workers:build && cd .. && wrangler deploy"
+    "build:server": "mkdir -p dist/server && esbuild server/**/*.ts --bundle --minify --platform=node --target=node22 --outdir=dist/server --format=esm",
+    "workers:dev": "wrangler dev --config wrangler.toml",
+    "workers:build": "cd server && pnpm build",
+    "workers:deploy": "pnpm workers:build && wrangler deploy"
   },
-  "workspaces": [
-    "server"
-  ],
   "devDependencies": {
     "@atproto/identity": "^0.4.2",
     "@nuxt/image": "^1.8.1",
