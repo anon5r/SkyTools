@@ -1,15 +1,25 @@
-# SkyTools API
+# SkyTools - Nuxt + Vercel Functions
 
-AT Protocolを使用したバックエンドAPIをVercel Functionsで実行します。
+Nuxtアプリと、AT ProtocolのVercel Functionsを組み合わせたプロジェクトです。
+
+## 構成
+
+- **Nuxtアプリ** (`/app/`): Bluesky向けWebアプリケーション
+- **Vercel Functions** (`/app/server/`): AT ProtocolのDNS解決APIエンドポイント
 
 ## 機能
 
-### Routes (`/routes/`)
+### Nuxtアプリ (`/app/`)
 
+- Bluesky用のWebインターフェース
+- プロフィール表示、投稿閲覧など
+
+### Vercel Functions (`/app/server/`)
+
+#### Routes (`/routes/`)
 - `getrepocar`: BlueskyユーザーのリポジトリデータをCARファイル形式でダウンロード
 
-### API Functions (`/api/`)
-
+#### API Functions (`/api/`)
 - `resolver-functions`: DIDとハンドルの相互解決
 - `handle-resolve`: ハンドル/DIDの解決
 - `resolver`: 高度なタイムアウト機能付きリゾルバー
@@ -20,115 +30,114 @@ AT Protocolを使用したバックエンドAPIをVercel Functionsで実行し�
 ### 前提条件
 
 - Node.js 18以上
-- Vercel CLI (`npm i -g vercel`)
+- pnpm 8以上 (`npm install -g pnpm`)
+- Vercel CLI (`npm install -g vercel`)
 
 ### インストール
 
 ```bash
-npm install
+# Nuxtアプリの依存関係をインストール
+cd app && pnpm install
 ```
 
 ### 開発環境の起動
 
 ```bash
-npm run dev
+# Nuxtアプリの開発サーバー
+cd app && pnpm run dev
+
+# Vercel Functions（ローカル開発）
+vercel dev
 ```
 
 ### デプロイ
 
 ```bash
-vercel
+# 自動デプロイスクリプト
+chmod +x vercel-deploy.sh && ./vercel-deploy.sh
+
+# または手動デプロイ
+vercel --prod
 ```
 
-## API エンドポイント
+## デプロイ後のエンドポイント
 
-### Routes
-
-#### GET /routes/getrepocar
-
-BlueskyユーザーのリポジトリデータをCARファイル形式でダウンロードします。
-
-**パラメータ:**
-
-- `repo` (string): ユーザーのDID (例: `did:plc:xxx`)
-
-**例:**
-
+### Nuxtアプリ
 ```
-GET /routes/getrepocar?repo=did:plc:example123
+https://your-project.vercel.app/          # メインアプリ
+https://your-project.vercel.app/profile   # プロフィールページ
+https://your-project.vercel.app/about     # Aboutページ
 ```
 
-### API Functions
+### Vercel Functions
 
-#### GET /api/resolver-functions
-
-DIDまたはハンドルを解決します。
-
-**パラメータ:**
-
-- `actor` (string): DIDまたはハンドル
-
-**例:**
-
+#### Routes
 ```
-GET /api/resolver-functions?actor=example.bsky.social
-GET /api/resolver-functions?actor=did:plc:example123
+https://your-project.vercel.app/routes/getrepocar?repo=did:plc:example
 ```
 
-#### GET /api/handle-resolve
-
-ハンドルまたはDIDを解決します。
-
-**パラメータ:**
-
-- `query` (string): ハンドルまたはDID
-
-**例:**
-
+#### API Functions
 ```
-GET /api/handle-resolve?query=example.bsky.social
-```
-
-#### GET /api/resolver
-
-高度なタイムアウト機能付きでDIDとハンドルを相互解決します。
-
-**パラメータ:**
-
-- `query` (string): ハンドルまたはDID
-
-**例:**
-
-```
-GET /api/resolver?query=example.bsky.social
-```
-
-#### GET /api/resolve-handle
-
-ハンドルからDIDを解決します。
-
-**パラメータ:**
-
-- `handle` (string): ハンドル
-
-**例:**
-
-```
-GET /api/resolve-handle?handle=example.bsky.social
+https://your-project.vercel.app/api/resolver?query=example.bsky.social
+https://your-project.vercel.app/api/handle-resolve?query=example.bsky.social
+https://your-project.vercel.app/api/resolver-functions?actor=example.bsky.social
+https://your-project.vercel.app/api/resolve-handle?handle=example.bsky.social
 ```
 
 ## 技術スタック
 
-- TypeScript
-- Vercel Functions
-- AT Protocol (@atproto/*)
-- Luxon (日付処理)
+### Nuxtアプリ
 
-## 注意事項
+- **Framework**: Nuxt 3
+- **UI**: Vue 3 + Tailwind CSS + Flowbite
+- **Icons**: FontAwesome Pro
+- **State**: Pinia (Nuxt内蔵)
 
-このAPIは`node:dns`を内部的に使用するため、Cloudflare Workersでは動作しません。Vercel Functionsで実行してください。
+### Vercel Functions
 
-## 元のコード構造
+- **Runtime**: Node.js 20
+- **Language**: TypeScript
+- **Libraries**: AT Protocol (@atproto/*)、Luxon
 
-このプロジェクトは元々Cloudflare Workers + H3フレームワークで構築されていましたが、DNS解決の制限によりVercel
-Functionsに移行されました。
+## アーキテクチャ
+
+```
+skytools/
+├── app/                          # Nuxtアプリ
+│   ├── pages/                    # Nuxtページ
+│   ├── components/               # Vueコンポーネント
+│   ├── server/                   # Vercel Functions
+│   │   ├── api/                  # API Functions
+│   │   └── routes/               # Route Functions
+│   ├── nuxt.config.ts           # Nuxt設定
+│   └── package.json             # Nuxtアプリの依存関係
+├── vercel.json                  # Vercel設定
+└── package.json                 # プロジェクトルート設定
+```
+
+## 開発の注意事項
+
+1. **DNS解決**: `node:dns`を使用するため、Cloudflare Workersでは動作しません
+2. **ビルド**: NuxtアプリとVercel Functionsは独立してビルドされます
+3. **依存関係**: AT Protocol関連の依存関係は`/app/package.json`に含まれています
+
+## トラブルシューティング
+
+### デプロイエラー
+
+1. Vercel CLIがインストールされているか確認
+2. `/app/package.json`に必要な依存関係が含まれているか確認
+3. `vercel.json`の設定が正しいか確認
+
+### ローカル開発エラー
+
+1. `cd app && pnpm install`で依存関係をインストール
+2. `vercel dev`でローカルサーバーを起動
+3. `http://localhost:3000`でアクセス
+
+### 不要ファイルのクリーンアップ
+
+```bash
+# app/server内の不要ファイルを削除
+chmod +x cleanup-server.sh && ./cleanup-server.sh
+```

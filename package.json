@@ -1,26 +1,16 @@
 {
   "name": "skytools",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.11.0",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Build completed'",
-    "start": "vercel dev --listen 3000",
-    "type-check": "npx tsc --noEmit"
+    "build": "cd app && pnpm run build",
+    "dev": "cd app && pnpm run dev",
+    "start": "cd app && pnpm start",
+    "install-deps": "cd app && pnpm install",
+    "lint": "cd app && pnpm run lint",
+    "type-check": "cd app && pnpm run type-check"
   },
-  "dependencies": {
-    "@atproto/api": "^0.13.12",
-    "@atproto/identity": "^0.4.8",
-    "@atproto/common-web": "^0.4.2",
-    "@atproto/syntax": "^0.4.0",
-    "luxon": "^3.5.0",
-    "h3": "^1.15.3",
-    "ufo": "^1.6.1"
-  },
-  "devDependencies": {
-    "@types/luxon": "^3.4.2",
-    "@types/node": "^20.0.0",
-    "@vercel/node": "^3.0.0",
-    "typescript": "^5.8.3"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }

@@ -1,4 +1,7 @@
 {
+  "buildCommand": "cd app && pnpm run build",
+  "outputDirectory": "app/dist",
+  "installCommand": "cd app && pnpm install",
   "functions": {
     "app/server/api/*.ts": {
       "runtime": "nodejs20.x"

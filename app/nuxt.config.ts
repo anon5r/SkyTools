@@ -170,8 +170,8 @@ export default defineNuxtConfig({
     token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
   nitro: {
-    preset: process.env.NITRO_PRESET || 'cloudflare-pages',
-    // Exclude server API routes from the Pages build
+    preset: process.env.NITRO_PRESET || 'vercel',
+    // Exclude server API routes from the Vercel build since they're handled by Vercel Functions
     externals: {
       inline: ['@atproto/api', '@atproto/common-web', '@atproto/identity'],
     },

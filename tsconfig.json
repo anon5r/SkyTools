@@ -20,13 +20,21 @@
     ]
   },
   "include": [
-    "app/server/**/*",
-    "*.ts"
+    "app/server/api/**/*.ts",
+    "app/server/routes/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "app/node_modules",
-    "app/.nuxt"
+    "app/.nuxt",
+    "app/server/worker.ts",
+    "app/server/node_modules",
+    "app/composables",
+    "app/plugins",
+    "app/layouts",
+    "app/pages",
+    "app/components",
+    "app/errors"
   ]
 }
