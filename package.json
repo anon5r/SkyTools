@@ -3,14 +3,5 @@
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.11.0",
-  "scripts": {
-    "build": "cd app && pnpm run build",
-    "dev": "cd app && pnpm run dev",
-    "start": "cd app && pnpm start",
-    "install-deps": "cd app && pnpm install",
-    "lint": "cd app && pnpm run lint",
-    "type-check": "cd app && pnpm run type-check"
-  },
-  "dependencies": {},
-  "devDependencies": {}
+  "description": "SkyTools - Vercel deployment root"
 }

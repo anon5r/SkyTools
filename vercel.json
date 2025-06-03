@@ -1,27 +1,27 @@
 {
-  "buildCommand": "cd app && pnpm run build",
-  "outputDirectory": "app/dist",
-  "installCommand": "cd app && pnpm install",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "installCommand": "pnpm install",
   "functions": {
-    "app/server/api/*.ts": {
+    "server/api/*.ts": {
       "runtime": "nodejs20.x"
     },
-    "app/server/routes/*.ts": {
+    "server/routes/*.ts": {
       "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/app/server/api/$1"
+      "destination": "/server/api/$1"
     },
     {
       "source": "/routes/(.*)",
-      "destination": "/app/server/routes/$1"
+      "destination": "/server/routes/$1"
     },
     {
       "source": "/functions/(.*)",
-      "destination": "/app/server/routes/$1"
+      "destination": "/server/routes/$1"
     }
   ]
 }

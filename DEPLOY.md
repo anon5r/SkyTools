@@ -70,9 +70,9 @@ https://your-project.vercel.app/routes/getrepocar?repo=did:plc:z72i7hdynmk6r22z2
 
 ```
 skytools/
-├── vercel.json                  # Vercel設定
-├── package.json                 # ルートプロジェクト設定
-└── app/                         # Nuxtアプリルート
+├── vercel.json                  # Vercel設定（rootDirectory: app）
+├── package.json                 # ルートプロジェクト設定（最小限）
+└── app/                         # Nuxtアプリルート（VercelのrootDirectory）
     ├── nuxt.config.ts          # Nuxt設定（preset: vercel）
     ├── package.json            # Nuxt + Functions依存関係
     ├── pages/                  # Nuxtページ

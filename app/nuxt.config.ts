@@ -166,9 +166,6 @@ export default defineNuxtConfig({
     '~/assets/css/main.css',
   ],
   plugins: ['@/plugins/analytics.client.ts'],
-  cloudflareAnalytics: {
-    token: process.env.CLOUDFLARE_TOKEN || 'none',
-  },
   nitro: {
     preset: process.env.NITRO_PRESET || 'vercel',
     // Exclude server API routes from the Vercel build since they're handled by Vercel Functions

@@ -49,6 +49,20 @@ if [ "$all_exist" = false ]; then
     exit 1
 fi
 
+# 不要なファイルのチェック
+echo "🧹 不要ファイルの確認..."
+if [ -f "app/server/package.json" ]; then
+    echo "⚠️ app/server/package.json が残っています（Vercel Functionsでは不要）"
+fi
+
+if [ -f "app/server/pnpm-lock.yaml" ]; then
+    echo "⚠️ app/server/pnpm-lock.yaml が残っています（削除推奨）"
+fi
+
+if [ -d "app/server/node_modules" ]; then
+    echo "⚠️ app/server/node_modules が残っています（削除推奨）"
+fi
+
 # Nuxtアプリの主要ファイル確認
 echo "🎨 Nuxtアプリの確認..."
 nuxt_files=("app/pages" "app/components" "app/layouts")
@@ -75,8 +89,9 @@ echo "✅ ファイル確認完了！"
 echo ""
 echo "📦 Vercelデプロイを実行中..."
 echo "   - Package Manager: pnpm"
-echo "   - Nuxtアプリ: /app -> Vercel Static + SSR"
-echo "   - API Functions: /app/server -> Vercel Functions"
+echo "   - Root Directory: app/"
+echo "   - Nuxtアプリ: app/ -> Vercel Static + SSR"
+echo "   - API Functions: app/server/ -> Vercel Functions"
 echo ""
 
 # Vercelデプロイの実行
