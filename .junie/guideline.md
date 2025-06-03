@@ -1,7 +1,7 @@
 # Junie Guidelines for SkyTools Project
 
 This document provides guidelines for using Junie with the SkyTools project, a web service built with Nuxt.js that
-interacts with Bluesky and AT Protocol, deployed to Cloudflare Pages & Workers.
+interacts with Bluesky and AT Protocol, deployed to Vercel.
 
 ## Project Overview
 
@@ -10,7 +10,7 @@ SkyTools is a web service that:
 - Uses Nuxt.js as the frontend framework
 - Interacts with Bluesky and AT Protocol via XRPC (API)
 - Displays and edits data from Bluesky and AT Protocol
-- Is deployed to Cloudflare Pages (UI) and Cloudflare Workers (API)
+- Is deployed to Vercel (UI) and Vercel Functions (API)
 - Uses TypeScript for development
 - Uses pnpm as the package manager
 - Uses Flowbite for UI components
@@ -27,7 +27,7 @@ The project consists of two main parts:
 
 - Node.js 20.x
 - pnpm 8.15.5+
-- Cloudflare account (for deployment)
+- Vercel account (for deployment)
 - Bluesky account (for testing)
 
 ### Setting Up the Development Environment

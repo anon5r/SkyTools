@@ -63,24 +63,6 @@ for file in "${api_files[@]}"; do
     fi
 done
 
-# 不要なファイルの警告
-echo "🧹 不要ファイルの確認..."
-cleanup_needed=false
-
-if [ -f "app/server/package.json" ]; then
-    echo "⚠️ app/server/package.json: 削除推奨（Vercel Functionsでは不要）"
-    cleanup_needed=true
-fi
-
-if [ -f "app/server/pnpm-lock.yaml" ]; then
-    echo "⚠️ app/server/pnpm-lock.yaml: 削除推奨"
-    cleanup_needed=true
-fi
-
-if [ -d "app/server/node_modules" ]; then
-    echo "⚠️ app/server/node_modules: 削除推奨"
-    cleanup_needed=true
-fi
 
 if [ "$cleanup_needed" = true ]; then
     echo "💡 以下のコマンドで不要ファイルを削除できます："

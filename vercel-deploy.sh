@@ -49,19 +49,6 @@ if [ "$all_exist" = false ]; then
     exit 1
 fi
 
-# 不要なファイルのチェック
-echo "🧹 不要ファイルの確認..."
-if [ -f "app/server/package.json" ]; then
-    echo "⚠️ app/server/package.json が残っています（Vercel Functionsでは不要）"
-fi
-
-if [ -f "app/server/pnpm-lock.yaml" ]; then
-    echo "⚠️ app/server/pnpm-lock.yaml が残っています（削除推奨）"
-fi
-
-if [ -d "app/server/node_modules" ]; then
-    echo "⚠️ app/server/node_modules が残っています（削除推奨）"
-fi
 
 # Nuxtアプリの主要ファイル確認
 echo "🎨 Nuxtアプリの確認..."

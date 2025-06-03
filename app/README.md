@@ -1,113 +1,138 @@
-# SkyTools UI
+# SkyTools App - Nuxt + Vercel Functions
 
-This directory contains the UI part of SkyTools, which is deployed to Cloudflare Pages.
+このディレクトリには、VercelにデプロイされるSkyToolsアプリが含まれています。
 
-## Setup
+## 構成
 
-Make sure to install the dependencies:
+- **Nuxtアプリ**: メインのWebアプリケーション
+- **Vercel Functions**: `/server` ディレクトリ内のAPIエンドポイント
+
+## セットアップ
+
+依存関係をインストール:
 
 ```bash
-# pnpm
 pnpm install
 ```
 
-## Environment Variables
+## 環境変数
 
-| Variable              | Description                      | Default value                        |
-|-----------------------|----------------------------------|--------------------------------------|
-| GTM_ID                | Google Tag Manager               | GA-XXXXXX                            |
-| CLOUDFLARE_TOKEN      | Your Cloudflare API Token        |                                      |
-| FONTAWESOME_TOKEN     | Your FontAwesome API Token       |                                      |
-| DEFAULT_PDS           |                                  | `bsky.social`                        |
-| DEFAULT_PDS_SUFFIX    | Auto append suffix               | `bsky.social`                        |
-| DEFAULT_PDS_ENDPOINT  | PDS API URL                      | https://bsky.social                  |
-| DEFAULT_APP_URL       | Default application frontend URL | https://bsky.app                     |
-| WEBMASTER_DID         | Owner DID                        | `did:plc:c22jdrqhoajyj5ca7e56a3ke`   |
-| INVITE_CODE_FREQ      | Invite code frequency by JSON    | `'{"days": 10}'`                     |
-| CDN_PREFIX            | Blob image proxy URL             | http://cdn-skytools.anon5r.com/proxy |
-| CLOUDFLARE_ACCOUNT_ID | Your Cloudflare Account ID       |                                      |
-| NITRO_PRESET          | Nuxt.js preset for deployment    | `cloudflare-pages`                   |
+| 変数名                  | 説明                    | デフォルト値                              |
+|----------------------|-----------------------|-------------------------------------|
+| GTM_ID               | Google Tag Manager ID | GTM-XXXXXXX                         |
+| CLOUDFLARE_TOKEN     | Cloudflare APIトークン    |                                     |
+| DEFAULT_PDS          | デフォルトPDS              | `bsky.social`                       |
+| DEFAULT_PDS_ENDPOINT | PDS API URL           | https://bsky.social                 |
+| DEFAULT_APP_URL      | アプリのフロントエンドURL        | https://bsky.app                    |
+| WEBMASTER_DID        | 管理者DID                | `did:plc:c22jdrqhoajyj5ca7e56a3ke`  |
+| CDN_PREFIX           | 画像プロキシURL             | https://cdn.bluesky.social/imgproxy |
+| OGP_PREFIX           | OGP用URLプレフィックス        | https://your-app.vercel.app         |
+| NODE_ENV             | 実行環境                  | production                          |
 
-## Development
+## 開発
 
-### Development Server
+### 開発サーバー
 
-Start the development server on `http://localhost:3000`:
+`http://localhost:3000`で開発サーバーを起動:
 
 ```bash
-# Standard Nuxt.js development server
+# Nuxt開発サーバー
 pnpm dev
 
-# Or run as Cloudflare Pages development server
-pnpm pages:dev
+# Vercel Functions付きローカル開発
+vercel dev
 ```
 
-### Debugging
+### デバッグ
 
-To debug the UI part, you can use the following techniques:
+1. **Vue DevTools**: Vue DevToolsブラウザ拡張機能
+2. **ブラウザDevTools**: ブラウザの開発者ツール
+3. **Console Logging**: `console.log()`でのロギング
+4. **Nuxt DevTools**: `nuxt.config.ts`で`devtools: { enabled: true }`
 
-1. **Vue DevTools**: Install the Vue DevTools browser extension to inspect Vue components, state, and events.
+## デプロイ
 
-2. **Browser DevTools**: Use the browser's built-in developer tools to inspect the DOM, network requests, and JavaScript
-   errors.
+### Vercelへのデプロイ
 
-3. **Console Logging**: Use `console.log()` statements in your code to log information to the browser console.
-
-4. **Nuxt.js DevTools**: Enable Nuxt.js DevTools by setting `devtools: { enabled: true }` in your `nuxt.config.ts` file.
-
-## Deployment
-
-The UI part is deployed to Cloudflare Pages using the GitHub Actions workflow defined in
-`.github/workflows/deploy-pages.yaml`. The workflow is triggered when changes are pushed to the `main` branch and the
-changes affect files in the `app` directory (excluding the `app/server` directory) or the workflow file itself.
-
-### Deployment Process
-
-1. The workflow checks out the code.
-2. It sets up Node.js with the specified version.
-3. It installs the dependencies using pnpm.
-4. It builds the UI using the `pages:build` script, which uses the Cloudflare Pages preset for Nuxt.js.
-5. It deploys the UI to Cloudflare Pages using the `pages:deploy` script, which uses Wrangler to deploy the UI.
-
-### Manual Deployment
-
-To manually deploy the UI part to Cloudflare Pages, run the following commands from the `app` directory:
+プロジェクトルートから実行:
 
 ```bash
-# Install dependencies
-pnpm install
+# 自動デプロイスクリプト
+./vercel-deploy.sh
 
-# Build for Cloudflare Pages
-pnpm pages:build
-
-# Deploy to Cloudflare Pages
-pnpm pages:deploy
+# 手動デプロイ
+vercel --prod
 ```
 
-### Preview Deployment
-
-To preview the production build locally, run the following command from the `app` directory:
+### ローカルプレビュー
 
 ```bash
-# Preview the production build
-pnpm pages:preview
+# 本番ビルドのプレビュー
+pnpm build
+pnpm preview
+
+# Vercel Functionsと一緒にプレビュー
+vercel dev
 ```
 
-## Project Structure
+## プロジェクト構造
 
-- `app.vue`: The main Vue component.
-- `app.config.ts`: Application configuration.
-- `nuxt.config.ts`: Nuxt.js configuration.
-- `assets/`: Static assets like CSS, images, and fonts.
-- `components/`: Vue components.
-- `composables/`: Vue composables.
-- `layouts/`: Vue layouts.
-- `pages/`: Vue pages.
-- `plugins/`: Vue plugins.
-- `public/`: Public files that will be served at the root.
-- `server/`: Server API code (deployed to Cloudflare Workers).
-- `static/`: Static files.
-- `utils/`: Utility functions.
+```
+app/
+├── nuxt.config.ts          # Nuxt設定（preset: vercel）
+├── package.json            # 依存関係
+├── components/             # Vueコンポーネント
+├── composables/            # Vue Composables
+├── layouts/                # レイアウト
+├── pages/                  # ページ
+├── plugins/                # プラグイン
+├── server/                 # Vercel Functions
+│   ├── api/               # API Functions
+│   └── routes/            # Route Functions
+├── public/                # 静的ファイル
+├── assets/                # アセット
+└── utils/                 # ユーティリティ
+```
 
-For more information about Nuxt.js, check out
-the [Nuxt.js documentation](https://nuxt.com/docs/getting-started/introduction).
+## API エンドポイント
+
+### Vercel Functions
+
+#### API Functions (`/api/`)
+
+- `/api/resolver` - DID/ハンドル解決
+- `/api/handle-resolve` - ハンドル解決
+- `/api/resolver-functions` - DID/ハンドル相互解決
+- `/api/resolve-handle` - ハンドルからDID解決
+
+#### Route Functions (`/routes/`)
+
+- `/routes/getrepocar` - リポジトリCARファイルダウンロード
+
+## 技術スタック
+
+- **フレームワーク**: Nuxt 3
+- **ランタイム**: Vercel Functions (Node.js 20)
+- **UI**: Vue 3 + Tailwind CSS + Flowbite
+- **アイコン**: FontAwesome Pro
+- **状態管理**: Pinia (Nuxt内蔵)
+- **API**: AT Protocol (@atproto/*)
+
+## 移行情報
+
+このプロジェクトは以前Cloudflare Pages + Workersで動作していましたが、
+`node:dns`の制限によりVercel Functionsに移行されました。
+
+### 削除された機能
+
+- Cloudflare Workers (`worker.ts`)
+- Cloudflare Pages Functions (`functions/`)
+- Wrangler設定 (`wrangler.toml`)
+
+### 新機能
+
+- Vercel Functions (`server/`)
+- DNS解決機能の完全サポート
+- Node.js標準ライブラリの利用
+
+詳細については、プロジェクトルートの[README.md](../README.md)をご覧ください。

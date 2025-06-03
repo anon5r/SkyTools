@@ -121,6 +121,29 @@ skytools/
 2. **ビルド**: NuxtアプリとVercel Functionsは独立してビルドされます
 3. **依存関係**: AT Protocol関連の依存関係は`/app/package.json`に含まれています
 
+## 移行履歴
+
+このプロジェクトは**Cloudflare Workers + Pages**から**Vercel Functions + Static**に移行されました。
+
+### 移行理由
+
+- `node:dns`モジュールの制限によりCloudflare WorkersでAT ProtocolのDNS解決が不可能
+- Vercel FunctionsではNode.js標準ライブラリが完全サポート
+
+### 移行による変更
+
+- ✅ DNS解決機能の完全動作
+- ✅ 統合されたデプロイメント
+- ✅ シンプルな依存関係管理
+- ❌ Cloudflare Workers固有の機能は使用不可
+
+### 削除されたファイル
+
+```bash
+# クリーンアップスクリプトで削除可能
+chmod +x cleanup-server.sh && ./cleanup-server.sh
+```
+
 ## トラブルシューティング
 
 ### デプロイエラー

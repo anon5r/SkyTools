@@ -158,7 +158,6 @@ export default defineNuxtConfig({
     'nuxt-cloudflare-analytics',
     '@nuxt/image',
     process.env.NODE_ENV !== 'production' ? '@nuxt/devtools' : null,
-    process.env.NODE_ENV !== 'production' ? 'nitro-cloudflare-dev' : null,
   ],
   css: [
     'flowbite/dist/flowbite.css',
@@ -168,7 +167,7 @@ export default defineNuxtConfig({
   plugins: ['@/plugins/analytics.client.ts'],
   nitro: {
     preset: process.env.NITRO_PRESET || 'vercel',
-    // Exclude server API routes from the Vercel build since they're handled by Vercel Functions
+    // Vercel Functions用設定
     externals: {
       inline: ['@atproto/api', '@atproto/common-web', '@atproto/identity'],
     },

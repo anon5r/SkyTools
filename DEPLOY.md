@@ -208,3 +208,36 @@ curl "https://your-project.vercel.app/routes/getrepocar?repo=did:plc:z72i7hdynmk
 
 **重要**: このプロジェクトは`node:dns`を使用するため、Cloudflare WorkersやEdge Runtimeでは動作しません。Vercel
 Functions（Node.js Runtime）でのみ動作します。
+
+## 11. Cloudflare Workersからの移行
+
+このプロジェクトは以前Cloudflare Workers + Pages構成でしたが、`node:dns`の制限によりVercel Functionsに移行されました。
+
+### 削除された設定
+
+- `wrangler.toml` - Cloudflare Workers設定
+- `app/functions/` - Cloudflare Pages Functions
+- `app/server/worker.ts` - Cloudflare Workers メインファイル
+- `app/server/package.json` - 独立したパッケージ管理
+
+### 新しい設定
+
+- `vercel.json` - Vercel Functions設定
+- `app/server/api/` - Vercel API Functions
+- `app/server/routes/` - Vercel Route Functions
+- 統合されたパッケージ管理（`app/package.json`）
+
+### 移行後の利点
+
+✅ **DNS解決の完全サポート** - `node:dns`モジュールが使用可能  
+✅ **統合されたデプロイ** - NuxtアプリとAPIが1つのVercelプロジェクト  
+✅ **シンプルな依存関係管理** - 1つのpackage.jsonで管理  
+✅ **Node.js標準ライブラリ** - 全てのNode.jsライブラリが利用可能
+
+### クリーンアップ
+
+不要になったCloudflare関連ファイルを削除:
+
+```bash
+chmod +x cleanup-server.sh && ./cleanup-server.sh
+```
