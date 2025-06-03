@@ -1,28 +1,22 @@
-import {
-  createError,
-  defineEventHandler,
-  getQuery,
-  sendError,
-  setResponseStatus,
-} from 'h3'
-import type { QueryObject } from 'ufo'
 import { DidResolver, HandleResolver } from '@atproto/identity'
 import { getHandle } from '@atproto/common-web'
-import { type DidDocument } from '@atproto/identity/src/types'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const timeoutMS: number = 3000
-export default defineEventHandler(async event => {
-  const query: QueryObject = getQuery(event)
-  const param: string = query.query as string
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Only allow GET requests
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  const { query: param } = req.query
 
   console.log('Received request with query:', param)
 
-  if (!param) {
+  if (!param || typeof param !== 'string') {
     console.log('No query provided')
-    sendError(
-      event,
-      createError({ status: 500, statusText: 'No `query` provided' })
-    )
+    return res.status(400).json({ error: 'No `query` provided' })
   }
 
   try {
@@ -30,14 +24,11 @@ export default defineEventHandler(async event => {
       error: 'No DID or handle found',
     }
 
-    const timeout = (
-      promise: Promise<DidDocument | string | null | undefined>,
-      ms: number
-    ) => {
+    const timeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
       return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
           reject(new Error('Promise timed out after ' + ms + ' ms'))
-        }, ms as number)
+        }, ms)
         promise
           .then(value => {
             clearTimeout(timer)
@@ -55,12 +46,9 @@ export default defineEventHandler(async event => {
       const resolver = new DidResolver({
         timeout: timeoutMS,
       })
-      const handle = (await timeout(
-        resolver.resolve(param),
-        timeoutMS
-      )) as DidDocument
-      if (handle) {
-        result = { did: param, handle: getHandle(handle) }
+      const didDoc = await timeout(resolver.resolve(param), timeoutMS)
+      if (didDoc) {
+        result = { did: param, handle: getHandle(didDoc) }
         console.log('Resolved handle:', result.handle)
       }
     } else {
@@ -69,27 +57,25 @@ export default defineEventHandler(async event => {
         timeout: timeoutMS,
         backupNameservers: ['1.1.1.1', '1.0.0.1', '8.8.8.8', '8.8.4.4'],
       })
-      const did = (await timeout(resolver.resolve(param), timeoutMS)) as string
+      const did = await timeout(resolver.resolve(param), timeoutMS)
       if (did) {
-        result = { did: did, handle: param }
+        result = { did: did.toString(), handle: param }
         console.log('Resolved DID:', result.did)
       }
     }
 
     if (result.did) {
       console.log('Returning success response:', result)
-      setResponseStatus(event, 200)
-      return result
+      return res.status(200).json(result)
     } else {
       console.log('Returning not found response:', result)
-      sendError(
-        event,
-        createError({ status: 404, statusText: 'Not found' }),
-        false
-      )
+      return res.status(404).json({ error: 'Not found' })
     }
-  } catch (error: Error | any) {
+  } catch (error: unknown) {
     console.error('Error occurred:', error)
-    sendError(event, error, false)
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    })
   }
-})
+}

@@ -1,0 +1,26 @@
+{
+  "name": "skytools",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build completed'",
+    "start": "vercel dev --listen 3000",
+    "type-check": "npx tsc --noEmit"
+  },
+  "dependencies": {
+    "@atproto/api": "^0.13.12",
+    "@atproto/identity": "^0.4.8",
+    "@atproto/common-web": "^0.4.2",
+    "@atproto/syntax": "^0.4.0",
+    "luxon": "^3.5.0",
+    "h3": "^1.15.3",
+    "ufo": "^1.6.1"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.0.0",
+    "@vercel/node": "^3.0.0",
+    "typescript": "^5.8.3"
+  }
+}

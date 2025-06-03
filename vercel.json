@@ -1,0 +1,24 @@
+{
+  "functions": {
+    "app/server/api/*.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "app/server/routes/*.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/app/server/api/$1"
+    },
+    {
+      "source": "/routes/(.*)",
+      "destination": "/app/server/routes/$1"
+    },
+    {
+      "source": "/functions/(.*)",
+      "destination": "/app/server/routes/$1"
+    }
+  ]
+}

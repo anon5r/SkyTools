@@ -1,11 +1,5 @@
-import {
-  createError,
-  defineEventHandler,
-  getQuery,
-  H3Event,
-  sendError,
-} from 'h3'
 import { DidResolver, HandleResolver } from '@atproto/identity'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const didResolver = new DidResolver({ timeout: 3000 })
 const handleResolver = new HandleResolver()
@@ -22,8 +16,8 @@ async function resolveHandle(handle: string): Promise<string | null> {
 
 async function resolveDid(did: string): Promise<string | null> {
   try {
-    const handle = await didResolver.resolve(did)
-    return handle?.alsoKnownAs?.toString() ?? null
+    const didDoc = await didResolver.resolve(did)
+    return didDoc?.alsoKnownAs?.[0]?.replace('at://', '') ?? null
   } catch (error) {
     console.error(`Failed to resolve DID: ${did}`, error)
     return null
@@ -34,36 +28,39 @@ function isDid(value: string): boolean {
   return value.startsWith('did:')
 }
 
-export default defineEventHandler(async (event: H3Event) => {
-  const query = getQuery(event)
-  const param = query.query
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Only allow GET requests
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
 
-  if (param) {
-    if (isDid(param.toString())) {
-      const resolvedHandle = await resolveDid(param.toString())
+  const { query: param } = req.query
+
+  if (!param || typeof param !== 'string') {
+    return res.status(400).json({ error: 'Query parameter is required' })
+  }
+
+  try {
+    if (isDid(param)) {
+      const resolvedHandle = await resolveDid(param)
       if (resolvedHandle) {
-        return { handle: resolvedHandle, did: param }
+        return res.status(200).json({ handle: resolvedHandle, did: param })
       } else {
-        return sendError(
-          event,
-          createError({ status: 404, statusText: 'DID not found' })
-        )
+        return res.status(404).json({ error: 'DID not found' })
       }
     } else {
-      const resolvedDid = await resolveHandle(param.toString())
+      const resolvedDid = await resolveHandle(param)
       if (resolvedDid) {
-        return { handle: param, did: resolvedDid }
+        return res.status(200).json({ handle: param, did: resolvedDid })
       } else {
-        return sendError(
-          event,
-          createError({ status: 404, statusText: 'Handle not found' })
-        )
+        return res.status(404).json({ error: 'Handle not found' })
       }
     }
-  } else {
-    return sendError(
-      event,
-      createError({ status: 400, statusText: 'Query parameter is required' })
-    )
+  } catch (error) {
+    console.error('Error in handle-resolve:', error)
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    })
   }
-})
+}
