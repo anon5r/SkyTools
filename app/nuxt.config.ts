@@ -1,6 +1,9 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
+  experimental: {
+    extraPageMetaExtractionKeys: [],
+  },
   runtimeConfig: {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',

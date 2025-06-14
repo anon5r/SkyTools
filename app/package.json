@@ -14,22 +14,33 @@
     "pages:dev": "wrangler pages dev --port 3000 ./dist",
     "pages:build": "nuxt build",
     "pages:deploy": "nuxt build && wrangler pages deploy ./dist",
-    "pages:preview": "wrangler pages dev ./dist --port 3000"
+    "pages:preview": "wrangler pages dev ./dist --port 3000",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test --reporter=html,list",
+    "test:e2e:ui": "playwright test --ui"
   },
   "devDependencies": {
     "@atproto/identity": "^0.4.0",
     "@cloudflare/workers-types": "^4.20241018.0",
     "@nuxt/image": "^1.7.0",
+    "@nuxt/test-utils": "^3.12.0",
     "@nuxt/types": "^2.17.3",
     "@nuxtjs/color-mode": "^3.4.1",
     "@nuxtjs/tailwindcss": "^6.12.0",
+    "@playwright/test": "^1.42.1",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.14.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
     "@typescript-eslint/typescript-estree": "^7.8.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitest/coverage-v8": "^1.3.1",
+    "@vitest/ui": "^1.3.1",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
+    "@vue/test-utils": "^2.4.5",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -38,6 +49,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-unused-imports": "^3.2.0",
     "eslint-plugin-vue": "^9.25.0",
+    "happy-dom": "^13.6.2",
     "nitro-cloudflare-dev": "^0.1.4",
     "nuxt": "^3.12.2",
     "postcss": "^8.4.38",
@@ -47,6 +59,7 @@
     "typescript": "^5.4.5",
     "ufo": "^1.5.3",
     "vite": "^5.3.1",
+    "vitest": "^1.3.1",
     "vue": "^3.4.27",
     "vue-eslint-parser": "^9.4.2",
     "vue-router": "^4.3.2",
@@ -70,5 +83,5 @@
     "luxon": "^3.4.4",
     "nuxt-cloudflare-analytics": "^1.0.8"
   },
-  "packageManager": "yarn@3.6.3+sha256.08ead1821a257416e6f217e89365425bf4b6d2430c3279318bedcec1a245fff5"
+  "packageManager": "pnpm@10.11.0"
 }

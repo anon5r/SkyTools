@@ -249,10 +249,10 @@ export const parseAtUri = (uri: string): { [key: string]: string } => {
  * @return {object} {method: plc, identifier: xxxxxxxxxxxxxx}
  */
 export const parseDID = (did: string): { [key: string]: string } => {
-  const m = did.match(/^did:(?<method>\w+):(?<identifier>[a-z0-9:%-]+)$/)
+  const m = did.match(/^did:(?<method>\w+):(?<identifier>[a-zA-Z0-9:%-.]+)$/)
   if (m && m.groups) return m.groups
 
-  throw new Error('Invalid URI format')
+  throw new Error('Invalid DID format')
 }
 
 /**

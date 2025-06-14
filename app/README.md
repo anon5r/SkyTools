@@ -7,14 +7,11 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 Make sure to install the dependencies:
 
 ```bash
-# yarn
-yarn install
+# pnpm (recommended)
+pnpm install
 
 # npm
 npm install
-
-# pnpm
-pnpm install
 ```
 
 # Environment Variables
@@ -42,11 +39,11 @@ pnpm install
 Start the development server on `http://localhost:3000`
 
 ```bash
-yarn dev
+pnpm dev
 ```
 Or run as cloudflare pages development
 ```bash
-yarn pages:dev
+pnpm pages:dev
 ```
 
 ```bash
@@ -56,13 +53,13 @@ yarn pages:dev
 Build the application for production:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 Locally preview production build:
 
 ```bash
-yarn preview
+pnpm preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
