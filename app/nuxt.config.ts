@@ -2,7 +2,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   experimental: {
-    extraPageMetaExtractionKeys: [],
+    extraPageMetaExtractionKeys: ['author', 'keywords', 'og:image'],
   },
   runtimeConfig: {
     public: {

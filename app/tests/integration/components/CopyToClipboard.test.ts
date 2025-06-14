@@ -12,7 +12,7 @@ vi.mock('@fortawesome/vue-fontawesome', () => ({
 }))
 
 describe('CopyToClipboard', () => {
-  let wrapper: ReturnType<typeof mount>
+  let wrapper: ReturnType<typeof mount<typeof CopyToClipboard>>
   const textToCopy = 'Test text to copy'
 
   // Mock clipboard API
