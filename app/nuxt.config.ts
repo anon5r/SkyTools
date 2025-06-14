@@ -15,6 +15,13 @@ export default defineNuxtConfig({
       cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
       prodURLPrefix: 'https://skytools.anon5r.com',
     },
+    build: {
+      transpile:
+        process.env.NODE_ENV === 'production'
+          ? ['@atproto/api', '@gtm-support/vue-gtm']
+          : ['@gtm-support/vue-gtm'],
+      analyze: process.env.NODE_ENV !== 'production',
+    },
   },
   ssr: false,
   devtools: {
@@ -169,13 +176,6 @@ export default defineNuxtConfig({
     '~/assets/css/main.css',
   ],
   plugins: ['@/plugins/analytics.client.ts'],
-  cloudflareAnalytics: {
-    token: process.env.CLOUDFLARE_TOKEN || 'none',
-  },
-  build: {
-    transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
-    analyze: process.env.NODE_ENV !== 'production',
-  },
   vite: {
     build: {
       rollupOptions: {
@@ -204,5 +204,8 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: '',
+  },
+  cloudflareAnalytics: {
+    token: process.env.CLOUDFLARE_TOKEN || 'none',
   },
 })
