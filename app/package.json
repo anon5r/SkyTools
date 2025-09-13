@@ -64,7 +64,7 @@
     "@fortawesome/pro-thin-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@gtm-support/vue-gtm": "^2.2.0",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "flowbite": "^2.3.0",
     "flowbite-vue": "^0.1.5",
     "luxon": "^3.4.4",
