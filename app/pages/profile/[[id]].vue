@@ -96,7 +96,7 @@
                 <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
-                    !loadState.profile
+                    !loadState.profile && !hasError.value
                       ? 'Loading...'
                       : userinfo.profile?.displayName ||
                         userinfo.details.handle ||
@@ -623,9 +623,11 @@
    * @param {object} obj
    */
   const isLoadingState = obj => {
-    // Object.keys(obj).forEach(key => {
-    //   console.log(`loadingState[${key}]: `, obj[key])
-    // })
+    console.log(`========>>> isLoadingState`)
+    Object.keys(obj).forEach(key => {
+      console.log(`loadingState[${key}]: `, obj[key])
+    })
+    console.log(`<<<======== isLoadingState`)
     return Object.values(obj).every(value => {
       return value === true
     })
@@ -779,7 +781,9 @@
       updateUserInfo('avatarURL', null)
       updateUserInfo('bannerURL', null)
 
+      updateUserInfo('details', [])
       updateUserInfo('posts', [])
+      updateUserInfo('reposts', [])
       updateUserInfo('following', [])
       updateUserInfo('like', [])
       updateUserInfo('list', [])
