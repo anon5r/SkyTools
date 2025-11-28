@@ -1,14 +1,12 @@
 import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
-import type { QueryObject } from 'ufo'
 import { HandleResolver } from '@atproto/identity'
 
 export default defineEventHandler(async (event) => {
-  const query: QueryObject = getQuery(event)
-  const handle = query.handle as string
+  const { handle } = getQuery(event)
 
-  if (!handle) {
+  if (typeof handle !== 'string' || !handle) {
     setResponseStatus(event, 400)
-    return { error: 'No handle provided' }
+    return { error: 'Query parameter "handle" must be a non-empty string.' }
   }
 
   if (handle.startsWith('did:')) {

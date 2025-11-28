@@ -1,16 +1,14 @@
 import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
-import type { QueryObject } from 'ufo'
 import { DidResolver } from '@atproto/identity'
 import { DateTime } from 'luxon'
 import { getHandle, getPdsEndpoint } from '@atproto/common-web'
 
 export default defineEventHandler(async (event) => {
-  const query: QueryObject = getQuery(event)
-  const actor = query.repo as string
+  const { repo: actor } = getQuery(event)
 
-  if (!actor) {
+  if (typeof actor !== 'string' || !actor) {
     setResponseStatus(event, 400)
-    return { error: 'No DID provided' }
+    return { error: 'Query parameter "repo" must be a non-empty string.' }
   }
 
   if (!actor.startsWith('did:')) {
