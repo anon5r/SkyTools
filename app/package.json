@@ -7,13 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "node scripts/check-fontawesome.js && nuxt prepare",
     "analyze": "nuxt analyze",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
     "pages:dev": "wrangler pages dev --port 3000 ./dist",
-    "pages:build": "nuxt build",
-    "pages:deploy": "nuxt build && wrangler pages deploy ./dist",
+    "pages:build": "yarn build",
+    "pages:deploy": "yarn pages:build && wrangler pages deploy ./dist",
     "pages:preview": "wrangler pages dev ./dist --port 3000"
   },
   "devDependencies": {
@@ -46,7 +46,7 @@
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5",
     "ufo": "^1.5.3",
-    "vite": "^5.3.1",
+    "vite": "^5.4.19",
     "vue": "^3.4.27",
     "vue-eslint-parser": "^9.4.2",
     "vue-router": "^4.3.2",
@@ -54,14 +54,10 @@
   },
   "dependencies": {
     "@atproto/api": "^0.13.7",
-    "@awesome.me/kit-e7e521035c": "^1.0.14",
-    "@fortawesome/fontawesome-free": "^6.5.2",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
-    "@fortawesome/pro-light-svg-icons": "^6.5.2",
-    "@fortawesome/pro-regular-svg-icons": "^6.5.2",
-    "@fortawesome/pro-solid-svg-icons": "^6.5.2",
-    "@fortawesome/pro-thin-svg-icons": "^6.5.2",
+    "@fortawesome/free-regular-svg-icons": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@gtm-support/vue-gtm": "^2.2.0",
     "axios": "^1.8.2",
@@ -69,6 +65,14 @@
     "flowbite-vue": "^0.1.5",
     "luxon": "^3.4.4",
     "nuxt-cloudflare-analytics": "^1.0.8"
+  },
+  "optionalDependencies": {
+    "@awesome.me/kit-e7e521035c": "^1.0.14",
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "@fortawesome/pro-light-svg-icons": "^6.5.2",
+    "@fortawesome/pro-regular-svg-icons": "^6.5.2",
+    "@fortawesome/pro-solid-svg-icons": "^6.5.2",
+    "@fortawesome/pro-thin-svg-icons": "^6.5.2"
   },
   "packageManager": "yarn@3.6.3+sha256.08ead1821a257416e6f217e89365425bf4b6d2430c3279318bedcec1a245fff5"
 }
