@@ -1385,6 +1385,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-common-types@npm:6.7.2":
+  version: 6.7.2
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.7.2"
+  checksum: 9c17f03032e56b8e8e996e5b2c15c8b47baf6f8d5c0703025b0b2711907245f94a7032b3da52d2714b5aeff1c14d3535e6869a82086136dcacae9ccd479dc6a2
+  languageName: node
+  linkType: hard
+
 "@fortawesome/fontawesome-free@npm:^6.5.2":
   version: 6.5.2
   resolution: "@fortawesome/fontawesome-free@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Ffontawesome-free%2F-%2F6.5.2%2Ffontawesome-free-6.5.2.tgz"
@@ -1407,6 +1414,24 @@ __metadata:
   dependencies:
     "@fortawesome/fontawesome-common-types": 6.5.2
   checksum: f037c15978da40942e7962f3ddbddf767bc1a5a126952422c786408e4942f7da4daaefe028ba039b56761636903a5916b845547755a8e04e079c6f92e724fd37
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-regular-svg-icons@npm:^6.5.2":
+  version: 6.7.2
+  resolution: "@fortawesome/free-regular-svg-icons@npm:6.7.2"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.7.2
+  checksum: 1a2be177dbb2c0186b3f10157a70c494f9e3c12c022cc8fb926c37b78a61e256a98c2739774671106454cb1a7f2336c6f49443e6bef44f33e67dd4e186f126cc
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-solid-svg-icons@npm:^6.5.2":
+  version: 6.7.2
+  resolution: "@fortawesome/free-solid-svg-icons@npm:6.7.2"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.7.2
+  checksum: 457cc180399be57efd1a5908aaa76c8530dec5469fa676904179f73976c10bb030c6de9bf866e2a83e042cfd23856ba5fa1ca5acdb83f4e90c6b4aa9e5412d3c
   languageName: node
   linkType: hard
 
@@ -11312,6 +11337,8 @@ __metadata:
     "@fortawesome/fontawesome-free": ^6.5.2
     "@fortawesome/fontawesome-svg-core": ^6.5.2
     "@fortawesome/free-brands-svg-icons": ^6.5.2
+    "@fortawesome/free-regular-svg-icons": ^6.5.2
+    "@fortawesome/free-solid-svg-icons": ^6.5.2
     "@fortawesome/pro-light-svg-icons": ^6.5.2
     "@fortawesome/pro-regular-svg-icons": ^6.5.2
     "@fortawesome/pro-solid-svg-icons": ^6.5.2
@@ -11355,6 +11382,19 @@ __metadata:
     vue-eslint-parser: ^9.4.2
     vue-router: ^4.3.2
     wrangler: ^3.62.0
+  dependenciesMeta:
+    "@awesome.me/kit-e7e521035c":
+      optional: true
+    "@fortawesome/fontawesome-free":
+      optional: true
+    "@fortawesome/pro-light-svg-icons":
+      optional: true
+    "@fortawesome/pro-regular-svg-icons":
+      optional: true
+    "@fortawesome/pro-solid-svg-icons":
+      optional: true
+    "@fortawesome/pro-thin-svg-icons":
+      optional: true
   languageName: unknown
   linkType: soft
 
