@@ -1,4 +1,4 @@
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
 import type { QueryObject } from 'ufo'
 import { DidResolver, HandleResolver } from '@atproto/identity'
 import { getHandle } from '@atproto/common-web'
@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
   const actor = query.actor as string
 
   if (!actor) {
+    setResponseStatus(event, 400)
     return { error: 'No `actor` provided' }
   }
 
@@ -26,9 +27,11 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    setResponseStatus(event, 404)
     return { error: 'No DID or handle found' }
   } catch (error) {
     console.error(error)
+    setResponseStatus(event, 500)
     return { error: 'Internal server error' }
   }
 })

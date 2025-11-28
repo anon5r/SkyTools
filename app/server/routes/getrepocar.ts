@@ -1,4 +1,4 @@
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
 import type { QueryObject } from 'ufo'
 import { DidResolver } from '@atproto/identity'
 import { DateTime } from 'luxon'
@@ -9,10 +9,12 @@ export default defineEventHandler(async (event) => {
   const actor = query.repo as string
 
   if (!actor) {
+    setResponseStatus(event, 400)
     return { error: 'No DID provided' }
   }
 
   if (!actor.startsWith('did:')) {
+    setResponseStatus(event, 400)
     return { error: 'Invalid DID' }
   }
 
@@ -21,6 +23,7 @@ export default defineEventHandler(async (event) => {
     const didDoc = await didResolve.resolve(actor)
 
     if (!didDoc) {
+      setResponseStatus(event, 404)
       return { error: 'No DID document found' }
     }
 
@@ -28,6 +31,7 @@ export default defineEventHandler(async (event) => {
     const pdsEndpoint = getPdsEndpoint(didDoc)
 
     if (!pdsEndpoint) {
+      setResponseStatus(event, 404)
       return { error: 'No personal data server found' }
     }
 
@@ -50,6 +54,7 @@ export default defineEventHandler(async (event) => {
     return new Response(response.body, { status: 200, headers })
   } catch (error) {
     console.error(error)
+    setResponseStatus(event, 500)
     return { error: 'Error occurred while downloading file' }
   }
 })

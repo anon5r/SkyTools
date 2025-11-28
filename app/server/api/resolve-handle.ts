@@ -1,4 +1,4 @@
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
 import type { QueryObject } from 'ufo'
 import { HandleResolver } from '@atproto/identity'
 
@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   const handle = query.handle as string
 
   if (!handle) {
+    setResponseStatus(event, 400)
     return { error: 'No handle provided' }
   }
 
@@ -22,9 +23,11 @@ export default defineEventHandler(async (event) => {
       return { did }
     }
 
+    setResponseStatus(event, 404)
     return { error: 'No DID found for handle' }
   } catch (error) {
     console.error(error)
+    setResponseStatus(event, 500)
     return { error: 'Internal Server Error' }
   }
 })
