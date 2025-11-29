@@ -35,9 +35,13 @@ export default defineEventHandler(async (event) => {
 
     const repoUrl = `${pdsEndpoint}/xrpc/com.atproto.sync.getRepo?did=${actor}`
 
-    const response = await fetch(repoUrl)
+    const response = await fetch(repoUrl, {
+      headers: {
+        'User-Agent': 'SkyTools/1.0 (Cloudflare Workers)',
+      },
+    })
     if (response.status !== 200 || response.body === null) {
-      throw new Error('Error occurred while fetching the repo data')
+      throw new Error(`Error fetching repo data: Status ${response.status}`)
     }
 
     const date = DateTime.now().toFormat('yyyyMMdd_HHmm')
@@ -50,9 +54,12 @@ export default defineEventHandler(async (event) => {
     }
 
     return new Response(response.body, { status: 200, headers })
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
     setResponseStatus(event, 500)
-    return { error: 'Error occurred while downloading file' }
+    return { 
+      error: 'Error occurred while downloading file',
+      details: error.message || String(error)
+    }
   }
 })
