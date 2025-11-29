@@ -40,12 +40,10 @@
         </p>
       </NuxtLink>
       <NuxtLink to="/bsky/mushrooms" class="feature-card">
-        <h2
-          class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2 line-through">
-          Invite code
+        <h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+          Mushrooms
         </h2>
-        <p
-          class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4 line-through">
+        <p class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4">
           List of Bluesky mushroom PDS servers and first created accounts.
         </p>
       </NuxtLink>
