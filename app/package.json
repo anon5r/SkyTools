@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.3.3",
   "scripts": {
-    "build": "nuxt build",
+    "build": "node scripts/setup-fontawesome.mjs && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

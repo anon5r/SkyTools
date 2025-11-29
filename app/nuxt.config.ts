@@ -1,6 +1,31 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { existsSync } from 'fs'
+import { join } from 'path'
+
+const isProInstalled = () => {
+  try {
+    return existsSync(join(process.cwd(), 'node_modules/@fortawesome/pro-solid-svg-icons'))
+  } catch (e) {
+    return false
+  }
+}
+
+const usePro = isProInstalled()
+console.log(`FontAwesome Setup: Using ${usePro ? 'Pro' : 'Free'} version`)
+
+const faAliases = usePro ? {} : {
+  '@fortawesome/pro-solid-svg-icons': '@fortawesome/free-solid-svg-icons',
+  '@fortawesome/pro-regular-svg-icons': '@fortawesome/free-regular-svg-icons',
+  '@fortawesome/pro-brands-svg-icons': '@fortawesome/free-brands-svg-icons',
+  '@fortawesome/pro-light-svg-icons': '@fortawesome/free-solid-svg-icons',
+  '@fortawesome/pro-thin-svg-icons': '@fortawesome/free-solid-svg-icons',
+  '@fortawesome/pro-duotone-svg-icons': '@fortawesome/free-solid-svg-icons',
+}
 
 export default defineNuxtConfig({
+  alias: {
+    ...faAliases,
+  },
   runtimeConfig: {
     public: {
       GTM_ID: process.env.GTM_ID || 'GTM-UNDEFINED',
