@@ -3,7 +3,18 @@ import { DidResolver } from '@atproto/identity'
 import { DateTime } from 'luxon'
 import { getHandle, getPdsEndpoint } from '@atproto/common-web'
 
-export default defineEventHandler(async (event) => {
+// Cloudflare Workers does not support { redirect: 'error' }.
+// Patch global fetch to use 'manual' instead, which prevents following redirects (similar intent)
+// but returns the 3xx response instead of throwing.
+const _originalFetch = globalThis.fetch
+globalThis.fetch = async (input, init) => {
+  if (init && init.redirect === 'error') {
+    init = { ...init, redirect: 'manual' }
+  }
+  return _originalFetch(input, init)
+}
+
+export default defineEventHandler(async event => {
   const { repo: actor } = getQuery(event)
 
   if (typeof actor !== 'string' || !actor) {
@@ -36,6 +47,8 @@ export default defineEventHandler(async (event) => {
     const repoUrl = `${pdsEndpoint}/xrpc/com.atproto.sync.getRepo?did=${actor}`
 
     const response = await fetch(repoUrl, {
+      method: 'GET',
+      redirect: 'follow',
       headers: {
         'User-Agent': 'SkyTools/1.0 (Cloudflare Workers)',
       },
@@ -57,9 +70,9 @@ export default defineEventHandler(async (event) => {
   } catch (error: any) {
     console.error(error)
     setResponseStatus(event, 500)
-    return { 
+    return {
       error: 'Error occurred while downloading file',
-      details: error.message || String(error)
+      details: error.message || String(error),
     }
   }
 })
