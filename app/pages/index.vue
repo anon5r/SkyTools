@@ -39,38 +39,48 @@
           You can check the registration status, terms and policies of each PDS.
         </p>
       </NuxtLink>
-      <NuxtLink to="/invite-code" class="feature-card">
+      <NuxtLink to="/bsky/mushrooms" class="feature-card">
         <h2
           class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2 line-through">
           Invite code
         </h2>
-        <span href="#" class="label-maintain">
-          <ClientOnly>
-            <font-awesome-icon
-              :icon="['fas', 'triangle-exclamation']"
-              class="mr-1 text-xs" />
-          </ClientOnly>
-          Temporary closed
-        </span>
-        <span href="#" class="label-auth-required">
-          <ClientOnly>
-            <font-awesome-icon :icon="['fas', 'lock']" class="mr-1 text-xs" />
-          </ClientOnly>
-          Authentication required
-        </span>
         <p
           class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4 line-through">
-          View history of invite code grants, usage (and whom used). To use this
-          feature, you must be logged into Bluesky using AppPassword.
+          List of Bluesky mushroom PDS servers and first created accounts.
         </p>
       </NuxtLink>
+      <!--      <NuxtLink to="/invite-code" class="feature-card">-->
+      <!--        <h2-->
+      <!--          class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2 line-through">-->
+      <!--          Invite code-->
+      <!--        </h2>-->
+      <!--        <span href="#" class="label-maintain">-->
+      <!--          <ClientOnly>-->
+      <!--            <font-awesome-icon-->
+      <!--              :icon="['fas', 'triangle-exclamation']"-->
+      <!--              class="mr-1 text-xs" />-->
+      <!--          </ClientOnly>-->
+      <!--          Temporary closed-->
+      <!--        </span>-->
+      <!--        <span href="#" class="label-auth-required">-->
+      <!--          <ClientOnly>-->
+      <!--            <font-awesome-icon :icon="['fas', 'lock']" class="mr-1 text-xs" />-->
+      <!--          </ClientOnly>-->
+      <!--          Authentication required-->
+      <!--        </span>-->
+      <!--        <p-->
+      <!--          class="text-md font-normal text-gray-300 dark:text-gray-500 mb-4 line-through">-->
+      <!--          View history of invite code grants, usage (and whom used). To use this-->
+      <!--          feature, you must be logged into Bluesky using AppPassword.-->
+      <!--        </p>-->
+      <!--      </NuxtLink>-->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { useAppConfig, useSeoMeta } from '#imports'
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   const config = useAppConfig()
   const appName = config.title
