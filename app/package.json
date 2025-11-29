@@ -68,12 +68,7 @@
     "nuxt-cloudflare-analytics": "^1.0.8"
   },
   "optionalDependencies": {
-    "@awesome.me/kit-e7e521035c": "^1.0.14",
-    "@fortawesome/fontawesome-free": "^6.5.2",
-    "@fortawesome/pro-light-svg-icons": "^6.5.2",
-    "@fortawesome/pro-regular-svg-icons": "^6.5.2",
-    "@fortawesome/pro-solid-svg-icons": "^6.5.2",
-    "@fortawesome/pro-thin-svg-icons": "^6.5.2"
+    "@awesome.me/kit-e7e521035c": "^1.0.14"
   },
   "packageManager": "yarn@3.6.3+sha256.08ead1821a257416e6f217e89365425bf4b6d2430c3279318bedcec1a245fff5"
 }
