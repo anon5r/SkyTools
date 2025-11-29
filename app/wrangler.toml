@@ -1,4 +1,4 @@
 name = "skytools-app"
 pages_build_output_dir = "./dist"
-compatibility_date = "2024-11-29"
+compatibility_date = "2025-09-15"
 compatibility_flags = ["nodejs_compat"]
