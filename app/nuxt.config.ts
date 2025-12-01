@@ -4,7 +4,9 @@ import { join } from 'path'
 
 const isProInstalled = () => {
   try {
-    return existsSync(join(process.cwd(), 'node_modules/@fortawesome/pro-solid-svg-icons'))
+    return existsSync(
+      join(process.cwd(), 'node_modules/@fortawesome/pro-solid-svg-icons')
+    )
   } catch (e) {
     return false
   }
@@ -13,14 +15,17 @@ const isProInstalled = () => {
 const usePro = isProInstalled()
 console.log(`FontAwesome Setup: Using ${usePro ? 'Pro' : 'Free'} version`)
 
-const faAliases = usePro ? {} : {
-  '@fortawesome/pro-solid-svg-icons': '@fortawesome/free-solid-svg-icons',
-  '@fortawesome/pro-regular-svg-icons': '@fortawesome/free-regular-svg-icons',
-  '@fortawesome/pro-brands-svg-icons': '@fortawesome/free-brands-svg-icons',
-  '@fortawesome/pro-light-svg-icons': '@fortawesome/free-solid-svg-icons',
-  '@fortawesome/pro-thin-svg-icons': '@fortawesome/free-solid-svg-icons',
-  '@fortawesome/pro-duotone-svg-icons': '@fortawesome/free-solid-svg-icons',
-}
+const faAliases = usePro
+  ? {}
+  : {
+      '@fortawesome/pro-solid-svg-icons': '@fortawesome/free-solid-svg-icons',
+      '@fortawesome/pro-regular-svg-icons':
+        '@fortawesome/free-regular-svg-icons',
+      '@fortawesome/pro-brands-svg-icons': '@fortawesome/free-brands-svg-icons',
+      '@fortawesome/pro-light-svg-icons': '@fortawesome/free-solid-svg-icons',
+      '@fortawesome/pro-thin-svg-icons': '@fortawesome/free-solid-svg-icons',
+      '@fortawesome/pro-duotone-svg-icons': '@fortawesome/free-solid-svg-icons',
+    }
 
 export default defineNuxtConfig({
   alias: {
@@ -162,7 +167,7 @@ export default defineNuxtConfig({
     pages: true,
     productionTip: false,
     title: 'SkyTools' as string,
-    defaultSuffix: process.env.DEFAULT_PDS_SUFFIX || ('.bsky.social' as string),
+    defaultSuffix: process.env.DEFAULT_PDS_SUFFIX || ('bsky.social' as string),
     defaultPDS: process.env.PDS_DEFAULT || ('bsky.social' as string),
     defaultPDSEntrypoint:
       process.env.DEFAULT_PDS_ENDPOINT || ('https://bsky.social' as string),
