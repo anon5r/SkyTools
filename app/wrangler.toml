@@ -3,9 +3,6 @@ pages_build_output_dir = "./dist"
 compatibility_date = "2025-09-15"
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare Account Configuration
-account_id = "${CLOUDFLARE_ACCOUNT_ID}"
-
 # Environment Variables (non-sensitive)
 [vars]
 NODE_ENV = "production"
