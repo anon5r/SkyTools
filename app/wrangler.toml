@@ -2,3 +2,18 @@ name = "skytools-app"
 pages_build_output_dir = "./dist"
 compatibility_date = "2025-09-15"
 compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Account Configuration
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
+
+# Environment Variables (non-sensitive)
+[vars]
+NODE_ENV = "production"
+GTM_ID = "GTM-KT2457M"
+PDS_DEFAULT = "bsky.social"
+DEFAULT_PDS_SUFFIX = "bsky.social"
+DEFAULT_PDS_ENDPOINT = "https://bsky.social"
+DEFAULT_APP_URL = "https://bsky.app"
+WEBMASTER_DID = "did:plc:c22jdrqhoajyj5ca7e56a3ke"
+INVITE_CODE_FREQ = "{\"days\": 10}"
+CDN_PREFIX = "https://cdn-skytools.anon5r.com/proxy"
