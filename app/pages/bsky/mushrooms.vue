@@ -13,6 +13,7 @@
       'enoki',
       'helvella',
       'inkcap',
+      'jellybaby',
       'lionsmane',
       'lobster',
       'meadow',
