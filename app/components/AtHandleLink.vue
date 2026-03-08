@@ -1,16 +1,16 @@
 <template>
-  <a :href="postURL" class="text-blue-700 dark:text-blue-500">
-    <slot v-if="!props.withHandle || !$slots.default()">@{{ handle }}</slot>
+  <NuxtLink :to="postURL" class="text-blue-700 dark:text-blue-500">
+    <slot v-if="!props.withHandle || !$slots.default" />
+    <span v-if="!props.withHandle || !$slots.default">@{{ handle }}</span>
     <template v-else>
       <slot />
       @{{ handle }}
     </template>
-  </a>
+  </NuxtLink>
 </template>
 
 <script setup>
   import { onMounted, ref } from '#imports'
-  import { defineProps } from 'vue'
   import { parseAtUri, resolveDID } from '~/utils/bskyutils'
   import { ClientPost } from '@/utils/client'
 
