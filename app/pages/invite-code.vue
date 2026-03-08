@@ -255,7 +255,7 @@
     const serviceURL = new URL(config.defaultPDSEntrypoint)
     // Back to current page
     navigate.setNext(route.name)
-    await router.push({ path: `${serviceURL.hostname}/signin` })
+    await router.push({ path: 'auth/oauth/signin' })
   }
 
   /** Gets list of invite codes */

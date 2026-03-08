@@ -233,7 +233,7 @@
   import { FwbAvatar } from 'flowbite-vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-  const SIGNIN_URL = '/bsky.social/signin'
+  const SIGNIN_URL = '/auth/oauth/signin'
 
   const route = useRoute()
   const router = useRouter()

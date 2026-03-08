@@ -24,11 +24,9 @@
   </div>
 </template>
 
-<style scoped></style>
-
 <script setup lang="ts">
   import { useAppConfig } from '#imports'
-  import { AppBskyEmbedImages } from '@atproto/api'
+  import type { AppBskyEmbedImages } from '@atproto/api'
   import { defineProps, type PropType } from 'vue'
 
   /** @type {AppBskyEmbedImages} props.embed */
@@ -56,3 +54,5 @@
   })
   const config = useAppConfig()
 </script>
+
+<style scoped></style>

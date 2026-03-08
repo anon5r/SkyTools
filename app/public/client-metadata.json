@@ -2,7 +2,7 @@
   "client_id": "https://skytools.anon5r.com/client-metadata.json",
   "client_name": "SkyTools",
   "client_uri": "https://skytools.anon5r.com",
-  "redirect_uris": ["https://skytools.anon5r.com/oauth/callback"],
+  "redirect_uris": ["https://skytools.anon5r.com/auth/oauth/callback"],
   "scope": "atproto transition:generic",
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],

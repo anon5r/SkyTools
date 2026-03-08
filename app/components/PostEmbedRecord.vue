@@ -68,12 +68,10 @@
   </div>
 </template>
 
-<style scoped></style>
-
 <script setup lang="ts">
   import { AppBskyEmbedRecord } from '@atproto/api'
   import { defineProps, type Ref } from 'vue'
-  import { ClientPost, ref, useAppConfig, isDev } from '#imports'
+  import { ClientPost, isDev, ref, useAppConfig } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
 
   /** @type {AppBskyEmbedRecord} props.embed */
@@ -126,3 +124,5 @@
     }
   }
 </script>
+
+<style scoped></style>

@@ -1,5 +1,5 @@
 import type { AtpSessionData, AtpSessionEvent } from '@atproto/api'
-import { AtpAgent } from '@atproto/api'
+import { Agent, AtpAgent } from '@atproto/api'
 import { getPDSEndpointByDID, resolveHandle } from '~/utils/bskyutils'
 import { BrowserOAuthClient } from '@atproto/oauth-client-browser'
 import type { Ref } from '#imports'
@@ -14,7 +14,7 @@ declare interface LoginState {
 }
 
 // let _agent: Ref<{ [key: string]: BskyAgent }> = ref({})
-const _agent: Ref<Record<string, AtpAgent>> = ref({})
+const _agent: Ref<Record<string, AtpAgent | Agent>> = ref({})
 let _oauthClient: BrowserOAuthClient | undefined
 
 const keyCredentials = 'credentials'
@@ -32,7 +32,7 @@ const getOAuthClient = async () => {
     await new Promise(() => {})
   }
 
-  const redirectUri = `${url}/oauth/callback`
+  const redirectUri = `${url}/auth/oauth/callback`
   const scope = 'atproto transition:generic'
   const clientId = isDev()
     ? `http://localhost?redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`
@@ -66,7 +66,7 @@ const initLoginState = (): LoginState => {
   }
 }
 
-const getAgent = async (pdsEntrypoint?: string): Promise<AtpAgent> => {
+const getAgent = async (pdsEntrypoint?: string): Promise<AtpAgent | Agent> => {
   if (
     pdsEntrypoint &&
     pdsEntrypoint.length > 0 &&
@@ -101,7 +101,7 @@ const getAgent = async (pdsEntrypoint?: string): Promise<AtpAgent> => {
     _agent.value[pdsEntrypoint] = agent
   }
   if (!_agent.value[pdsEntrypoint]) throw new Error('Could not get agent')
-  return _agent.value[pdsEntrypoint] as AtpAgent
+  return _agent.value[pdsEntrypoint] as AtpAgent | Agent
 }
 
 export { getAgent, initLoginState }
@@ -129,11 +129,14 @@ export const login = async (credentials: {
       }
     }
 
-    await client.signIn(credentials.identifier)
+    // @ts-expect-error: login_hint is internally handled but explicitly requested
+    await client.signIn(credentials.identifier, {
+      login_hint: credentials.identifier,
+    })
     return true
   }
 
-  const agent: AtpAgent = await getAgent(credentials.pds)
+  const agent = (await getAgent(credentials.pds)) as AtpAgent
   if (!agent) throw new Error('Could not get agent')
   try {
     const response = await agent.login({
@@ -168,8 +171,9 @@ export const finalizeOAuth = async () => {
   const session = initResult ? initResult.session : null
 
   if (session) {
-    const agent = new AtpAgent(session as any)
-    const pdsEntrypoint = agent.pdsUrl?.toString() ?? 'https://bsky.social'
+    const agent = new Agent(session)
+    const config = useAppConfig()
+    const pdsEntrypoint = config.defaultPDSEntrypoint || 'https://bsky.social'
     _agent.value[pdsEntrypoint] = agent
 
     const useLoginState = useState('loginState', initLoginState)
@@ -197,8 +201,23 @@ export const finalizeOAuth = async () => {
 export const logout = async (pdsEntrypoint?: string): Promise<void> => {
   try {
     const agent = await getAgent(pdsEntrypoint)
-    if (agent.hasSession) {
-      await agent.com.atproto.server.deleteSession()
+    const actorDid = 'session' in agent ? agent.session?.did : agent.assertDid
+    if ('hasSession' in agent ? agent.hasSession : !!agent.did) {
+      if (import.meta.client && actorDid) {
+        try {
+          const client = await getOAuthClient()
+          await client.revoke(actorDid)
+        } catch (e) {
+          console.error('Failed to revoke OAuth session', e)
+        }
+      }
+      if ('com' in agent && agent.com.atproto.server.deleteSession) {
+        try {
+          await agent.com.atproto.server.deleteSession()
+        } catch (e) {
+          // Might error for OAuth, which is fine as revoke() handles OAuth sessions
+        }
+      }
       ClientPost.setViewerLoggedIn(false)
       ClientPost.setViewerBlockedList([])
     }
@@ -219,8 +238,9 @@ export const restoreSession = async (pdsEntrypoint?: string): Promise<void> => {
     const session = initResult ? initResult.session : null
 
     if (session) {
-      const agent = new AtpAgent(session as any)
-      const entrypoint = agent.pdsUrl?.toString() ?? 'https://bsky.social'
+      const agent = new Agent(session)
+      const config = useAppConfig()
+      const entrypoint = config.defaultPDSEntrypoint || 'https://bsky.social'
       _agent.value[entrypoint] = agent
 
       const useLoginState = useState('loginState', initLoginState)
@@ -245,7 +265,7 @@ export const restoreSession = async (pdsEntrypoint?: string): Promise<void> => {
     if (credentials) {
       try {
         const session = JSON.parse(credentials)
-        const agent: AtpAgent = await getAgent(pdsEntrypoint)
+        const agent = (await getAgent(pdsEntrypoint)) as AtpAgent
         const res = await agent.resumeSession(session)
         const useLoginState = useState('loginState', initLoginState)
         useLoginState.value = {
@@ -293,11 +313,12 @@ export const getEmail = (): string => {
 }
 
 export const getProfile = async (pdsUri?: string) => {
-  const agent: AtpAgent = await getAgent(pdsUri)
+  const agent = await getAgent(pdsUri)
   if (!agent) throw new Error('Require authentication')
 
+  const actorDid = 'session' in agent ? agent.session?.did : agent.assertDid
   const result = await agent.app.bsky.actor.getProfile({
-    actor: agent.session?.did as string,
+    actor: actorDid as string,
   })
 
   if (!result.success) throw new Error('Could not get profile')
