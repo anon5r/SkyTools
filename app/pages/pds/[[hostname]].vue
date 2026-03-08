@@ -9,7 +9,7 @@
             type="text"
             class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder="Enter PDS entry point (e.g. https://bsky.social)"
-            @keyup.enter="getPDSInfo" />
+            @keyup.enter="getPDSInfo" >
         </div>
         <button
           class="px-5 py-3 min-w-fit bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md"
@@ -137,11 +137,12 @@
                   <a
                     :href="pdsInfo.links.privacyPolicy"
                     target="_blank"
-                    class="my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline"
-                    >Privacy Policy
+                    class="my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
+                    Privacy Policy
                     <font-awesome-icon
                       :icon="['fas', 'external-link-alt']"
-                      class="ml-1 text-xs" /></a>
+                      class="ml-1 text-xs" />
+                  </a>
                 </div>
                 <div v-if="pdsInfo.links?.termsOfService">
                   <font-awesome-icon
@@ -149,11 +150,12 @@
                     class="mr-2 text-md text-blue-800 dark:text-blue-400" />
                   <span
                     class="ml-0 my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
-                    <a :href="pdsInfo.links.termsOfService" target="_blank"
-                      >Terms of Service
+                    <a :href="pdsInfo.links.termsOfService" target="_blank">
+                      Terms of Service
                       <font-awesome-icon
                         :icon="['fas', 'external-link-alt']"
-                        class="ml-1 text-xs" /></a>
+                        class="ml-1 text-xs" />
+                    </a>
                   </span>
                 </div>
               </dd>
@@ -199,10 +201,10 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, onBeforeMount } from 'vue'
+  import { onBeforeMount, ref, watch } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { describeServer } from '~/utils/bskyutils'
-  import { ComAtprotoServerDescribeServer } from '@atproto/api'
+  import type { ComAtprotoServerDescribeServer } from '@atproto/api'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { isDev } from '#imports'
 

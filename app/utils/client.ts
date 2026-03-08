@@ -1,4 +1,4 @@
-import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
+import type { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
 import * as bskyutils from '~/utils/bskyutils'
 import { isDev } from '~/utils/helpers'
 import { BlockedError, UnauthenticatedError } from '~/errors/BskyErrors'
@@ -135,7 +135,7 @@ class ClientPost {
     if (pdsEndpoint) client._endpoint = pdsEndpoint
 
     client._atUri = bskyutils.parseAtUri(atUriPost)
-    const did = client._atUri.actor
+    const did = client._atUri.actor as string
 
     try {
       if (client._endpoint === undefined)
@@ -155,11 +155,11 @@ class ClientPost {
         client._profile.labels &&
         client._profile.labels.$type === 'com.atproto.label.defs#selfLabels'
       ) {
-        filtered = (client._profile.labels.values as [{ val: string }]).filter(
-          v => {
-            return v.val === '!no-unauthenticated'
-          }
-        )
+        filtered = (
+          (client._profile.labels as any).values as [{ val: string }]
+        ).filter(v => {
+          return v.val === '!no-unauthenticated'
+        })
         // No authenticated
         client._noUnauthenticated = filtered.length > 0
         if (client._noUnauthenticated && !ClientPost._viewer_loggedIn)
@@ -190,7 +190,7 @@ class ClientPost {
     // Avatar
     client._avatarURL = bskyutils.buildBlobRefURL(
       cdnURL,
-      client.atUri.actor,
+      client.atUri.actor as string,
       client.profile as AppBskyActorProfile.Record,
       'avatar',
       client._endpoint
@@ -199,7 +199,7 @@ class ClientPost {
     // Banner
     client._bannerURL = bskyutils.buildBlobRefURL(
       cdnURL,
-      client.atUri.did,
+      client.atUri.did as string,
       client.profile as AppBskyActorProfile.Record,
       'banner',
       client._endpoint
@@ -220,9 +220,9 @@ class ClientPost {
 
       const record = await bskyutils.getRecord(
         client._endpoint ?? client._config.defaultPDSEntrypoint,
-        client._atUri.collection,
-        client._atUri.actor,
-        client._atUri.rkey
+        client._atUri.collection as string,
+        client._atUri.actor as string,
+        client._atUri.rkey as string
       )
       client._cid = record.data.cid as string
       client._record = record.data.value as AppBskyFeedPost.Record

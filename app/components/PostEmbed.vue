@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-  import { defineProps, type PropType } from 'vue'
+  import type { PropType } from 'vue'
   import { onMounted } from '#imports'
   import {
     AppBskyEmbedExternal,
@@ -47,7 +47,8 @@
   const props = defineProps({
     embed: {
       type: Object as PropType<
-        AppBskyEmbedImages.Main | AppBskyEmbedVideo.Main,
+        | AppBskyEmbedImages.Main
+        | AppBskyEmbedVideo.Main
         | AppBskyEmbedRecord.Main
         | AppBskyEmbedRecordWithMedia.Main
         | AppBskyEmbedExternal.Main
@@ -94,6 +95,7 @@
 </script>
 
 <style scoped>
+  @reference "tailwindcss";
   .at-handle::before {
     content: '@';
   }

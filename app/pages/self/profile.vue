@@ -65,7 +65,7 @@
                     {{ profile.handle || 'unknown.example' }}
                   </span>
                   <span v-else class="mt-4">
-                    <Label></Label>
+                    <Label />
                     Loading...
                   </span>
                 </div>
@@ -85,8 +85,8 @@
                 <!-- Edit button -->
                 <button
                   class="p-2 min-w-full text-xs bg-blue-400 dark:bg-blue-950 text-blue-200 rounded-md focus:outline select-none"
-                  @click="editLabel()"
-                  :class="!loadState.update ? 'disabled' : ''">
+                  :class="!loadState.update ? 'disabled' : ''"
+                  @click="editLabel()">
                   <ClientOnly>
                     <span v-if="!loadState.update">
                       <div role="status" class="inline-block leading-tight">
@@ -155,7 +155,7 @@
                   v-model="description"
                   rows="5"
                   class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Write your thoughts here..."></textarea>
+                  placeholder="Write your thoughts here..." />
               </div>
               <div v-else>
                 {{ profile?.description ?? '' }}
@@ -165,7 +165,7 @@
             <!-- Label update -->
             <div v-if="!hasError" class="flex flex-row content-center">
               <!-- Labels -->
-              <LabelList :labels="labels" :inEdit="inEdit" />
+              <LabelList :labels="labels" :in-edit="inEdit" />
             </div>
 
             <!-- Last indexed -->
@@ -208,14 +208,14 @@
 
 <script setup>
   import {
-    useAppConfig,
-    useSeoMeta,
-    useState,
+    bskyutils,
     onMounted,
     ref,
+    useAppConfig,
     useRoute,
     useRouter,
-    bskyutils,
+    useSeoMeta,
+    useState,
   } from '#imports'
   import { DateTime } from 'luxon'
   import { isDev, isEqualArray } from '@/utils/helpers'

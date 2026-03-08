@@ -88,7 +88,7 @@
   onMounted(() => {
     if (props.profile) {
       if (props.profile.avatar) {
-        let repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
+        const repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
 
         avatarURL.value = buildBlobRefURL(
           config.cdnPrefix,
@@ -107,6 +107,7 @@
 </script>
 
 <style scoped>
+  @reference "~/assets/css/main.css";
   .avatar-object-cover :deep(img) {
     @apply object-cover;
   }

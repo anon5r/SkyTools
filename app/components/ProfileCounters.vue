@@ -1,60 +1,32 @@
 <template>
-  <div class="flex flex-row min-w-strech">
-    <div
-      v-if="followersCount !== undefined"
-      class="mr-2 font-light text-gray-600 dark:text-slate-500">
-      <span class="font-semibold text-gray-900 dark:text-slate-200">
-        {{ followersCount }}
+  <div
+    class="flex justify-around p-4 bg-white dark:bg-slate-800 rounded-md shadow-sm">
+    <div class="text-center">
+      <span class="block text-2xl font-bold text-gray-900 dark:text-slate-100">
+        {{ profile.followersCount }}
       </span>
-      followers
+      <span class="text-gray-500 dark:text-slate-400 text-sm">Followers</span>
     </div>
-    <div class="mx-2 font-light text-gray-600 dark:text-slate-500">
-      <span class="font-semibold text-gray-900 dark:text-slate-200">
-        {{ followsCount }}
+    <div class="text-center">
+      <span class="block text-2xl font-bold text-gray-900 dark:text-slate-100">
+        {{ profile.followsCount }}
       </span>
-      following
+      <span class="text-gray-500 dark:text-slate-400 text-sm">Following</span>
     </div>
-    <div class="ml-2 font-light text-gray-600 dark:text-slate-500">
-      <span class="font-semibold text-gray-900 dark:text-slate-200">
-        {{ postsCount }}
+    <div class="text-center">
+      <span class="block text-2xl font-bold text-gray-900 dark:text-slate-100">
+        {{ profile.postsCount }}
       </span>
-      posts
+      <span class="text-gray-500 dark:text-slate-400 text-sm">Posts</span>
     </div>
-    <div
-      v-if="likeCount !== undefined"
-      class="ml-2 font-light text-gray-600 dark:text-slate-500">
-      <span class="font-semibold text-gray-900 dark:text-slate-200">
-        {{ likeCount }}
-      </span>
-      like
-    </div>
-    <slot></slot>
   </div>
 </template>
 
-<script setup>
-  import { defineProps } from 'vue'
-
+<script setup lang="ts">
   const props = defineProps({
-    followersCount: {
-      type: Number,
-      required: false,
-      default: undefined,
-    },
-    followsCount: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    postsCount: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    likeCount: {
-      type: Number,
-      required: false,
-      default: undefined,
+    profile: {
+      type: Object,
+      required: true,
     },
   })
 </script>

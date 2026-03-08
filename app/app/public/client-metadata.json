@@ -1,0 +1,18 @@
+{
+  "client_id": "https://skytools.anon5r.com/client-metadata.json",
+  "client_name": "SkyTools",
+  "client_uri": "https://skytools.anon5r.com",
+  "logo_uri": "https://skytools.anon5r.com/images/default.png",
+  "tos_uri": "https://skytools.anon5r.com/about",
+  "policy_uri": "https://skytools.anon5r.com/about",
+  "redirect_uris": [
+    "https://skytools.anon5r.com/oauth/callback",
+    "http://localhost:3000/oauth/callback"
+  ],
+  "scope": "atproto transition:generic",
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "application_type": "native",
+  "token_endpoint_auth_method": "none",
+  "dpop_bound_access_tokens": true
+}

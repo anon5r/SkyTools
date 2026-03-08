@@ -1,4 +1,4 @@
-import { useAppConfig, useRouter, ref, onMounted } from '#imports'
+import { onMounted, ref, useAppConfig, useRouter } from '#imports'
 
 interface Navigation {
   next: string | null
@@ -43,7 +43,8 @@ export function useNavigation() {
 
   const goNext = (): void => {
     try {
-      if (getNext()?.startsWith('/')) router.push({ path: getNext() })
+      if (getNext()?.startsWith('/'))
+        router.push({ path: getNext() ?? undefined })
       else router.push({ name: getNext() ?? 'index' })
     } catch (err) {
       goHome()
@@ -52,7 +53,8 @@ export function useNavigation() {
 
   const goPrev = (): void => {
     try {
-      if (getPrev()?.startsWith('/')) router.push({ path: getPrev() })
+      if (getPrev()?.startsWith('/'))
+        router.push({ path: getPrev() ?? undefined })
       router.push({ name: getPrev() ?? 'index' })
     } catch (err) {
       goHome()

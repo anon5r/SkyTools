@@ -90,6 +90,7 @@
 </script>
 
 <style scoped>
+  @reference "~/assets/css/main.css";
   .feature-card {
     @apply bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 hover:dark:bg-gray-600 border border-gray-200 dark:border-gray-700 rounded-lg p-4 md:p-6;
   }

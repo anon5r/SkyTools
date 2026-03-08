@@ -1,17 +1,19 @@
 import axios, { type AxiosResponse } from 'axios'
 import { isDev } from '@/utils/helpers'
+import type {
+  AppBskyFeedPost,
+  ComAtprotoRepoDescribeRepo,
+  ComAtprotoRepoGetRecord,
+  ComAtprotoRepoListRecords,
+  ComAtprotoServerDescribeServer,
+  ComAtprotoSyncListRepos,
+} from '@atproto/api'
 import {
   AppBskyActorProfile,
   AppBskyFeedGenerator,
-  type AppBskyFeedPost,
   AppBskyGraphList,
   AtpAgent,
   AtUri,
-  ComAtprotoRepoDescribeRepo,
-  type ComAtprotoRepoGetRecord,
-  type ComAtprotoRepoListRecords,
-  ComAtprotoServerDescribeServer,
-  ComAtprotoSyncListRepos,
 } from '@atproto/api'
 import type { BlobRef } from '@atproto/lexicon'
 
@@ -126,7 +128,7 @@ export const resolveHandle = async (
 
   try {
     const url = `${pdsUri ?? config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
-    let res = await axios.get(url)
+    const res = await axios.get(url)
     if (res.status === 200 && res.data?.did) return res.data.did as string
   } catch (error: any) {
     if (isDev()) {
@@ -137,7 +139,7 @@ export const resolveHandle = async (
 
   try {
     const url = `https://${identifier}/.well-known/atproto-did`
-    let res = await axios.get(url)
+    const res = await axios.get(url)
     if (res.status === 200) return res.data as string
   } catch (err) {
     if (isDev()) {
@@ -215,9 +217,9 @@ export const getIdentityAuditLogs = async (
 ): Promise<any> => {
   const url = `${plcURL}/${identifier}/log/audit`
   try {
-    const res: AxiosResponse<Object, any> = await axios.get(url)
+    const res: AxiosResponse<object> = await axios.get(url)
 
-    if (res.data) return res.data as Object
+    if (res.data) return res.data as object
     throw new Error('Failed to resolve handle')
   } catch (err: any) {
     if (isDev()) {
@@ -273,7 +275,7 @@ export const getRecord = async (
   try {
     const response: ComAtprotoRepoGetRecord.Response = await createAtpAgent(
       repoEndpoint
-    ).api.com.atproto.repo.getRecord({
+    ).com.atproto.repo.getRecord({
       repo: repo,
       collection: collection,
       rkey: recordKey,
@@ -311,7 +313,7 @@ export const listRecords = async (
   try {
     const response = await createAtpAgent(
       repoEndpoint
-    ).api.com.atproto.repo.listRecords({
+    ).com.atproto.repo.listRecords({
       collection: collection,
       repo: identifier,
       limit: limit,
@@ -332,14 +334,14 @@ export const listRecords = async (
  * @param {string} cid
  * @returns
  */
-export const getBlob = async (did: string, cid: string): Promise<string> => {
+export async function getBlob(did: string, cid: string): Promise<string> {
   try {
     const response = await createAtpAgent().com.atproto.sync.getBlob({
       did: did,
       cid: cid,
     })
     if (response.data) {
-      const blobObject = new Blob([response.data], {
+      const blobObject = new Blob([response.data as unknown as BlobPart], {
         type: response.headers['Content-Type'] as string,
       })
       return URL.createObjectURL(blobObject)
@@ -386,7 +388,7 @@ export const getPost = async (
 export const describeRepo = async (id: string): Promise<any> => {
   try {
     const response: ComAtprotoRepoDescribeRepo.Response =
-      await createAtpAgent().api.com.atproto.repo.describeRepo({
+      await createAtpAgent().com.atproto.repo.describeRepo({
         repo: id,
       })
 
@@ -484,7 +486,7 @@ export const buildPostURL = async (
   if (handle === undefined) {
     try {
       if (isDev()) console.log(atUri)
-      handle = await resolveDID(atUri.did, false)
+      handle = await resolveDID(atUri.did as string, false)
     } catch (er) {
       handle = atUri.did
     }
@@ -497,7 +499,7 @@ export const describeServer = async (
 ): Promise<ComAtprotoServerDescribeServer.OutputSchema> => {
   try {
     const response: ComAtprotoServerDescribeServer.Response =
-      await createAtpAgent(server).api.com.atproto.server.describeServer()
+      await createAtpAgent(server).com.atproto.server.describeServer()
     if (response.success) {
       return response.data
     }
@@ -518,7 +520,7 @@ export const listRepos = async (
 ): Promise<ComAtprotoSyncListRepos.Repo[]> => {
   const response: ComAtprotoSyncListRepos.Response = await createAtpAgent(
     pdsUri
-  ).api.com.atproto.sync.listRepos({
+  ).com.atproto.sync.listRepos({
     limit: limit ?? undefined,
     cursor: cursor ?? undefined,
   })

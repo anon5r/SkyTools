@@ -6,14 +6,14 @@
         <div class="px-3 py-3 flex flex-row justify-between items-center">
           <div class="mr-4 relative w-full">
             <input
+              id="handle_did"
               v-model="id"
               type="text"
-              id="handle_did"
               class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
+              :disabled="!isLoadingState(loadState)"
               @focusout="focusout"
-              @keyup.enter="profileEvent"
-              :disabled="!isLoadingState(loadState)" />
+              @keyup.enter="profileEvent" >
             <label
               for="handle_did"
               class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-translate px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:bg-gray-100 dark:peer-focus:bg-slate-900 left-1">
@@ -22,8 +22,8 @@
           </div>
           <button
             class="px-5 py-3 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md"
-            @click.prevent="profileEvent"
-            :disabled="!isLoadingState(loadState)">
+            :disabled="!isLoadingState(loadState)"
+            @click.prevent="profileEvent">
             <span v-if="!isLoadingState(loadState)" class="flex flex-inline">
               <svg
                 aria-hidden="true"
@@ -208,7 +208,7 @@
 
         <div class="pt-2">
           <fwb-tabs v-model="activeTab" class="pt-1 px-1">
-            <fwb-tab name="posts" title="Posts" id="posts">
+            <fwb-tab id="posts" name="posts" title="Posts">
               <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
                 <!-- Pinned post -->
@@ -222,7 +222,7 @@
                     "
                     :pds="userinfo.endpoint"
                     :profile="userinfo.profile"
-                    :isPinned="true" />
+                    :is-pinned="true" />
                 </div>
 
                 <!-- Posts -->
@@ -233,7 +233,7 @@
                     :cid="record.cid"
                     :rkey="bskyutils.parseAtUri(record.uri).rkey"
                     :pds="userinfo.endpoint"
-                    :postRecord="record.value"
+                    :post-record="record.value"
                     :profile="userinfo.profile" />
                 </div>
               </div>
@@ -261,14 +261,14 @@
               <div v-if="cursors.posts" class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  @click="loadMore('posts')"
-                  :disabled="!loadState.posts">
+                  :disabled="!loadState.posts"
+                  @click="loadMore('posts')">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab name="reposts" title="Reposts" id="reposts">
+            <fwb-tab id="reposts" name="reposts" title="Reposts">
               <!-- Reposts -->
               <div v-if="userinfo.reposts.length > 0">
                 <ul>
@@ -308,14 +308,14 @@
               <div v-if="cursors.reposts" class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  @click="loadMore('reposts')"
-                  :disabled="!loadState.reposts">
+                  :disabled="!loadState.reposts"
+                  @click="loadMore('reposts')">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab name="following" title="Following" id="following">
+            <fwb-tab id="following" name="following" title="Following">
               <!-- Following -->
               <div v-if="userinfo.following.length > 0">
                 <ul>
@@ -355,14 +355,14 @@
                 class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  @click="loadMore('following')"
-                  :disabled="!loadState.following">
+                  :disabled="!loadState.following"
+                  @click="loadMore('following')">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab name="like" title="Like" id="like">
+            <fwb-tab id="like" name="like" title="Like">
               <!-- Like -->
               <div v-if="userinfo.like.length > 0">
                 <ul>
@@ -402,14 +402,14 @@
               <div v-if="cursors.like" class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  @click="loadMore('like')"
-                  :disabled="!loadState.like">
+                  :disabled="!loadState.like"
+                  @click="loadMore('like')">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab v-if="easterMode" name="blocks" title="Blocks" id="blocks">
+            <fwb-tab v-if="easterMode" id="blocks" name="blocks" title="Blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
@@ -448,14 +448,14 @@
                 class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  @click="loadMore('blocks')"
-                  :disabled="!loadState.blocks">
+                  :disabled="!loadState.blocks"
+                  @click="loadMore('blocks')">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab name="list" title="List" id="list">
+            <fwb-tab id="list" name="list" title="List">
               <!-- List -->
               <div v-if="userinfo.list.length > 0">
                 <ul>
@@ -496,8 +496,8 @@
               <div v-if="cursors.list" class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  @click="loadMore('list')"
-                  :disabled="!loadState.list">
+                  :disabled="!loadState.list"
+                  @click="loadMore('list')">
                   Load more
                 </button>
               </div>
@@ -881,7 +881,7 @@
       details.createdAt = (
         await bskyUtils.getIdentityAuditLogs(did)
       )[0].createdAt
-      for (let serv of details.data.didDoc.service) {
+      for (const serv of details.data.didDoc.service) {
         const urlParser = new URL(serv.serviceEndpoint)
         switch (serv.type) {
           case 'AtprotoPersonalDataServer':
@@ -1379,6 +1379,7 @@
 </script>
 
 <style scoped>
+  @reference "~/assets/css/main.css";
   .at-handle::before {
     content: '@';
   }

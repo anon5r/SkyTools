@@ -41,6 +41,7 @@
 <script setup lang="ts">
   import { onMounted } from '#imports'
   import { initDropdowns } from 'flowbite'
+
   const props = defineProps({
     icon: {
       type: String,
@@ -69,6 +70,7 @@
 </script>
 
 <style scoped>
+  @reference "~/assets/css/main.css";
   .button-default {
     @apply inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 rounded-lg focus:ring-1 focus:outline-none dark:text-white focus:ring-gray-50 dark:focus:ring-gray-600;
   }

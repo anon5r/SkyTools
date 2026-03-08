@@ -1,10 +1,10 @@
 <template>
   <article
-    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800"
-    :id="`post-${props.rkey ?? props.cid}`">
+    :id="`post-${props.rkey ?? props.cid}`"
+    class="p-4 my-5 text-base shadow-md bg-white rounded-lg dark:bg-slate-800">
     <font-awesome-icon
-      :icon="['fas', 'thumbtack']"
       v-if="props.isPinned"
+      :icon="['fas', 'thumbtack']"
       class="ml-2"
       style="color: #ffd43b" />
     <div class="flex justify-between items-center mb-2">
@@ -23,7 +23,7 @@
         <div class="max-w-xs truncate">
           <!-- DisplayName -->
           <div v-if="isHidden">Hidden user</div>
-          <NuxtLink :to="ClientPost.getPermanentLink(handle)" v-else>
+          <NuxtLink v-else :to="ClientPost.getPermanentLink(handle)">
             {{ displayName ?? handle }}
           </NuxtLink>
           <div
@@ -155,7 +155,7 @@
   import { defineProps, type PropType, type Ref } from 'vue'
   import { DateTime } from 'luxon'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
+  import type { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
   import type { AppConfig } from '@nuxt/schema'
   import { UnauthenticatedError } from '~/errors/BskyErrors'
   import * as bskyutils from '~/utils/bskyutils'
@@ -288,6 +288,7 @@
 </script>
 
 <style scoped>
+  @reference "tailwindcss";
   .at-handle::before {
     content: '@';
   }

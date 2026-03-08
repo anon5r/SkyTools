@@ -1,6 +1,7 @@
 import { defineNuxtConfig } from 'nuxt/config'
 import { existsSync } from 'fs'
 import { join } from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
 const isProInstalled = () => {
   try {
@@ -28,6 +29,10 @@ const faAliases = usePro
     }
 
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4,
+  },
+  srcDir: '.',
   alias: {
     ...faAliases,
   },
@@ -39,14 +44,19 @@ export default defineNuxtConfig({
       defaultPDSEntrypoint: 'https://bsky.social',
       webmasterDid: 'did:plc:c22jdrqhoajyj5ca7e56a3ke',
       inviteCodeFreq: '{"days": 10}',
-      cdnPrefix: 'https://cdn.bluesky.social/imgproxy',
+      cdnPrefix: 'https://cdn-skytools.anon5r.com/proxy',
       prodURLPrefix: 'https://skytools.anon5r.com',
+      bskyAppURL: process.env.DEFAULT_APP_URL || 'https://bsky.app',
     },
   },
   ssr: false,
   devtools: {
     enabled: process.env.NODE_ENV === 'development',
     timeline: { enabled: process.env.NODE_ENV === 'development' },
+  },
+
+  devServer: {
+    host: '127.0.0.1',
   },
 
   app: {
@@ -163,48 +173,36 @@ export default defineNuxtConfig({
       ],
     },
   },
-  appConfig: {
-    pages: true,
-    productionTip: false,
-    title: 'SkyTools' as string,
-    defaultSuffix: process.env.DEFAULT_PDS_SUFFIX || ('bsky.social' as string),
-    defaultPDS: process.env.PDS_DEFAULT || ('bsky.social' as string),
-    defaultPDSEntrypoint:
-      process.env.DEFAULT_PDS_ENDPOINT || ('https://bsky.social' as string),
-    bskyAppURL: process.env.DEFAULT_APP_URL || ('https://bsky.app' as string),
-    webmasterDid:
-      process.env.WEBMASTER_DID ||
-      ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
-    inviteCodeFreq:
-      (process.env.INVITE_CODE_FREQ &&
-        JSON.parse(process.env.INVITE_CODE_FREQ)) ||
-      ({ weeks: 2 } as object),
-    cdnPrefix: process.env.CDN_PREFIX || 'https://cdn.bluesky.social/imgproxy',
-    prodURLPrefix: process.env.OGP_PREFIX || 'https://skytools.anon5r.com',
-  },
+  appConfig: {},
+  compatibilityDate: '2026-01-08',
   modules: [
-    '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    'nuxt-cloudflare-analytics',
+    '@nuxt/scripts',
     '@nuxt/image',
-    process.env.NODE_ENV !== 'production' ? '@nuxt/devtools' : null,
+    '@nuxt/eslint',
     process.env.NODE_ENV !== 'production' ? 'nitro-cloudflare-dev' : null,
-  ],
+  ].filter(Boolean) as any[],
   css: [
     'flowbite/dist/flowbite.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
     '~/assets/css/main.css',
   ],
-  plugins: ['@/plugins/analytics.client.ts'],
-  cloudflareAnalytics: {
-    token: process.env.CLOUDFLARE_TOKEN || 'none',
+  plugins: [],
+  scripts: {
+    registry: {
+      cloudflareWebAnalytics: {
+        token: process.env.CLOUDFLARE_TOKEN || 'none',
+      },
+    },
   },
   build: {
     transpile: process.env.NODE_ENV === 'production' ? ['@atproto/api'] : [],
     analyze: process.env.NODE_ENV !== 'production',
   },
   vite: {
+    plugins: [tailwindcss() as any],
     build: {
+      chunkSizeWarningLimit: 2000,
       rollupOptions: {
         output: {
           manualChunks: {

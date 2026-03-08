@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-  import { useAppConfig, useSeoMeta, onMounted, ref } from '#imports'
+  import { onMounted, ref, useAppConfig, useSeoMeta } from '#imports'
   import { resolveDID } from '~/utils/bskyutils'
 
   const config = useAppConfig()
@@ -118,6 +118,7 @@
 </script>
 
 <style scoped>
+  @reference "~/assets/css/main.css";
   a {
     @apply text-blue-500;
     cursor: hand;
