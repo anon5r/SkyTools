@@ -27,10 +27,12 @@ const getOAuthClient = async () => {
   const url = import.meta.client ? window.location.origin : config.prodURLPrefix
 
   if (import.meta.client && window.location.hostname === 'localhost') {
+    // OAuth providers typically reject 'localhost' as a redirect URI.
+    // We automatically redirect to 127.0.0.1, which is usually allowed.
+    // If this redirect fails for any reason, please open the app at
+    // http://127.0.0.1:3000 directly to avoid this redirection.
     window.location.hostname = '127.0.0.1'
-    // Stop execution until navigation happens (OAuth providers often reject localhost)
-    // Developers can avoid this by browsing using 127.0.0.1 directly.
-    await new Promise(() => {})
+    await new Promise(() => {}) // Halt until browser completes navigation
   }
 
   const redirectUri = `${url}/auth/oauth/callback`
@@ -165,35 +167,43 @@ export const login = async (credentials: {
   }
 }
 
+/**
+ * Shared helper: register an OAuth session agent and update login state.
+ */
+const _applyOAuthSession = async (session: { did: string }): Promise<Agent> => {
+  const agent = new Agent(session as any)
+  const config = useAppConfig()
+  const pdsEntrypoint = config.defaultPDSEntrypoint || 'https://bsky.social'
+  _agent.value[pdsEntrypoint] = agent
+
+  const useLoginState = useState('loginState', initLoginState)
+  useLoginState.value = {
+    isLoggedIn: true,
+    userHandle: session.did,
+    userDid: session.did,
+    userEmail: undefined,
+  }
+
+  // Try to resolve the human-readable handle from the profile
+  try {
+    const profile = await agent.getProfile({ actor: session.did })
+    useLoginState.value.userHandle = profile.data.handle
+  } catch (e) {
+    if (isDev()) console.error('Failed to get profile after OAuth', e)
+  }
+
+  ClientPost.setViewerLoggedIn(true)
+  return agent
+}
+
 export const finalizeOAuth = async () => {
-  if (!import.meta.client) return
+  if (!import.meta.client) return false
   const client = await getOAuthClient()
   const initResult = await client.init()
   const session = initResult ? initResult.session : null
 
   if (session) {
-    const agent = new Agent(session)
-    const config = useAppConfig()
-    const pdsEntrypoint = config.defaultPDSEntrypoint || 'https://bsky.social'
-    _agent.value[pdsEntrypoint] = agent
-
-    const useLoginState = useState('loginState', initLoginState)
-    useLoginState.value = {
-      isLoggedIn: true,
-      userHandle: session.did, // session.handle might not be in OAuthSession initially or it is in user info
-      userDid: session.did,
-      userEmail: undefined,
-    }
-
-    // Try to get profile to get handle
-    try {
-      const profile = await agent.getProfile({ actor: session.did })
-      useLoginState.value.userHandle = profile.data.handle
-    } catch (e) {
-      console.error('Failed to get profile after OAuth', e)
-    }
-
-    ClientPost.setViewerLoggedIn(true)
+    await _applyOAuthSession(session)
     return true
   }
   return false
@@ -239,26 +249,7 @@ export const restoreSession = async (pdsEntrypoint?: string): Promise<void> => {
     const session = initResult ? initResult.session : null
 
     if (session) {
-      const agent = new Agent(session)
-      const config = useAppConfig()
-      const entrypoint = config.defaultPDSEntrypoint || 'https://bsky.social'
-      _agent.value[entrypoint] = agent
-
-      const useLoginState = useState('loginState', initLoginState)
-      useLoginState.value = {
-        isLoggedIn: true,
-        userHandle: session.did,
-        userDid: session.did,
-        userEmail: undefined,
-      }
-
-      // Try to get profile to get handle
-      try {
-        const profile = await agent.getProfile({ actor: session.did })
-        useLoginState.value.userHandle = profile.data.handle
-      } catch (e) {}
-
-      ClientPost.setViewerLoggedIn(true)
+      await _applyOAuthSession(session)
       return
     }
 

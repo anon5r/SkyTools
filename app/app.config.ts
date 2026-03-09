@@ -14,8 +14,8 @@ export default defineAppConfig({
       if (!process.env.INVITE_CODE_FREQ) return { weeks: 2 }
       try {
         return JSON.parse(process.env.INVITE_CODE_FREQ)
-      } catch (e) {
-        console.error("Error parsing INVITE_CODE_FREQ:", e)
+      } catch {
+        // Fall back to default silently – the env var is optional
         return { weeks: 2 }
       }
     })(),

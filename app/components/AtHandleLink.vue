@@ -1,9 +1,10 @@
 <template>
   <NuxtLink :to="postURL" class="text-blue-700 dark:text-blue-500">
-    <slot v-if="!props.withHandle || !$slots.default" />
-    <span v-if="!props.withHandle || !$slots.default">@{{ handle }}</span>
-    <template v-else>
+    <template v-if="props.withHandle && $slots.default">
       <slot />
+      @{{ handle }}
+    </template>
+    <template v-else>
       @{{ handle }}
     </template>
   </NuxtLink>
