@@ -165,7 +165,11 @@
             <!-- Label update -->
             <div v-if="!hasError" class="flex flex-row content-center">
               <!-- Labels -->
-              <LabelList :labels="labels" :in-edit="inEdit" />
+              <LabelList
+                :labels="labels"
+                :in-edit="inEdit"
+                @add-label="(label) => labels.push(label)"
+                @remove-label="(index) => labels.splice(index, 1)" />
             </div>
 
             <!-- Last indexed -->

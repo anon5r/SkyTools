@@ -69,18 +69,23 @@
     },
   })
 
+  const emit = defineEmits<{
+    'add-label': [label: string]
+    'remove-label': [index: number]
+  }>()
+
   // Access system-defined labels fetched in profile.vue
   const definedLabels = useState<string[]>('defined-labels', () => [])
   const newLabel = ref('')
 
   const removeLabel = (index: number) => {
-    props.labels.splice(index, 1)
+    emit('remove-label', index)
   }
 
   const addLabel = () => {
     const val = newLabel.value.trim()
     if (val && !props.labels.includes(val)) {
-      props.labels.push(val)
+      emit('add-label', val)
     }
     newLabel.value = ''
   }

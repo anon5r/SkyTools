@@ -31,7 +31,19 @@
     let html = ''
     for (const segment of rt.segments()) {
       if (segment.isLink() && segment.link) {
-        html += `<a href="${escapeHTML(segment.link.uri)}" class="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 underline" target="_blank" rel="noopener noreferrer">${escapeHTML(segment.text)}</a>`
+        const allowed = ['http:', 'https:', 'mailto:']
+        let href: string | undefined
+        try {
+          const parsed = new URL(segment.link.uri)
+          if (allowed.includes(parsed.protocol)) href = segment.link.uri
+        } catch {
+          // invalid URL — skip
+        }
+        if (href) {
+          html += `<a href="${escapeHTML(href)}" class="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 underline" target="_blank" rel="noopener noreferrer">${escapeHTML(segment.text)}</a>`
+        } else {
+          html += escapeHTML(segment.text)
+        }
       } else if (segment.isMention() && segment.mention) {
         html += `<a href="/profile/${escapeHTML(segment.mention.did)}" class="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 underline">${escapeHTML(segment.text)}</a>`
       } else if (segment.isTag() && segment.tag) {
