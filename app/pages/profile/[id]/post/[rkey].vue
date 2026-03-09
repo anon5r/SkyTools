@@ -5,11 +5,16 @@
       <div class="pt-4">
         <!-- Posts -->
         <PostView
+          v-if="did && pds && profile"
           :did="did"
           :uri="atUri"
           :rkey="postID"
           :profile="profile"
           :pds="pds" />
+        <div v-else class="text-center italic">
+          <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />
+          Loading...
+        </div>
       </div>
     </div>
   </div>
