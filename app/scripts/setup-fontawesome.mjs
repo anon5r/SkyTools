@@ -46,5 +46,7 @@ if (token) {
     execSync('yarn config unset "npmScopes.fortawesome.npmAuthToken"', {
       stdio: 'ignore',
     })
-  } catch (e) {}
+  } catch {
+    // ignore
+  }
 }

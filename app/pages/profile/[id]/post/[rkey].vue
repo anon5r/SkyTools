@@ -5,7 +5,6 @@
       <div class="pt-4">
         <!-- Posts -->
         <PostView
-          :post="{} as any"
           :did="did"
           :uri="atUri"
           :rkey="postID"
