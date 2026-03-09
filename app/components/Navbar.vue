@@ -11,28 +11,33 @@
             {{ appName }}
           </span>
         </NuxtLink>
-        <!-- Side menu button by drawer -->
-        <button
-          id="drawer-menu-button"
-          data-drawer-target="drawer-sidebar"
-          data-drawer-show="drawer-sidebar"
-          data-drawer-placement="right"
-          aria-controls="drawer-sidebar"
-          type="button"
-          class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 hover:bg-gray-100"
-          aria-label="Open Menu">
-          <svg
-            class="w-6 h-6"
-            aria-hidden="true"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              fill-rule="evenodd"
-              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-              clip-rule="evenodd" />
-          </svg>
-        </button>
+        <div class="flex items-center">
+          <ClientOnly>
+            <ToggleDarkmode class="mr-2" />
+          </ClientOnly>
+          <!-- Side menu button by drawer -->
+          <button
+            id="drawer-menu-button"
+            data-drawer-target="drawer-sidebar"
+            data-drawer-show="drawer-sidebar"
+            data-drawer-placement="right"
+            aria-controls="drawer-sidebar"
+            type="button"
+            class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 hover:bg-gray-100"
+            aria-label="Open Menu">
+            <svg
+              class="w-6 h-6"
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill-rule="evenodd"
+                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -136,13 +141,6 @@
                   class="flex-shrink-0 w-5 h-5 pr-1 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
                 <span class="ml-3">Sign in Bluesky</span>
               </NuxtLink>
-            </li>
-            <li>
-              <div
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <ToggleDarkmode class="flex-shrink-0" />
-                <span class="ml-3">Theme</span>
-              </div>
             </li>
           </ul>
         </ClientOnly>
