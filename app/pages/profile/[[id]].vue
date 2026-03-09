@@ -196,12 +196,12 @@
                       </CopyToClipboard>
                     </li>
                     <li v-if="easterMode">
-                      <NuxtLink
-                        :to="`https://${userinfo.details?.servers[0]}/xrpc/com.atproto.sync.getRepo?did=${encodeURIComponent(userinfo.details.did)}`"
-                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      <a
+                        :href="`/getrepocar?repo=${encodeURIComponent(userinfo.details.did)}`"
+                        class="block px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white border-t border-gray-200 dark:border-gray-700">
+                        <font-awesome-icon class="pr-1" :icon="['fas', 'download']" />
                         Download CAR
-                        <font-awesome-icon :icon="['fas', 'download']" />
-                      </NuxtLink>
+                      </a>
                     </li>
                   </ul>
                 </DropdownMenuButton>
