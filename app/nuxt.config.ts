@@ -172,6 +172,7 @@ export default defineNuxtConfig({
         },
       ],
     },
+    buildAssetsDir: 'assets',
   },
   appConfig: {},
   compatibilityDate: '2026-01-08',
