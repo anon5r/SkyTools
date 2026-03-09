@@ -1,4 +1,4 @@
-import { execSync } from 'child_process'
+import { execFileSync, execSync } from 'child_process'
 
 const token = process.env.FONTAWESOME_NPM_AUTH_TOKEN
 
@@ -7,14 +7,8 @@ if (token) {
   try {
     // Configure registry for @fortawesome scope
     // We use yarn config set
-    execSync(
-      'yarn config set "npmScopes.fortawesome.npmRegistryServer" "https://npm.fontawesome.com/"',
-      { stdio: 'inherit' }
-    )
-    execSync(
-      `yarn config set "npmScopes.fortawesome.npmAuthToken" "${token}"`,
-      { stdio: 'inherit' }
-    )
+    execFileSync('yarn', ['config', 'set', 'npmScopes.fortawesome.npmRegistryServer', 'https://npm.fontawesome.com/'], { stdio: 'inherit' })
+    execFileSync('yarn', ['config', 'set', 'npmScopes.fortawesome.npmAuthToken', token], { stdio: 'inherit' })
 
     console.log('Installing Font Awesome Pro packages...')
     const packages = [
@@ -27,7 +21,7 @@ if (token) {
 
     // Install without modifying lockfile if possible, but yarn add usually modifies it.
     // In CI, modifications are discarded.
-    execSync(`yarn add ${packages.join(' ')}`, { stdio: 'inherit' })
+    execFileSync('yarn', ['add', ...packages], { stdio: 'inherit' })
 
     console.log('Font Awesome Pro installed successfully.')
   } catch (e) {
@@ -40,10 +34,10 @@ if (token) {
   console.log('No Font Awesome Token found. Using Free version (default).')
   // Ensure we are using public registry for free packages (in case it was changed previously)
   try {
-    execSync('yarn config unset "npmScopes.fortawesome.npmRegistryServer"', {
+    execFileSync('yarn', ['config', 'unset', 'npmScopes.fortawesome.npmRegistryServer'], {
       stdio: 'ignore',
     })
-    execSync('yarn config unset "npmScopes.fortawesome.npmAuthToken"', {
+    execFileSync('yarn', ['config', 'unset', 'npmScopes.fortawesome.npmAuthToken'], {
       stdio: 'ignore',
     })
   } catch {
