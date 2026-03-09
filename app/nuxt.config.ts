@@ -175,7 +175,7 @@ export default defineNuxtConfig({
     buildAssetsDir: 'assets',
   },
   appConfig: {},
-  compatibilityDate: '2026-01-08',
+  compatibilityDate: '2026-03-06',
   modules: [
     '@nuxtjs/color-mode',
     '@nuxt/scripts',
