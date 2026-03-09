@@ -67,6 +67,15 @@ export const formatIdentifier = (id: string) => {
 }
 
 /**
+ * Determine if a hostname is valid (not an IP address or reserved local domain)
+ */
+const isValidHostname = (hostname: string) => {
+  const isIP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(hostname) || hostname.includes(':')
+  const isLocal = hostname === 'localhost' || hostname.endsWith('.local') || hostname.endsWith('.internal')
+  return !isIP && !isLocal
+}
+
+/**
  * Convert DID to at-proto-uri or handle to DID
  * @param {string} identifier DID
  * @param {boolean} onlyHandle Return only handle
@@ -83,6 +92,7 @@ export const resolveDID = async (
       requestUrl = `${plcURL}/${identifier}`
     else if (identifier.startsWith('did:web:')) {
       const hostname = identifier.substring(8)
+      if (!isValidHostname(hostname)) throw new Error(`Invalid did:web hostname: ${hostname}`)
       requestUrl = `https://${hostname}/.well-known/did.json`
     } else
       requestUrl = `${config.defaultPDSEntrypoint}/xrpc/com.atproto.identity.resolveHandle?handle=${identifier}`
@@ -138,6 +148,7 @@ export const resolveHandle = async (
   }
 
   try {
+    if (!isValidHostname(identifier)) throw new Error(`Invalid handle hostname: ${identifier}`)
     const url = `https://${identifier}/.well-known/atproto-did`
     const res = await axios.get(url)
     if (res.status === 200) return res.data as string
@@ -180,6 +191,7 @@ export const getPDSEndpointByDID = async (
     url = `${plcURL}/${identifier}`
   } else if (identifier.startsWith('did:web:')) {
     const hostname = identifier.substring(8)
+    if (!isValidHostname(hostname)) throw new Error(`Invalid did:web hostname: ${hostname}`)
     url = `https://${hostname}/.well-known/did.json`
   }
   if (url.length < 1)

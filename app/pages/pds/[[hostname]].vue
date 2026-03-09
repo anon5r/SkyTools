@@ -135,7 +135,7 @@
                     :icon="['far', 'file-shield']"
                     class="mr-1 text-md mr-1 text-blue-800 dark:text-blue-400" />
                   <a
-                    :href="pdsInfo.links.privacyPolicy"
+                    :href="safeUrl(pdsInfo.links.privacyPolicy)"
                     target="_blank"
                     class="my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
                     Privacy Policy
@@ -150,7 +150,7 @@
                     class="mr-2 text-md text-blue-800 dark:text-blue-400" />
                   <span
                     class="ml-0 my-1 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-200 underline">
-                    <a :href="pdsInfo.links.termsOfService" target="_blank">
+                    <a :href="safeUrl(pdsInfo.links.termsOfService)" target="_blank">
                       Terms of Service
                       <font-awesome-icon
                         :icon="['fas', 'external-link-alt']"
@@ -213,6 +213,19 @@
 
   const pdsInfo = ref<ComAtprotoServerDescribeServer.OutputSchema | null>(null)
   const success = ref(true)
+
+  const safeUrl = (url?: string) => {
+    if (!url) return undefined
+    try {
+      const parsed = new URL(url)
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        return url
+      }
+    } catch {
+      // Ignore invalid URLs
+    }
+    return undefined
+  }
 
   const pdsHostname = ref<string | null>(
     (route.params.hostname as string) || null

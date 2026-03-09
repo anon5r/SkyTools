@@ -28,7 +28,8 @@ const getOAuthClient = async () => {
 
   if (import.meta.client && window.location.hostname === 'localhost') {
     window.location.hostname = '127.0.0.1'
-    // Stop execution until navigation happens
+    // Stop execution until navigation happens (OAuth providers often reject localhost)
+    // Developers can avoid this by browsing using 127.0.0.1 directly.
     await new Promise(() => {})
   }
 
@@ -129,8 +130,8 @@ export const login = async (credentials: {
       }
     }
 
-    // @ts-expect-error: login_hint is internally handled but explicitly requested
     await client.signIn(credentials.identifier, {
+      // @ts-expect-error: login_hint is internally handled but explicitly requested
       login_hint: credentials.identifier,
     })
     return true

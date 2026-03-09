@@ -227,13 +227,9 @@
       if (route.path === '/oauth/callback') return
 
       if (agent.value === null) agent.value = await getAgent()
-      await restoreSession()
 
-      if (!noRestore.value) {
-        if (!isLogin()) {
-          agent.value = await getAgent()
-          await restoreSession()
-        }
+      if (!noRestore.value && !isLogin()) {
+        await restoreSession()
       }
     }
   })

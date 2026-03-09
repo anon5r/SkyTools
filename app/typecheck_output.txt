@@ -1,0 +1,113 @@
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm.
+FontAwesome Setup: Using Free version
+npm warn Unknown env config "shamefully-hoist". This will stop working in the next major version of npm.
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm.
+.nuxt/tsconfig.json(156,15): error TS6046: Argument for '--module' option must be: 'none', 'commonjs', 'amd', 'system', 'umd', 'es6', 'es2015', 'es2020', 'es2022', 'esnext', 'node16', 'nodenext'.
+components/LabelList.vue(5,13): error TS18046: 'label' is of type 'unknown'.
+components/LabelList.vue(7,58): error TS18046: 'label' is of type 'unknown'.
+components/LabelList.vue(9,29): error TS18046: 'label' is of type 'unknown'.
+components/LabelList.vue(29,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/LabelList.vue(29,25): error TS2440: Import declaration conflicts with local declaration of 'defineEmits'.
+components/ListField.vue(10,19): error TS18048: 'props.list' is possibly 'undefined'.
+components/ListField.vue(33,19): error TS18048: 'props.list' is possibly 'undefined'.
+components/ListField.vue(37,19): error TS18048: 'props.list' is possibly 'undefined'.
+components/ListField.vue(47,16): error TS18048: 'props.list' is possibly 'undefined'.
+components/ListField.vue(65,10): error TS18048: 'props.list' is possibly 'undefined'.
+components/ListField.vue(104,11): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/PostEmbed.vue(25,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/PostEmbedImages.vue(3,40): error TS18046: 'image' is of type 'unknown'.
+components/PostEmbedImages.vue(5,15): error TS18046: 'image' is of type 'unknown'.
+components/PostEmbedImages.vue(6,15): error TS18046: 'image' is of type 'unknown'.
+components/PostEmbedImages.vue(13,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/PostEmbedRecord.vue(22,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/PostEmbedRecordWithMedia.vue(27,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/PostEmbedVideo.vue(13,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/PostView.vue(30,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/ProfileCounters.vue(25,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/RitchText.vue(6,12): error TS2440: Import declaration conflicts with local declaration of 'defineProps'.
+components/RitchText.vue(21,49): error TS2322: Type 'unknown[]' is not assignable to type 'Main[]'.
+  Type 'unknown' is not assignable to type 'Main'.
+components/SigninForm.vue(36,17): error TS2440: Import declaration conflicts with local declaration of 'defineEmits'.
+composables/auth.ts(92,3): error TS2322: Type 'AtpAgent | undefined' is not assignable to type 'AtpAgent'.
+  Type 'undefined' is not assignable to type 'AtpAgent'.
+composables/auth.ts(121,7): error TS2345: Argument of type '{ pds: string | undefined; }' is not assignable to parameter of type '{ scope?: string | undefined; redirect_uri?: `http://[::1]${string}` | "http://127.0.0.1" | `http://127.0.0.1#${string}` | `http://127.0.0.1?${string}` | `http://127.0.0.1/${string}` | `http://127.0.0.1:${string}` | `https://${string}` | `${string}.${string}:/${string}` | undefined; authorization_details?: { ...; }[...'.
+  Object literal may only specify known properties, and 'pds' does not exist in type '{ scope?: string | undefined; redirect_uri?: `http://[::1]${string}` | "http://127.0.0.1" | `http://127.0.0.1#${string}` | `http://127.0.0.1?${string}` | `http://127.0.0.1/${string}` | `http://127.0.0.1:${string}` | `https://${string}` | `${string}.${string}:/${string}` | undefined; authorization_details?: { ...; }[...'.
+composables/auth.ts(157,11): error TS2339: Property 'session' does not exist on type '{ session: OAuthSession; state?: undefined; } | { session: OAuthSession; state: string | null; } | undefined'.
+composables/auth.ts(191,13): error TS2540: Cannot assign to 'session' because it is a read-only property.
+composables/auth.ts(208,13): error TS2339: Property 'session' does not exist on type '{ session: OAuthSession; state?: undefined; } | { session: OAuthSession; state: string | null; } | undefined'.
+composables/navigation.ts(46,53): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+composables/navigation.ts(55,53): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+error.vue(13,18): error TS18048: 'props.error' is possibly 'undefined'.
+error.vue(17,26): error TS18048: 'props.error' is possibly 'undefined'.
+error.vue(24,20): error TS18048: 'props.error' is possibly 'undefined'.
+error.vue(29,24): error TS18048: 'props.error' is possibly 'undefined'.
+error.vue(34,20): error TS18048: 'props.error' is possibly 'undefined'.
+node_modules/@nuxt/scripts/dist/runtime/components/ScriptCarbonAds.vue(23,45): error TS1343: The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', or 'nodenext'.
+node_modules/@nuxt/scripts/dist/runtime/components/ScriptGoogleAdsense.vue(52,7): error TS1343: The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', or 'nodenext'.
+node_modules/@nuxt/scripts/dist/runtime/components/ScriptGoogleMaps.vue(5,23): error TS2688: Cannot find type definition file for 'google.maps'.
+node_modules/@nuxt/scripts/dist/runtime/components/ScriptVimeoPlayer.vue(5,23): error TS2688: Cannot find type definition file for 'vimeo__player'.
+node_modules/@nuxt/scripts/dist/runtime/components/ScriptYouTubePlayer.vue(5,23): error TS2688: Cannot find type definition file for 'youtube'.
+nuxt.config.ts(199,15): error TS2322: Type 'Plugin<any>[]' is not assignable to type 'PluginOption'.
+  Type 'Plugin<any>[]' is not assignable to type 'PluginOption[]'.
+    Type 'Plugin<any>' is not assignable to type 'PluginOption'.
+      Type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/vite/dist/node/index").Plugin<any>' is not assignable to type 'Plugin<any>'.
+        Types of property 'hotUpdate' are incompatible.
+          Type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>> | undefined' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>, {}> | undefined'.
+            Type '(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>' is not assignable to type 'ObjectHook<(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>, {}> | undefined'.
+              Type '(this: import("/Users/anon/Workspace/repos/skytools/app/node_modules/vite/node_modules/rollup/dist/rollup").MinimalPluginContext & { ...; }, options: import("/Users/anon/Workspace/repos/skytools/app/node_modules/vite/dist/node/index").HotUpdateOptions) => void | ... 1 more ... | Promise<...>' is not assignable to type '(this: MinimalPluginContext & { environment: DevEnvironment; }, options: HotUpdateOptions) => void | EnvironmentModuleNode[] | Promise<...>'.
+                The 'this' types of each signature are incompatible.
+                  Type 'MinimalPluginContext & { environment: DevEnvironment; }' is not assignable to type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/vite/node_modules/rollup/dist/rollup").MinimalPluginContext & { environment: import("/Users/anon/Workspace/repos/skytools/app/node_modules/vite/dist/node/index").DevEnvironment; }'.
+                    Type 'MinimalPluginContext & { environment: DevEnvironment; }' is not assignable to type 'MinimalPluginContext'.
+                      Types of property 'meta' are incompatible.
+                        Property 'viteVersion' is missing in type 'PluginContextMeta' but required in type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/vite/node_modules/rollup/dist/rollup").PluginContextMeta'.
+pages/bsky/mushrooms.vue(100,9): error TS2322: Type 'Ref<Record<string, Main>, Record<string, Main>>' is not assignable to type 'Ref<Record<string, { did: string; handle: string; profile: Main | null; pds: string; }[]>, Record<string, { did: string; handle: string; profile: Main | null; pds: string; }[]>>'.
+  Type 'Record<string, Main>' is not assignable to type 'Record<string, { did: string; handle: string; profile: Main | null; pds: string; }[]>'.
+    'string' index signatures are incompatible.
+      Type 'Main' is not assignable to type '{ did: string; handle: string; profile: Main | null; pds: string; }[]'.
+pages/bsky/mushrooms.vue(114,30): error TS2532: Object is possibly 'undefined'.
+pages/bsky/mushrooms.vue(144,5): error TS2532: Object is possibly 'undefined'.
+pages/bsky/mushrooms.vue(179,18): error TS2322: Type 'Main | null' is not assignable to type 'Main | undefined'.
+  Type 'null' is not assignable to type 'Main | undefined'.
+pages/profile/[id]/post/[rkey].vue(7,10): error TS2345: Argument of type '{ did: string; uri: string; rkey: string; profile: Main; pds: string; }' is not assignable to parameter of type 'Partial<{}> & Omit<{ readonly post: Record<string, any>; } & VNodeProps & AllowedComponentProps & ComponentCustomProps, never> & Record<...>'.
+  Property 'post' is missing in type '{ did: string; uri: string; rkey: string; profile: Main; pds: string; }' but required in type 'Omit<{ readonly post: Record<string, any>; } & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>'.
+pages/profile/[id]/post/[rkey].vue(34,9): error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', or 'nodenext', and the 'target' option is set to 'es2017' or higher.
+pages/profile/[id]/post/[rkey].vue(38,15): error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', or 'nodenext', and the 'target' option is set to 'es2017' or higher.
+pages/profile/[id]/post/[rkey].vue(39,19): error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', or 'nodenext', and the 'target' option is set to 'es2017' or higher.
+plugins/analytics.client.ts(13,5): error TS2322: Type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/nuxt/node_modules/vue-router/dist/vue-router").Router' is not assignable to type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist/index-DFCq6eJK").y'.
+  The types returned by 'push(...)' are incompatible between these types.
+    Type 'Promise<void | import("/Users/anon/Workspace/repos/skytools/app/node_modules/nuxt/node_modules/vue-router/dist/router-CWoNjPRp").L | undefined>' is not assignable to type 'Promise<void | import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist/index-DFCq6eJK").ft | undefined>'.
+      Type 'void | import("/Users/anon/Workspace/repos/skytools/app/node_modules/nuxt/node_modules/vue-router/dist/router-CWoNjPRp").L | undefined' is not assignable to type 'void | import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist/index-DFCq6eJK").ft | undefined'.
+        Type 'NavigationFailure' is not assignable to type 'void | NavigationFailure | undefined'.
+          Type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/nuxt/node_modules/vue-router/dist/router-CWoNjPRp").L' is not assignable to type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist/index-DFCq6eJK").ft'.
+            Types of property 'type' are incompatible.
+              Type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/nuxt/node_modules/vue-router/dist/router-CWoNjPRp").I.NAVIGATION_ABORTED | import("/Users/anon/Workspace/repos/skytools/app/node_modules/nuxt/node_modules/vue-router/dist/router-CWoNjPRp").I.NAVIGATION_CANCELLED | import("/Users/anon/Workspace/repos/skyto...' is not assignable to type 'import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist/index-DFCq6eJK").dt.NAVIGATION_ABORTED | import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist/index-DFCq6eJK").dt.NAVIGATION_CANCELLED | import("/Users/anon/Workspace/repos/skytools/app/node_modules/vue-router/dist...'.
+                Type 'ErrorTypes.NAVIGATION_ABORTED' is not assignable to type 'ErrorTypes.NAVIGATION_ABORTED | ErrorTypes.NAVIGATION_CANCELLED | ErrorTypes.NAVIGATION_DUPLICATED'.
+utils/client.ts(142,64): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+utils/client.ts(143,51): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+utils/client.ts(152,9): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+utils/client.ts(158,44): error TS2339: Property 'values' does not exist on type '$Typed<SelfLabels> | { $type: string; }'.
+  Property 'values' does not exist on type '{ $type: string; }'.
+utils/client.ts(167,51): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+utils/client.ts(193,7): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+utils/client.ts(223,9): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+ ERROR  Process exited with non-zero status (2)
+
+    at G._waitForOutput (node_modules/tinyexec/dist/main.js:574:92)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.run (node_modules/@nuxt/cli/dist/typecheck-C8wVgBzd.mjs:66:3)
+    at async runCommand (node_modules/citty/dist/index.mjs:188:47)
+    at async runCommand (node_modules/citty/dist/index.mjs:185:21)
+    at async runMain (node_modules/citty/dist/index.mjs:285:10) 
+
+

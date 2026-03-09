@@ -41,9 +41,14 @@ export function useNavigation() {
     return navigate?.value?.prev
   }
 
+  const isValidLocalPath = (path: string | null | undefined): boolean => {
+    if (!path) return false
+    return path.startsWith('/') && !path.startsWith('//') && !path.startsWith('/\\')
+  }
+
   const goNext = (): void => {
     try {
-      if (getNext()?.startsWith('/'))
+      if (isValidLocalPath(getNext()))
         router.push({ path: getNext() ?? undefined })
       else router.push({ name: getNext() ?? 'index' })
     } catch (err) {
@@ -53,7 +58,7 @@ export function useNavigation() {
 
   const goPrev = (): void => {
     try {
-      if (getPrev()?.startsWith('/'))
+      if (isValidLocalPath(getPrev()))
         router.push({ path: getPrev() ?? undefined })
       router.push({ name: getPrev() ?? 'index' })
     } catch (err) {

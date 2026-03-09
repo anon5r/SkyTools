@@ -10,9 +10,15 @@ export default defineAppConfig({
   webmasterDid:
     process.env.WEBMASTER_DID || ('did:plc:c22jdrqhoajyj5ca7e56a3ke' as string),
   inviteCodeFreq:
-    (process.env.INVITE_CODE_FREQ &&
-      JSON.parse(process.env.INVITE_CODE_FREQ)) ||
-    ({ weeks: 2 } as object),
+    (() => {
+      if (!process.env.INVITE_CODE_FREQ) return { weeks: 2 }
+      try {
+        return JSON.parse(process.env.INVITE_CODE_FREQ)
+      } catch (e) {
+        console.error("Error parsing INVITE_CODE_FREQ:", e)
+        return { weeks: 2 }
+      }
+    })(),
   cdnPrefix: process.env.CDN_PREFIX || 'https://cdn-skytools.anon5r.com/proxy',
   prodURLPrefix: process.env.OGP_PREFIX || 'https://skytools.anon5r.com',
 })
