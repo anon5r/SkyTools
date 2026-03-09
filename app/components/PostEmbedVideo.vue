@@ -20,7 +20,7 @@
               :src="`${config.cdnPrefix}/${config.defaultPDS}/video/${
                 props.did
               }/${props.embed.video.ref.toString()}`"
-              :type="props.embed.video.mimeType" />
+              :type="props.embed.video.mimeType" >
             Your browser does not support the video tag.
           </video>
         </a>
@@ -29,11 +29,9 @@
   </div>
 </template>
 
-<style scoped></style>
-
 <script setup lang="ts">
   import { useAppConfig } from '#imports'
-  import { AppBskyEmbedVideo } from '@atproto/api'
+  import type { AppBskyEmbedVideo } from '@atproto/api'
   import { defineProps, type PropType } from 'vue'
 
   /** @type {AppBskyEmbedVideo} props.embed */
@@ -61,3 +59,5 @@
   })
   const config = useAppConfig()
 </script>
+
+<style scoped></style>

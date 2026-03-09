@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="copyToClipboard" v-bind="$attrs">
+    <button v-bind="$attrs" @click="copyToClipboard">
       <slot />
     </button>
     <div
@@ -12,10 +12,7 @@
         'px-4 py-2 rounded-md shadow-md bg-white dark:bg-gray-800',
       ]">
       <font-awesome-icon
-        :icon="[
-          'fa',
-          success ? 'check-circle' : 'times-circle',
-        ]"></font-awesome-icon>
+        :icon="['fa', success ? 'check-circle' : 'times-circle']" />
       <span class="ml-2">{{ toastMessage }}</span>
     </div>
   </div>

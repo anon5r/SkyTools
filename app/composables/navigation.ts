@@ -1,4 +1,4 @@
-import { useAppConfig, useRouter, ref, onMounted } from '#imports'
+import { onMounted, ref, useAppConfig, useRouter } from '#imports'
 
 interface Navigation {
   next: string | null
@@ -41,9 +41,15 @@ export function useNavigation() {
     return navigate?.value?.prev
   }
 
+  const isValidLocalPath = (path: string | null | undefined): boolean => {
+    if (!path) return false
+    return path.startsWith('/') && !path.startsWith('//') && !path.startsWith('/\\')
+  }
+
   const goNext = (): void => {
     try {
-      if (getNext()?.startsWith('/')) router.push({ path: getNext() })
+      if (isValidLocalPath(getNext()))
+        router.push({ path: getNext() ?? undefined })
       else router.push({ name: getNext() ?? 'index' })
     } catch (err) {
       goHome()
@@ -52,7 +58,8 @@ export function useNavigation() {
 
   const goPrev = (): void => {
     try {
-      if (getPrev()?.startsWith('/')) router.push({ path: getPrev() })
+      if (isValidLocalPath(getPrev()))
+        router.push({ path: getPrev() ?? undefined })
       router.push({ name: getPrev() ?? 'index' })
     } catch (err) {
       goHome()

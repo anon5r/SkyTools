@@ -11,13 +11,13 @@
         <div class="px-3 py-3 flex flex-row justify-between items-center">
           <div class="mr-2 relative w-full">
             <input
+              id="handle_did"
               v-model="handle"
               type="text"
-              id="handle_did"
               class="block px-2.5 pb-2 pt-2 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
               @focusout="focusout"
-              @keyup.enter="submit" />
+              @keyup.enter="submit" >
             <label
               for="handle_did"
               class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-transparent px-2 peer-focus:px-2 peer-focus:bg-white peer-focus:dark:bg-slate-800 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
@@ -33,8 +33,8 @@
       </div>
 
       <div
-        class="bg-white dark:bg-slate-900 shadow-md rounded-lg px-3 py-2 border-2"
         v-if="results.length > 0"
+        class="bg-white dark:bg-slate-900 shadow-md rounded-lg px-3 py-2 border-2"
         :class="{ 'border-red-600': hasError, 'border-green-500': !hasError }">
         <div
           class="block text-gray-700 dark:text-slate-400 text-lg font-semibold py-2 px-2">

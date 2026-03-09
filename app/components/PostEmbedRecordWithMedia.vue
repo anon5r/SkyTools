@@ -17,10 +17,8 @@
   </div>
 </template>
 
-<style scoped></style>
-
 <script setup lang="ts">
-  import { AppBskyEmbedRecordWithMedia } from '@atproto/api'
+  import type { AppBskyEmbedRecordWithMedia } from '@atproto/api'
   import { defineProps, type PropType } from 'vue'
 
   /** @type {AppBskyEmbedRecordWithMedia} props.embed */
@@ -47,3 +45,5 @@
     },
   })
 </script>
+
+<style scoped></style>

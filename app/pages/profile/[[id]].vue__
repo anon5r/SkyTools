@@ -6,14 +6,14 @@
         <div class="px-3 py-3 flex flex-row justify-between items-center">
           <div class="mr-4 relative w-full">
             <input
-              id="handle_did"
               v-model="id"
               type="text"
+              id="handle_did"
               class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
-              :disabled="!isLoadingState(loadState)"
               @focusout="focusout"
-              @keyup.enter="profileEvent" >
+              @keyup.enter="profileEvent"
+              :disabled="!isLoadingState(loadState)" />
             <label
               for="handle_did"
               class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-translate px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:bg-gray-100 dark:peer-focus:bg-slate-900 left-1">
@@ -22,8 +22,8 @@
           </div>
           <button
             class="px-5 py-3 bg-blue-400 dark:bg-blue-700 hover:bg-blue-500 hover:dark:bg-blue-600 text-white dark:text-slate-200 rounded-md"
-            :disabled="!isLoadingState(loadState)"
-            @click.prevent="profileEvent">
+            @click.prevent="profileEvent"
+            :disabled="!isLoadingState(loadState)">
             <span v-if="!isLoadingState(loadState)" class="flex flex-inline">
               <svg
                 aria-hidden="true"
@@ -92,11 +92,11 @@
                     class="m-2 min-w-max" />
                 </div>
               </div>
-              <div class="grow max-w-prose">
+              <div>
                 <h2 class="text-3xl" :class="{ 'text-red-600': hasError }">
                   <!-- Disply name -->
                   {{
-                    !loadState.profile && !hasError.value
+                    !loadState.profile
                       ? 'Loading...'
                       : userinfo.profile?.displayName ||
                         userinfo.details.handle ||
@@ -121,18 +121,11 @@
                   <span v-else class="mt-4">loading...</span>
                 </div>
                 <div
-                  class="md:text-sm text-xs truncate md:font-mono text-gray-600 dark:text-slate-400 select-all">
+                  class="text-sm sm:text-xs truncate font-mono sm:font-thin text-gray-600 dark:text-slate-400 select-all">
                   <!-- DID -->
                   {{ loadState.details ? userinfo.details.did : 'loading...' }}
                 </div>
               </div>
-              <ButtonDebugMenu
-                v-if="userinfo.details?.servers?.length > 0"
-                id="profile-menu"
-                button-style="bg-transparent"
-                :handle="userinfo.details.handle"
-                :did="userinfo.details.did"
-                :pds="`https://${userinfo.details?.servers[0]}`" />
             </div>
 
             <p class="m-4 min-w-stretch whitespace-pre-line">
@@ -167,7 +160,7 @@
             </div>
             <div
               v-if="loadState.details && userinfo.details.createdAt"
-              class="mx-4 text-xs font-mono text-gray-600 dark:text-slate-400">
+              class="mx-4 text-xs font-thin font-mono text-gray-600 dark:text-slate-400">
               <!-- Created at -->
               <font-awesome-icon
                 v-if="loadState.details"
@@ -208,24 +201,9 @@
 
         <div class="pt-2">
           <fwb-tabs v-model="activeTab" class="pt-1 px-1">
-            <fwb-tab id="posts" name="posts" title="Posts">
+            <fwb-tab name="posts" title="Posts" id="posts">
               <!-- Posts -->
               <div v-if="userinfo.posts.length > 0">
-                <!-- Pinned post -->
-                <div v-if="userinfo.profile.pinnedPost">
-                  <PostView
-                    :did="userinfo.details.did"
-                    :uri="userinfo.profile.pinnedPost.uri"
-                    :cid="userinfo.profile.pinnedPost.cid"
-                    :rkey="
-                      bskyutils.parseAtUri(userinfo.profile.pinnedPost.uri).rkey
-                    "
-                    :pds="userinfo.endpoint"
-                    :profile="userinfo.profile"
-                    :is-pinned="true" />
-                </div>
-
-                <!-- Posts -->
                 <div v-for="record of userinfo.posts" :key="record.cid">
                   <PostView
                     :did="userinfo.details.did"
@@ -233,7 +211,7 @@
                     :cid="record.cid"
                     :rkey="bskyutils.parseAtUri(record.uri).rkey"
                     :pds="userinfo.endpoint"
-                    :post-record="record.value"
+                    :postRecord="record.value"
                     :profile="userinfo.profile" />
                 </div>
               </div>
@@ -261,61 +239,14 @@
               <div v-if="cursors.posts" class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  :disabled="!loadState.posts"
-                  @click="loadMore('posts')">
+                  @click="loadMore('posts')"
+                  :disabled="!loadState.posts">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab id="reposts" name="reposts" title="Reposts">
-              <!-- Reposts -->
-              <div v-if="userinfo.reposts.length > 0">
-                <ul>
-                  <li v-for="record of userinfo.reposts" :key="record.cid">
-                    <PostView
-                      :uri="record.value.subject.uri"
-                      :cid="record.cid"
-                      :did="record.did"
-                      :pds="record.pds"
-                      :rkey="record.rkey"
-                      :profile="record.profile"
-                      :post-record="record.post" />
-                  </li>
-                </ul>
-              </div>
-              <div v-else class="mt-4 mx-2">There are no reposts.</div>
-
-              <div v-if="!loadState.reposts" class="flex mt-4 mx-2">
-                <div role="status">
-                  <svg
-                    aria-hidden="true"
-                    class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                    viewBox="0 0 100 101"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                      fill="currentColor" />
-                    <path
-                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                      fill="currentFill" />
-                  </svg>
-                  <span class="sr-only">Loading...</span>
-                </div>
-                Loading...
-              </div>
-              <div v-if="cursors.reposts" class="flex justify-center pt-2 pb-6">
-                <button
-                  class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  :disabled="!loadState.reposts"
-                  @click="loadMore('reposts')">
-                  Load more
-                </button>
-              </div>
-            </fwb-tab>
-
-            <fwb-tab id="following" name="following" title="Following">
+            <fwb-tab name="following" title="Following" id="following">
               <!-- Following -->
               <div v-if="userinfo.following.length > 0">
                 <ul>
@@ -355,14 +286,14 @@
                 class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  :disabled="!loadState.following"
-                  @click="loadMore('following')">
+                  @click="loadMore('following')"
+                  :disabled="!loadState.following">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab id="like" name="like" title="Like">
+            <fwb-tab name="like" title="Like" id="like">
               <!-- Like -->
               <div v-if="userinfo.like.length > 0">
                 <ul>
@@ -372,7 +303,6 @@
                       :cid="record.cid"
                       :did="record.did"
                       :pds="record.pds"
-                      :rkey="record.rkey"
                       :profile="record.profile"
                       :post-record="record.post" />
                   </li>
@@ -402,14 +332,14 @@
               <div v-if="cursors.like" class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  :disabled="!loadState.like"
-                  @click="loadMore('like')">
+                  @click="loadMore('like')"
+                  :disabled="!loadState.like">
                   Load more
                 </button>
               </div>
             </fwb-tab>
 
-            <fwb-tab v-if="easterMode" id="blocks" name="blocks" title="Blocks">
+            <fwb-tab v-if="easterMode" name="blocks" title="Blocks" id="blocks">
               <!-- Block -->
               <div v-if="userinfo.blocks && userinfo.blocks.length > 0">
                 <ul>
@@ -448,56 +378,8 @@
                 class="flex justify-center pt-2 pb-6">
                 <button
                   class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  :disabled="!loadState.blocks"
-                  @click="loadMore('blocks')">
-                  Load more
-                </button>
-              </div>
-            </fwb-tab>
-
-            <fwb-tab id="list" name="list" title="List">
-              <!-- List -->
-              <div v-if="userinfo.list.length > 0">
-                <ul>
-                  <li
-                    v-for="record of userinfo.list"
-                    :key="record.cid"
-                    class="mb-2">
-                    <ListField
-                      :uri="record.uri"
-                      :cid="record.cid"
-                      :list="record.value"
-                      :handle="userinfo.details.handle"
-                      :pds="userinfo.endpoint" />
-                  </li>
-                </ul>
-              </div>
-              <div v-else class="mt-4 mx-2">No lists</div>
-
-              <div v-if="!loadState.list" class="flex mt-4 mx-2">
-                <div role="status">
-                  <svg
-                    aria-hidden="true"
-                    class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                    viewBox="0 0 100 101"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                      fill="currentColor" />
-                    <path
-                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                      fill="currentFill" />
-                  </svg>
-                  <span class="sr-only">Loading...</span>
-                </div>
-                Loading...
-              </div>
-              <div v-if="cursors.list" class="flex justify-center pt-2 pb-6">
-                <button
-                  class="px-8 py-2 rounded-full text-sm bg-transparent border border-gray-400 dark:border-slate-400 text-gray-400 dark:text-slate-400"
-                  :disabled="!loadState.list"
-                  @click="loadMore('list')">
+                  @click="loadMore('blocks')"
+                  :disabled="!loadState.blocks">
                   Load more
                 </button>
               </div>
@@ -509,41 +391,44 @@
   </div>
 </template>
 
-<script setup>
-  import axios from 'axios'
+<script setup lang="ts">
+  import axios, { type AxiosError } from 'axios'
   import {
     onMounted,
-    ref,
-    toRaw,
-    useAppConfig,
     useRoute,
     useRouter,
+    useAppConfig,
     useSeoMeta,
+    ref,
+    toRaw,
     watch,
+    isDev,
+    isLoggedIn,
   } from '#imports'
+  import type { Ref, UnwrapRef } from 'vue'
   import { FwbAvatar, FwbTab, FwbTabs } from 'flowbite-vue'
-  import { isDev } from '@/utils/helpers'
-  import * as bskyUtils from '~/utils/bskyutils'
-  import bskyutils from '~/utils/bskyutils'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { UnauthenticatedError } from '~/errors/BskyErrors'
-  import { isLoggedIn } from '~/composables/auth'
-  import { AtpAgent } from '@atproto/api'
+  import {
+    type AppBskyActorProfile,
+    AtpAgent,
+    ComAtprotoRepoListRecords,
+  } from '@atproto/api'
   import { DateTime } from 'luxon'
-  import ButtonDebugMenu from '~/components/ButtonDebugMenu.vue'
+  import bskyutils from '~/utils/bskyutils'
 
   const activeTab = ref('posts')
 
   const route = useRoute()
   const router = useRouter()
   const config = useAppConfig()
-  const id = ref(route.params.id || '')
+  const id: Ref<string> = ref((route.params.id as string) || '')
   const noUnauthenticated = ref(true)
 
   watch(
     () => route.params.id,
     newId => {
-      id.value = newId || ''
+      id.value = (newId as string) || ''
     }
   )
   const fetchCount = 20
@@ -563,12 +448,10 @@
     avatarURL: '',
     bannerURL: '',
     posts: [],
-    reposts: [],
     following: [],
     followers: [],
     like: [],
     blocks: [],
-    list: [],
   }
 
   /**
@@ -576,38 +459,48 @@
    *
    * @typedef {Ref<UnwrapRef<{followers: *[], avatarURL: string, like: *[], blocks: *[], profile: {}, following: *[], bannerURL: string, details: {did: string}, posts: *[]}>>} UserInfo
    */
-  const userinfo = ref(userinfoInitial)
+  const userinfo: Ref<
+    | UnwrapRef<{
+        followers: ComAtprotoRepoListRecords.Response[]
+        avatarURL: string
+        like: ComAtprotoRepoListRecords.Response[]
+        blocks: ComAtprotoRepoListRecords.Response[]
+        profile: AppBskyActorProfile.Record
+        following: ComAtprotoRepoListRecords.Response[]
+        bannerURL: string
+        details: { did: string }
+        posts: ComAtprotoRepoListRecords.Response[]
+        endpoint: string
+      }>
+    | any
+  > = ref(userinfoInitial)
 
   // Each loading state
-  const loadState = ref({
+  const loadState: Ref<any> = ref({
     details: true,
     profile: true,
     avatarURL: true,
     bannerURL: true,
     posts: true,
-    reposts: true,
     following: true,
     like: true,
     blocks: true,
-    list: true,
   })
 
   const cursors = ref({
     posts: undefined,
-    reposts: undefined,
     following: undefined,
     like: undefined,
     blocks: undefined,
-    list: undefined,
   })
 
   /**
    * Batch update all values
-   * @param {*} obj
-   * @param {*} val
+   * @param {Object} obj
+   * @param {any} val
    */
-  const updateAllValues = (obj, val) => {
-    Object.keys(obj).forEach(key => {
+  const updateAllValues = (obj: any, val: any) => {
+    Object.keys(obj).forEach((key: string) => {
       obj[key] = val
       if (val === false) {
         // Set timeout while loading after 5 sec
@@ -622,26 +515,12 @@
    * Loading state
    * @param {object} obj
    */
-  const isLoadingState = obj => {
-    console.log(`========>>> isLoadingState`)
-    Object.keys(obj).forEach(key => {
-      console.log(`loadingState[${key}]: `, obj[key])
-    })
-    console.log(`<<<======== isLoadingState`)
-    return Object.values(obj).every(value => {
-      return value === true
-    })
-  }
-  /**
-   * Stop all loading state
-   */
-  const stopAllLoadingState = () => {
-    Object.values(loadState.value).map(key => (loadState.value[key] = true))
+  const isLoadingState = (obj: string) => {
+    return Object.values(obj).every((value: any) => value === true)
   }
 
   onMounted(async () => {
-    bskyUtils.setConfig(toRaw(config))
-    easterMode.value = localStorage.getItem('_easter') === 'true'
+    bskyutils.setConfig(toRaw(config))
 
     useSeoMeta({
       title: `Profile | ${config.title} ${id.value ?? ' - ' + id.value}`,
@@ -656,23 +535,25 @@
         title: `Profile | ${config.title} - ${userinfo.value.profile.displayName} (${userinfo.value.details.handle})`,
       })
     }
+
+    easterMode.value = localStorage.getItem('_easter') === 'true'
   })
 
   const focusout = () => {
-    id.value = bskyUtils.formatIdentifier(id.value)
+    id.value = bskyutils.formatIdentifier(id.value)
   }
 
   const profileEvent = async () => {
     await showProfile(id.value)
   }
 
-  const showProfile = async identifier => {
+  const showProfile = async (identifier: string) => {
     userinfo.value = userinfoInitial
     hasError.value = false
     updateAllValues(loadState.value, false)
 
     if (!identifier) {
-      identifier = bskyUtils.formatIdentifier(id.value)
+      identifier = bskyutils.formatIdentifier(id.value)
     }
     if (identifier.length > 253) throw new Error('Identifier is too long')
     id.value = identifier
@@ -686,7 +567,7 @@
       try {
         noUnauthenticated.value = true
         await loadProfile(identifier)
-      } catch (err) {
+      } catch (err: UnauthenticatedError | Error | unknown) {
         // If the profile has never been updated,
         // it cannot be retrieved from the repository
         console.info('No profile user: ', identifier)
@@ -709,30 +590,26 @@
         }
       }
 
+      let posts,
+        follow,
+        like,
+        blocks = []
       // Fetch posts
       fetchPosts(identifier, fetchCount)
         .then(resolve => {
-          updateUserInfo('posts', resolve)
+          posts = resolve
+          updateUserInfo('posts', posts)
         })
         .catch(err => {
           if (isDev()) console.warn(err)
           if (!loadState.value['posts']) loadState.value['posts'] = true
         })
 
-      // Fetch reposts
-      fetchReposts(identifier, fetchCount)
-        .then(resolve => {
-          updateUserInfo('reposts', resolve)
-        })
-        .catch(err => {
-          if (isDev()) console.warn(err)
-          if (!loadState.value['reposts']) loadState.value['reposts'] = true
-        })
-
       // Fetch follow
       fetchFollow(identifier, fetchCount)
         .then(resolve => {
-          updateUserInfo('following', resolve)
+          follow = resolve
+          updateUserInfo('following', follow)
         })
         .catch(err => {
           if (isDev()) console.warn(err)
@@ -742,31 +619,24 @@
       // Fetch like
       fetchLike(identifier, fetchCount)
         .then(resolve => {
-          updateUserInfo('like', resolve)
+          like = resolve
+          updateUserInfo('like', like)
         })
         .catch(err => {
           if (isDev()) console.warn(err)
           if (!loadState.value['like']) loadState.value['like'] = true
         })
-      // Fetch list
-      fetchList(identifier, fetchCount)
-        .then(resolve => {
-          updateUserInfo('list', resolve)
-        })
-        .catch(err => {
-          if (isDev()) console.warn(err)
-          if (!loadState.value['list']) loadState.value['list'] = true
-        })
 
       if (easterMode.value) {
         fetchBlocks(identifier, fetchCount)
           .then(resolve => {
-            updateUserInfo('blocks', resolve)
+            blocks = resolve
+            updateUserInfo('blocks', blocks)
           })
           .catch(err => {
             if (isDev()) console.warn(err)
             updateUserInfo('blocks', [])
-            if (!loadState.value['blocks']) loadState.value['blocks'] = true
+            if (!loadState.value?.blocks) loadState.value.blocks = true
           })
       } else {
         updateUserInfo('blocks', [])
@@ -776,20 +646,17 @@
         console.log('UserInfo = ', toRaw(userinfo))
         console.log('Cursors = ', toRaw(cursors))
       }
-    } catch (err) {
+    } catch (err: UnauthenticatedError | AxiosError | Error | unknown) {
       if (isDev()) console.error(err)
       updateUserInfo('avatarURL', null)
       updateUserInfo('bannerURL', null)
 
-      updateUserInfo('details', [])
       updateUserInfo('posts', [])
-      updateUserInfo('reposts', [])
       updateUserInfo('following', [])
       updateUserInfo('like', [])
-      updateUserInfo('list', [])
       updateUserInfo('blocks', [])
 
-      if (err.name === 'UnauthenticatedError') {
+      if (err?.name === 'UnauthenticatedError') {
         noUnauthenticated.value = false
         updateUserInfo('profile', {
           displayName: 'Hidden user',
@@ -797,7 +664,7 @@
         })
       } else {
         hasError.value = true
-        if (userinfo.value.details.length < 1) updateUserInfo('details', {})
+        updateUserInfo('details', {})
         updateUserInfo('profile', { displayName: 'Error: Unknown' })
 
         if (id.value.startsWith('did:')) {
@@ -808,14 +675,14 @@
         } else {
           userinfo.value.details = {
             handle: id.value,
-            did: userinfo.value.details.did ?? 'error:unknown:unknown',
+            did: 'error:unknown:unknown',
           }
         }
       }
-      stopAllLoadingState()
+
       if (axios.isAxiosError(err)) {
-        if (err.response.status === 400) {
-          if (err.response.data.message) {
+        if (err.response?.status === 400) {
+          if (err.response?.data.message) {
             userinfo.value.profile.description = err.response.data.message
           }
         }
@@ -824,22 +691,25 @@
   }
 
   /**
-   * update user data
+   * update user datum
    * @param {string} item
    * @param {any} value
    */
-  const updateUserInfo = (item, value) => {
+  const updateUserInfo = (item: string, value: any) => {
     if (isDev()) console.log('[updateUserInfo]::', item, ' = ', value)
     userinfo.value[item] = value
     loadState.value[item] = true
   }
 
   /**
-   * add items to user data
+   * add items to user datum
    * @param {string} item
    * @param {array} records
    */
-  const addRecordsUserInfo = (item, records) => {
+  const addRecordsUserInfo = (
+    item: string,
+    records: ComAtprotoRepoListRecords.Record[]
+  ) => {
     if (isDev()) console.log('[addItemsToUserInfo] ::', item, ' = ', records)
     records.forEach(record => {
       userinfo.value[item].push(record)
@@ -856,20 +726,18 @@
     let did = '',
       handle = undefined
     if (id.startsWith('did:', 0)) {
-      handle = await bskyUtils.resolveDID(id)
+      handle = await bskyutils.resolveDID(id)
       did = id
     } else {
       handle = id
-      did = await bskyUtils.resolveHandle(id)
+      did = await bskyutils.resolveHandle(id)
     }
 
-    userinfo.value.endpoint = await bskyUtils.getPDSEndpointByDID(did)
+    userinfo.value.endpoint = await bskyutils.getPDSEndpointByDID(did)
 
     const agent = new AtpAgent({
       service: userinfo.value.endpoint,
     })
-
-    updateUserInfo('details', { did: did })
     const details = await agent.api.com.atproto.repo.describeRepo({
       repo: did,
     })
@@ -879,9 +747,9 @@
       details.servers = []
       details.labelers = []
       details.createdAt = (
-        await bskyUtils.getIdentityAuditLogs(did)
+        await bskyutils.getIdentityAuditLogs(did)
       )[0].createdAt
-      for (const serv of details.data.didDoc.service) {
+      for (let serv of details.data.didDoc.service) {
         const urlParser = new URL(serv.serviceEndpoint)
         switch (serv.type) {
           case 'AtprotoPersonalDataServer':
@@ -912,11 +780,11 @@
     id = id.trim()
     let did = ''
     if (id.startsWith('did:', 0)) did = id
-    else did = await bskyUtils.resolveHandle(id)
+    else did = await bskyutils.resolveHandle(id)
 
     if (!userinfo.value.endpoint)
-      userinfo.value.endpoint = await bskyUtils.getPDSEndpointByDID(did)
-    const atp = bskyUtils.createAtpAgent(userinfo.value.endpoint)
+      userinfo.value.endpoint = await bskyutils.getPDSEndpointByDID(did)
+    const atp = bskyutils.createAtpAgent(userinfo.value.endpoint)
     const profile = await atp.com.atproto.repo.getRecord({
       collection: 'app.bsky.actor.profile',
       repo: did,
@@ -936,7 +804,7 @@
         throw new UnauthenticatedError('You should logged in bsky.social')
       }
       updateUserInfo('profile', profile.data.value)
-      const avatarURL = bskyUtils.buildBlobRefURL(
+      const avatarURL = bskyutils.buildBlobRefURL(
         config.cdnPrefix,
         did,
         profile.data.value,
@@ -944,7 +812,7 @@
         userinfo.value.endpoint
       )
       updateUserInfo('avatarURL', avatarURL)
-      const bannerURL = bskyUtils.buildBlobRefURL(
+      const bannerURL = bskyutils.buildBlobRefURL(
         config.cdnPrefix,
         did,
         profile.data.value,
@@ -957,8 +825,7 @@
 
   /**
    *
-   * @param {string} name
-   * @param {string?} purpose
+   * @param {*} name
    */
   const loadMore = async name => {
     let records = []
@@ -967,16 +834,12 @@
     loadState.value[name] = false
     if (name === 'posts') {
       records = await fetchPosts(id.value, fetchCount, cursor)
-    } else if (name === 'reposts') {
-      records = await fetchReposts(id.value, fetchCount, cursor)
     } else if (name === 'following') {
       records = await fetchFollow(id.value, fetchCount, cursor)
     } else if (name === 'like') {
       records = await fetchLike(id.value, fetchCount, cursor)
     } else if (name === 'blocks') {
       records = await fetchBlocks(id.value, fetchCount, cursor)
-    } else if (name === 'list') {
-      records = await fetchList(id.value, fetchCount, cursor)
     }
     addRecordsUserInfo(name, records)
     if (isDev()) console.log('loadMore::' + name + ' = ', records)
@@ -990,7 +853,7 @@
    */
   const fetchPosts = async (id, limit = 50, cursor = undefined) => {
     try {
-      const response = await bskyUtils.listRecords(
+      const response = await bskyutils.listRecords(
         userinfo.value.endpoint,
         'app.bsky.feed.post',
         id,
@@ -1014,104 +877,19 @@
     }
   }
 
-  const fetchReposts = async (id, limit = 50, cursor = undefined) => {
-    try {
-      const response = await bskyUtils.listRecords(
-        userinfo.value.endpoint,
-        'app.bsky.feed.repost',
-        id,
-        limit,
-        cursor
-      )
-
-      if (response.success) {
-        if (isDev()) console.log('app.bsky.feed.repost = ', response.data)
-        const records = response.data.records.map(async record => {
-          const recordUri = bskyUtils.parseAtUri(record.value.subject.uri)
-          const did = recordUri.actor
-          const repoEndpoint = await bskyUtils.getPDSEndpointByDID(did)
-          let post = {},
-            removed = false
-          try {
-            post = await bskyUtils.getPost(repoEndpoint, did, recordUri.rkey)
-          } catch (err) {
-            removed = true
-            if (isDev()) {
-              console.error('fetchRepost::post.records')
-              console.error(err)
-            }
-          }
-
-          let avatar, banner, profile, handle
-          try {
-            profile = await bskyUtils.loadProfile(repoEndpoint, did)
-            avatar = bskyUtils.buildBlobRefURL(
-              config.cdnPrefix,
-              did,
-              profile,
-              'avatar',
-              repoEndpoint
-            )
-            banner = bskyUtils.buildBlobRefURL(
-              config.cdnPrefix,
-              did,
-              profile,
-              'banner',
-              repoEndpoint
-            )
-          } catch (err) {
-            console.info('Not set profile: ', did)
-          }
-
-          try {
-            handle = await bskyUtils.resolveDID(did)
-          } catch (err) {
-            handle = record.value.subject
-          }
-
-          return {
-            ...record,
-            rkey: recordUri.rkey,
-            removed: removed,
-            profile: profile,
-            did: did,
-            handle: handle,
-            avatarURL: avatar,
-            bannerURL: banner,
-            post: post ?? {
-              createdAt: '1970-01-01 09:00:00Z',
-              text: 'The post may have been deleted.',
-            },
-            pds: repoEndpoint,
-          }
-        })
-
-        const repostList = await Promise.all(records)
-        cursors.value['reposts'] = response.data.cursor
-        if (isDev()) console.log('fetchRepost = ', repostList)
-        return repostList
-      } else {
-        return []
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (isDev()) console.error(err.status, err.message)
-        return []
-      }
-      if (isDev()) console.error(err)
-      throw new Error('Failed to get Repost feed', err)
-    }
-  }
-
   /**
    * Fetch like
    * @param {string} id handle or DID
-   * @param {int} limit
+   * @param {number} limit
    * @param {string|undefined} cursor
    */
-  const fetchLike = async (id, limit = 50, cursor = undefined) => {
+  const fetchLike = async (
+    id: string,
+    limit: number = 50,
+    cursor: string | undefined = undefined
+  ) => {
     try {
-      const response = await bskyUtils.listRecords(
+      const response = await bskyutils.listRecords(
         userinfo.value.endpoint,
         'app.bsky.feed.like',
         id,
@@ -1121,68 +899,70 @@
 
       if (response.success) {
         if (isDev()) console.log('app.bsky.feed.like = ', response.data)
-        const records = response.data.records.map(async record => {
-          const recordUri = bskyUtils.parseAtUri(record.value.subject.uri)
-          const did = recordUri.actor
-          const repoEndpoint = await bskyUtils.getPDSEndpointByDID(did)
-          let post = {},
-            removed = false
-          try {
-            post = await bskyUtils.getPost(repoEndpoint, did, recordUri.rkey)
-          } catch (err) {
-            removed = true
-            if (isDev()) {
-              console.error('fetchLike::post.records')
-              console.error(err)
+        const records = response.data.records.map(
+          async (record: ComAtprotoRepoListRecords.Record) => {
+            const recordUri = bskyutils.parseAtUri(record.value.subject.uri)
+            const did = recordUri.did
+            const repoEndpoint = await bskyutils.getPDSEndpointByDID(did)
+            let post = {},
+              removed = false
+            try {
+              post = await bskyutils.getPost(repoEndpoint, did, recordUri.rkey)
+            } catch (err) {
+              removed = true
+              if (isDev()) {
+                console.error('fetchLike::post.records')
+                console.error(err)
+              }
+            }
+
+            let avatar, banner, profile, handle
+            try {
+              profile = await bskyutils.loadProfile(repoEndpoint, did)
+              avatar = bskyutils.buildBlobRefURL(
+                config.cdnPrefix,
+                did,
+                profile,
+                'avatar',
+                repoEndpoint
+              )
+              banner = bskyutils.buildBlobRefURL(
+                config.cdnPrefix,
+                did,
+                profile,
+                'banner',
+                repoEndpoint
+              )
+            } catch (err) {
+              console.info('Not set profile: ', did)
+            }
+
+            try {
+              handle = await bskyutils.resolveDID(did)
+            } catch (err) {
+              handle = record.value.subject
+            }
+
+            return {
+              ...record,
+              rkey: recordUri.rkey,
+              removed: removed,
+              profile: profile,
+              did: did,
+              handle: handle,
+              avatarURL: avatar,
+              bannerURL: banner,
+              post: post ?? {
+                createdAt: '1970-01-01 09:00:00Z',
+                text: 'The post may have been deleted.',
+              },
+              pds: repoEndpoint,
             }
           }
-
-          let avatar, banner, profile, handle
-          try {
-            profile = await bskyUtils.loadProfile(repoEndpoint, did)
-            avatar = bskyUtils.buildBlobRefURL(
-              config.cdnPrefix,
-              did,
-              profile,
-              'avatar',
-              repoEndpoint
-            )
-            banner = bskyUtils.buildBlobRefURL(
-              config.cdnPrefix,
-              did,
-              profile,
-              'banner',
-              repoEndpoint
-            )
-          } catch (err) {
-            console.info('Not set profile: ', did)
-          }
-
-          try {
-            handle = await bskyUtils.resolveDID(did)
-          } catch (err) {
-            handle = record.value.subject
-          }
-
-          return {
-            ...record,
-            rkey: recordUri.rkey,
-            removed: removed,
-            profile: profile,
-            did: did,
-            handle: handle,
-            avatarURL: avatar,
-            bannerURL: banner,
-            post: post ?? {
-              createdAt: '1970-01-01 09:00:00Z',
-              text: 'The post may have been deleted.',
-            },
-            pds: repoEndpoint,
-          }
-        })
+        )
 
         const likeList = await Promise.all(records)
-        cursors.value['like'] = response.data.cursor
+        cursors.value?.like = response.data.cursor
         if (isDev()) console.log('fetchLike = ', likeList)
         return likeList
       } else {
@@ -1201,12 +981,16 @@
   /**
    * Fetch follow
    * @param {string} id handle or DID
-   * @param {int} limit
+   * @param {number} limit
    * @param {string|undefined} cursor
    */
-  const fetchFollow = async (id, limit = 50, cursor = undefined) => {
+  const fetchFollow = async (
+    id: string,
+    limit: number = 50,
+    cursor = string | undefined
+  ) => {
     try {
-      const response = await bskyUtils.listRecords(
+      const response = await bskyutils.listRecords(
         userinfo.value.endpoint,
         'app.bsky.graph.follow',
         id,
@@ -1219,8 +1003,8 @@
             pdsEndpoint = '',
             profile = {}
           try {
-            handle = await bskyUtils.resolveDID(record.value.subject)
-            pdsEndpoint = await bskyUtils.getPDSEndpointByDID(
+            handle = await bskyutils.resolveDID(record.value.subject)
+            pdsEndpoint = await bskyutils.getPDSEndpointByDID(
               record.value.subject
             )
           } catch (err) {
@@ -1231,7 +1015,7 @@
           }
 
           try {
-            profile = await bskyUtils.loadProfile(
+            profile = await bskyutils.loadProfile(
               pdsEndpoint,
               record.value.subject
             )
@@ -1253,7 +1037,7 @@
           }
         })
         const resolvedFollowers = await Promise.all(records)
-        cursors.value['following'] = response.data.cursor
+        cursors.value?.following = response.data.cursor
         if (isDev()) console.log('fetchFollow = ', resolvedFollowers)
         return resolvedFollowers
       } else {
@@ -1271,12 +1055,16 @@
   /**
    * Fetch blocks
    * @param {string} id handle or DID
-   * @param {int} limit
+   * @param {number} limit
    * @param {string|undefined} cursor
    */
-  const fetchBlocks = async (id, limit = 50, cursor = undefined) => {
+  const fetchBlocks = async (
+    id: string,
+    limit: number = 50,
+    cursor: string | undefined = undefined
+  ) => {
     try {
-      const response = await bskyUtils.listRecords(
+      const response = await bskyutils.listRecords(
         userinfo.value.endpoint,
         'app.bsky.graph.block',
         id,
@@ -1284,15 +1072,15 @@
         cursor
       )
       if (response.success) {
-        const records = response.data.records.map(async record => {
+        const records = response.data.records.map(async (record: {}) => {
           let handle = '',
-            pdsEndpoint,
+            pdsEndpoint = '',
             profile
           try {
-            pdsEndpoint = await bskyUtils.getPDSEndpointByDID(
+            pdsEndpoint = await bskyutils.getPDSEndpointByDID(
               record.value.subject
             )
-            handle = await bskyUtils.resolveDID(record.value.subject)
+            handle = await bskyutils.resolveDID(record.value.subject)
           } catch (err) {
             console.warn(
               'Could not resolve handle (deleted?): ',
@@ -1300,7 +1088,7 @@
             )
           }
           try {
-            profile = await bskyUtils.loadProfile(
+            profile = await bskyutils.loadProfile(
               pdsEndpoint,
               record.value.subject
             )
@@ -1323,7 +1111,7 @@
           }
         })
         const resolvedBlocks = await Promise.all(records)
-        cursors.value['blocks'] = response.data.cursor
+        cursors.value?.blocks = response.data.cursor
         if (isDev()) console.log('fetchBlocks = ', resolvedBlocks)
         return resolvedBlocks
       } else {
@@ -1336,50 +1124,9 @@
       if (isDev()) console.error(err)
     }
   }
-
-  const fetchList = async (id, limit = 50, cursor = undefined) => {
-    try {
-      const response = await bskyUtils.listRecords(
-        userinfo.value.endpoint,
-        'app.bsky.graph.list',
-        id,
-        limit,
-        cursor
-      )
-      if (response.success) {
-        let data = response.data.records
-        if (!easterMode.value) {
-          data = data.filter(record => {
-            return record.value.purpose.lastIndexOf('#modlist') < 0
-          })
-          console.log(data)
-        }
-        const records = data.map(async record => {
-          return {
-            ...record,
-            purpose: record.value.purpose.substring(
-              record.value.purpose.indexOf('#') + 1
-            ),
-          }
-        })
-        const list = await Promise.all(records)
-        if (isDev()) console.log(`fetchList = `, list)
-        return list
-      } else {
-        return []
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (isDev()) console.error(err.status, err.message)
-      }
-      if (isDev()) console.error(err)
-      return []
-    }
-  }
 </script>
 
 <style scoped>
-  @reference "~/assets/css/main.css";
   .at-handle::before {
     content: '@';
   }

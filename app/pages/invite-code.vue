@@ -47,8 +47,8 @@
                     "
                     class="mr-2" />
                   <a
-                    @click="toggleUsed"
-                    :class="{ 'line-through': record.uses?.length > 0 }">
+                    :class="{ 'line-through': record.uses?.length > 0 }"
+                    @click="toggleUsed">
                     {{ record.code }}
                   </a>
                 </fwb-accordion-header>
@@ -180,9 +180,9 @@
           <template #footer>
             <div class="flex justify-between">
               <button
-                @click="navigate.goHome"
                 type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                @click="navigate.goHome">
                 Go back
               </button>
             </div>
@@ -196,12 +196,12 @@
 <script setup lang="js">
   import { DateTime } from 'luxon'
   import {
+    onMounted,
+    ref,
     useAppConfig,
     useRoute,
     useRouter,
     useSeoMeta,
-    onMounted,
-    ref,
   } from '#imports'
   import { getAgent, isLoggedIn, restoreSession } from '~/composables/auth'
   import { useNavigation } from '~/composables/navigation'
@@ -255,7 +255,7 @@
     const serviceURL = new URL(config.defaultPDSEntrypoint)
     // Back to current page
     navigate.setNext(route.name)
-    await router.push({ path: `${serviceURL.hostname}/signin` })
+    await router.push({ path: 'auth/oauth/signin' })
   }
 
   /** Gets list of invite codes */

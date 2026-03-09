@@ -7,7 +7,7 @@
           <!-- Avatar -->
           <fwb-avatar
             :img="avatarURL"
-            :alt="props.list.name ?? 'List Avatar'"
+            :alt="props.list?.name ?? 'List Avatar'"
             class="min-w-max avatar-object-cover">
             <template #placeholder>
               <svg
@@ -30,11 +30,11 @@
         <div class="xl:max-w-xl lg:max-w-lg md:max-w-md max-w-64 truncate">
           <!-- DisplayName -->
           <font-awesome-icon
-            v-if="props.list.purpose === 'app.bsky.graph.defs#curatelist'"
+            v-if="props.list?.purpose === 'app.bsky.graph.defs#curatelist'"
             class="mr-2 text-slate-400 dark:text-slate-500"
             icon="people-group" />
           <font-awesome-icon
-            v-if="props.list.purpose === 'app.bsky.graph.defs#modlist'"
+            v-if="props.list?.purpose === 'app.bsky.graph.defs#modlist'"
             class="mr-2 text-slate-400 dark:text-slate-500"
             icon="comment-slash" />
           <font-awesome-icon
@@ -44,7 +44,7 @@
           <NuxtLink
             :to="`https://bsky.app/profile/${props.handle}/lists/${rkey}`"
             class="">
-            {{ props.list.name }}
+            {{ props.list?.name }}
           </NuxtLink>
           <p
             class="md:text-sm text-xs font-mono text-gray-500 dark:text-slate-500">
@@ -62,7 +62,7 @@
     </div>
     <div class="text-sm pl-14 pr-16 max-w-fit truncate">
       <!-- Description -->
-      {{ props.list.description ?? '' }}
+      {{ props.list?.description ?? '' }}
     </div>
   </div>
 </template>
@@ -70,7 +70,7 @@
 <script setup lang="ts">
   import { FwbAvatar } from 'flowbite-vue'
   import { onMounted, ref, useAppConfig } from '#imports'
-  import { type AppBskyGraphList } from '@atproto/api'
+  import type { AppBskyGraphList } from '@atproto/api'
   import { buildBlobRefURL, parseAtUri } from '~/utils/bskyutils'
   import type { PropType } from 'vue'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -97,11 +97,11 @@
   onMounted(() => {
     if (props.list) {
       if (props.list.avatar) {
-        let repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
+        const repoEndpoint = props.pds ?? config.defaultPDSEntrypoint
 
         avatarURL.value = buildBlobRefURL(
           config.cdnPrefix,
-          actor,
+          actor as string,
           props.list,
           'avatar',
           repoEndpoint
@@ -116,6 +116,7 @@
 </script>
 
 <style scoped>
+  @reference "~/assets/css/main.css";
   .avatar-object-cover :deep(img) {
     @apply object-cover;
   }

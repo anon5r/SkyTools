@@ -1,7 +1,10 @@
 <script setup lang="ts">
   import bskyutils from '~/utils/bskyutils'
   import { onMounted, ref, type Ref } from 'vue'
-  import { AppBskyActorProfile, ComAtprotoSyncListRepos } from '@atproto/api'
+  import type {
+    AppBskyActorProfile,
+    ComAtprotoSyncListRepos,
+  } from '@atproto/api'
 
   const bskyPDS: Record<string, string[]> = {
     'us-east': [
@@ -103,15 +106,15 @@
       {
         did: string
         handle: string
-        profile: AppBskyActorProfile.Record | null
+        profile: AppBskyActorProfile.Record | undefined
         pds: string
       }[]
     >
-  > = ref({} as Record<string, AppBskyActorProfile.Record>)
+  > = ref({})
 
   onMounted(() => {
     for (const region in bskyPDS) {
-      for (const mushroom of bskyPDS[region]) {
+      for (const mushroom of bskyPDS[region]!) {
         loadPDSHeadAccount(mushroom, region)
       }
     }
@@ -140,11 +143,11 @@
     } catch (err) {
       console.error(err)
     }
-    if (!accounts.value[pds as string]) accounts.value[pds as string] = []
-    accounts.value[pds as string].push({
+    if (!accounts.value![pds as string]) accounts.value![pds as string] = []
+    accounts.value![pds as string]!.push({
       did: did,
       handle: handle,
-      profile: profile,
+      profile: profile ?? undefined,
       pds: pdsUri,
     })
   }

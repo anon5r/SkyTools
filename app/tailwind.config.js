@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 const colors = require('tailwindcss/colors')
+const plugin = require('tailwindcss/plugin')
 
 module.exports = {
   content: [
@@ -28,23 +29,11 @@ module.exports = {
           900: '#0f172a',
           950: '#020617',
         },
+        gray: colors.gray,
+        blue: colors.sky,
+        red: colors.rose,
+        pink: colors.fuchsia,
       },
-    },
-  },
-  darkMode: 'class',
-  plugins: [require('flowbite/plugin')],
-  colors: {
-    gray: colors.gray,
-    blue: colors.sky,
-    red: colors.rose,
-    pink: colors.fuchsia,
-  },
-}
-
-const plugin = require('tailwindcss/plugin')
-module.exports = {
-  theme: {
-    extend: {
       textShadow: {
         sm: '0 1px 2px var(--tw-shadow-color)',
         DEFAULT: '0 2px 4px var(--tw-shadow-color)',
@@ -52,7 +41,9 @@ module.exports = {
       },
     },
   },
+  darkMode: 'class',
   plugins: [
+    require('flowbite/plugin'),
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
         {
