@@ -204,10 +204,10 @@ export default defineNuxtConfig({
     plugins: [tailwindcss() as any],
     build: {
       chunkSizeWarningLimit: 2000,
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          manualChunks: {
-            'atproto/api': ['@atproto/api'],
+          codeSplitting: {
+            groups: [{ name: 'atproto-api', test: /@atproto\/api/ }],
           },
         },
       },

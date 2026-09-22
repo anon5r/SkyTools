@@ -745,17 +745,17 @@
     hasError.value = false
     updateAllValues(loadState.value, false)
 
-    if (!identifier) {
-      identifier = bskyUtils.formatIdentifier(id.value)
-    }
-    if (identifier.length > 253) throw new Error('Identifier is too long')
-    id.value = identifier
-    if (route.params.id !== identifier)
-      await router.push(`/profile/${identifier}`)
-
-    activeTab.value = 'posts'
-
     try {
+      if (!identifier) {
+        identifier = bskyUtils.formatIdentifier(id.value)
+      }
+      if (identifier.length > 253) throw new Error('Identifier is too long')
+      id.value = identifier
+      if (route.params.id !== identifier)
+        await router.push(`/profile/${identifier}`)
+
+      activeTab.value = 'posts'
+
       await loadDetails(identifier)
       try {
         noUnauthenticated.value = true
@@ -888,12 +888,14 @@
       }
       stopAllLoadingState()
       if (axios.isAxiosError(err)) {
-        if (err.response.status === 400) {
+        if (err.response?.status === 400) {
           if (err.response.data.message) {
             userinfo.value.profile.description = err.response.data.message
           }
         }
       }
+    } finally {
+      stopAllLoadingState()
     }
   }
 

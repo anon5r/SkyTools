@@ -7,14 +7,8 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 Make sure to install the dependencies:
 
 ```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
-pnpm install
+# Bun
+bun install
 ```
 
 # Environment Variables
@@ -23,7 +17,7 @@ pnpm install
 |----------------------|----------------------------------|----------------------------------------|
 | GTM_ID               | Google Tag Manager               | GA-XXXXXX                              |
 | CLOUDFLARE_TOKEN     | Your Cloudflare API Token        |                                        |
-| FONTAWESOME_TOKEN    | Your FontAwesome API Token       |                                        |
+| FONTAWESOME_NPM_AUTH_TOKEN | Font Awesome Pro npm registry token |                                  |
 | DEFAULT_PDS          |                                  | `bsky.social`                          |
 | DEFAULT_PDS_SUFFIX   | Auto append suffix               | `bsky.social`                          |
 | DEFAULT_PDS_ENDPOINT | PDS API URL                      | https://bsky.social                    |
@@ -31,6 +25,9 @@ pnpm install
 | WEBMASTER_DID        | Owner DID                        | `did:plc:c22jdrqhoajyj5ca7e56a3ke`     |
 | INVITE_CODE_FREQ     | Invite code frequency by JSON    | `'{"days": 10}'`                       |
 | CDN_PREFIX           | Blob image proxy URL             | http://cdn-skytools.anon5r.com/proxy   |
+
+Set `FONTAWESOME_NPM_AUTH_TOKEN` when installing dependencies; it authenticates Bun to the Font Awesome Pro registry.
+
 
 
 
@@ -42,11 +39,11 @@ pnpm install
 Start the development server on `http://localhost:3000`
 
 ```bash
-yarn dev
+bun run dev
 ```
 Or run as cloudflare pages development
 ```bash
-yarn pages:dev
+bun run pages:dev
 ```
 
 ```bash
@@ -56,13 +53,13 @@ yarn pages:dev
 Build the application for production:
 
 ```bash
-yarn build
+bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-yarn preview
+bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
