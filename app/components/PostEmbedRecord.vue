@@ -54,10 +54,11 @@
             {{ client.record.text ?? '' }}
           </div>
           <div v-if="client?.record && client.record.embed">
-            <PostEmbedImages
+            <PostEmbed
+              :uri="props.embed.record.uri"
               :embed="client.record.embed"
-              :did="client.did"
-              :pds="client.endpoint" />
+              :did="client.did ?? props.did"
+              :pds="client.endpoint ?? props.pds ?? ''" />
           </div>
         </div>
       </NuxtLink>
@@ -70,7 +71,7 @@
 
 <script setup lang="ts">
   import { AppBskyEmbedRecord } from '@atproto/api'
-  import { defineProps, type Ref } from 'vue'
+  import type { Ref } from 'vue'
   import { ClientPost, isDev, ref, useAppConfig } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
 

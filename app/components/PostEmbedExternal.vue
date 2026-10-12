@@ -9,13 +9,17 @@
         class="m-4 min-w-full max-w-fit bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <figure
           class="relative p-2 max-w-full transition-all duration-300 bg-transparent cursor-pointer">
-          <LazyNuxtImg
+          <img
             v-if="recordEmbed.external.thumb"
-            :src="`${config.cdnPrefix}/${props.pds.substring(8)}/image/${
-              props.did
-            }/${recordEmbed.external.thumb.ref.toString()}`"
+            :src="
+              buildImageURL(
+                props.did,
+                recordEmbed.external.thumb.ref.toString(),
+                'feed_thumbnail'
+              )
+            "
             :alt="recordEmbed.external.title"
-            class="mx-auto max-h-44 md:max-h-56 max-w-full rounded-t-lg object-cover object-center" />
+            class="mx-auto max-h-44 md:max-h-56 max-w-full rounded-t-lg object-cover object-center">
           <figcaption class="px-4 pt-1.5 pb-0.5">
             <h5
               class="mb-1 text-md md:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -46,7 +50,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig, isDev } from '#imports'
+  import { isDev } from '#imports'
+  import { buildImageURL } from '~/utils/bskyutils'
   import { AppBskyEmbedExternal } from '@atproto/api'
   import type { ValidationResult } from '@atproto/lexicon'
 
@@ -68,7 +73,6 @@
     },
   })
   const recordEmbed = props.embed
-  const config = useAppConfig()
 
   if (AppBskyEmbedExternal.isMain(recordEmbed)) {
     // External Link

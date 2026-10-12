@@ -436,46 +436,38 @@ export const loadProfile = async (
   return profile.data.value as AppBskyActorProfile.Record
 }
 
-/**
- * Build blob image URL with com.atproto.sync.getBlob
- * @param {string} cdnURL https://av-cdn.bsky.social
- * @param {string} did DID
- * @param {AppBskyActorProfile.Record} record ProfileRecord object
- * @param {string} itemName "avatar" | "banner"
- * @param {string | undefined} endpoint endpoint URL
- * @returns {string}
- * @throws {Error} Invalid profile record
- */
+/** Build a Bluesky image CDN URL from a repository DID and blob CID. */
+export const buildImageURL = (
+  did: string,
+  cid: string,
+  preset: 'avatar' | 'banner' | 'feed_thumbnail' | 'feed_fullsize'
+): string => `https://cdn.bsky.app/img/${preset}/plain/${did}/${cid}@jpeg`
+
+/** Build a profile/list image URL. Legacy CDN/PDS arguments are kept for callers. */
 export const buildBlobRefURL = (
-  cdnURL: string,
+  _cdnURL: string,
   did: string,
   record:
     | AppBskyActorProfile.Record
     | AppBskyGraphList.Record
     | AppBskyFeedGenerator.Record,
   itemName: string,
-  endpoint?: string | undefined
+  _endpoint?: string
 ): string => {
-  if (
-    !(
-      AppBskyActorProfile.isRecord(record) ||
-      AppBskyGraphList.isRecord(record) ||
-      AppBskyFeedGenerator.isRecord(record)
-    )
-  ) {
-    console.info(did, itemName, endpoint)
-    console.dir(record)
+  if (!(
+    AppBskyActorProfile.isRecord(record) ||
+    AppBskyGraphList.isRecord(record) ||
+    AppBskyFeedGenerator.isRecord(record)
+  )) {
     throw new Error(`Invalid record type: ${did}`)
   }
-  if (record[itemName] === undefined) {
-    console.warn(`Not found blob field "${itemName}" in record : ${did}`)
-    return ''
-  }
-  if (endpoint !== undefined && endpoint.startsWith('http')) {
-    endpoint = endpoint.substring(endpoint.indexOf('://') + 3)
-  }
+  if (record[itemName] === undefined) return ''
   const itemRef = (record[itemName] as BlobRef).ref
-  return `${cdnURL}/${endpoint ?? config.defaultPDS}/image/${did}/${itemRef}`
+  return buildImageURL(
+    did,
+    itemRef.toString(),
+    itemName === 'banner' ? 'banner' : 'avatar'
+  )
 }
 
 /**

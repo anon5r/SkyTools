@@ -3,14 +3,19 @@
     <div v-if="props.embed.$type === 'app.bsky.embed.record'">
       <PostEmbedRecord :embed="props.embed" :did="props.did" :pds="props.pds" />
     </div>
-    <div v-if="props.embed.$type === 'app.bsky.embed.images'">
+    <div v-if="AppBskyEmbedImages.isMain(props.embed)">
       <PostEmbedImages :embed="props.embed" :did="props.did" :pds="props.pds" />
     </div>
-    <div v-if="props.embed.$type === 'app.bsky.embed.video'">
-      <PostEmbedVideo :embed="props.embed" :did="props.did" :pds="props.pds" />
+    <div v-if="AppBskyEmbedVideo.isMain(props.embed)">
+      <PostEmbedVideo
+        :uri="props.uri"
+        :embed="props.embed"
+        :did="props.did"
+        :pds="props.pds" />
     </div>
-    <div v-if="props.embed.$type === 'app.bsky.embed.recordWithMedia'">
+    <div v-if="AppBskyEmbedRecordWithMedia.isMain(props.embed)">
       <PostEmbedRecordWithMedia
+        :uri="props.uri"
         :embed="props.embed"
         :did="props.did"
         :pds="props.pds" />
@@ -45,6 +50,7 @@
   /** @type {string} props.did */
   /** @type {string} props.repo */
   const props = defineProps({
+    uri: { type: String, required: true },
     embed: {
       type: Object as PropType<
         | AppBskyEmbedImages.Main
@@ -52,7 +58,7 @@
         | AppBskyEmbedRecord.Main
         | AppBskyEmbedRecordWithMedia.Main
         | AppBskyEmbedExternal.Main
-        | { $type: string; [k: string]: unknown }
+        | { $type: string }
       >,
       require: false,
       default: () => ({}),

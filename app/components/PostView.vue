@@ -175,7 +175,11 @@
       </div>
       <div v-if="record && record.embed">
         <!-- Embedded (image, record...) -->
-        <PostEmbed :did="did" :embed="record.embed" :pds="props.pds">
+        <PostEmbed
+          :uri="props.uri"
+          :did="did"
+          :embed="record.embed"
+          :pds="props.pds">
           <template #fallback>
             <div class="flex justify-center">
               <font-awesome-icon :icon="['fas', 'spinner']" spin-pulse />

@@ -24,7 +24,7 @@ bun install
 | DEFAULT_APP_URL      | Default application frontend URL | https://bsky.app                       |
 | WEBMASTER_DID        | Owner DID                        | `did:plc:c22jdrqhoajyj5ca7e56a3ke`     |
 | INVITE_CODE_FREQ     | Invite code frequency by JSON    | `'{"days": 10}'`                       |
-| CDN_PREFIX           | Blob image proxy URL             | http://cdn-skytools.anon5r.com/proxy   |
+| CDN_PREFIX           | SkyTools OGP asset base URL             | http://cdn-skytools.anon5r.com/proxy   |
 
 Set `FONTAWESOME_NPM_AUTH_TOKEN` when installing dependencies; it authenticates Bun to the Font Awesome Pro registry.
 
@@ -63,3 +63,5 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+Bluesky images are loaded directly from `https://cdn.bsky.app`. Videos use the playlist and thumbnail URLs returned by `https://public.api.bsky.app`, with native HLS playback or hls.js. `CDN_PREFIX` is retained for SkyTools OGP assets only. Videos unavailable in the public AppView display an unavailable message.

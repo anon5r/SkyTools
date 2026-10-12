@@ -3,7 +3,7 @@ import * as bskyutils from '~/utils/bskyutils'
 import { isDev } from '~/utils/helpers'
 import { BlockedError, UnauthenticatedError } from '~/errors/BskyErrors'
 
-const cdnURL = process.env.cdnPrefix || 'https://cdn-skytools.anon5r.com/proxy'
+const cdnURL = 'https://cdn.bsky.app'
 
 interface AppConfig {
   [key: string]: any

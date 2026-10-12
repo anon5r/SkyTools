@@ -8,16 +8,20 @@
         :key="img.image.ref.toString()"
         class="flex">
         <a
-          :href="`${config.cdnPrefix}/${config.defaultPDS}/image/${
-            props.did
-          }/${img.image.ref.toString()}`"
+          :href="
+            buildImageURL(props.did, img.image.ref.toString(), 'feed_fullsize')
+          "
           target="_blank">
-          <LazyNuxtImg
-            :src="`${config.cdnPrefix}/${config.defaultPDS}/image/${
-              props.did
-            }/${img.image.ref.toString()}`"
+          <img
+            :src="
+              buildImageURL(
+                props.did,
+                img.image.ref.toString(),
+                'feed_thumbnail'
+              )
+            "
             :alt="img.alt"
-            class="max-w-xs sm:max-w-md md:max-w-xs rounded-lg object-cover object-top" />
+            class="max-w-xs sm:max-w-md md:max-w-xs rounded-lg object-cover object-top">
         </a>
       </div>
     </div>
@@ -25,34 +29,16 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppConfig } from '#imports'
+  import { buildImageURL } from '~/utils/bskyutils'
   import type { AppBskyEmbedImages } from '@atproto/api'
-  import { defineProps, type PropType } from 'vue'
 
   /** @type {AppBskyEmbedImages} props.embed */
   /** @type {string} props.did */
-  const props = defineProps({
-    embed: {
-      type: Object as PropType<
-        | AppBskyEmbedImages.Main
-        | { $type: string; [k: string]: unknown }
-        | unknown
-      >,
-      required: false,
-      default: () => ({}),
-    },
-    did: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    pds: {
-      type: String,
-      required: false,
-      default: null,
-    },
-  })
-  const config = useAppConfig()
+  const props = defineProps<{
+    embed: AppBskyEmbedImages.Main
+    did: string
+    pds?: string
+  }>()
 </script>
 
 <style scoped></style>
