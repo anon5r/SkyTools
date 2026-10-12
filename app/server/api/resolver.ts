@@ -1,8 +1,7 @@
 import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
-import { DidResolver, HandleResolver } from '@atproto/identity'
-import { getHandle } from '@atproto/common-web'
+import { resolveDid, resolveHandle } from '../utils/identity'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async event => {
   const { actor } = getQuery(event)
 
   if (typeof actor !== 'string' || !actor) {
@@ -12,14 +11,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     if (actor.startsWith('did:')) {
-      const resolver = new DidResolver({})
-      const didDoc = await resolver.resolve(actor)
+      const didDoc = await resolveDid(actor)
       if (didDoc) {
-        return { did: actor, handle: getHandle(didDoc) }
+        return { did: actor, handle: didDoc.aka }
       }
     } else {
-      const resolver = new HandleResolver({})
-      const did = await resolver.resolve(actor)
+      const did = await resolveHandle(actor)
       if (did) {
         return { did: did, handle: actor }
       }

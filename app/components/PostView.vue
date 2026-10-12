@@ -193,11 +193,9 @@
     <div class="flex justify-end items-end">
       <div v-if="record" class="mt-3 inline-box">
         <!-- Labels -->
-        <ul
-          v-if="record.labels?.values && record.labels.values.length > 0"
-          class="inline-block">
+        <ul v-if="labels.length > 0" class="inline-block">
           <li
-            v-for="(label, index) in record.labels.values"
+            v-for="(label, index) in labels"
             :key="index"
             class="inline-block items-center px-1 py-0.5 mr-2 text-xs font-medium rounded"
             :class="
@@ -228,10 +226,14 @@
     useAuth,
   } from '#imports'
   import { FwbAvatar } from 'flowbite-vue'
-  import { defineProps, type PropType, type Ref } from 'vue'
+  import { computed, type PropType, type Ref } from 'vue'
   import { DateTime } from 'luxon'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import type { AppBskyActorProfile, AppBskyFeedPost } from '@atproto/api'
+  import {
+    ComAtprotoLabelDefs,
+    type AppBskyActorProfile,
+    type AppBskyFeedPost,
+  } from '@atproto/api'
   import type { AppConfig } from '@nuxt/schema'
   import { UnauthenticatedError } from '~/errors/BskyErrors'
   import * as bskyutils from '~/utils/bskyutils'
@@ -282,6 +284,10 @@
   const displayName: Ref<string> = ref('Unknown')
   const avatarURL: Ref<string | undefined> = ref(undefined)
   const record: Ref<AppBskyFeedPost.Record> = ref(props.postRecord)
+  const labels = computed(() => {
+    const result = ComAtprotoLabelDefs.validateSelfLabels(record.value?.labels)
+    return result.success ? result.value.values : []
+  })
   const isRemoved: Ref<boolean> = ref(false)
   const isHidden: Ref<boolean> = ref(false)
   const pdsEndpoint: Ref<string> = ref(config.defaultPDSEntrypoint)

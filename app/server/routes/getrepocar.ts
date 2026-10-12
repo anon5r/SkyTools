@@ -1,18 +1,6 @@
 import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
-import { DidResolver } from '@atproto/identity'
+import { resolveDid } from '../utils/identity'
 import { DateTime } from 'luxon'
-import { getHandle, getPdsEndpoint } from '@atproto/common-web'
-
-// Cloudflare Workers does not support { redirect: 'error' }.
-// Patch global fetch to use 'manual' instead, which prevents following redirects (similar intent)
-// but returns the 3xx response instead of throwing.
-const _originalFetch = globalThis.fetch
-globalThis.fetch = async (input, init) => {
-  if (init && init.redirect === 'error') {
-    init = { ...init, redirect: 'manual' }
-  }
-  return _originalFetch(input, init)
-}
 
 export default defineEventHandler(async event => {
   const { repo: actor } = getQuery(event)
@@ -28,16 +16,15 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    const didResolve = new DidResolver({})
-    const didDoc = await didResolve.resolve(actor)
+    const didDoc = await resolveDid(actor)
 
     if (!didDoc) {
       setResponseStatus(event, 404)
       return { error: 'No DID document found' }
     }
 
-    const handle = getHandle(didDoc)
-    const pdsEndpoint = getPdsEndpoint(didDoc)
+    const handle = didDoc.aka ?? actor
+    const pdsEndpoint = didDoc.pds?.serviceEndpoint
 
     if (!pdsEndpoint) {
       setResponseStatus(event, 404)
@@ -67,12 +54,12 @@ export default defineEventHandler(async event => {
     }
 
     return new Response(response.body, { status: 200, headers })
-  } catch (error: any) {
+  } catch (error) {
     console.error(error)
     setResponseStatus(event, 500)
     return {
       error: 'Error occurred while downloading file',
-      details: error.message || String(error),
+      details: error instanceof Error ? error.message : String(error),
     }
   }
 })

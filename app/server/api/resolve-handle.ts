@@ -1,7 +1,7 @@
 import { defineEventHandler, getQuery, setResponseStatus } from 'h3'
-import { HandleResolver } from '@atproto/identity'
+import { resolveHandle } from '../utils/identity'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async event => {
   const { handle } = getQuery(event)
 
   if (typeof handle !== 'string' || !handle) {
@@ -14,8 +14,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const resolve = new HandleResolver({})
-    const did = await resolve.resolve(handle)
+    const did = await resolveHandle(handle)
 
     if (did) {
       return { did }

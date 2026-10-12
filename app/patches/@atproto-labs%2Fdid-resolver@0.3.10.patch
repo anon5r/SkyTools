@@ -1,0 +1,26 @@
+diff --git a/dist/methods/plc.js b/dist/methods/plc.js
+index c8fb938666aae71743c86215ef5fc290d65352a5..6574b6d45fd0c4fa5118bc25d90011a11da9eadd 100644
+--- a/dist/methods/plc.js
++++ b/dist/methods/plc.js
+@@ -14,7 +14,7 @@ export class DidPlcMethod {
+         // Should never throw
+         const url = new URL(`/${encodeURIComponent(did)}`, this.plcDirectoryUrl);
+         return this.fetch(url, {
+-            redirect: 'error',
++            redirect: 'manual',
+             headers: { accept: 'application/did+ld+json,application/json' },
+             signal: options?.signal,
+         }).then(fetchSuccessHandler);
+diff --git a/dist/methods/web.js b/dist/methods/web.js
+index f3f83b20f526cc70bc7164b7d7d872c29db7346e..5ff8a468073d774baaa154aaae34c95f52f269a8 100644
+--- a/dist/methods/web.js
++++ b/dist/methods/web.js
+@@ -17,7 +17,7 @@ export class DidWebMethod {
+         // "localhost", or resolves to a private IP address, the fetch function is
+         // responsible for handling it.
+         return this.fetch(didDocumentUrl, {
+-            redirect: 'error',
++            redirect: 'manual',
+             headers: { accept: 'application/did+ld+json,application/json' },
+             signal: options?.signal,
+         }).then(fetchSuccessHandler);
